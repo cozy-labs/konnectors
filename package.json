@@ -1,0 +1,38 @@
+{
+  "name": "konnectors",
+  "version": "0.1.0",
+  "engines": [
+    "node = 0.8.x"
+  ],
+  "description": "Store data from the web in your Cozy",
+  "license": "AGPL",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frankrousseau/konnectors.git"
+  },
+  "main": "server.coffee",
+  "dependencies": {
+    "americano": "0.2.10",
+    "americano-cozy": "0.1.4",
+    "printit": "0.1.2",
+    "querystring": "0.2.0",
+    "request-json": "0.4.5",
+    "moment": "2.4.0"
+  },
+  "devDependencies": {
+    "nock": "0.27.0",
+    "should": "2.0.1",
+    "mocha": "1.13.0",
+    "request-json": "0.4.4",
+    "cozy-fixtures": "1.0.1",
+    "coffeelint": "0.6.1"
+  },
+  "scripts": {
+    "test": "cake tests",
+    "start": "coffee server.coffee"
+  },
+  "cozy-permissions": {
+      "RescueTimeActivity": "Data from RescueTime.com
+  },
+  "cozy-displayName": "Konnectors"
+}
