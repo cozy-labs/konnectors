@@ -1,6 +1,7 @@
 # Konnectors
 
-Collection of connectors to fetch data from different websites to your Cozy.
+Collection of connectors to fetch data from different websites and save them
+into your Cozy.
 
 # Available connectors
 
