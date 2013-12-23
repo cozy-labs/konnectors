@@ -7,6 +7,5 @@ module.exports = class AppView extends BaseView
     template: require('./templates/home')
 
     afterRender: ->
-        console.log "write more code here !"
         konnectors = new Konnectors()
         konnectors.fetch()

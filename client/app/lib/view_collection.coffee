@@ -41,8 +41,7 @@ module.exports = class ViewCollection extends BaseView
         @listenTo @collection, "add",     @addItem
         @listenTo @collection, "remove",  @removeItem
 
-        if not @collectionEl? and el?
-            collectionEl = el
+        @$collectionEl = $(@collectionEl)
 
     # if we have views before a render call, we detach them
     render: ->
@@ -51,7 +50,6 @@ module.exports = class ViewCollection extends BaseView
 
     # after render, we reattach the views
     afterRender: ->
-        @$collectionEl = $(@collectionEl)
         @appendView view.$el for id, view of @views
         @onReset @collection
         @onChange @views
@@ -83,4 +81,3 @@ module.exports = class ViewCollection extends BaseView
 
     fetch: (options) =>
         @collection.fetch options
-

@@ -3,7 +3,7 @@ KonnectorsCollection = require '../collections/konnectors'
 KonnectorView = require './konnector'
 
 module.exports = class KonnectorsView extends ViewCollection
-    el: '#konnectors'
+    collectionEl: '#konnectors'
 
     collection: new KonnectorsCollection()
     itemview: KonnectorView

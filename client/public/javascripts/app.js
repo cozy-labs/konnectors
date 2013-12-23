@@ -232,15 +232,12 @@ window.require.register("lib/view_collection", function(exports, require, module
     };
 
     ViewCollection.prototype.initialize = function() {
-      var collectionEl;
       ViewCollection.__super__.initialize.apply(this, arguments);
       this.views = {};
       this.listenTo(this.collection, "reset", this.onReset);
       this.listenTo(this.collection, "add", this.addItem);
       this.listenTo(this.collection, "remove", this.removeItem);
-      if ((this.collectionEl == null) && (typeof el !== "undefined" && el !== null)) {
-        return collectionEl = el;
-      }
+      return this.$collectionEl = $(this.collectionEl);
     };
 
     ViewCollection.prototype.render = function() {
@@ -255,7 +252,6 @@ window.require.register("lib/view_collection", function(exports, require, module
 
     ViewCollection.prototype.afterRender = function() {
       var id, view, _ref1;
-      this.$collectionEl = $(this.collectionEl);
       _ref1 = this.views;
       for (id in _ref1) {
         view = _ref1[id];
@@ -379,7 +375,6 @@ window.require.register("views/app_view", function(exports, require, module) {
 
     AppView.prototype.afterRender = function() {
       var konnectors;
-      console.log("write more code here !");
       konnectors = new Konnectors();
       return konnectors.fetch();
     };
@@ -391,6 +386,7 @@ window.require.register("views/app_view", function(exports, require, module) {
 });
 window.require.register("views/konnector", function(exports, require, module) {
   var BaseView, KonnectorView, _ref,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -400,6 +396,8 @@ window.require.register("views/konnector", function(exports, require, module) {
     __extends(KonnectorView, _super);
 
     function KonnectorView() {
+      this.onImportClicked = __bind(this.onImportClicked, this);
+      this.afterRender = __bind(this.afterRender, this);
       _ref = KonnectorView.__super__.constructor.apply(this, arguments);
       return _ref;
     }
@@ -407,6 +405,43 @@ window.require.register("views/konnector", function(exports, require, module) {
     KonnectorView.prototype.template = require('./templates/konnector');
 
     KonnectorView.prototype.className = 'konnector';
+
+    KonnectorView.prototype.events = {
+      "click .import-button": "onImportClicked"
+    };
+
+    KonnectorView.prototype.afterRender = function() {
+      var fields, name, val, _results;
+      fields = this.model.get('fields');
+      _results = [];
+      for (name in fields) {
+        val = fields[name];
+        _results.push(this.$('.fields').append("<label for=\"" + name + "-input\">" + name + "</label>\n<input type=\"text\" class=\"" + name + "-input\" value=\"" + val + "\" />"));
+      }
+      return _results;
+    };
+
+    KonnectorView.prototype.onImportClicked = function() {
+      var fields, name, val, _results,
+        _this = this;
+      fields = this.model.get('fields');
+      _results = [];
+      for (name in fields) {
+        val = fields[name];
+        fields[name] = $("." + name + "-input").val();
+        console.log(fields[name]);
+        this.model.set('fields', fields);
+        _results.push(this.model.save({
+          success: function() {
+            return alert("import succeeded");
+          },
+          error: function() {
+            return alert("import failed");
+          }
+        }));
+      }
+      return _results;
+    };
 
     return KonnectorView;
 
@@ -432,7 +467,7 @@ window.require.register("views/konnectors", function(exports, require, module) {
       return _ref;
     }
 
-    KonnectorsView.prototype.el = '#konnectors';
+    KonnectorsView.prototype.collectionEl = '#konnectors';
 
     KonnectorsView.prototype.collection = new KonnectorsCollection();
 
@@ -470,7 +505,7 @@ window.require.register("views/templates/konnector", function(exports, require, 
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<!-- .konnector --><div class="title">Title</div><div class="description">Description</div><div class="required-fields">Fields</div><div class="buttons">Import</div><div class="status">Status</div><div class="infos">Infos</div>');
+  buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">import</button></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos">' + escape((interp = status) == null ? '' : interp) + '</div>');
   }
   return buf.join("");
   };
