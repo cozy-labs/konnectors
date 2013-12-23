@@ -32,7 +32,8 @@
     "start": "coffee server.coffee"
   },
   "cozy-permissions": {
-      "RescueTimeActivity": "Data from RescueTime.com
+      "Konnector": "Konnector description and required fields",
+      "RescueTimeActivity": "Data from RescueTime.com"
   },
   "cozy-displayName": "Konnectors"
 }
