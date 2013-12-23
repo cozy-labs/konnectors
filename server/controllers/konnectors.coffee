@@ -1,3 +1,11 @@
+Konnector = require '../models/konnector'
 
 module.exports =
-/bin/bash: q : commande introuvable
+    all: (req, res, next) ->
+        Konnector.all (err, konnectors) ->
+            if err
+                next err
+            else
+                res.send konnectors
+
+    import: (req, res, next) ->

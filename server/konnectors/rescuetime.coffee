@@ -24,9 +24,8 @@ RescueTimeActivity.destroyAll = (callback) ->
 module.exports =
 
     name: "Rescue Time"
-    requiredFields: [
-        "apikey",
-    ]
+    fields:
+        apikey: ""
 
     description: "Fetch all rescuetime data"
 
