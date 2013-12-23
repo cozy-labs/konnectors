@@ -429,7 +429,6 @@ window.require.register("views/konnector", function(exports, require, module) {
       for (name in fields) {
         val = fields[name];
         fields[name] = $("." + name + "-input").val();
-        console.log(fields[name]);
         this.model.set('fields', fields);
         _results.push(this.model.save({
           success: function() {

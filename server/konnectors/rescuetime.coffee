@@ -23,7 +23,7 @@ RescueTimeActivity.destroyAll = (callback) ->
 
 module.exports =
 
-    name: "Rescue Time"
+    name: "rescuetime"
     fields:
         apikey: ""
 
@@ -70,6 +70,10 @@ module.exports =
                 callback err
             else if res.statusCode isnt 200
                 callback new Error body
+            else if not body.rows?
+                callback new Error """
+Something went wrong while fetching rescue time data.
+"""
             else
                 recSave = (i) ->
                     if i < body.rows.length

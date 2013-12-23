@@ -29,6 +29,8 @@ module.exports = (callback) ->
                 konnectorHash[konnector.name] = konnector
 
             konnectorModules = getKonnectorModules()
+            console.log konnectorModules
+
             konnectorsToCreate = []
 
             for name, konnectorModule of konnectorModules

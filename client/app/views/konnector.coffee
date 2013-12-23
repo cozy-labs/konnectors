@@ -19,7 +19,6 @@ module.exports = class KonnectorView extends BaseView
         fields = @model.get 'fields'
         for name, val of fields
             fields[name] = $(".#{name}-input").val()
-            console.log fields[name]
             @model.set 'fields', fields
             @model.save
                 success: =>
