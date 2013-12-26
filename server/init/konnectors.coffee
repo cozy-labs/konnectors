@@ -5,16 +5,21 @@ log = require('printit')()
 
 Konnector = require '../models/konnector'
 
-modulesPath = './server/konnectors'
+modulesPath = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'konnectors')
 
+isCoffeeFile = (fileName) ->
+    extension = fileName.split('.')[1]
+    firstChar = fileName[0]
+    firstChar isnt '.' and extension is 'coffee'
 
 getKonnectorModules = ->
     modules = {}
     moduleFiles = fs.readdirSync modulesPath
     for moduleFile in moduleFiles
-        name = moduleFile.split('.')[0]
-        modulePath = "../konnectors/#{name}"
-        modules[name] = require modulePath
+        if isCoffeeFile moduleFile
+            name = moduleFile.split('.')[0]
+            modulePath = "../konnectors/#{name}"
+            modules[name] = require modulePath
     modules
 
 
@@ -29,8 +34,6 @@ module.exports = (callback) ->
                 konnectorHash[konnector.name] = konnector
 
             konnectorModules = getKonnectorModules()
-            console.log konnectorModules
-
             konnectorsToCreate = []
 
             for name, konnectorModule of konnectorModules
@@ -39,15 +42,22 @@ module.exports = (callback) ->
                         name: konnectorModule.name
                         description: konnectorModule.description
                         fields: konnectorModule.fields
+                        init: konnectorModule.init
+
 
             recCreate = ->
                 if konnectorsToCreate.length > 0
                     konnector = konnectorsToCreate.pop()
-                    Konnector.create konnector, (err) ->
+                    konnector.init (err) ->
                         if err
                             callback err
                         else
-                            recCreate()
+                            delete konnector.init
+                            Konnector.create konnector, (err) ->
+                                if err
+                                    callback err
+                                else
+                                    recCreate()
                 else
                     Konnector.all (err, konnectors) ->
                         callback null

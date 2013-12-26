@@ -11,6 +11,8 @@ module.exports =
     getKonnector: (req, res, next) ->
         Konnector.find req.params.konnectorId, (err, konnector) ->
             if err
+                next err
+            else if not konnector?
                 res.send 404
             else
                 req.konnector = konnector
