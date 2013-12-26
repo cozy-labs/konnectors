@@ -40,7 +40,8 @@ module.exports =
 
     # Define parameters (start date and end date) then fetch data accordingly.
     fetch: (requiredFields, callback) ->
-        RescueTimeActivity.request 'byDate', limit: 1, (err, activities) =>
+        params = limit: 1, descending: true
+        RescueTimeActivity.request 'byDate', params, (err, activities) =>
             if err then callback err
 
             else
