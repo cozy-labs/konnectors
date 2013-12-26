@@ -422,24 +422,22 @@ window.require.register("views/konnector", function(exports, require, module) {
     };
 
     KonnectorView.prototype.onImportClicked = function() {
-      var fields, name, val, _results,
+      var fields, name, val,
         _this = this;
       fields = this.model.get('fields');
-      _results = [];
       for (name in fields) {
         val = fields[name];
         fields[name] = $("." + name + "-input").val();
-        this.model.set('fields', fields);
-        _results.push(this.model.save({
-          success: function() {
-            return alert("import succeeded");
-          },
-          error: function() {
-            return alert("import failed");
-          }
-        }));
       }
-      return _results;
+      this.model.set('fields', fields);
+      return this.model.save({
+        success: function() {
+          return alert("import succeeded");
+        },
+        error: function() {
+          return alert("import failed");
+        }
+      });
     };
 
     return KonnectorView;

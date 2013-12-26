@@ -19,9 +19,9 @@ module.exports = class KonnectorView extends BaseView
         fields = @model.get 'fields'
         for name, val of fields
             fields[name] = $(".#{name}-input").val()
-            @model.set 'fields', fields
-            @model.save
-                success: =>
-                    alert "import succeeded"
-                error: =>
-                    alert "import failed"
+        @model.set 'fields', fields
+        @model.save
+            success: =>
+                alert "import succeeded"
+            error: =>
+                alert "import failed"
