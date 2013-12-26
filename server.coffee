@@ -6,6 +6,8 @@ log = printit
     prefix: null
     date: true
 
+process.env.TZ = 'UTC'
+
 port = process.env.PORT || 9358
 americano.start {name: 'template', port: port}, ->
 
