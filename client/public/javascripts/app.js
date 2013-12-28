@@ -416,7 +416,7 @@ window.require.register("views/konnector", function(exports, require, module) {
       _results = [];
       for (name in fields) {
         val = fields[name];
-        _results.push(this.$('.fields').append("<label for=\"" + name + "-input\">" + name + "</label>\n<input type=\"text\" class=\"" + name + "-input\" value=\"" + val + "\" />"));
+        _results.push(this.$('.fields').append("<div class=\"field line\">\n<div><label for=\"" + name + "-input\">" + name + "</label></div>\n<div><input type=\"text\" class=\"" + name + "-input\" value=\"" + val + "\" /></div>\n</div>"));
       }
       return _results;
     };
@@ -491,7 +491,7 @@ window.require.register("views/templates/home", function(exports, require, modul
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div id="content"><h1>Konnectors</h1><div id="konnectors"></div></div>');
+  buf.push('<div id="content"><div class="line clearfix"><img src="images/small_icon.png" class="right"/><h1>Konnectors</h1></div><div id="konnectors"></div></div>');
   }
   return buf.join("");
   };
@@ -502,7 +502,9 @@ window.require.register("views/templates/konnector", function(exports, require, 
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">import</button></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos">' + escape((interp = status) == null ? '' : interp) + '</div>');
+  buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">import</button></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date">Last import: ' + escape((interp = model.importDate) == null ? '' : interp) + '</div><div class="date"> <a');
+  buf.push(attrs({ 'href':("/apps/databrowser/search/all/" + (model.dataName) + "") }, {"href":true}));
+  buf.push('>See data</a></div></div>');
   }
   return buf.join("");
   };

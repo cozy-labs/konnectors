@@ -5,4 +5,7 @@ h2.name #{model.name}
 .buttons 
     button.import-button import
 .status #{status}
-.infos #{status}
+.infos
+    .date Last import: #{model.importDate}
+    .date 
+        a(href="/apps/databrowser/search/all/#{model.dataName}") See data

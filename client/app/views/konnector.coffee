@@ -11,8 +11,10 @@ module.exports = class KonnectorView extends BaseView
         fields = @model.get 'fields'
         for name, val of fields
             @$('.fields').append """
-<label for="#{name}-input">#{name}</label>
-<input type="text" class="#{name}-input" value="#{val}" />
+<div class="field line">
+<div><label for="#{name}-input">#{name}</label></div>
+<div><input type="text" class="#{name}-input" value="#{val}" /></div>
+</div>
 """
 
     onImportClicked: =>
