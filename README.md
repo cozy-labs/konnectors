@@ -6,3 +6,5 @@ into your Cozy.
 # Available connectors
 
 * RescueTime
+* Jawbone (Move and Sleep data)
+* Twitter (published tweets)
