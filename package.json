@@ -35,8 +35,21 @@
     "start": "coffee server.coffee"
   },
   "cozy-permissions": {
-    "Konnector": "Konnector description and required fields",
-    "RescueTimeActivity": "Data from RescueTime.com"
+    "Konnector": {
+      "description": "Konnector description and required fields",
+    },
+    "RescueTimeActivity": {
+      "description": "Activity data from RescueTime.com."
+    },
+    "JawboneMove": {
+      "description": "Move data from jawbone.com."
+    },
+    "JawboneSleep": {
+      "description": "Sleep data from jawbone.com."
+    },
+    "TwitterTweet": {
+      "description": "Tweets you published on Twitter."
+    }
   },
   "cozy-displayName": "Konnectors"
 }
