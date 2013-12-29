@@ -37,7 +37,9 @@ module.exports =
                     if err
                         next err
                     else
-                        data = isImporting: false
+                        data =
+                            isImporting: false
+                            lastImport: new Date()
                         req.konnector.updateAttributes data, (err) ->
                             if err
                                 next err
