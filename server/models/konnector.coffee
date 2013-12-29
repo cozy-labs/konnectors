@@ -15,3 +15,28 @@ module.exports = Konnector = americano.getModel 'Konnector',
 
 Konnector.all = (callback) ->
     Konnector.request 'all', callback
+
+Konnector.import = (fieldValues, callback) ->
+
+    data =
+        fieldValues: fieldValues
+        isImporting: true
+    @updateAttributes data, (err) ->
+        if err
+            callback err
+
+        else
+            konnectorModule = require "../konnectors/#{@slug}"
+            konnectorModule.fetch fieldValues, (err) ->
+                if err
+                    callback err
+
+                else
+                    data =
+                        isImporting: false
+                        lastImport: new Date()
+                    @updateAttributes data, (err) ->
+                        if err
+                            callback err
+                        else
+                            callback()
