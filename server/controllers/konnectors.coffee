@@ -1,12 +1,7 @@
 Konnector = require '../models/konnector'
 
 module.exports =
-    all: (req, res, next) ->
-        Konnector.all (err, konnectors) ->
-            if err
-                next err
-            else
-                res.send konnectors
+
 
     getKonnector: (req, res, next) ->
         Konnector.find req.params.konnectorId, (err, konnector) ->
@@ -17,6 +12,15 @@ module.exports =
             else
                 req.konnector = konnector
                 next()
+
+
+    all: (req, res, next) ->
+        Konnector.all (err, konnectors) ->
+            if err
+                next err
+            else
+                res.send konnectors
+
 
     import: (req, res, next) ->
         data =

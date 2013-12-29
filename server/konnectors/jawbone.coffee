@@ -64,16 +64,20 @@ JawboneSleep.all = (callback) ->
 
 module.exports =
 
-    name: "jawbone"
-    fields:
-        login: ""
-        password: ""
+    name: "Jawbone"
+    slug: "jawbone"
+    description: "Download Move and Sleep Data from Jawbone CSV file."
+    vendorLink: "https://jawbone.com/up"
 
-    description: "Fetch Jawbone CSV data"
+    fields:
+        login: "text"
+        password: "password"
 
     models:
         moves: JawboneMove
         sleeps: JawboneSleep
+
+    modelNames: ['JawboneMove', 'JawboneSleep']
 
 
     # Define model requests.

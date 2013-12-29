@@ -22,21 +22,24 @@ TwitterTweet = americano.getModel 'TwitterTweet',
 TwitterTweet.all = (callback) ->
     TwitterTweet.request 'byDate', callback
 
+
 # Konnector
 
 module.exports =
 
-    name: "twitter"
+    name: "Twitter"
+    slug: "twitter"
+    description: "Download all your tweets published on Twitter."
+    vendorLink: "https://twitter.com/"
+
     fields:
-        "consumerKey": ""
-        "consumerSecret": ""
-        "accessToken": ""
-        "accessTokenSecret": ""
-
-    description: "Download your tweets"
-
+        consumerKey: "text"
+        consumerSecret: "text"
+        accessToken: "text"
+        accessTokenSecret: "password"
     models:
         tweets: TwitterTweet
+    modelNames: ["TwitterTweet"]
 
 
     # Define model requests.
