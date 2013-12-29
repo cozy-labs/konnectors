@@ -61,7 +61,7 @@ module.exports =
 
         if activities.length > 0
             start = moment(activities[0].date).format 'YYYY-MM-DD'
-            params = key: moment().format 'YYYY-MM-DD'
+            params = key: new Date(moment().format 'YYYY-MM-DD')
             RescueTimeActivity.requestDestroy 'byDate', params, (err) =>
                 if err then callback err
                 else @fetchData apikey, start, end, callback
@@ -69,7 +69,6 @@ module.exports =
         else
             start = moment().subtract('years', 10).format 'YYYY-MM-DD'
             @fetchData apikey, start, end, callback
-
 
 
     # Fetch activity list from rescuetime, then create an entry for each row.
