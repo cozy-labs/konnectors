@@ -10,4 +10,5 @@ module.exports =
         get: konnectors.all
 
     'konnectors/:konnectorId':
+        get: konnectors.show
         put: konnectors.import

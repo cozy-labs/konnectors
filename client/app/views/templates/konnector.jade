@@ -6,7 +6,9 @@ h2.name #{model.name}
     button.import-button import
 .status #{status}
 .infos
-    .date Last import: #{model.importDate}
+    .date 
+        span.label Last import:&nbsp;
+        span.last-import
     .datas
         | Imported data:&nbsp;
         for name in model.modelNames

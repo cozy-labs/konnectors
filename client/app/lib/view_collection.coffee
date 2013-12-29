@@ -48,6 +48,7 @@ module.exports = class ViewCollection extends BaseView
         view.$el.detach() for id, view of @views
         super
 
+
     # after render, we reattach the views
     afterRender: ->
         @appendView view.$el for id, view of @views

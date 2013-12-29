@@ -8,6 +8,18 @@ module.exports = class KonnectorView extends BaseView
         "click .import-button": "onImportClicked"
 
     afterRender: =>
+        @$el.addClass "konnector-#{@model.get 'slug'}"
+
+        lastImport = @model.get 'lastImport'
+        isImporting  = @model.get 'isImporting'
+
+        if isImporting
+            @$('.last-import').html 'importing...'
+        else if lastImport?
+            @$('.last-import').html moment(lastImport).format 'LLL'
+        else
+            @$('.last-import').html "no import performed."
+
         values = @model.get 'fieldValues'
         values ?= {}
         for name, val of @model.get 'fields'

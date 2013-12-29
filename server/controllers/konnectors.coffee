@@ -22,9 +22,16 @@ module.exports =
                 res.send konnectors
 
 
+    show: (req, res, next) ->
+        res.send req.konnector
+
+
     import: (req, res, next) ->
-        req.konnector.import req.body.fieldValues, (err) ->
-            if err
-                next err
-            else
-                res.send success: true, 200
+        if req.konnector.isImporting
+            res.send error: true, msg: 'konnector is already importing', 400
+        else
+            req.konnector.import req.body.fieldValues, (err) ->
+                if err
+                    next err
+                else
+                    res.send success: true, 200

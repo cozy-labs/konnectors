@@ -1,6 +1,7 @@
 ViewCollection = require '../lib/view_collection'
 KonnectorsCollection = require '../collections/konnectors'
 KonnectorView = require './konnector'
+KonnectorListener = require './konnector_listener'
 
 module.exports = class KonnectorsView extends ViewCollection
     collectionEl: '#konnectors'
@@ -9,7 +10,7 @@ module.exports = class KonnectorsView extends ViewCollection
     itemview: KonnectorView
 
     afterRender: ->
-        @collection.on 'reset', =>
-            @renderAll()
-        @collection.on 'add', (model) =>
-            @renderOne model
+        super
+
+        @remoteChangeListener = new KonnectorListener()
+        @remoteChangeListener.watch @collection

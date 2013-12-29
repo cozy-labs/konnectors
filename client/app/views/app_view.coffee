@@ -8,4 +8,5 @@ module.exports = class AppView extends BaseView
 
     afterRender: ->
         konnectors = new Konnectors()
+        konnectors.render()
         konnectors.fetch()

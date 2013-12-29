@@ -376,6 +376,7 @@ window.require.register("views/app_view", function(exports, require, module) {
     AppView.prototype.afterRender = function() {
       var konnectors;
       konnectors = new Konnectors();
+      konnectors.render();
       return konnectors.fetch();
     };
 
@@ -411,7 +412,17 @@ window.require.register("views/konnector", function(exports, require, module) {
     };
 
     KonnectorView.prototype.afterRender = function() {
-      var name, val, values, _ref1, _results;
+      var isImporting, lastImport, name, val, values, _ref1, _results;
+      this.$el.addClass("konnector-" + (this.model.get('slug')));
+      lastImport = this.model.get('lastImport');
+      isImporting = this.model.get('isImporting');
+      if (isImporting) {
+        this.$('.last-import').html('importing...');
+      } else if (lastImport != null) {
+        this.$('.last-import').html(moment(lastImport).format('LLL'));
+      } else {
+        this.$('.last-import').html("no import performed.");
+      }
       values = this.model.get('fieldValues');
       if (values == null) {
         values = {};
@@ -453,8 +464,45 @@ window.require.register("views/konnector", function(exports, require, module) {
   })(BaseView);
   
 });
+window.require.register("views/konnector_listener", function(exports, require, module) {
+  var Konnector, KonnectorListener, _ref,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Konnector = require('../models/konnector');
+
+  module.exports = KonnectorListener = (function(_super) {
+    __extends(KonnectorListener, _super);
+
+    function KonnectorListener() {
+      _ref = KonnectorListener.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    KonnectorListener.prototype.models = {
+      konnector: Konnector
+    };
+
+    KonnectorListener.prototype.events = ['konnector.update'];
+
+    KonnectorListener.prototype.onRemoteUpdate = function(model) {
+      var isImporting, slug;
+      isImporting = model.get('isImporting');
+      slug = model.get('slug');
+      if (isImporting) {
+        return $(".konnector-" + slug + " .last-import").html('importing...');
+      } else {
+        return $(".konnector-" + slug + " .last-import").html(moment().format('LLL'));
+      }
+    };
+
+    return KonnectorListener;
+
+  })(CozySocketListener);
+  
+});
 window.require.register("views/konnectors", function(exports, require, module) {
-  var KonnectorView, KonnectorsCollection, KonnectorsView, ViewCollection, _ref,
+  var KonnectorListener, KonnectorView, KonnectorsCollection, KonnectorsView, ViewCollection, _ref,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -463,6 +511,8 @@ window.require.register("views/konnectors", function(exports, require, module) {
   KonnectorsCollection = require('../collections/konnectors');
 
   KonnectorView = require('./konnector');
+
+  KonnectorListener = require('./konnector_listener');
 
   module.exports = KonnectorsView = (function(_super) {
     __extends(KonnectorsView, _super);
@@ -479,13 +529,9 @@ window.require.register("views/konnectors", function(exports, require, module) {
     KonnectorsView.prototype.itemview = KonnectorView;
 
     KonnectorsView.prototype.afterRender = function() {
-      var _this = this;
-      this.collection.on('reset', function() {
-        return _this.renderAll();
-      });
-      return this.collection.on('add', function(model) {
-        return _this.renderOne(model);
-      });
+      KonnectorsView.__super__.afterRender.apply(this, arguments);
+      this.remoteChangeListener = new KonnectorListener();
+      return this.remoteChangeListener.watch(this.collection);
     };
 
     return KonnectorsView;
@@ -510,7 +556,7 @@ window.require.register("views/templates/konnector", function(exports, require, 
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">import</button></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date">Last import: ' + escape((interp = model.importDate) == null ? '' : interp) + '</div><div class="datas">Imported data:&nbsp;');
+  buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">import</button></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"> <span class="label">Last import:&nbsp;</span><span class="last-import"></span></div><div class="datas">Imported data:&nbsp;');
   // iterate model.modelNames
   ;(function(){
     if ('number' == typeof model.modelNames.length) {
