@@ -146,6 +146,7 @@ module.exports =
                 recImport()
 
 
+# Import data for a given year. Row date should be after *start*.
 importYear = (start, year, token, callback) ->
     log.info "import year #{year}"
     url = 'https://jawbone.com/user/settings/download_up_data?'
@@ -167,6 +168,7 @@ importYear = (start, year, token, callback) ->
             importData start, csvData, callback
 
 
+# Create cozy data from a CSV string.
 importData = (start, csvData, callback) ->
     lines = csvData.split '\n'
     headers = lines[0]
@@ -198,6 +200,8 @@ importData = (start, csvData, callback) ->
             move.save (err) ->
                 if err then callback err
                 else if line[columns["asleepTime"]] isnt ''
+                    log.debug "move imported"
+                    log.debug move
                     sleep = new JawboneSleep
                         date: date
                         asleepTime: line[columns["asleepTime"]]
@@ -210,8 +214,14 @@ importData = (start, csvData, callback) ->
                         lightSleepDuration: line[columns["lightSleepDuration"]]
                         sleepQuality: line[columns["sleepQuality"]]
                     sleep.save (err) ->
-                        callback err
+                        if err
+                            callback err
+                        else
+                            log.debug "sleep imported"
+                            log.debug sleep
                 else
+                    log.debug "move imported"
+                    log.debug move
                     callback()
 
         else
