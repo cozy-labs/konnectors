@@ -9,6 +9,7 @@ basepath = '/anapi/data?key=testkey&format=json&perspective=interval&' + \
 
 start = moment().subtract('years', 10).format 'YYYY-MM-DD'
 end = moment().add('days', 1).format 'YYYY-MM-DD'
+now = moment().format 'YYYY-MM-DD'
 
 
 # Mock rescue time server.
@@ -24,8 +25,13 @@ mock = nock('https://www.rescuetime.com')
     .reply 200,
         rows: [
           [ '2013-12-22T00:00:00', 7, 1, 'npmjs.org', 'Marketing', 2 ]
+          [ "#{now}T00:00:00", 7, 1, 'npmjs.org', 'Marketing', 2 ]
         ]
-
+    .get(basepath + "&restrict_begin=#{now}&restrict_end=#{end}")
+    .reply 200,
+        rows: [
+          [ "#{now}T00:00:00", 7, 1, 'npmjs.org', 'Marketing', 2 ]
+        ]
 
 describe "When I fetch rescuetime data", ->
     before (done) ->
@@ -43,11 +49,20 @@ describe "When I fetch rescuetime data", ->
                 activities.length.should.equal 2
                 done()
 
-    it "The second time it should store one more activity", (done) =>
+    it "The second time it should store two more activities", (done) =>
         connector.fetch apikey: 'testkey', (err) =>
             should.not.exist err
 
             connector.models.activities.all (err, activities) =>
                 should.not.exist err
-                activities.length.should.equal 3
+                activities.length.should.equal 4
+                done()
+
+    it "The third time it should not store any new activities", (done) =>
+        connector.fetch apikey: 'testkey', (err) =>
+            should.not.exist err
+
+            connector.models.activities.all (err, activities) =>
+                should.not.exist err
+                activities.length.should.equal 4
                 done()
