@@ -1,11 +1,11 @@
 path = require 'path'
 fs = require 'fs'
-
 log = require('printit')()
 
 Konnector = require '../models/konnector'
 
-modulesPath = path.join(path.dirname(fs.realpathSync(__filename)), '..', 'konnectors')
+currentPath = path.dirname fs.realpathSync __filename
+modulesPath = path.join currentPath, '..', 'konnectors'
 
 isCoffeeFile = (fileName) ->
     extension = fileName.split('.')[1]
@@ -38,12 +38,7 @@ module.exports = (callback) ->
 
             for name, konnectorModule of konnectorModules
                 unless konnectorHash[konnectorModule.name]?
-                    konnectorsToCreate.push
-                        name: konnectorModule.name
-                        description: konnectorModule.description
-                        fields: konnectorModule.fields
-                        init: konnectorModule.init
-
+                    konnectorsToCreate.push konnectorModule
 
             recCreate = ->
                 if konnectorsToCreate.length > 0
