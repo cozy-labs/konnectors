@@ -34,7 +34,7 @@ module.exports =
 
     fields:
         consumerKey: "text"
-        consumerSecret: "text"
+        consumerSecret: "password"
         accessToken: "text"
         accessTokenSecret: "password"
     models:
@@ -100,14 +100,21 @@ saveTweets = (requiredFields, start, callback) ->
 
 
 saveTweetGroup = (client, path, start, callback) ->
-    client.get path, (err, res, tweets) ->
-        tweets = tweets.reverse()
-        log.info "#{tweets.length} tweets to import"
-        tweets.pop() if path.indexOf('max_id') isnt -1
+    log.info client.options
 
+    client.get path, (err, res, tweets) ->
         if err
             callback err
+        else if res.statusCode
+            callback new Error 'Bad authentication data'
         else
+            console.log tweets
+            console.log res.statusCode
+
+            log.info "#{tweets.length} tweets to import"
+            tweets = tweets.reverse()
+            tweets.pop() if path.indexOf('max_id') isnt -1
+
             lastId = null
             recSave = ->
                 if tweets?.length > 0
@@ -130,6 +137,8 @@ saveTweetGroup = (client, path, start, callback) ->
                             if err
                                 callback err
                             else
+                                log.debug 'tweet saved'
+                                log.debug twitterTweet
                                 recSave()
                     else
                         callback null, null
