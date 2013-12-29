@@ -36,7 +36,7 @@
   },
   "cozy-permissions": {
     "Konnector": {
-      "description": "Konnector description and required fields",
+      "description": "Konnector description and required fields"
     },
     "RescueTimeActivity": {
       "description": "Activity data from RescueTime.com."
