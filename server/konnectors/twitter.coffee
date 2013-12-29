@@ -100,7 +100,6 @@ saveTweets = (requiredFields, start, callback) ->
 
 
 saveTweetGroup = (client, path, start, callback) ->
-    log.info client.options
 
     client.get path, (err, res, tweets) ->
         if err
