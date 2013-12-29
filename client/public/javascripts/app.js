@@ -565,7 +565,7 @@ window.require.register("views/templates/konnector", function(exports, require, 
         var name = model.modelNames[$index];
 
   buf.push('<a');
-  buf.push(attrs({ 'href':("/apps/databrowser/search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
+  buf.push(attrs({ 'href':("/apps/databrowser/#search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
   buf.push('> \n' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
       }
 
@@ -575,7 +575,7 @@ window.require.register("views/templates/konnector", function(exports, require, 
         $$l++;      var name = model.modelNames[$index];
 
   buf.push('<a');
-  buf.push(attrs({ 'href':("/apps/databrowser/search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
+  buf.push(attrs({ 'href':("/apps/databrowser/#search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
   buf.push('> \n' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
       }
 
