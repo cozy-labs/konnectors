@@ -19,15 +19,23 @@ module.exports =
                 next()
 
     import: (req, res, next) ->
-        fields = req.body.fields
-        req.konnector.updateAttributes fields: fields, (err) ->
+        data =
+            fieldValues: req.body.fieldValues
+            isImporting: true
+
+        req.konnector.updateAttributes data, (err) ->
             if err
                 next err
             else
-                name = req.konnector.name
-                konnectorModule = require "../konnectors/#{name}"
-                konnectorModule.fetch fields, (err) ->
+                slug = req.konnector.slug
+                konnectorModule = require "../konnectors/#{slug}"
+                konnectorModule.fetch fieldValues, (err) ->
                     if err
                         next err
                     else
-                        res.send success: true, 200
+                        data = isImporting: false
+                        req.konnector.updateAttributes data, (err) ->
+                            if err
+                                next err
+                            else
+                                res.send success: true, 200
