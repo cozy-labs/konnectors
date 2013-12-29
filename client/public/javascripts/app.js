@@ -411,25 +411,33 @@ window.require.register("views/konnector", function(exports, require, module) {
     };
 
     KonnectorView.prototype.afterRender = function() {
-      var fields, name, val, _results;
-      fields = this.model.get('fields');
+      var name, val, values, _ref1, _results;
+      values = this.model.get('fieldValues');
+      if (values == null) {
+        values = {};
+      }
+      _ref1 = this.model.get('fields');
       _results = [];
-      for (name in fields) {
-        val = fields[name];
-        _results.push(this.$('.fields').append("<div class=\"field line\">\n<div><label for=\"" + name + "-input\">" + name + "</label></div>\n<div><input type=\"text\" class=\"" + name + "-input\" value=\"" + val + "\" /></div>\n</div>"));
+      for (name in _ref1) {
+        val = _ref1[name];
+        if (values[name] == null) {
+          values[name] = "";
+        }
+        _results.push(this.$('.fields').append("<div class=\"field line\">\n<div><label for=\"" + name + "-input\">" + name + "</label></div>\n<div><input class=\"" + name + "-input\" type=\"" + val + "\"\n            value=\"" + values[name] + "\"/></div>\n</div>"));
       }
       return _results;
     };
 
     KonnectorView.prototype.onImportClicked = function() {
-      var fields, name, val,
+      var fieldValues, name, val, _ref1,
         _this = this;
-      fields = this.model.get('fields');
-      for (name in fields) {
-        val = fields[name];
-        fields[name] = $("." + name + "-input").val();
+      fieldValues = {};
+      _ref1 = this.model.get('fields');
+      for (name in _ref1) {
+        val = _ref1[name];
+        fieldValues[name] = $("." + name + "-input").val();
       }
-      this.model.set('fields', fields);
+      this.model.set('fieldValues', fieldValues);
       return this.model.save({
         success: function() {
           return alert("import succeeded");
@@ -502,9 +510,33 @@ window.require.register("views/templates/konnector", function(exports, require, 
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">import</button></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date">Last import: ' + escape((interp = model.importDate) == null ? '' : interp) + '</div><div class="date"> <a');
-  buf.push(attrs({ 'href':("/apps/databrowser/search/all/" + (model.dataName) + "") }, {"href":true}));
-  buf.push('>See data</a></div></div>');
+  buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">import</button></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date">Last import: ' + escape((interp = model.importDate) == null ? '' : interp) + '</div><div class="datas">Imported data:&nbsp;');
+  // iterate model.modelNames
+  ;(function(){
+    if ('number' == typeof model.modelNames.length) {
+
+      for (var $index = 0, $$l = model.modelNames.length; $index < $$l; $index++) {
+        var name = model.modelNames[$index];
+
+  buf.push('<a');
+  buf.push(attrs({ 'href':("/apps/databrowser/search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
+  buf.push('> \n' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
+      }
+
+    } else {
+      var $$l = 0;
+      for (var $index in model.modelNames) {
+        $$l++;      var name = model.modelNames[$index];
+
+  buf.push('<a');
+  buf.push(attrs({ 'href':("/apps/databrowser/search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
+  buf.push('> \n' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
+      }
+
+    }
+  }).call(this);
+
+  buf.push('</div></div>');
   }
   return buf.join("");
   };

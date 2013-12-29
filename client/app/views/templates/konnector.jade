@@ -7,5 +7,9 @@ h2.name #{model.name}
 .status #{status}
 .infos
     .date Last import: #{model.importDate}
-    .date 
-        a(href="/apps/databrowser/search/all/#{model.dataName}") See data
+    .datas
+        | Imported data:&nbsp;
+        for name in model.modelNames
+            a(href="/apps/databrowser/search/all/#{name}", target="_blank") 
+                  |#{name}
+            |&nbsp;

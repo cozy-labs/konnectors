@@ -953,7 +953,7 @@ h1 {
   margin-top: 0px;
 }
 h2 {
-  font-family: main;
+  font-family: title;
   font-weight: normal;
   margin-top: 20px;
 }
@@ -970,7 +970,8 @@ a:visited {
 }
 a:hover,
 a:visited:hover {
-  text-decoration: underline;
+  color: #e58067;
+  text-decoration: none;
 }
 button {
   border: 0;
@@ -1038,8 +1039,8 @@ label {
 .konnector {
   margin-bottom: 30px;
   padding-bottom: 10px;
-  background: #f9f6e7;
   padding: 20px;
+  font-family: main;
 }
 .konnector h2 {
   padding-bottom: 0px;

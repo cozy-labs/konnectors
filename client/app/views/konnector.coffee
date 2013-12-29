@@ -8,20 +8,24 @@ module.exports = class KonnectorView extends BaseView
         "click .import-button": "onImportClicked"
 
     afterRender: =>
-        fields = @model.get 'fields'
-        for name, val of fields
+        values = @model.get 'fieldValues'
+        values ?= {}
+        for name, val of @model.get 'fields'
+            values[name] = "" unless values[name]?
+
             @$('.fields').append """
 <div class="field line">
 <div><label for="#{name}-input">#{name}</label></div>
-<div><input type="text" class="#{name}-input" value="#{val}" /></div>
+<div><input class="#{name}-input" type="#{val}"
+            value="#{values[name]}"/></div>
 </div>
 """
 
     onImportClicked: =>
-        fields = @model.get 'fields'
-        for name, val of fields
-            fields[name] = $(".#{name}-input").val()
-        @model.set 'fields', fields
+        fieldValues = {}
+        for name, val of @model.get 'fields'
+            fieldValues[name] = $(".#{name}-input").val()
+        @model.set 'fieldValues', fieldValues
         @model.save
             success: =>
                 alert "import succeeded"
