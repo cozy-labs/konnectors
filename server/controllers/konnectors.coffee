@@ -19,8 +19,9 @@ module.exports =
             if err
                 next err
             else
+                konnectors.sort (konnectorA, konnectorB) ->
+                    konnectorA.name.localeCompare konnectorB.name
                 res.send konnectors
-
 
     show: (req, res, next) ->
         res.send req.konnector

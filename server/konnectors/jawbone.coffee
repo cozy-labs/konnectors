@@ -2,7 +2,6 @@ americano = require 'americano-cozy'
 querystring = require 'querystring'
 request = require 'request'
 moment = require 'moment'
-csv = require 'ya-csv'
 log = require('printit')
     prefix: "Jawbone"
     date: true
