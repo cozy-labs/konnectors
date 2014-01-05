@@ -29,7 +29,7 @@ module.exports =
 
     import: (req, res, next) ->
         if req.konnector.isImporting
-            setTimeout, ->
+            setTimeout ->
                 data =
                     isImporting: false
                     lastImport: new Date()
