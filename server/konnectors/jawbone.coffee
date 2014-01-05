@@ -97,16 +97,36 @@ module.exports =
             else
                 if moves.length > 0
                     start = moment(moves[0].date)
-                    year = start.format('YYYY-MM-DD').substring(0, 4)
+                    year = start.format('YYYY-MM-DD').substring 0, 4
                 else
-                    start = moment '20110101', "YYYYMMDD"
+                    start = moment '20110101', 'YYYYMMDD'
                     year = '2011'
                 login = requiredFields.login
                 password = requiredFields.password
 
                 log.info "last data import was: #{start.format()}"
 
-                @fetchData login, password, start, year, callback
+                # Destroy last imported record (it has probably changed since)
+                if moves.length > 0
+                    moves[0].destroy (err) ->
+                        JawboneSleep.request 'byDate', params, (err, sleeps) =>
+                            if sleeps.length > 0
+                                sleeps[0].destroy (err) ->
+                                    if err
+                                        callback err
+                                    else
+                                        @fetchData(
+                                            login, password,
+                                            start, year, callback
+                                        )
+                            else
+                                @fetchData(
+                                    login, password,
+                                    start, year, callback
+                                )
+
+                else
+                    @fetchData login, password, start, year, callback
 
 
     fetchData: (login, password, start, year, callback) =>
