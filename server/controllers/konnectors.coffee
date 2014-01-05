@@ -34,7 +34,7 @@ module.exports =
                     isImporting: false
                     lastImport: new Date()
                 req.konnector.updateAttributes data, (err) ->
-            , 600
+            , 6
             res.send error: true, msg: 'konnector is already importing', 400
         else
             req.konnector.import req.body.fieldValues, (err) ->
