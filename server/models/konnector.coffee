@@ -23,7 +23,11 @@ Konnector::import = (fieldValues, callback) ->
     @updateAttributes data, (err) =>
 
         if err
-            callback err
+            data =
+                isImporting: false
+                lastImport: new Date()
+            @updateAttributes data, (err) ->
+                callback err
 
         else
             konnectorModule = require "../konnectors/#{@slug}"

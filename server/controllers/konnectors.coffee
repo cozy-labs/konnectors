@@ -29,6 +29,12 @@ module.exports =
 
     import: (req, res, next) ->
         if req.konnector.isImporting
+            setTimeout, ->
+                data =
+                    isImporting: false
+                    lastImport: new Date()
+                @updateAttributes data, (err) ->
+            , 600
             res.send error: true, msg: 'konnector is already importing', 400
         else
             req.konnector.import req.body.fieldValues, (err) ->
