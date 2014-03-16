@@ -104,12 +104,9 @@ saveTweetGroup = (client, path, start, callback) ->
     client.get path, (err, res, tweets) ->
         if err
             callback err
-        else if res.statusCode
+        else if res.statusCode isnt 200
             callback new Error 'Bad authentication data'
         else
-            console.log tweets
-            console.log res.statusCode
-
             log.info "#{tweets.length} tweets to import"
             tweets = tweets.reverse()
             tweets.pop() if path.indexOf('max_id') isnt -1
