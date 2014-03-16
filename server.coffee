@@ -10,7 +10,7 @@ log = printit
 
 process.env.TZ = 'UTC'
 
-port = params =
+params =
     name: 'konnectors'
     port: process.env.PORT || 9358
 

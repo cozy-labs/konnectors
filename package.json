@@ -25,7 +25,6 @@
     "nock": "0.27.0",
     "should": "2.0.1",
     "mocha": "1.13.0",
-    "request-json": "0.4.4",
     "cozy-fixtures": "1.0.1",
     "coffeelint": "0.6.1"
   },
