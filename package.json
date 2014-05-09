@@ -48,6 +48,9 @@
     },
     "TwitterTweet": {
       "description": "Tweets you published on Twitter."
+    },
+    "PhoneBill": {
+      "description": "Phone bills loaded by B&You Konnector."
     }
   },
   "cozy-displayName": "Konnectors"
