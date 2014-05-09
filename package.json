@@ -51,6 +51,9 @@
     },
     "PhoneBill": {
       "description": "Phone bills loaded by B&You Konnector."
+    },
+    "File": {
+      "description": "To import CSV or PDF file in the Cozy File System."
     }
   },
   "cozy-displayName": "Konnectors"
