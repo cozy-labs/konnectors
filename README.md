@@ -8,3 +8,4 @@ into your Cozy.
 * RescueTime
 * Jawbone (Move and Sleep data)
 * Twitter (published tweets)
+* B&You (Bill PDFs)
