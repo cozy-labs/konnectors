@@ -19,6 +19,7 @@ americano.start params, (app, server) ->
 
     initKonnectors (err) ->
         if err
+            log.raw err
             log.error "An error occured."
             log.error "Konnectors were not properly initialized."
         else
