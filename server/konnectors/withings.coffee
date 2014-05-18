@@ -3,6 +3,8 @@ request = require 'request'
 moment = require 'moment'
 crypto = require 'crypto'
 
+# helpers
+
 log = require('printit')
     date: true
     prefix: 'withings'
@@ -10,6 +12,7 @@ log = require('printit')
 hexMd5 = (name) ->
     crypto.createHash('md5').update(name).digest('hex')
 
+# Urls
 
 authUrl = 'https://auth.withings.com/fr/'
 accountUrl = 'https://healthmate.withings.com/index/service/account'
@@ -69,8 +72,7 @@ module.exports =
                 callback err
 
 
-    # Get last imported activity to know from where to start the import. Then
-    # define parameters (start date and end date) and fetch data accordingly.
+    # Set start and end date to fetch all data.
     fetch: (requiredFields, callback) ->
         params = limit: 1, descending: true
         log.debug 'fetch withings'
@@ -88,7 +90,7 @@ module.exports =
         @fetchData email, password, start, end, callback
 
 
-    # Fetch activity list from rescuetime, then create an entry for each row.
+    # Fetch data from withings website and save them as Cozy objects
     fetchData: (email, password, start, end, callback) =>
 
         data =
@@ -177,6 +179,8 @@ saveMeasures = (measures, callback) ->
                 heartBeatHash[date] = true
 
             log.debug 'analyse new measures'
+            # Here we keep only new measure, it doesn't save the same measure
+            # twice.
             measuresToSave = []
             heartBeatsToSave = []
             for measuregrp in measures
