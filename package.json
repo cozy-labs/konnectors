@@ -54,6 +54,12 @@
     },
     "File": {
       "description": "To import CSV or PDF file in the Cozy File System."
+    },
+    "WithingsScaleMeasure": {
+      "description": "Import weight infos from Smart Body Analyzer."
+    },
+    "WithingsHeartBeat": {
+      "description": "Import heartbeat from Smart Body Analyzer."
     }
   },
   "cozy-displayName": "Konnectors"
