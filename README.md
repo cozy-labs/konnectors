@@ -7,5 +7,6 @@ into your Cozy.
 
 * RescueTime
 * Jawbone (Move and Sleep data)
+* Withings (Weight and Heartbeat data)
 * Twitter (published tweets)
 * B&You (Bill PDFs)
