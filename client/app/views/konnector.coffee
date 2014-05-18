@@ -8,10 +8,11 @@ module.exports = class KonnectorView extends BaseView
         "click .import-button": "onImportClicked"
 
     afterRender: =>
-        @$el.addClass "konnector-#{@model.get 'slug'}"
-
+        slug = @model.get 'slug'
         lastImport = @model.get 'lastImport'
         isImporting  = @model.get 'isImporting'
+
+        @$el.addClass "konnector-#{slug}"
 
         if isImporting
             @$('.last-import').html 'importing...'
@@ -27,16 +28,18 @@ module.exports = class KonnectorView extends BaseView
 
             @$('.fields').append """
 <div class="field line">
-<div><label for="#{name}-input">#{name}</label></div>
-<div><input class="#{name}-input" type="#{val}"
+<div><label for="#{slug}-#{name}-input">#{name}</label></div>
+<div><input id="#{slug}-#{name}-input" type="#{val}"
             value="#{values[name]}"/></div>
 </div>
 """
 
     onImportClicked: =>
         fieldValues = {}
+        slug = @model.get 'slug'
+
         for name, val of @model.get 'fields'
-            fieldValues[name] = $(".#{name}-input").val()
+            fieldValues[name] = $("##{slug}-#{name}-input").val()
         @model.set 'fieldValues', fieldValues
         @model.save
             success: =>
