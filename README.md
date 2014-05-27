@@ -10,3 +10,4 @@ into your Cozy.
 * Withings (Weight and Heartbeat data)
 * Twitter (published tweets)
 * B&You (Bill PDFs)
+* Free (Bill PDFs, only Internet)
