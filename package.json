@@ -50,7 +50,10 @@
       "description": "Tweets you published on Twitter."
     },
     "PhoneBill": {
-      "description": "Phone bills loaded by B&You Konnector."
+      "description": "Phone bills fetched by B&You Konnector."
+    },
+    "InternetBill": {
+      "description": "Internet bills fetched by Free Konnector."
     },
     "File": {
       "description": "To import CSV or PDF file in the Cozy File System."
