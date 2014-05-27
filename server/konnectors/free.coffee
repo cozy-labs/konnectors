@@ -6,6 +6,7 @@ cheerio = require 'cheerio'
 fs = require 'fs'
 
 File = require '../models/file'
+fetcher = require '../lib/fetcher'
 
 log = require('printit')
     prefix: "Free"
@@ -49,55 +50,70 @@ module.exports =
     fetch: (requiredFields, callback) ->
 
         log.info "Import started"
+        billInfos = []
 
-        data =
-            "pass": requiredFields.password
-            "login": requiredFields.login
-
-        loginUrl = "https://subscribe.free.fr/login/login.pl"
-        billUrl = "https://adsl.free.fr/liste-factures.pl"
-
-        options =
-            method: 'POST'
-            form: data
-            jar: true
-            url: loginUrl
-
-        request options, (err, res, body) ->
-            buildUrl = ->
-                location = res.headers.location
-                parameters = location.split('?')[1]
-                "#{billUrl}?#{parameters}"
-
-            request.get buildUrl(), (err, res, body) ->
-                $ = cheerio.load body
-                billInfos = []
-
-                # Parse the fetched page to extract useful data.
-                $('.pane li').each ->
-                    amount = $($(this).find('strong').get(1)).html()
-                    amount = amount.replace ' Euros', ''
-                    amount = parseFloat amount
-
-                    pdfUrl = $(this).find('.last a').attr 'href'
-                    pdfUrl = "https://adsl.free.fr/#{pdfUrl}"
-
-                    month = pdfUrl.split('&')[2].split('=')[1]
-                    date = moment month, 'YYYYMM'
-
-                    billInfo =
-                        amount: amount
-                        date: date
-                        vendor: 'Free'
-
-                    billInfo.pdfurl = pdfUrl if date.year() > 2011
-                    billInfos.push billInfo
-
-                saveBills billInfos, requiredFields.folderPath, callback
+        fetcher.new()
+            .use(logIn)
+            .use(parsePage)
+            .use(saveMonthlyData)
+            .fetch requiredFields, billInfos, data: '', callback
 
 
+# Procedure to login to Free website.
+logIn = (requiredFields, billInfos, body, next) ->
+    console.log requiredFields
+    data =
+        "pass": requiredFields.password
+        "login": requiredFields.login
 
-saveBills = (billInfos, path, callback) ->
+    loginUrl = "https://subscribe.free.fr/login/login.pl"
+    billUrl = "https://adsl.free.fr/liste-factures.pl"
+
+    options =
+        method: 'POST'
+        form: data
+        jar: true
+        url: loginUrl
+
+    request options, (err, res, body) ->
+        return next err if err
+        location = res.headers.location
+        parameters = location.split('?')[1]
+        url = "#{billUrl}?#{parameters}"
+
+        request.get url, (err, res, body) ->
+            body.data = body
+            if err then next err
+            else next()
+
+
+# Parse the fetched page to extract bill data.
+parsePage = (requiredFields, billInfos, body, next) ->
+    $ = cheerio.load body.data
+    $('.pane li').each ->
+        amount = $($(this).find('strong').get(1)).html()
+        amount = amount.replace ' Euros', ''
+        amount = parseFloat amount
+
+        pdfUrl = $(this).find('.last a').attr 'href'
+        pdfUrl = "https://adsl.free.fr/#{pdfUrl}"
+
+        month = pdfUrl.split('&')[2].split('=')[1]
+        date = moment month, 'YYYYMM'
+
+        billInfo =
+            amount: amount
+            date: date
+            vendor: 'Free'
+
+        billInfo.pdfurl = pdfUrl if date.year() > 2011
+        billInfos.push billInfo
+    log.debug billInfos
+    next()
+
+
+saveMonthlyData = (requiredFields, billInfos, body, next) ->
+    path = requiredFields.folderPath
 
     # Get current bills
     InternetBill.all (err, bills) ->
@@ -114,7 +130,7 @@ saveBills = (billInfos, path, callback) ->
             # End of recursive loop when there is no more bill to create.
             if billsToCreate.length is 0
                 log.info 'Free bills imported.'
-                callback()
+                next()
 
             else
                 bill = billsToCreate.pop()
