@@ -6,6 +6,9 @@ cheerio = require 'cheerio'
 fs = require 'fs'
 
 File = require '../models/file'
+fetcher = require '../lib/fetcher'
+filterExisting = require '../lib/filter_existing'
+saveDataAndFile = require '../lib/save_data_and_file'
 
 log = require('printit')
     prefix: "Free"
@@ -50,104 +53,69 @@ module.exports =
 
         log.info "Import started"
 
-        data =
-            "pass": requiredFields.password
-            "login": requiredFields.login
-
-        loginUrl = "https://subscribe.free.fr/login/login.pl"
-        billUrl = "https://adsl.free.fr/liste-factures.pl"
-
-        options =
-            method: 'POST'
-            form: data
-            jar: true
-            url: loginUrl
-
-        request options, (err, res, body) ->
-            buildUrl = ->
-                location = res.headers.location
-                parameters = location.split('?')[1]
-                "#{billUrl}?#{parameters}"
-
-            request.get buildUrl(), (err, res, body) ->
-                $ = cheerio.load body
-                billInfos = []
-
-                # Parse the fetched page to extract useful data.
-                $('.pane li').each ->
-                    amount = $($(this).find('strong').get(1)).html()
-                    amount = amount.replace ' Euros', ''
-                    amount = parseFloat amount
-
-                    pdfUrl = $(this).find('.last a').attr 'href'
-                    pdfUrl = "https://adsl.free.fr/#{pdfUrl}"
-
-                    month = pdfUrl.split('&')[2].split('=')[1]
-                    date = moment month, 'YYYYMM'
-
-                    billInfo =
-                        amount: amount
-                        date: date
-                        vendor: 'Free'
-
-                    billInfo.pdfurl = pdfUrl if date.year() > 2011
-                    billInfos.push billInfo
-
-                saveBills billInfos, requiredFields.folderPath, callback
-
-
-
-saveBills = (billInfos, path, callback) ->
-
-    # Get current bills
-    InternetBill.all (err, bills) ->
-        billHash = {}
-        billHash[bill.date.toISOString()] = bill for bill in bills
-
-        # Create only non existing bills.
-        billsToCreate = billInfos.filter (bill) ->
-            not billHash[bill.date.toISOString()]?
-
-        # Recursive function to save bill PDFs and create bill docs one by one.
-        (createBill = ->
-
-            # End of recursive loop when there is no more bill to create.
-            if billsToCreate.length is 0
-                log.info 'Free bills imported.'
+        fetcher.new()
+            .use(logIn)
+            .use(parsePage)
+            .use(filterExisting log, InternetBill)
+            .use(saveDataAndFile log, InternetBill, 'free')
+            .args(requiredFields, {}, {})
+            .fetch ->
+                log.info "Free bills imported"
                 callback()
 
+
+# Procedure to login to Free website.
+logIn = (requiredFields, billInfos, data, next) ->
+
+    loginUrl = "https://subscribe.free.fr/login/login.pl"
+    billUrl = "https://adsl.free.fr/liste-factures.pl"
+
+    form =
+        "pass": requiredFields.password
+        "login": requiredFields.login
+
+    options =
+        method: 'POST'
+        form: form
+        jar: true
+        url: loginUrl
+
+    request options, (err, res, body) ->
+        return next err if err
+
+        location = res.headers.location
+        parameters = location.split('?')[1]
+        url = "#{billUrl}?#{parameters}"
+
+        request.get url, (err, res, body) ->
+            if err then next err
             else
-                bill = billsToCreate.pop()
-                billLabel = bill.date.format 'MMYYYY'
+                data.html = body
+                next()
 
-                log.info "import for bill #{billLabel} started."
-                if bill.pdfurl?
-                    # It creates a file for the PDF.
-                    fileName = "#{bill.date.format 'YYYYMM'}_free.pdf"
-                    File.createNew fileName, path, bill.date, bill.pdfurl, (err) ->
-                        if err
-                            log.raw err
-                            log.info "bill for #{billLabel} not saved."
-                            createBill()
-                        else
-                            log.info "File for #{billLabel} created."
 
-                            # Then, it creates a bill document.
-                            InternetBill.create bill, (err) ->
-                                if err
-                                    log.raw err
-                                    log.error "bill for #{billLabel} not saved."
-                                else
-                                    log.info "bill for #{billLabel} saved."
-                                createBill()
-                else
-                    # If there is no file, it saves only data.
-                    log.info "No file to download for #{billLabel}."
-                    InternetBill.create bill, (err) ->
-                        if err
-                            log.raw err
-                            log.error "bill for #{billLabel} not saved."
-                        else
-                            log.info "bill for #{billLabel} saved."
-                        createBill()
-        )()
+# Parse the fetched page to extract bill data.
+parsePage = (requiredFields, bills, data, next) ->
+    bills.fetched = []
+    $ = cheerio.load data.html
+    $('.pane li').each ->
+        amount = $($(this).find('strong').get(1)).html()
+        amount = amount.replace ' Euros', ''
+        amount = parseFloat amount
+
+        pdfUrl = $(this).find('.last a').attr 'href'
+        pdfUrl = "https://adsl.free.fr/#{pdfUrl}"
+
+        month = pdfUrl.split('&')[2].split('=')[1]
+        date = moment month, 'YYYYMM'
+
+        bill =
+            amount: amount
+            date: date
+            vendor: 'Free'
+
+        bill.pdfurl = pdfUrl if date.year() > 2011
+        bills.fetched.push bill
+
+    next()
+
