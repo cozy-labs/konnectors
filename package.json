@@ -59,6 +59,9 @@
     "File": {
       "description": "To import CSV or PDF file in the Cozy File System."
     },
+    "Folder": {
+      "description": "To allow user to select folder for his/her fetched files."
+    },
     "WithingsScaleMeasure": {
       "description": "Import weight infos from Smart Body Analyzer."
     },

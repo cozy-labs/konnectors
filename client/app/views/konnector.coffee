@@ -26,13 +26,24 @@ module.exports = class KonnectorView extends BaseView
         for name, val of @model.get 'fields'
             values[name] = "" unless values[name]?
 
-            @$('.fields').append """
+            fieldHtml = """
 <div class="field line">
 <div><label for="#{slug}-#{name}-input">#{name}</label></div>
+"""
+
+            if val is 'folder'
+                fieldHtml += """
+<div><select id="#{slug}-#{name}-input"
+             value="#{values[name]}"></select></div>
+</div>
+"""
+            else
+                fieldHtml += """
 <div><input id="#{slug}-#{name}-input" type="#{val}"
             value="#{values[name]}"/></div>
 </div>
 """
+            @$('.fields').append fieldHtml
 
     onImportClicked: =>
         fieldValues = {}
@@ -46,3 +57,11 @@ module.exports = class KonnectorView extends BaseView
                 alert "import succeeded"
             error: =>
                 alert "import failed"
+
+    selectPath: =>
+        slug = @model.get 'slug'
+        for name, val of @model.get 'fields'
+            if val is 'folder'
+                values = @model.get 'fieldValues'
+                values ?= {}
+                @$("##{slug}-#{name}-input").val values[name]

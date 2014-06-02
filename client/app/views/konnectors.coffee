@@ -1,3 +1,4 @@
+request = require '../lib/request'
 ViewCollection = require '../lib/view_collection'
 KonnectorsCollection = require '../collections/konnectors'
 KonnectorView = require './konnector'
@@ -14,3 +15,15 @@ module.exports = class KonnectorsView extends ViewCollection
 
         @remoteChangeListener = new KonnectorListener()
         @remoteChangeListener.watch @collection
+
+    fetch: ->
+        @collection.fetch
+            success: =>
+                request.get 'folders', (err, paths) =>
+                    for path in paths
+                        $("select").append """
+                        <option value="#{path}">#{path}</option>
+                        """
+
+                    for cid, konnector of @views
+                        konnector.selectPath()

@@ -38,7 +38,7 @@ module.exports =
     fields:
         login: "text"
         password: "password"
-        folderPath: "text"
+        folderPath: "folder"
     models:
         internetbill: InternetBill
     modelNames: ["InternetBill"]

@@ -45,7 +45,7 @@ module.exports =
     fields:
         phoneNumber: "text"
         password: "password"
-        folderPath: "text"
+        folderPath: "folder"
     models:
         phonebill: PhoneBill
     modelNames: ["PhoneBill"]

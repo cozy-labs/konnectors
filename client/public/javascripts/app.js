@@ -208,6 +208,47 @@ module.exports = BaseView = (function(_super) {
 
 });
 
+;require.register("lib/request", function(exports, require, module) {
+exports.request = function(type, url, data, callback) {
+  return $.ajax({
+    type: type,
+    url: url,
+    data: data != null ? JSON.stringify(data) : null,
+    contentType: "application/json",
+    dataType: "json",
+    success: function(data) {
+      if (callback != null) {
+        return callback(null, data);
+      }
+    },
+    error: function(data) {
+      if ((data != null) && (data.msg != null) && (callback != null)) {
+        return callback(new Error(data.msg));
+      } else if (callback != null) {
+        return callback(new Error("Server error occured"));
+      }
+    }
+  });
+};
+
+exports.get = function(url, callback) {
+  return exports.request("GET", url, null, callback);
+};
+
+exports.post = function(url, data, callback) {
+  return exports.request("POST", url, data, callback);
+};
+
+exports.put = function(url, data, callback) {
+  return exports.request("PUT", url, data, callback);
+};
+
+exports.del = function(url, callback) {
+  return exports.request("DELETE", url, null, callback);
+};
+
+});
+
 ;require.register("lib/view_collection", function(exports, require, module) {
 var BaseView, ViewCollection, _ref,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -417,6 +458,7 @@ module.exports = KonnectorView = (function(_super) {
   __extends(KonnectorView, _super);
 
   function KonnectorView() {
+    this.selectPath = __bind(this.selectPath, this);
     this.onImportClicked = __bind(this.onImportClicked, this);
     this.afterRender = __bind(this.afterRender, this);
     _ref = KonnectorView.__super__.constructor.apply(this, arguments);
@@ -432,7 +474,7 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var isImporting, lastImport, name, slug, val, values, _ref1, _results;
+    var fieldHtml, isImporting, lastImport, name, slug, val, values, _ref1, _results;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
@@ -455,7 +497,13 @@ module.exports = KonnectorView = (function(_super) {
       if (values[name] == null) {
         values[name] = "";
       }
-      _results.push(this.$('.fields').append("<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + name + "</label></div>\n<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + values[name] + "\"/></div>\n</div>"));
+      fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + name + "</label></div>";
+      if (val === 'folder') {
+        fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\"\n             value=\"" + values[name] + "\"></select></div>\n</div>";
+      } else {
+        fieldHtml += "<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + values[name] + "\"/></div>\n</div>";
+      }
+      _results.push(this.$('.fields').append(fieldHtml));
     }
     return _results;
   };
@@ -479,6 +527,26 @@ module.exports = KonnectorView = (function(_super) {
         return alert("import failed");
       }
     });
+  };
+
+  KonnectorView.prototype.selectPath = function() {
+    var name, slug, val, values, _ref1, _results;
+    slug = this.model.get('slug');
+    _ref1 = this.model.get('fields');
+    _results = [];
+    for (name in _ref1) {
+      val = _ref1[name];
+      if (val === 'folder') {
+        values = this.model.get('fieldValues');
+        if (values == null) {
+          values = {};
+        }
+        _results.push(this.$("#" + slug + "-" + name + "-input").val(values[name]));
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   };
 
   return KonnectorView;
@@ -526,9 +594,11 @@ module.exports = KonnectorListener = (function(_super) {
 });
 
 ;require.register("views/konnectors", function(exports, require, module) {
-var KonnectorListener, KonnectorView, KonnectorsCollection, KonnectorsView, ViewCollection, _ref,
+var KonnectorListener, KonnectorView, KonnectorsCollection, KonnectorsView, ViewCollection, request, _ref,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+request = require('../lib/request');
 
 ViewCollection = require('../lib/view_collection');
 
@@ -556,6 +626,28 @@ module.exports = KonnectorsView = (function(_super) {
     KonnectorsView.__super__.afterRender.apply(this, arguments);
     this.remoteChangeListener = new KonnectorListener();
     return this.remoteChangeListener.watch(this.collection);
+  };
+
+  KonnectorsView.prototype.fetch = function() {
+    var _this = this;
+    return this.collection.fetch({
+      success: function() {
+        return request.get('folders', function(err, paths) {
+          var cid, konnector, path, _i, _len, _ref1, _results;
+          for (_i = 0, _len = paths.length; _i < _len; _i++) {
+            path = paths[_i];
+            $("select").append("<option value=\"" + path + "\">" + path + "</option>");
+          }
+          _ref1 = _this.views;
+          _results = [];
+          for (cid in _ref1) {
+            konnector = _ref1[cid];
+            _results.push(konnector.selectPath());
+          }
+          return _results;
+        });
+      }
+    });
   };
 
   return KonnectorsView;
