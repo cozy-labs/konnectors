@@ -1,6 +1,6 @@
 File = require '../models/file'
 
-module.exports = (log, model, suffix) ->
+module.exports = (log, model, suffix, tags) ->
     (requiredFields, entries, body, next) ->
         entries.filtered = entries.fetched unless entries.filtered?
 
@@ -21,14 +21,15 @@ module.exports = (log, model, suffix) ->
                 fileName = "#{entry.date.format 'YYYYMM'}_#{suffix}.pdf"
                 date = entry.date
                 pdfurl = entry.pdfurl
-                path = requiredFields.path
-                File.createNew fileName, path, date, pdfurl, (err) ->
+                path = requiredFields.folderPath
+                File.createNew fileName, path, date, pdfurl, tags, (err, file) ->
                     if err
                         log.raw err
                         log.info "entry for #{entryLabel} not saved."
                         createEntry()
                     else
                         log.info "File for #{entryLabel} created."
+                        entry.fileId = file.id
                         saveEntry entry, entryLabel
 
             if entries.filtered.length isnt 0
