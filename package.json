@@ -56,6 +56,9 @@
     "InternetBill": {
       "description": "Internet bills fetched by Free Konnector."
     },
+    "CodeBill": {
+      "description": "Code bills fetched by Github Konnector."
+    },
     "File": {
       "description": "To import CSV or PDF file in the Cozy File System."
     },

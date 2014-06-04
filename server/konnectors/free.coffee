@@ -57,7 +57,7 @@ module.exports =
             .use(logIn)
             .use(parsePage)
             .use(filterExisting log, InternetBill)
-            .use(saveDataAndFile log, InternetBill, 'free')
+            .use(saveDataAndFile log, InternetBill, 'free', ['facture'])
             .args(requiredFields, {}, {})
             .fetch ->
                 log.info "Free bills imported"

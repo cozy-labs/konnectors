@@ -16,7 +16,7 @@ module.exports = File = americano.getModel 'File',
     clearance: (x) -> x
     tags: (x) -> x
 
-File.createNew = (fileName, path, date, url, callback) ->
+File.createNew = (fileName, path, date, url, tags, callback) ->
     now = moment().toISOString()
     filePath = "/tmp/#{fileName}"
 
@@ -25,14 +25,14 @@ File.createNew = (fileName, path, date, url, callback) ->
         path: path
         creationDate: now
         lastModification: now
-        tags: ["facture"]
+        tags: tags
         class: 'document'
 
     # Index file to DS indexer.
     index = (newFile) ->
         newFile.index ["name"], (err) ->
             log.error err if err
-            callback()
+            callback null, newFile
 
     # Attach binary to newly created file.
     attachBinary = (newFile) ->
