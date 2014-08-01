@@ -1,6 +1,9 @@
 path = require 'path'
 fs = require 'fs'
-log = require('printit')()
+log = require('printit')
+    prefix: null
+    date: true
+
 
 Konnector = require '../models/konnector'
 
@@ -26,7 +29,7 @@ getKonnectorModules = ->
 module.exports = (callback) ->
     Konnector.all (err, konnectors) ->
         if err
-            console.log err
+            log.error err
             callback err
         else
             konnectorHash = {}
@@ -40,20 +43,17 @@ module.exports = (callback) ->
                 unless konnectorHash[konnectorModule.name]?
                     konnectorsToCreate.push konnectorModule
 
-            recCreate = ->
+            console.log 'cool'
+            (recCreate = ->
                 if konnectorsToCreate.length > 0
                     konnector = konnectorsToCreate.pop()
+                    console.log konnector
                     konnector.init (err) ->
-                        if err
-                            callback err
-                        else
-                            delete konnector.init
-                            Konnector.create konnector, (err) ->
-                                if err
-                                    callback err
-                                else
-                                    recCreate()
+                        log.error err if err
+                        delete konnector.init
+                        Konnector.create konnector, (err) ->
+                            log.error err if err
+                            recCreate()
                 else
-                    Konnector.all (err, konnectors) ->
-                        callback null
-            recCreate()
+                    log.info "all konnectors are created."
+            )()

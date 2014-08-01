@@ -1,14 +1,17 @@
 americano = require 'americano'
+initKonnectors = require './init/konnectors'
+
 config =
-    common: [
-        americano.bodyParser()
-        americano.methodOverride()
-        americano.errorHandler
-            dumpExceptions: true
-            showStack: true
-        americano.static __dirname + '/../client/public',
-            maxAge: 86400000
-    ]
+    common:
+        use: [
+            americano.bodyParser()
+            americano.methodOverride()
+            americano.errorHandler
+                dumpExceptions: true
+                showStack: true
+            americano.static __dirname + '/../client/public',
+        ]
+        afterStart: initKonnectors
 
     development: [
         americano.logger 'dev'
