@@ -2,6 +2,8 @@ fs = require 'fs'
 americano = require 'americano-cozy'
 request = require 'request'
 moment = require 'moment'
+log = require('printit')
+    prefix: 'file'
 
 # Required to save file fetched via a konnector.
 module.exports = File = americano.getModel 'File',
