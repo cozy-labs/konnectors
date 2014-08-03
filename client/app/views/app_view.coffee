@@ -10,4 +10,3 @@ module.exports = class AppView extends BaseView
         konnectors = new Konnectors()
         konnectors.render()
         konnectors.fetch()
-
