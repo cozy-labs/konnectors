@@ -42,7 +42,6 @@ module.exports =
         folderPath: "folder"
     models:
         internetbill: CodeBill
-    modelNames: ["CodeBill"]
 
     # Define model requests.
     init: (callback) ->

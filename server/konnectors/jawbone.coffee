@@ -2,6 +2,7 @@ americano = require 'americano-cozy'
 querystring = require 'querystring'
 request = require 'request'
 moment = require 'moment'
+async = require 'async'
 log = require('printit')
     prefix: "Jawbone"
     date: true
@@ -32,7 +33,6 @@ dataFields =
 
 Steps = americano.getModel 'Steps',
     date: Date
-    vendor: Jawbone
     activeTime: Number
     activeTimeCalories: Number
     distance: Number
@@ -41,7 +41,7 @@ Steps = americano.getModel 'Steps',
     longestIdleTime: Number
     steps: Number
     totalCalories: Number
-    vendor: {type: String, default: 'JawbonE'}
+    vendor: {type: String, default: 'Jawbone'}
 
 Steps.all = (callback) ->
     Steps.request 'byDate', callback
@@ -78,8 +78,6 @@ module.exports =
     models:
         moves: Steps
         sleeps: Sleep
-
-    modelNames: ['Steps', 'Sleep']
 
 
     # Define model requests.
@@ -254,14 +252,10 @@ importData = (start, csvData, callback) ->
         else
             callback()
 
-    recSave = ->
-        if lines.length > 1
-            line = lines.pop()
-            saveLine line, (err) ->
-                if err then callback err
-                else recSave()
-        else
-            log.info 'CSV file imported.'
-            callback()
-
-    recSave()
+    async.eachSeries lines, (line, callback) ->
+        saveLine line, (err) ->
+            if err then callback err
+            else recSave()
+    , (err) ->
+        log.info 'CSV file imported.'
+        callback err

@@ -65,7 +65,6 @@ module.exports =
         scalemeasure: Weight
         heartbeat: HeartBeat
         bloodpressure: BloodPressure
-    modelNames: ["Weight", "HeartBeat", "BloodPressure"]
 
 
     # Define model requests.
@@ -110,7 +109,7 @@ module.exports =
         # Get auth token.
         onceUrl = 'https://auth.withings.com/index/service/once/'
         request.post onceUrl, form: data, (err, res, body) =>
-            return callback err if err
+           return callback err if err
 
             body = JSON.parse body
             once = body.body.once
@@ -169,7 +168,6 @@ module.exports =
 
 
 saveMeasures = (measures, callback) ->
-
 
     processData = (scaleMeasures, heartBeats, bloodPressures) ->
         scaleMeasureHash = {}
