@@ -21,6 +21,7 @@
     "request": "2.34.0",
     "cozy-realtime-adapter": "~0.12.0",
     "cheerio": "0.16.0",
+    "async": "0.9.0",
     "ware": "0.3.0"
   },
   "devDependencies": {
