@@ -2,6 +2,7 @@ americano = require 'americano-cozy'
 querystring = require 'querystring'
 request = require 'request'
 moment = require 'moment'
+async = require 'async'
 log = require('printit')
     prefix: "Jawbone"
     date: true
@@ -30,7 +31,7 @@ dataFields =
 
 # Models
 
-JawboneMove = americano.getModel 'JawboneMove',
+Steps = americano.getModel 'Steps',
     date: Date
     activeTime: Number
     activeTimeCalories: Number
@@ -40,11 +41,12 @@ JawboneMove = americano.getModel 'JawboneMove',
     longestIdleTime: Number
     steps: Number
     totalCalories: Number
+    vendor: {type: String, default: 'Jawbone'}
 
-JawboneMove.all = (callback) ->
-    JawboneMove.request 'byDate', callback
+Steps.all = (callback) ->
+    Steps.request 'byDate', callback
 
-JawboneSleep = americano.getModel 'JawboneSleep',
+Sleep = americano.getModel 'Sleep',
     date: Date
     asleepTime: Number
     awakeDuration: Number
@@ -55,9 +57,10 @@ JawboneSleep = americano.getModel 'JawboneSleep',
     lightSleepDuration: Number
     sleepDuration: Number
     sleepQuality: Number
+    vendor: {type: String, default: 'Jawbone'}
 
-JawboneSleep.all = (callback) ->
-    JawboneSleep.request 'byDate', callback
+Sleep.all = (callback) ->
+    Sleep.request 'byDate', callback
 
 # Konnector
 
@@ -73,24 +76,22 @@ module.exports =
         password: "password"
 
     models:
-        moves: JawboneMove
-        sleeps: JawboneSleep
-
-    modelNames: ['JawboneMove', 'JawboneSleep']
+        moves: Steps
+        sleeps: Sleep
 
 
     # Define model requests.
     init: (callback) ->
         map = (doc) -> emit doc.date, doc
-        JawboneMove.defineRequest 'byDate', map, (err) ->
+        Steps.defineRequest 'byDate', map, (err) ->
             callback err if err
-            JawboneSleep.defineRequest 'byDate', map, (err) ->
+            Sleep.defineRequest 'byDate', map, (err) ->
                 callback err
 
 
     fetch: (requiredFields, callback) ->
         params = limit: 1, descending: true
-        JawboneMove.request 'byDate', params, (err, moves) =>
+        Steps.request 'byDate', params, (err, moves) =>
             if err
                 callback err
 
@@ -112,7 +113,7 @@ module.exports =
                 if moves.length > 0
                     start.hours 0, 0, 0, 0
                     moves[0].destroy (err) =>
-                        JawboneSleep.request 'byDate', params, (err, sleeps) =>
+                        Sleep.request 'byDate', params, (err, sleeps) =>
                             if sleeps.length > 0 and sleeps[0].date is moves[0].date
                                 sleeps[0].destroy (err) =>
                                     if err
@@ -209,7 +210,7 @@ importData = (start, csvData, callback) ->
 
         if date.toDate() >= start.toDate()
 
-            move = new JawboneMove
+            move = new Steps
                 date: date
                 activeTime: line[columns["activeTime"]]
                 activeTimeCalories: line[columns["activeTimeCalories"]]
@@ -225,7 +226,7 @@ importData = (start, csvData, callback) ->
                 else if line[columns["asleepTime"]] isnt ''
                     log.debug "move imported"
                     log.debug move
-                    sleep = new JawboneSleep
+                    sleep = new Sleep
                         date: date
                         asleepTime: line[columns["asleepTime"]]
                         awakeDuration: line[columns["awakeDuration"]]
@@ -251,14 +252,10 @@ importData = (start, csvData, callback) ->
         else
             callback()
 
-    recSave = ->
-        if lines.length > 1
-            line = lines.pop()
-            saveLine line, (err) ->
-                if err then callback err
-                else recSave()
-        else
-            log.info 'CSV file imported.'
-            callback()
-
-    recSave()
+    async.eachSeries lines, (line, callback) ->
+        saveLine line, (err) ->
+            if err then callback err
+            else recSave()
+    , (err) ->
+        log.info 'CSV file imported.'
+        callback err

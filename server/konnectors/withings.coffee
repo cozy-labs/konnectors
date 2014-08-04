@@ -20,29 +20,33 @@ measureUrl = 'https://healthmate.withings.com/index/service/measure'
 
 # Models
 
-WithingsScaleMeasure = americano.getModel 'WithingsScaleMeasure',
+Weight = americano.getModel 'Weight',
     date: Date
     weight: Number
     leanWeight: Number
     fatWeight: Number
     user: String
+    vendor: {type: String, default: 'Withings'}
 
-WithingsHeartBeat = americano.getModel 'WithingsHeartBeat',
+HeartBeat = americano.getModel 'HeartBeat',
     date: Date
     value: Number
     user: String
+    vendor: {type: String, default: 'Withings'}
 
-WithingsScaleMeasure.all = (callback) ->
-    WithingsScaleMeasure.request 'byDate', callback
+BloodPressure = americano.getModel 'BloodPressure',
+    date: Date
+    systolic: Number
+    diastolic: Number
+    user: String
+    vendor: {type: String, default: 'Withings'}
 
-WithingsScaleMeasure.destroyAll = (callback) ->
-    WithingsScaleMeasure.requestDestroy 'byDate', callback
+for model in [Weight, BloodPressure, HeartBeat]
+    model.all = (callback) ->
+        model.request 'byDate', callback
 
-WithingsHeartBeat.all = (callback) ->
-    WithingsHeartBeat.request 'byDate', callback
-
-WithingsHeartBeat.destroyAll = (callback) ->
-    WithingsHeartBeat.requestDestroy 'byDate', callback
+    model.destroyAll = (callback) ->
+        model.requestDestroy 'byDate', callback
 
 
 # Konnector
@@ -58,18 +62,20 @@ module.exports =
         email: "text"
         password: "password"
     models:
-        scalemeasure: WithingsScaleMeasure
-        heartbeat: WithingsHeartBeat
-    modelNames: ["WithingsScaleMeasure", "WithingsHeartBeat"]
+        scalemeasure: Weight
+        heartbeat: HeartBeat
+        bloodpressure: BloodPressure
 
 
     # Define model requests.
     init: (callback) ->
         map = (doc) -> emit doc.date, doc
-        WithingsScaleMeasure.defineRequest 'byDate', map, (err) ->
+        Weight.defineRequest 'byDate', map, (err) ->
             callback err if err
-            WithingsHeartBeat.defineRequest 'byDate', map, (err) ->
+            HeartBeat.defineRequest 'byDate', map, (err) ->
                 callback err
+                BloodPressure.defineRequest 'byDate', map, (err) ->
+                    callback err
 
 
     # Set start and end date to fetch all data.
@@ -103,7 +109,7 @@ module.exports =
         # Get auth token.
         onceUrl = 'https://auth.withings.com/index/service/once/'
         request.post onceUrl, form: data, (err, res, body) =>
-            return callback err if err
+           return callback err if err
 
             body = JSON.parse body
             once = body.body.once
@@ -118,7 +124,8 @@ module.exports =
             request.post authUrl, form: data, (err, res, body) =>
                 return callback err if err
 
-                sessionid = res.headers['set-cookie'][1].split(';')[0].split('=')[1]
+                sessionid = \
+                    res.headers['set-cookie'][1].split(';')[0].split('=')[1]
 
                 data =
                     action: 'getuserslist'
@@ -153,7 +160,7 @@ module.exports =
                         enddate: end
                         userid: userid
 
-                    # Fetch withings measure
+                    # Fetch withings measures
                     request.post measureUrl, form: data, (err, res, body) =>
                         return callback err if err
                         measures = JSON.parse body
@@ -161,76 +168,94 @@ module.exports =
 
 
 saveMeasures = (measures, callback) ->
-    scaleMeasureHash = {}
-    heartBeatHash = {}
+
+    processData = (scaleMeasures, heartBeats, bloodPressures) ->
+        scaleMeasureHash = {}
+        heartBeatHash = {}
+        bloodPressureHash = {}
+
+        for scaleMeasure in scaleMeasures
+            date = moment scaleMeasure.date
+            scaleMeasureHash[date] = true
+
+        for heartBeat in heartBeats
+            date = moment heartBeat.date
+            heartBeatHash[date] = true
+
+        for bloodPressure in bloodPressures
+            date = moment bloodPressure.date
+            bloodPressureHash[date] = true
+
+        log.debug 'analyse new measures'
+
+        # Here we keep only new measure, it doesn't save the same measure
+        # twice.
+        measuresToSave = []
+        heartBeatsToSave = []
+        bloodPressuresToSave = []
+        for measuregrp in measures
+            date = moment(measuregrp.date * 1000)
+
+            scaleMeasure = new Weight
+            scaleMeasure.date = date
+            heartBeat = new HeartBeat
+            heartBeat.date = date
+            bloodPressure = new BloodPressure
+            bloodPressure.date = date
+            for measure in measuregrp.measures
+                switch measure.type
+                    when 1 then scaleMeasure.weight = measure.value
+                    when 5 then scaleMeasure.leanWeight = measure.value
+                    when 8 then scaleMeasure.fatWeight = measure.value
+                    when 9 then bloodPressure.diastolic = measure.value
+                    when 10 then bloodPressure.systolic = measure.value
+                    when 11 then heartBeat.value = measure.value
+
+            if scaleMeasure.weight? and not scaleMeasureHash[date]?
+                measuresToSave.push scaleMeasure
+
+            if heartBeat.value? and not heartBeatHash[date]?
+                heartBeatsToSave.push heartBeat
+
+            if bloodPressure.systolic? and not bloodPressure[date]?
+                bloodPressuresToSave.push bloodPressure
+
+        log.debug "#{measuresToSave.length} weight measures to save"
+        log.debug "#{heartBeatsToSave.length} heartbeat measures to save"
+        log.debug "#{bloodPressuresToSave.length} blood pressure measures to save"
+
+        saveAll = (models, done) ->
+            if models.length is 0
+                done()
+            else
+                model = models.pop()
+                model.save (err) ->
+                    if err then done err
+                    else saveAll models, done
+
+        log.debug 'Save weights...'
+        saveAll measuresToSave, (err) ->
+            log.debug 'Heartbeats saved...'
+            if err then callback err
+            else
+
+                log.debug 'Save heartbeats...'
+                saveAll heartBeatsToSave, (err) ->
+                    log.debug 'Heartbeats saved...'
+                    if err then callback err
+                    else
+
+                        log.debug 'Save blood pressures...'
+                        saveAll bloodPressuresToSave, (err) ->
+                            log.debug 'Blood pressures saved...'
+                            if err then callback err
+                            else callback()
 
     log.debug 'fetch old measures'
-    WithingsScaleMeasure.all (err, scaleMeasures) ->
+    Weight.all (err, scaleMeasures) ->
         return callback err if err
-        WithingsHeartBeat.all (err, heartBeats) ->
+        HeartBeat.all (err, heartBeats) ->
             return callback err if err
-
-            for scaleMeasure in scaleMeasures
-                date = moment scaleMeasure.date
-                scaleMeasureHash[date] = true
-
-            for heartBeat in heartBeats
-                date = moment heartBeat.date
-                heartBeatHash[date] = true
-
-            log.debug 'analyse new measures'
-            # Here we keep only new measure, it doesn't save the same measure
-            # twice.
-            measuresToSave = []
-            heartBeatsToSave = []
-            for measuregrp in measures
-                date = moment(measuregrp.date * 1000)
-
-                scaleMeasure = new WithingsScaleMeasure
-                scaleMeasure.date = date
-                heartBeat = new WithingsHeartBeat
-                heartBeat.date = date
-                for measure in measuregrp.measures
-                    # 1 - weight
-                    # 5 - lean weight
-                    # 8 - fat weight
-                    # 11 - heart beat
-                    if measure.type is  11
-                        heartBeat.value = measure.value
-                    else if measure.type is 1
-                        scaleMeasure.weight = measure.value
-                    else if measure.type is 5
-                        scaleMeasure.leanWeight = measure.value
-                    else if measure.type is 8
-                        scaleMeasure.fatWeight = measure.value
-
-                if scaleMeasure.weight? and not scaleMeasureHash[date]?
-                    measuresToSave.push scaleMeasure
-
-                if heartBeat.value? and not heartBeatHash[date]?
-                    heartBeatsToSave.push heartBeat
-
-            log.debug "#{measuresToSave.length} weight measures to save"
-            log.debug "#{heartBeatsToSave.length} heartbeat measures to save"
-            saveMeasures = ->
-                if measuresToSave.length is 0
-                    log.debug 'Save heartbeats...'
-                    saveHeartBeats()
-                else
-                    measure = measuresToSave.pop()
-                    measure.save (err) ->
-                        log.error "saving #{measure} failed." if err
-                        saveMeasures()
-
-            saveHeartBeats = ->
-                if heartBeatsToSave.length is 0
-                    log.debug 'Saving is done...'
-                    callback()
-                else
-                    heartBeat = heartBeatsToSave.pop()
-                    heartBeat.save (err) ->
-                        log.error "saving #{heartBeat} failed." if err
-                        saveHeartBeats()
-
-            log.debug 'Save measures...'
-            saveMeasures()
+            BloodPressure.all (err, bloodPressures) ->
+                return callback err if err
+                processData scaleMeasures, heartBeats, bloodPressures
