@@ -2,6 +2,7 @@ americano = require 'americano-cozy'
 request = require 'request'
 moment = require 'moment'
 crypto = require 'crypto'
+async = require 'async'
 
 # helpers
 
@@ -41,12 +42,70 @@ BloodPressure = americano.getModel 'BloodPressure',
     user: String
     vendor: {type: String, default: 'Withings'}
 
-for model in [Weight, BloodPressure, HeartBeat]
-    model.all = (callback) ->
-        model.request 'byDate', callback
+Weight.all = (callback) ->
+    Weight.request 'byDate', callback
 
-    model.destroyAll = (callback) ->
-        model.requestDestroy 'byDate', callback
+HeartBeat.all = (callback) ->
+    HeartBeat.request 'byDate', callback
+
+BloodPressure.all = (callback) ->
+    BloodPressure.request 'byDate', callback
+
+
+# Konnector
+
+module.exports =
+
+    name: "Withings"
+    slug: "withings"
+    description: "Download all your measures from your Withings account."
+    vendorLink: "https://www.withings.com/"
+
+    fields:
+        email: "text"
+        password: "password"
+    models:
+        scalemeasure: Weight
+        heartbeat: HeartBeat
+        bloodpressure: BloodPressure
+
+
+    # Define model requests.
+    init: (callback) ->
+        map = (doc) -> emit doc.date, doc
+        Weight.defineRequest 'byDate', map, (err) ->
+            callback err if err
+            HeartBeat.defineRequest 'byDate', map, (err) ->
+                callback err
+                BloodPressure.defineRequest 'byDate', map, (err) ->
+
+
+# Konnector
+
+module.exports =
+
+    name: "Withings"
+    slug: "withings"
+    description: "Download all your measures from your Withings account."
+    vendorLink: "https://www.withings.com/"
+
+    fields:
+        email: "text"
+        password: "password"
+    models:
+        scalemeasure: Weight
+        heartbeat: HeartBeat
+        bloodpressure: BloodPressure
+
+
+    # Define model requests.
+    init: (callback) ->
+        map = (doc) -> emit doc.date, doc
+        Weight.defineRequest 'byDate', map, (err) ->
+            callback err if err
+            HeartBeat.defineRequest 'byDate', map, (err) ->
+                callback err
+                BloodPressure.defineRequest 'byDate', map, (err) ->
 
 
 # Konnector
@@ -109,7 +168,7 @@ module.exports =
         # Get auth token.
         onceUrl = 'https://auth.withings.com/index/service/once/'
         request.post onceUrl, form: data, (err, res, body) =>
-           return callback err if err
+            return callback err if err
 
             body = JSON.parse body
             once = body.body.once
@@ -217,7 +276,7 @@ saveMeasures = (measures, callback) ->
             if heartBeat.value? and not heartBeatHash[date]?
                 heartBeatsToSave.push heartBeat
 
-            if bloodPressure.systolic? and not bloodPressure[date]?
+            if bloodPressure.systolic? and not bloodPressureHash[date]?
                 bloodPressuresToSave.push bloodPressure
 
         log.debug "#{measuresToSave.length} weight measures to save"
@@ -225,17 +284,14 @@ saveMeasures = (measures, callback) ->
         log.debug "#{bloodPressuresToSave.length} blood pressure measures to save"
 
         saveAll = (models, done) ->
-            if models.length is 0
-                done()
-            else
-                model = models.pop()
-                model.save (err) ->
-                    if err then done err
-                    else saveAll models, done
+            async.forEach models, (model, callback) ->
+                model.save callback
+            , (err) ->
+                done err
 
         log.debug 'Save weights...'
         saveAll measuresToSave, (err) ->
-            log.debug 'Heartbeats saved...'
+            log.debug 'Weights saved...'
             if err then callback err
             else
 
@@ -254,6 +310,7 @@ saveMeasures = (measures, callback) ->
     log.debug 'fetch old measures'
     Weight.all (err, scaleMeasures) ->
         return callback err if err
+        console.log scaleMeasures
         HeartBeat.all (err, heartBeats) ->
             return callback err if err
             BloodPressure.all (err, bloodPressures) ->
