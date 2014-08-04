@@ -99,7 +99,6 @@ module.exports =
                 if moves.length > 0
                     start = moment(moves[0].date)
                     year = start.format('YYYY-MM-DD').substring 0, 4
-                    console.log moves[0].date
                 else
                     start = moment '20110101', 'YYYYMMDD'
                     year = '2011'
@@ -252,10 +251,8 @@ importData = (start, csvData, callback) ->
         else
             callback()
 
-    async.eachSeries lines, (line, callback) ->
-        saveLine line, (err) ->
-            if err then callback err
-            else recSave()
+    async.eachSeries lines, (line, cb) ->
+        saveLine line, cb
     , (err) ->
         log.info 'CSV file imported.'
         callback err
