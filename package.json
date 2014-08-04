@@ -42,10 +42,10 @@
     "RescueTimeActivity": {
       "description": "Activity data from RescueTime.com."
     },
-    "JawboneMove": {
+    "Steps": {
       "description": "Move data from jawbone.com."
     },
-    "JawboneSleep": {
+    "Sleep": {
       "description": "Sleep data from jawbone.com."
     },
     "TwitterTweet": {
@@ -66,11 +66,14 @@
     "Folder": {
       "description": "To allow user to select folder for his/her fetched files."
     },
-    "WithingsScaleMeasure": {
+    "Weight": {
       "description": "Import weight infos from Smart Body Analyzer."
     },
-    "WithingsHeartBeat": {
+    "HeartBeat": {
       "description": "Import heartbeat from Smart Body Analyzer."
+    },
+    "BloodPressure": {
+      "description": "Import blood pressure measures from Smart Body Analyzer."
     }
   },
   "cozy-displayName": "Konnectors"
