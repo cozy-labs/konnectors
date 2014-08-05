@@ -93,7 +93,7 @@ module.exports =
 Something went wrong while fetching rescue time data.
 """
             else
-                async.eachSeries body.rows, (data, err) ->
+                async.eachSeries body.rows, (row, cb) ->
                     data =
                         date: row[0]
                         duration: row[1]
@@ -105,6 +105,6 @@ Something went wrong while fetching rescue time data.
                         log.debug 'new activity imported'
                         log.debug JSON.stringify data
 
-                        callback err
+                        cb err
                 , (err) ->
                     callback()
