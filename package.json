@@ -74,6 +74,9 @@
     },
     "BloodPressure": {
       "description": "Import blood pressure measures from Smart Body Analyzer."
+    },
+    "Commit": {
+      "description": "Commit infos imported from Github."
     }
   },
   "cozy-displayName": "Konnectors"
