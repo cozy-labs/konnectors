@@ -9,7 +9,7 @@ into your Cozy.
 * Jawbone (Move and Sleep data)
 * Withings (Weight, Heartbeat and Blood Presure data)
 * Twitter (published tweets)
-* Github (Bill PDFs)
+* Github (Bill PDFs, commits)
 * B&You (Bill PDFs)
 * Free (Bill PDFs, only Internet)
 

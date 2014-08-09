@@ -102,6 +102,7 @@ saveTweets = (requiredFields, start, callback) ->
 
 saveTweetGroup = (client, path, start, callback) ->
 
+    log.debug path
     client.get path, (err, res, tweets) ->
         if err
             callback err
@@ -116,6 +117,9 @@ saveTweetGroup = (client, path, start, callback) ->
             async.eachSeries tweets, (tweet, cb) ->
                 date = moment tweet.created_at
 
+                log.debug tweet.created_at
+                log.debug moment tweet.created_at
+                log.debug date
                 if date > start
                     lastId = tweet.id_str
 
@@ -132,10 +136,10 @@ saveTweetGroup = (client, path, start, callback) ->
                         if err
                             cb err
                         else
-                            log.debug 'tweet saved'
-                            log.debug twitterTweet
+                            log.debug 'tweet saved ' + date
                             cb()
                 else
                     cb()
             , (err) ->
+                log.debug lastId
                 callback err, lastId
