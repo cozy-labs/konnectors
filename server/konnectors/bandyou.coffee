@@ -3,6 +3,7 @@ requestJson = require 'request-json'
 request = require 'request'
 moment = require 'moment'
 cheerio = require 'cheerio'
+async = require 'async'
 fs = require 'fs'
 
 log = require('printit')
@@ -48,7 +49,6 @@ module.exports =
         folderPath: "folder"
     models:
         phonebill: PhoneBill
-    modelNames: ["PhoneBill"]
 
     # Define model requests.
     init: (callback) ->
@@ -172,33 +172,25 @@ saveBills = (billInfos, path, callback) ->
         billsToCreate = billInfos.filter (bill) ->
             not billHash[bill.date.toISOString()]?
 
-        # Recursive function to save bill PDFs and create bill docs one by one.
-        createBill = ->
-
-            # End of recursive loop when there is no more bill to create.
-            if billsToCreate.length is 0
-                log.info 'B&You bills imported.'
-                callback()
-
-            # We create a file for the PDF...
-            else
-                bill = billsToCreate.pop()
-                billLabel = bill.date.format 'MMYYYY'
-                log.info "import for bill #{billLabel} started."
-                createFile path, bill.date, bill.pdfurl, (err) ->
-                    if err
-                        log.raw err
-                        log.info "bill for #{billLabel} not saved."
-                        createBill()
-                    else
-                        log.info "File for #{billLabel} created."
-                        # ... Then it creates a bill document.
-                        PhoneBill.create bill, (err) ->
-                            if err
-                                log.raw err
-                                log.info "bill for #{billLabel} not saved."
-                            else
-                                log.info "bill for #{billLabel} saved."
-                            createBill()
-
-        createBill()
+        # Save bill PDFs and create bill docs one by one.
+        async.eachSeries billsToCreate, (bill, callback) ->
+            billLabel = bill.date.format 'MMYYYY'
+            log.info "import for bill #{billLabel} started."
+            createFile path, bill.date, bill.pdfurl, (err) ->
+                if err
+                    log.raw err
+                    log.info "bill for #{billLabel} not saved."
+                    callback()
+                else
+                    log.info "File for #{billLabel} created."
+                    # ... Then it creates a bill document.
+                    PhoneBill.create bill, (err) ->
+                        if err
+                            log.raw err
+                            log.info "bill for #{billLabel} not saved."
+                        else
+                            log.info "bill for #{billLabel} saved."
+                        callback()
+        , (err) ->
+            log.info 'B&You bills imported.'
+            callback()

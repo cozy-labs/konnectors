@@ -2,6 +2,7 @@ americano = require 'americano-cozy'
 querystring = require 'querystring'
 request = require 'request-json'
 moment = require 'moment'
+async = require 'async'
 log = require('printit')
     date: true
     prefix: 'rescuetime'
@@ -35,7 +36,6 @@ module.exports =
         apikey: "text"
     models:
         activities: RescueTimeActivity
-    modelNames: ["RescueTimeActivity" ]
 
 
     # Define model requests.
@@ -93,22 +93,18 @@ module.exports =
 Something went wrong while fetching rescue time data.
 """
             else
-                recSave = ->
-                    if body.rows.length > 0
-                        row = body.rows.pop()
-                        data =
-                            date: row[0]
-                            duration: row[1]
-                            people: row[2]
-                            activity: row[3]
-                            category: row[4]
-                            productivity: row[5]
-                        RescueTimeActivity.create data, (err) ->
-                            log.debug 'new activity imported'
-                            log.debug JSON.stringify data
+                async.eachSeries body.rows, (row, cb) ->
+                    data =
+                        date: row[0]
+                        duration: row[1]
+                        people: row[2]
+                        activity: row[3]
+                        category: row[4]
+                        productivity: row[5]
+                    RescueTimeActivity.create data, (err) ->
+                        log.debug 'new activity imported'
+                        log.debug JSON.stringify data
 
-                            if err then callback err
-                            else recSave()
-                    else
-                        callback()
-                recSave()
+                        cb err
+                , (err) ->
+                    callback()

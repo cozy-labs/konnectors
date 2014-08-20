@@ -41,7 +41,6 @@ module.exports =
         folderPath: "folder"
     models:
         internetbill: InternetBill
-    modelNames: ["InternetBill"]
 
     # Define model requests.
     init: (callback) ->

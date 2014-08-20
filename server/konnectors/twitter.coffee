@@ -3,6 +3,7 @@ querystring = require 'querystring'
 requestJson = require 'request-json'
 request = require 'request'
 moment = require 'moment'
+async = require 'async'
 log = require('printit')
     prefix: "Twitter"
     date: true
@@ -101,6 +102,7 @@ saveTweets = (requiredFields, start, callback) ->
 
 saveTweetGroup = (client, path, start, callback) ->
 
+    log.debug path
     client.get path, (err, res, tweets) ->
         if err
             callback err
@@ -112,32 +114,32 @@ saveTweetGroup = (client, path, start, callback) ->
             tweets.pop() if path.indexOf('max_id') isnt -1
 
             lastId = null
-            recSave = ->
-                if tweets?.length > 0
-                    tweet = tweets.pop()
-                    date = moment tweet.created_at
+            async.eachSeries tweets, (tweet, cb) ->
+                date = moment tweet.created_at
 
-                    if date > start
-                        lastId = tweet.id_str if tweets.length is 0
+                log.debug tweet.created_at
+                log.debug moment tweet.created_at
+                log.debug date
+                if date > start
+                    lastId = tweet.id_str
 
-                        twitterTweet = TwitterTweet
-                            date: date
-                            text: tweet.text
-                            id_str: tweet.id_str
-                            retweetCount: tweet.retweet_count
-                            favoriteCount: tweet.favorite_count
-                            isReplyTo: tweet.in_reply_to_status_id?
-                            isRetweet: tweet.retweeted_status?
+                    twitterTweet = TwitterTweet
+                        date: date
+                        text: tweet.text
+                        id_str: tweet.id_str
+                        retweetCount: tweet.retweet_count
+                        favoriteCount: tweet.favorite_count
+                        isReplyTo: tweet.in_reply_to_status_id?
+                        isRetweet: tweet.retweeted_status?
 
-                        twitterTweet.save (err) ->
-                            if err
-                                callback err
-                            else
-                                log.debug 'tweet saved'
-                                log.debug twitterTweet
-                                recSave()
-                    else
-                        callback null, null
+                    twitterTweet.save (err) ->
+                        if err
+                            cb err
+                        else
+                            log.debug 'tweet saved ' + date
+                            cb()
                 else
-                    callback null, lastId
-            recSave()
+                    cb()
+            , (err) ->
+                log.debug lastId
+                callback err, lastId
