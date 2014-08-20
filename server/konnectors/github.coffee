@@ -84,12 +84,15 @@ logIn = (requiredFields, billInfos, data, next) ->
     billOptions =
         method: 'GET'
         jar: true
-        url: "https://github.com/settings/payments"
-
+        url: "https://github.com/settings/billing"
 
     request logInOptions, (err, res, body) ->
         $ = cheerio.load body
-        token = $('#login input:first-child').val()
+        inputs = $('#login input')
+        if inputs.length > 2
+            token = $(inputs[1]).val()
+        else
+            token = ''
         signInOptions.form.authenticity_token = token
 
         request signInOptions, (err, res, body) ->
@@ -106,8 +109,8 @@ parsePage = (requiredFields, bills, data, next) ->
     bills.fetched = []
     $ = cheerio.load data.html
 
-    $('tr.success').each ->
-        date = $(this).find('.date').text().substring 0, 7
+    $('.succeeded').each ->
+        date = $(this).find('.date time').text()
         amount = parseFloat $(this).find('.amount').text().substring 5
         pdfurl = "https://github.com#{$(this).find('.receipt a').attr 'href'}"
 

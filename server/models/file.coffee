@@ -43,7 +43,8 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
                 log.error err
                 callback err
             else
-                index newFile
+                fs.unlink filePath, ->
+                    index newFile
 
     # Save file in a tmp folder while attachBinary supports stream.
     options =
@@ -51,11 +52,8 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
         method: 'GET'
         jar: true
 
-    stream = request options, (err) ->
-        if err
-            log.error err
-            callback err
-        else
+    stream = request options, (err, res) ->
+        if res.statusCode is 200
             # Once done create file metadata then attach binary to file.
             stats = fs.statSync filePath
             data.size = stats["size"]
