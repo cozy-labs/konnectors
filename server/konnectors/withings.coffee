@@ -138,12 +138,11 @@ module.exports =
 
 
     # Set start and end date to fetch all data.
-    fetch: (requiredFields, callback) ->
+    fetch: (requiredFields, password, callback) ->
         params = limit: 1, descending: true
         log.debug 'fetch withings'
 
         email = requiredFields.email
-        password = requiredFields.password
 
         end = Math.ceil((new Date).getTime() / 1000)
         start = moment()

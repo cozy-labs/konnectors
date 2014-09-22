@@ -22,7 +22,9 @@ module.exports = class KonnectorView extends BaseView
             @$('.last-import').html "no import performed."
 
         values = @model.get 'fieldValues'
+        password = @model.get 'password'
         values ?= {}
+        password ?= ""
         for name, val of @model.get 'fields'
             values[name] = "" unless values[name]?
 
@@ -35,6 +37,12 @@ module.exports = class KonnectorView extends BaseView
                 fieldHtml += """
 <div><select id="#{slug}-#{name}-input"
              value="#{values[name]}"></select></div>
+</div>
+"""
+            else if val is 'password'
+                fieldHtml += """
+<div><input id="#{slug}-#{name}-input" type="#{val}"
+            value="#{password}"/></div>
 </div>
 """
             else
@@ -50,8 +58,12 @@ module.exports = class KonnectorView extends BaseView
         slug = @model.get 'slug'
 
         for name, val of @model.get 'fields'
-            fieldValues[name] = $("##{slug}-#{name}-input").val()
+            if name is 'password'
+                password = $("##{slug}-#{name}-input").val()
+            else
+                fieldValues[name] = $("##{slug}-#{name}-input").val()
         @model.set 'fieldValues', fieldValues
+        @model.set 'password', password
         @model.save
             success: =>
                 alert "import succeeded"

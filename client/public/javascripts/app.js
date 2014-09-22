@@ -105,8 +105,8 @@ module.exports = {
 
 });
 
-;require.register("collections/konnectors", function(exports, require, module) {
-var KonnectorsCollection, _ref,
+require.register("collections/konnectors", function(exports, require, module) {
+var KonnectorsCollection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -114,8 +114,7 @@ module.exports = KonnectorsCollection = (function(_super) {
   __extends(KonnectorsCollection, _super);
 
   function KonnectorsCollection() {
-    _ref = KonnectorsCollection.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return KonnectorsCollection.__super__.constructor.apply(this, arguments);
   }
 
   KonnectorsCollection.prototype.model = require('../models/konnector');
@@ -128,7 +127,7 @@ module.exports = KonnectorsCollection = (function(_super) {
 
 });
 
-;require.register("initialize", function(exports, require, module) {
+require.register("initialize", function(exports, require, module) {
 var app;
 
 app = require('application');
@@ -140,16 +139,14 @@ $(function() {
 
 });
 
-;require.register("lib/app_helpers", function(exports, require, module) {
+require.register("lib/app_helpers", function(exports, require, module) {
 (function() {
   return (function() {
     var console, dummy, method, methods, _results;
     console = window.console = window.console || {};
     method = void 0;
     dummy = function() {};
-    methods = 'assert,count,debug,dir,dirxml,error,exception,\
-                   group,groupCollapsed,groupEnd,info,log,markTimeline,\
-                   profile,profileEnd,time,timeEnd,trace,warn'.split(',');
+    methods = 'assert,count,debug,dir,dirxml,error,exception, group,groupCollapsed,groupEnd,info,log,markTimeline, profile,profileEnd,time,timeEnd,trace,warn'.split(',');
     _results = [];
     while (method = methods.pop()) {
       _results.push(console[method] = console[method] || dummy);
@@ -160,8 +157,8 @@ $(function() {
 
 });
 
-;require.register("lib/base_view", function(exports, require, module) {
-var BaseView, _ref,
+require.register("lib/base_view", function(exports, require, module) {
+var BaseView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -169,8 +166,7 @@ module.exports = BaseView = (function(_super) {
   __extends(BaseView, _super);
 
   function BaseView() {
-    _ref = BaseView.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return BaseView.__super__.constructor.apply(this, arguments);
   }
 
   BaseView.prototype.template = function() {};
@@ -178,9 +174,9 @@ module.exports = BaseView = (function(_super) {
   BaseView.prototype.initialize = function() {};
 
   BaseView.prototype.getRenderData = function() {
-    var _ref1;
+    var _ref;
     return {
-      model: (_ref1 = this.model) != null ? _ref1.toJSON() : void 0
+      model: (_ref = this.model) != null ? _ref.toJSON() : void 0
     };
   };
 
@@ -208,7 +204,7 @@ module.exports = BaseView = (function(_super) {
 
 });
 
-;require.register("lib/request", function(exports, require, module) {
+require.register("lib/request", function(exports, require, module) {
 exports.request = function(type, url, data, callback) {
   return $.ajax({
     type: type,
@@ -249,8 +245,8 @@ exports.del = function(url, callback) {
 
 });
 
-;require.register("lib/view_collection", function(exports, require, module) {
-var BaseView, ViewCollection, _ref,
+require.register("lib/view_collection", function(exports, require, module) {
+var BaseView, ViewCollection,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -264,8 +260,7 @@ module.exports = ViewCollection = (function(_super) {
     this.fetch = __bind(this.fetch, this);
     this.removeItem = __bind(this.removeItem, this);
     this.addItem = __bind(this.addItem, this);
-    _ref = ViewCollection.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return ViewCollection.__super__.constructor.apply(this, arguments);
   }
 
   ViewCollection.prototype.itemview = null;
@@ -298,20 +293,20 @@ module.exports = ViewCollection = (function(_super) {
   };
 
   ViewCollection.prototype.render = function() {
-    var id, view, _ref1;
-    _ref1 = this.views;
-    for (id in _ref1) {
-      view = _ref1[id];
+    var id, view, _ref;
+    _ref = this.views;
+    for (id in _ref) {
+      view = _ref[id];
       view.$el.detach();
     }
     return ViewCollection.__super__.render.apply(this, arguments);
   };
 
   ViewCollection.prototype.afterRender = function() {
-    var id, view, _ref1;
-    _ref1 = this.views;
-    for (id in _ref1) {
-      view = _ref1[id];
+    var id, view, _ref;
+    _ref = this.views;
+    for (id in _ref) {
+      view = _ref[id];
       this.appendView(view.$el);
     }
     this.onReset(this.collection);
@@ -324,10 +319,10 @@ module.exports = ViewCollection = (function(_super) {
   };
 
   ViewCollection.prototype.onReset = function(newcollection) {
-    var id, view, _ref1;
-    _ref1 = this.views;
-    for (id in _ref1) {
-      view = _ref1[id];
+    var id, view, _ref;
+    _ref = this.views;
+    for (id in _ref) {
+      view = _ref[id];
       view.remove();
     }
     return newcollection.forEach(this.addItem);
@@ -360,8 +355,8 @@ module.exports = ViewCollection = (function(_super) {
 
 });
 
-;require.register("models/konnector", function(exports, require, module) {
-var KonnectorModel, _ref,
+require.register("models/konnector", function(exports, require, module) {
+var KonnectorModel,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -369,8 +364,7 @@ module.exports = KonnectorModel = (function(_super) {
   __extends(KonnectorModel, _super);
 
   function KonnectorModel() {
-    _ref = KonnectorModel.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return KonnectorModel.__super__.constructor.apply(this, arguments);
   }
 
   KonnectorModel.prototype.rootUrl = "konnectors/";
@@ -381,8 +375,8 @@ module.exports = KonnectorModel = (function(_super) {
 
 });
 
-;require.register("router", function(exports, require, module) {
-var AppView, Router, _ref,
+require.register("router", function(exports, require, module) {
+var AppView, Router,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -392,8 +386,7 @@ module.exports = Router = (function(_super) {
   __extends(Router, _super);
 
   function Router() {
-    _ref = Router.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return Router.__super__.constructor.apply(this, arguments);
   }
 
   Router.prototype.routes = {
@@ -412,8 +405,8 @@ module.exports = Router = (function(_super) {
 
 });
 
-;require.register("views/app_view", function(exports, require, module) {
-var AppView, BaseView, Konnectors, _ref,
+require.register("views/app_view", function(exports, require, module) {
+var AppView, BaseView, Konnectors,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -425,8 +418,7 @@ module.exports = AppView = (function(_super) {
   __extends(AppView, _super);
 
   function AppView() {
-    _ref = AppView.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return AppView.__super__.constructor.apply(this, arguments);
   }
 
   AppView.prototype.el = 'body.application';
@@ -446,8 +438,8 @@ module.exports = AppView = (function(_super) {
 
 });
 
-;require.register("views/konnector", function(exports, require, module) {
-var BaseView, KonnectorView, _ref,
+require.register("views/konnector", function(exports, require, module) {
+var BaseView, KonnectorView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -461,8 +453,7 @@ module.exports = KonnectorView = (function(_super) {
     this.selectPath = __bind(this.selectPath, this);
     this.onImportClicked = __bind(this.onImportClicked, this);
     this.afterRender = __bind(this.afterRender, this);
-    _ref = KonnectorView.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return KonnectorView.__super__.constructor.apply(this, arguments);
   }
 
   KonnectorView.prototype.template = require('./templates/konnector');
@@ -474,7 +465,7 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var fieldHtml, isImporting, lastImport, name, slug, val, values, _ref1, _results;
+    var fieldHtml, isImporting, lastImport, name, password, slug, val, values, _ref, _results;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
@@ -487,19 +478,25 @@ module.exports = KonnectorView = (function(_super) {
       this.$('.last-import').html("no import performed.");
     }
     values = this.model.get('fieldValues');
+    password = this.model.get('password');
     if (values == null) {
       values = {};
     }
-    _ref1 = this.model.get('fields');
+    if (password == null) {
+      password = "";
+    }
+    _ref = this.model.get('fields');
     _results = [];
-    for (name in _ref1) {
-      val = _ref1[name];
+    for (name in _ref) {
+      val = _ref[name];
       if (values[name] == null) {
         values[name] = "";
       }
       fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + name + "</label></div>";
       if (val === 'folder') {
         fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\"\n             value=\"" + values[name] + "\"></select></div>\n</div>";
+      } else if (val === 'password') {
+        fieldHtml += "<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + password + "\"/></div>\n</div>";
       } else {
         fieldHtml += "<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + values[name] + "\"/></div>\n</div>";
       }
@@ -509,33 +506,41 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var fieldValues, name, slug, val, _ref1,
-      _this = this;
+    var fieldValues, name, password, slug, val, _ref;
     fieldValues = {};
     slug = this.model.get('slug');
-    _ref1 = this.model.get('fields');
-    for (name in _ref1) {
-      val = _ref1[name];
-      fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
+    _ref = this.model.get('fields');
+    for (name in _ref) {
+      val = _ref[name];
+      if (name === 'password') {
+        password = $("#" + slug + "-" + name + "-input").val();
+      } else {
+        fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
+      }
     }
     this.model.set('fieldValues', fieldValues);
+    this.model.set('password', password);
     return this.model.save({
-      success: function() {
-        return alert("import succeeded");
-      },
-      error: function() {
-        return alert("import failed");
-      }
+      success: (function(_this) {
+        return function() {
+          return alert("import succeeded");
+        };
+      })(this),
+      error: (function(_this) {
+        return function() {
+          return alert("import failed");
+        };
+      })(this)
     });
   };
 
   KonnectorView.prototype.selectPath = function() {
-    var name, slug, val, values, _ref1, _results;
+    var name, slug, val, values, _ref, _results;
     slug = this.model.get('slug');
-    _ref1 = this.model.get('fields');
+    _ref = this.model.get('fields');
     _results = [];
-    for (name in _ref1) {
-      val = _ref1[name];
+    for (name in _ref) {
+      val = _ref[name];
       if (val === 'folder') {
         values = this.model.get('fieldValues');
         if (values == null) {
@@ -555,8 +560,8 @@ module.exports = KonnectorView = (function(_super) {
 
 });
 
-;require.register("views/konnector_listener", function(exports, require, module) {
-var Konnector, KonnectorListener, _ref,
+require.register("views/konnector_listener", function(exports, require, module) {
+var Konnector, KonnectorListener,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -566,8 +571,7 @@ module.exports = KonnectorListener = (function(_super) {
   __extends(KonnectorListener, _super);
 
   function KonnectorListener() {
-    _ref = KonnectorListener.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return KonnectorListener.__super__.constructor.apply(this, arguments);
   }
 
   KonnectorListener.prototype.models = {
@@ -593,8 +597,8 @@ module.exports = KonnectorListener = (function(_super) {
 
 });
 
-;require.register("views/konnectors", function(exports, require, module) {
-var KonnectorListener, KonnectorView, KonnectorsCollection, KonnectorsView, ViewCollection, request, _ref,
+require.register("views/konnectors", function(exports, require, module) {
+var KonnectorListener, KonnectorView, KonnectorsCollection, KonnectorsView, ViewCollection, request,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -612,8 +616,7 @@ module.exports = KonnectorsView = (function(_super) {
   __extends(KonnectorsView, _super);
 
   function KonnectorsView() {
-    _ref = KonnectorsView.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return KonnectorsView.__super__.constructor.apply(this, arguments);
   }
 
   KonnectorsView.prototype.collectionEl = '#konnectors';
@@ -629,24 +632,25 @@ module.exports = KonnectorsView = (function(_super) {
   };
 
   KonnectorsView.prototype.fetch = function() {
-    var _this = this;
     return this.collection.fetch({
-      success: function() {
-        return request.get('folders', function(err, paths) {
-          var cid, konnector, path, _i, _len, _ref1, _results;
-          for (_i = 0, _len = paths.length; _i < _len; _i++) {
-            path = paths[_i];
-            $("select").append("<option value=\"" + path + "\">" + path + "</option>");
-          }
-          _ref1 = _this.views;
-          _results = [];
-          for (cid in _ref1) {
-            konnector = _ref1[cid];
-            _results.push(konnector.selectPath());
-          }
-          return _results;
-        });
-      }
+      success: (function(_this) {
+        return function() {
+          return request.get('folders', function(err, paths) {
+            var cid, konnector, path, _i, _len, _ref, _results;
+            for (_i = 0, _len = paths.length; _i < _len; _i++) {
+              path = paths[_i];
+              $("select").append("<option value=\"" + path + "\">" + path + "</option>");
+            }
+            _ref = _this.views;
+            _results = [];
+            for (cid in _ref) {
+              konnector = _ref[cid];
+              _results.push(konnector.selectPath());
+            }
+            return _results;
+          });
+        };
+      })(this)
     });
   };
 
@@ -656,7 +660,7 @@ module.exports = KonnectorsView = (function(_super) {
 
 });
 
-;require.register("views/templates/home", function(exports, require, module) {
+require.register("views/templates/home", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -668,7 +672,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/konnector", function(exports, require, module) {
+require.register("views/templates/konnector", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -706,5 +710,5 @@ return buf.join("");
 };
 });
 
-;
+
 //# sourceMappingURL=app.js.map

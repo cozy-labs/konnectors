@@ -50,7 +50,7 @@ module.exports =
             callback err
 
 
-    fetch: (requiredFields, callback) ->
+    fetch: (requiredFields, password, callback) ->
         log.info "Import started"
         params = limit: 1, descending: true
         TwitterTweet.request 'byDate', params, (err, tweets) =>
@@ -60,10 +60,10 @@ module.exports =
                 start = moment().subtract('years', 10)
 
             log.info "Start import since #{start.format()}"
-            saveTweets requiredFields, start, callback
+            saveTweets requiredFields, password, start, callback
 
 
-saveTweets = (requiredFields, start, callback) ->
+saveTweets = (requiredFields, password, start, callback) ->
     url = "https://api.twitter.com/1.1/"
     client = requestJson.newClient url
     client.options =

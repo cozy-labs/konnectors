@@ -89,7 +89,7 @@ module.exports =
                 callback err
 
 
-    fetch: (requiredFields, callback) ->
+    fetch: (requiredFields, password, callback) ->
         params = limit: 1, descending: true
         Steps.request 'byDate', params, (err, moves) =>
             if err
@@ -104,7 +104,6 @@ module.exports =
                     year = '2011'
 
                 login = requiredFields.login
-                password = requiredFields.password
 
                 log.info "last data import was: #{start.format()}"
 
