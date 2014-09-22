@@ -16,4 +16,3 @@ into your Cozy.
 # What we would like to see
 
 * weather tracker: store your location and track temperature and pluviometry.
-* github commit tracker: store your daily amount of commits.
