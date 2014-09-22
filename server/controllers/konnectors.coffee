@@ -56,7 +56,7 @@ module.exports =
             , 6
             res.send error: true, msg: 'konnector is already importing', 400
         else
-            req.konnector.import req.body.fieldValues, (err) ->
+            req.konnector.import req.body.fieldValues, req.body.password, (err) ->
                 if err
                     next err
                 else

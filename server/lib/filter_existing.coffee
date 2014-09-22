@@ -1,8 +1,9 @@
 
 module.exports = (log, model, suffix) ->
-    (requiredFields, entries, body, next) ->
+    (requiredFields, password, entries, body, next) ->
         entries.filtered = []
 
+        console.log entries
         # Get current entries
         model.all (err, entryObjects) ->
             return next err if err

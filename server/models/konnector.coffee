@@ -4,6 +4,7 @@ americano = require 'americano-cozy'
 module.exports = Konnector = americano.getModel 'Konnector',
     slug: String
     fieldValues: Object
+    password: String
     lastImport: Date
     isImporting: type: Boolean, default: false
 
@@ -11,9 +12,10 @@ module.exports = Konnector = americano.getModel 'Konnector',
 Konnector.all = (callback) ->
     Konnector.request 'all', callback
 
-Konnector::import = (fieldValues, callback) ->
+Konnector::import = (fieldValues, password, callback) ->
     data =
         fieldValues: fieldValues
+        password: password
         isImporting: true
 
     @updateAttributes data, (err) =>
@@ -27,7 +29,7 @@ Konnector::import = (fieldValues, callback) ->
 
         else
             konnectorModule = require "../konnectors/#{@slug}"
-            konnectorModule.fetch fieldValues, (err) =>
+            konnectorModule.fetch fieldValues, password, (err) =>
 
                 if err
                     data =
