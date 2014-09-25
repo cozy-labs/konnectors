@@ -4,29 +4,33 @@ log = require('printit')
        date: true
 
 Konnector = require '../models/konnector'
-konnectorModules = require '../lib/konnector_hash'
 
 module.exports = (callback) ->
         Konnector.all (err, konnectors) ->
 
            log.info 'Looking for entries to patch...'
-           for konnector in konnectors
+           async.eachSeries konnectors, (konnector, callback) ->
                 # Check for presence of the field password in fieldValues
-                if konnector.fieldValues and konnector.fieldValues.password
+                if konnector.fieldValues?.password
 
-                        # if fieldValues.password is not empty and password is empty
+                        # if password is empty
                         if konnector.password is ""
 
                                 log.info "#{konnector.slug} | patching password..."
-                                newpassword = konnector.fieldValues.password
+                                newPassword = konnector.fieldValues.password
                                 # Emptying the old password field
-                                konnector.fieldValues.password = ""
+                                konnector.fieldValues.password = null
 
                                 data =
                                         fieldValues: konnector.fieldValues
-                                        password: newpassword
+                                        password: newPassword
                                         isImporting: false
 
                                 # updating fieldValues.password and password in database
-                                konnector.updateAttributes data
-                                log.info "#{konnector.slug} | patching succeed"
+                                konnector.updateAttributes data, (err) ->
+                                        if err
+                                                log.info "#{konnector.slug} | #{err}"
+                                        else
+                                                log.info "#{konnector.slug} | patching succeed"
+
+                callback
