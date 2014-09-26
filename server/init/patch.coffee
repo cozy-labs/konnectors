@@ -31,6 +31,6 @@ module.exports = (callback) ->
                                         if err
                                                 log.info "#{konnector.slug} | #{err}"
                                         else
-                                                log.info "#{konnector.slug} | patching succeed"
+                                                log.info "#{konnector.slug} | patching succeeded"
 
-                callback
+                callback()
