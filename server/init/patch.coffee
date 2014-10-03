@@ -12,33 +12,25 @@ module.exports = (callback) ->
            log.info 'Looking for entries to patch...'
            async.eachSeries konnectors, (konnector, callback) ->
                 if konnector.password is ""
-                        log.info "password of #{konnector.slug}is empty"
+                        log.info "password of #{konnector.slug} is empty"
                         model = require "../konnectors/#{konnector.slug}"
-                        newPassword = "{"
-                        count = false
+                        newPassword = {}
 
                         for field, val of model.fields
-                                log.info "#{field} : #{val}"
 
                                 # if the field type is a password
                                 if val is "password"
-                                        if count then newPassword += ","
-                                        count = true
-                                        if konnector.fieldValues[field] is ""
-                                                newPassword += "\"#{field}\":\"\""
-                                        else
-                                                newPassword += "\"#{field}\":\"#{konnector.fieldValues[field]}\""
-                                                # Emptying the old password field
-                                                konnector.fieldValues[field] = null
-                        newPassword += "}"
+                                        newPassword[field] = konnector.fieldValues[field]
+                                        # Emptying the old password field
+                                        konnector.fieldValues[field] = null
                         # If newPassword has been filled
-                        if newPassword != "{}"
-                                log.info "value: #{newPassword}"
+                        log.info newPassword
+                        if Object.keys(newPassword).length isnt 0
                                 log.info "#{konnector.slug} | patching password..."
 
                                 data =
                                         fieldValues: konnector.fieldValues
-                                        password: newPassword
+                                        password: JSON.stringify newPassword
                                         isImporting: false
 
                                 # updating fieldValues and password in database

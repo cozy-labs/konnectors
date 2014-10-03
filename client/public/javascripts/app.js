@@ -481,8 +481,6 @@ module.exports = KonnectorView = (function(_super) {
     password = this.model.get('password');
     parsedPassword = '{}';
     parsedPassword = (password == null) || password === "" ? "" : JSON.parse(password);
-    console.log("pass : " + password);
-    console.log(parsedPassword);
     if (values == null) {
       values = {};
     }
@@ -511,32 +509,22 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var count, fieldValues, input, name, password, slug, val, _ref;
+    var fieldValues, input, name, password, slug, val, _ref;
     fieldValues = {};
-    password = "{";
-    count = false;
+    password = {};
     slug = this.model.get('slug');
     _ref = this.model.get('fields');
     for (name in _ref) {
       val = _ref[name];
       if (val === 'password') {
         input = $("#" + slug + "-" + name + "-input").val();
-        if (count) {
-          password += ";";
-        }
-        count = true;
-        if (input === "") {
-          password += "\"" + name + "\":\"\"";
-        } else {
-          password += "\"" + name + "\":\"" + input + "\"";
-        }
-        password += "}";
+        password[name] = input;
       } else {
         fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
       }
     }
     this.model.set('fieldValues', fieldValues);
-    this.model.set('password', password);
+    this.model.set('password', JSON.stringify(password));
     return this.model.save({
       success: (function(_this) {
         return function() {
