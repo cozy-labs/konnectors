@@ -23,6 +23,12 @@ module.exports = class KonnectorView extends BaseView
 
         values = @model.get 'fieldValues'
         password = @model.get 'password'
+        parsedPassword = '{}'
+        # check presence of password
+        parsedPassword = if not password? or password is "" then "" else JSON.parse password
+        #debug
+        console.log "pass : #{password}"
+        console.log parsedPassword
         values ?= {}
         password ?= ""
         for name, val of @model.get 'fields'
@@ -40,9 +46,11 @@ module.exports = class KonnectorView extends BaseView
 </div>
 """
             else if val is 'password'
+                # if password is not set then display empty string
+                pass = if not parsedPassword[name]? then "" else parsedPassword[name]
                 fieldHtml += """
 <div><input id="#{slug}-#{name}-input" type="#{val}"
-            value="#{password}"/></div>
+            value="#{pass}"/></div>
 </div>
 """
             else
@@ -55,11 +63,20 @@ module.exports = class KonnectorView extends BaseView
 
     onImportClicked: =>
         fieldValues = {}
+        password = "{"
+        count = false
         slug = @model.get 'slug'
 
         for name, val of @model.get 'fields'
-            if name is 'password'
-                password = $("##{slug}-#{name}-input").val()
+            if val is 'password'
+                input = $("##{slug}-#{name}-input").val()
+                if count then password += ";"
+                count = true
+                if input is ""
+                        password += "\"#{name}\":\"\""
+                else
+                        password += "\"#{name}\":\"#{input}\""
+                password += "}"
             else
                 fieldValues[name] = $("##{slug}-#{name}-input").val()
         @model.set 'fieldValues', fieldValues
