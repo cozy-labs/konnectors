@@ -54,7 +54,7 @@ module.exports =
         Commit.defineRequest 'byDate', map, (err) ->
             callback err
 
-    fetch: (requiredFields, password, callback) ->
+    fetch: (requiredFields, callback) ->
         log.info "Import started"
 
         fetcher.new()
@@ -68,10 +68,10 @@ module.exports =
 
 
 # Get latest events list to know wich commits were pushed.
-getEvents = (requiredFields, password, commits, data, next) ->
+getEvents = (requiredFields, commits, data, next) ->
     client = requestJson.newClient 'https://api.github.com'
     username = requiredFields.login
-    pass = password
+    pass = requiredFields.password
 
     client.setBasicAuth username, pass
 
@@ -96,7 +96,7 @@ getEvents = (requiredFields, password, commits, data, next) ->
 
 
 # Build hash listing all already downloaded commits.
-buildCommitDateHash = (requiredFields, password, entries, data, next) ->
+buildCommitDateHash = (requiredFields, entries, data, next) ->
     entries.commitHash = {}
     Commit.all limit: 1000, (err, commits) ->
         if err
@@ -109,7 +109,7 @@ buildCommitDateHash = (requiredFields, password, entries, data, next) ->
 
 
 # Retrieve and save non existing commits one by one.
-logCommits = (requiredFields, password, entries, data, next) ->
+logCommits = (requiredFields, entries, data, next) ->
     client = requestJson.newClient 'https://api.github.com'
     username = requiredFields.login
     pass = requiredFields.password

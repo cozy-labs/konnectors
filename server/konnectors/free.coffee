@@ -48,7 +48,7 @@ module.exports =
         InternetBill.defineRequest 'byDate', map, (err) ->
             callback err
 
-    fetch: (requiredFields, password, callback) ->
+    fetch: (requiredFields, callback) ->
 
         log.info "Import started"
 
@@ -57,20 +57,20 @@ module.exports =
             .use(parsePage)
             .use(filterExisting log, InternetBill)
             .use(saveDataAndFile log, InternetBill, 'free', ['facture'])
-            .args(requiredFields, password, {}, {})
+            .args(requiredFields, {}, {})
             .fetch ->
                 log.info "Free bills imported"
                 callback()
 
 
 # Procedure to login to Free website.
-logIn = (requiredFields, password, billInfos, data, next) ->
+logIn = (requiredFields, billInfos, data, next) ->
 
     loginUrl = "https://subscribe.free.fr/login/login.pl"
     billUrl = "https://adsl.free.fr/liste-factures.pl"
 
     form =
-        "pass": password
+        "pass": requiredFields.password
         "login": requiredFields.login
 
     options =
@@ -94,7 +94,7 @@ logIn = (requiredFields, password, billInfos, data, next) ->
 
 
 # Parse the fetched page to extract bill data.
-parsePage = (requiredFields, password, bills, data, next) ->
+parsePage = (requiredFields, bills, data, next) ->
     bills.fetched = []
     $ = cheerio.load data.html
     $('.pane li').each ->

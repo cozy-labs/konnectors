@@ -49,7 +49,7 @@ module.exports =
         CodeBill.defineRequest 'byDate', map, (err) ->
             callback err
 
-    fetch: (requiredFields, password, callback) ->
+    fetch: (requiredFields, callback) ->
         log.info "Import started"
 
         fetcher.new()
@@ -57,14 +57,14 @@ module.exports =
             .use(parsePage)
             .use(filterExisting log, CodeBill)
             .use(saveDataAndFile log, CodeBill, 'github', ['bill'])
-            .args(requiredFields, password, {}, {})
+            .args(requiredFields, {}, {})
             .fetch ->
                 log.info "Github bills imported"
                 callback()
 
 
 # Procedure to login to Free website.
-logIn = (requiredFields, password, billInfos, data, next) ->
+logIn = (requiredFields, billInfos, data, next) ->
     loginUrl = "https://github.com/session"
 
     signInOptions =
@@ -73,7 +73,7 @@ logIn = (requiredFields, password, billInfos, data, next) ->
         url: "https://github.com/session"
         form:
             login: requiredFields.login
-            password: password
+            password: requiredFields.password
             commit: 'Sign in'
 
     logInOptions =
@@ -105,7 +105,7 @@ logIn = (requiredFields, password, billInfos, data, next) ->
 
 
 # Parse the fetched page to extract bill data.
-parsePage = (requiredFields, password, bills, data, next) ->
+parsePage = (requiredFields, bills, data, next) ->
     bills.fetched = []
     $ = cheerio.load data.html
 

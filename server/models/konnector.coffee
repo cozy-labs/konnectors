@@ -29,7 +29,19 @@ Konnector::import = (fieldValues, password, callback) ->
 
         else
             konnectorModule = require "../konnectors/#{@slug}"
-            konnectorModule.fetch fieldValues, password, (err) =>
+
+            parsedPasswords = JSON.parse password
+            parsedPasswords ?= {}
+
+            # Injecting passwords in fieldValues
+            for name, val of parsedPasswords
+               fieldValues[name] = val
+
+            konnectorModule.fetch fieldValues, (err) =>
+
+                # Removing passwords in FieldValues
+                for name of parsedPasswords
+                   delete fieldValues[name]
 
                 if err
                     data =

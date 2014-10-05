@@ -47,7 +47,7 @@ module.exports =
 
     # Get last imported activity to know from where to start the import. Then
     # define parameters (start date and end date) and fetch data accordingly.
-    fetch: (requiredFields, password, callback) ->
+    fetch: (requiredFields, callback) ->
         params = limit: 1, descending: true
         RescueTimeActivity.request 'byDate', params, (err, activities) =>
             if err then callback err

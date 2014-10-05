@@ -2,7 +2,7 @@ async = require 'async'
 File = require '../models/file'
 
 module.exports = (log, model, suffix, tags) ->
-    (requiredFields, password, entries, body, next) ->
+    (requiredFields, entries, body, next) ->
         entries.filtered = entries.fetched unless entries.filtered?
 
         async.eachSeries entries.filtered, (entry, callback) ->

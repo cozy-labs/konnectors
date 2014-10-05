@@ -1,6 +1,6 @@
 
 module.exports = (log, model, suffix) ->
-    (requiredFields, password, entries, body, next) ->
+    (requiredFields, entries, body, next) ->
         entries.filtered = []
 
         console.log entries

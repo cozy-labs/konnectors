@@ -56,12 +56,12 @@ module.exports =
         PhoneBill.defineRequest 'byDate', map, (err) ->
             callback err
 
-    fetch: (requiredFields, password, callback) ->
+    fetch: (requiredFields, callback) ->
 
         log.info "Import started"
 
         data =
-            "login[password]": password
+            "login[password]": requiredFields.password
             "login[username]": requiredFields.phoneNumber
 
         loginUrl = 'https://www.b-and-you.fr/customer/account/loginPostAjax'
