@@ -23,11 +23,10 @@ module.exports = class KonnectorView extends BaseView
 
         values = @model.get 'fieldValues'
         password = @model.get 'password'
-        parsedPassword = '{}'
+        parsedPassword = {}
         # check presence of password
         parsedPassword = if not password? or password is "" then "" else JSON.parse password
         values ?= {}
-        password ?= ""
         for name, val of @model.get 'fields'
             values[name] = "" unless values[name]?
 

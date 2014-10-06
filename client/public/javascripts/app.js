@@ -479,13 +479,10 @@ module.exports = KonnectorView = (function(_super) {
     }
     values = this.model.get('fieldValues');
     password = this.model.get('password');
-    parsedPassword = '{}';
+    parsedPassword = {};
     parsedPassword = (password == null) || password === "" ? "" : JSON.parse(password);
     if (values == null) {
       values = {};
-    }
-    if (password == null) {
-      password = "";
     }
     _ref = this.model.get('fields');
     _results = [];
