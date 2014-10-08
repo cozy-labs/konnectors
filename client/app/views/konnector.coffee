@@ -22,10 +22,7 @@ module.exports = class KonnectorView extends BaseView
             @$('.last-import').html "no import performed."
 
         values = @model.get 'fieldValues'
-        password = @model.get 'password'
-        parsedPassword = {}
-        # check presence of password
-        parsedPassword = if not password? or password is "" then "" else JSON.parse password
+
         values ?= {}
         for name, val of @model.get 'fields'
             values[name] = "" unless values[name]?
@@ -41,14 +38,6 @@ module.exports = class KonnectorView extends BaseView
              value="#{values[name]}"></select></div>
 </div>
 """
-            else if val is 'password'
-                # if password is not set then display empty string
-                pass = if not parsedPassword[name]? then "" else parsedPassword[name]
-                fieldHtml += """
-<div><input id="#{slug}-#{name}-input" type="#{val}"
-            value="#{pass}"/></div>
-</div>
-"""
             else
                 fieldHtml += """
 <div><input id="#{slug}-#{name}-input" type="#{val}"
@@ -59,17 +48,12 @@ module.exports = class KonnectorView extends BaseView
 
     onImportClicked: =>
         fieldValues = {}
-        password = {}
+
         slug = @model.get 'slug'
 
         for name, val of @model.get 'fields'
-            if val is 'password'
-                input = $("##{slug}-#{name}-input").val()
-                password[name] = input
-            else
                 fieldValues[name] = $("##{slug}-#{name}-input").val()
         @model.set 'fieldValues', fieldValues
-        @model.set 'password', JSON.stringify password
         @model.save
             success: =>
                 alert "import succeeded"
