@@ -84,44 +84,4 @@ describe 'Injecting/Removing encrypted fields', ->
                         it 'then the password field is filled', ->
                                 expected = '{}'
                                 @konnector.password.should.equal expected
-                
-# americano = require 'americano'
-# moment = require 'moment'
 
-# helpers = require './helpers'
-# client = helpers.getClient()
-# dsClient = helpers.getClient 'http://localhost:9101/'
-# Konnector = require '../server/models/konnector'
-# twitter = require '../server/konnectors/twitter'
-
-
-# if process.env.NODE_ENV in ['test', 'production']
-#             dsClient.setBasicAuth process.env.NAME, process.env.TOKEN
-
-        # describe "Password management", ->
-
-        #         before helpers.startApp
-        #         before helpers.cleanDB
-        #         after helpers.stopApp
-        #         after helpers.cleanDB
-        # describe "Creating twitter konnector", ->
-        #         twitter.init (err) ->
-        #                 if err
-        #                         callback err
-        #                 else
-        #                     Konnector.create 
-        #         describe "Adding data to the konnector", ->
-        #                 it "inserting", ->
-        #                         fieldValues =
-        #                                 login: test
-        #                         password =
-        #                                 password: pass
-        #                         @client.put "konnectors/#{id}", fieldValues, JSON.stringify password, done
-        # describe 'Verifing if the password is correctly stored in database', ->
-        #         it 'should not be empty', ->
-        #                 should.not.equal ''
-        #         it 'should be an object', ->
-        #                 k
-        #         it 'should contain all the field of type password in the konnector model', ->
-
-        #         it '', ->
