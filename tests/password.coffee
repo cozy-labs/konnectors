@@ -17,8 +17,8 @@ describe 'Injecting/Removing encrypted fields', ->
         describe 'When I call injectEncryptedFields on the connector object', ->
             it 'then the fields Values are completely filled', ->
                 fieldValuesKeys = Object.keys @konnector.fieldValues
-                    for name, value of @fields
-                        fieldValuesKeys.should.containEql name
+                for name, value of @fields
+                    fieldValuesKeys.should.containEql name
 
     describe 'Removing fields', ->
 
@@ -66,14 +66,13 @@ describe 'Injecting/Removing encrypted fields', ->
                 expected = JSON.stringify password: 'pass'
                 @konnector.password.should.equal expected
 
-        describe 'when there is no  password field', ->
-            before ->
-                @konnector = new Konnector
-                    slug: 'test'
-                    fieldValues: username: "test"
-                    password: '{}'
-                @fields = username: "text"
-                @konnector.removeEncryptedFields @fields
+        it 'when there is no  password field', ->
+            @konnector = new Konnector
+                slug: 'test'
+                fieldValues: username: "test"
+                password: '{}'
+            @fields = username: "text"
+            @konnector.removeEncryptedFields @fields
 
             it 'then the fields Values are not containing any password', ->
                 fieldValuesKeys = Object.keys @konnector.fieldValues
