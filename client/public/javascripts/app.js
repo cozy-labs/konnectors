@@ -465,7 +465,7 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var fieldHtml, isImporting, lastImport, name, parsedPassword, pass, password, slug, val, values, _ref, _results;
+    var fieldHtml, isImporting, lastImport, name, slug, val, values, _ref, _results;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
@@ -478,9 +478,6 @@ module.exports = KonnectorView = (function(_super) {
       this.$('.last-import').html("no import performed.");
     }
     values = this.model.get('fieldValues');
-    password = this.model.get('password');
-    parsedPassword = {};
-    parsedPassword = (password == null) || password === "" ? "" : JSON.parse(password);
     if (values == null) {
       values = {};
     }
@@ -494,9 +491,6 @@ module.exports = KonnectorView = (function(_super) {
       fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + name + "</label></div>";
       if (val === 'folder') {
         fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\"\n             value=\"" + values[name] + "\"></select></div>\n</div>";
-      } else if (val === 'password') {
-        pass = parsedPassword[name] == null ? "" : parsedPassword[name];
-        fieldHtml += "<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + pass + "\"/></div>\n</div>";
       } else {
         fieldHtml += "<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + values[name] + "\"/></div>\n</div>";
       }
@@ -506,22 +500,15 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var fieldValues, input, name, password, slug, val, _ref;
+    var fieldValues, name, slug, val, _ref;
     fieldValues = {};
-    password = {};
     slug = this.model.get('slug');
     _ref = this.model.get('fields');
     for (name in _ref) {
       val = _ref[name];
-      if (val === 'password') {
-        input = $("#" + slug + "-" + name + "-input").val();
-        password[name] = input;
-      } else {
-        fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
-      }
+      fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
     }
     this.model.set('fieldValues', fieldValues);
-    this.model.set('password', JSON.stringify(password));
     return this.model.save({
       success: (function(_this) {
         return function() {
