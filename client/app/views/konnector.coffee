@@ -52,7 +52,7 @@ module.exports = class KonnectorView extends BaseView
         slug = @model.get 'slug'
 
         for name, val of @model.get 'fields'
-                fieldValues[name] = $("##{slug}-#{name}-input").val()
+            fieldValues[name] = $("##{slug}-#{name}-input").val()
         @model.set 'fieldValues', fieldValues
         @model.save
             success: =>

@@ -15,21 +15,21 @@ Konnector.all = (callback) ->
         callback err, konnectors
 
 Konnector::injectEncryptedFields = ->
-        try
-                parsedPasswords = JSON.parse @password
-                for name, val of parsedPasswords
-                        @fieldValues[name] = val
-        catch error
-                console.log "injecting encrypted fields : JSON.parse error : #{error}"
+    try
+        parsedPasswords = JSON.parse @password
+        for name, val of parsedPasswords
+            @fieldValues[name] = val
+    catch error
+        console.log "injecting encrypted fields : JSON.parse error : #{error}"
 
 Konnector::removeEncryptedFields = (fields) ->
 
-        password = {}
-        for name, type of fields
-                if type is "password"
-                        password[name] = @fieldValues[name]
-                        delete @fieldValues[name]
-        @password = JSON.stringify password
+    password = {}
+    for name, type of fields
+        if type is "password"
+            password[name] = @fieldValues[name]
+            delete @fieldValues[name]
+    @password = JSON.stringify password
 
 Konnector::import = (fieldValues, fields, callback) ->
     @fieldValues = fieldValues
