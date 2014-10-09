@@ -10,20 +10,26 @@ module.exports = (done) ->
 
         log.info 'Looking for entries to patch...'
         async.eachSeries konnectors, (konnector, callback) ->
+
             model = require "../konnectors/#{konnector.slug}"
+
+            # Store every field of password type
             unEncryptedFields = []
             for name, type of model.fields
                 if type is 'password'
                     unEncryptedFields.push name
 
             fieldValues = konnector.fieldValues
-            konnector.password = "{}" if not konnector.password? or konnector.password.length is 0
+            if not konnector.password? or konnector.password.length is 0
+                konnector.password = "{}"
             parsedPasswords = JSON.parse konnector.password
 
-            # if fieldValues exists and if the number of passwords are not matching the number of declared passwords
-            if fieldValues? and unEncryptedFields.length isnt Object.keys(parsedPasswords).length
+            # if fieldValues exists and if the number of passwords are not
+            # matching the number of declared passwords
+            if fieldValues? and unEncryptedFields.length isnt \
+            Object.keys(parsedPasswords).length
 
-                log.info "password of #{konnector.slug} is empty or not complete"
+                log.info "password of #{konnector.slug} not complete"
 
                 konnector.removeEncryptedFields model.fields
 
