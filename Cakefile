@@ -48,14 +48,14 @@ task 'tests', "Run tests #{taskDetails}", (opts) ->
     command = "#{env} mocha " + files.join(" ") + " --reporter spec --colors "
     command += "--globals clearImmediate,setImmediate "
     command += "--compilers coffee:coffee-script/register"
-        exec command, (err, stdout, stderr) ->
-            console.log stdout
-            if err
-                logger.error "Running mocha caught exception:\n" + err
-                process.exit 1
-            else
-                logger.info "Tests succeeded!"
-                process.exit 0
+    exec command, (err, stdout, stderr) ->
+        console.log stdout
+        if err
+            logger.error "Running mocha caught exception:\n" + err
+            process.exit 1
+        else
+            logger.info "Tests succeeded!"
+            process.exit 0
 
 task "lint", "Run coffeelint on source files", ->
 
