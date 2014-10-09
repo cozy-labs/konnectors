@@ -115,10 +115,10 @@ parsePage = (requiredFields, bills, data, next) ->
         pdfurl = "https://github.com#{$(this).find('.receipt a').attr 'href'}"
 
         switch amount
-          when 7 then plan = 'micro'
-          when 12 then plan = 'small'
-          when 22 then plan = 'medium'
-          when 50 then plan = 'large'
+            when 7 then plan = 'micro'
+            when 12 then plan = 'small'
+            when 22 then plan = 'medium'
+            when 50 then plan = 'large'
 
         bills.fetched.push
             date: moment date
