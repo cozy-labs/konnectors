@@ -20,6 +20,24 @@ describe 'Injecting/Removing encrypted fields', ->
             for name, value of @fields
                 fieldValuesKeys.should.containEql name
 
+    describe 'Injecting fields [multiple passwords]', ->
+        it 'When I call injectEncryptedFields on the connector object', ->
+            @konnector = new Konnector
+                slug: 'test'
+                fieldValues:
+                    username: "myname"
+                password: '{"pass": "azerty", "key": "qwerty"}'
+            @fields =
+                username: "text"
+                pass: "password"
+                key: "password"
+            @konnector.injectEncryptedFields()
+
+        it 'then the fields Values should be completely filled', ->
+            fieldValuesKeys = Object.keys @konnector.fieldValues
+            for name, value of @fields
+                fieldValuesKeys.should.containEql name
+
     describe 'Removing fields', ->
 
         it 'When I call removeEncryptedFields on the connector object', ->
@@ -42,6 +60,32 @@ describe 'Injecting/Removing encrypted fields', ->
 
         it 'and the password field should be filled', ->
             expected = JSON.stringify password: 'azerty'
+            @konnector.password.should.equal expected
+
+    describe 'Removing fields [multiple passwords]', ->
+
+        it 'When I call removeEncryptedFields on the connector object', ->
+            @konnector = new Konnector
+                slug: 'test'
+                fieldValues:
+                    username: "myname"
+                    pass1: "azerty"
+                    pass2: "qwerty"
+                password: '{"pass1": "azerty", "pass2": "qwerty"}'
+            @fields =
+                username: "text"
+                pass1: "password"
+                pass2: "password"
+            @konnector.removeEncryptedFields @fields
+
+        it 'then the fields Values should not contain any password', ->
+            fieldValuesKeys = Object.keys @konnector.fieldValues
+            for name, value of @fields
+                if value is 'password'
+                    fieldValuesKeys.should.not.containEql name
+
+        it 'and the password field should be filled', ->
+            expected = JSON.stringify pass1: 'azerty', pass2: 'qwerty'
             @konnector.password.should.equal expected
 
     describe 'Empty fields', ->
