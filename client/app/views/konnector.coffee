@@ -22,6 +22,7 @@ module.exports = class KonnectorView extends BaseView
             @$('.last-import').html "no import performed."
 
         values = @model.get 'fieldValues'
+
         values ?= {}
         for name, val of @model.get 'fields'
             values[name] = "" unless values[name]?
@@ -47,6 +48,7 @@ module.exports = class KonnectorView extends BaseView
 
     onImportClicked: =>
         fieldValues = {}
+
         slug = @model.get 'slug'
 
         for name, val of @model.get 'fields'

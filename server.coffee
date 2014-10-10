@@ -1,6 +1,7 @@
 americano = require 'americano'
 RealtimeAdapter = require 'cozy-realtime-adapter'
 initKonnectors = require './server/init/konnectors'
+patchKonnectors = require './server/init/patch'
 
 process.env.TZ = 'UTC'
 
@@ -12,4 +13,4 @@ params =
 
 americano.start params, (app, server) ->
     realtime = RealtimeAdapter server: server, ['konnector.update']
-    initKonnectors()
+    patchKonnectors -> initKonnectors()

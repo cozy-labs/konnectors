@@ -13,6 +13,7 @@ module.exports =
             else if not konnector?
                 res.send 404
             else
+                konnector.injectEncryptedFields()
                 req.konnector = konnector
                 next()
 
@@ -56,7 +57,8 @@ module.exports =
             , 6
             res.send error: true, msg: 'konnector is already importing', 400
         else
-            req.konnector.import req.body.fieldValues, (err) ->
+            fields = konnectorHash[req.konnector.slug].fields
+            req.konnector.import req.body.fieldValues, fields, (err) ->
                 if err
                     next err
                 else
