@@ -8,6 +8,10 @@ Konnector = require '../models/konnector'
 module.exports = (done) ->
     Konnector.all (err, konnectors) ->
 
+        # For some reason, async.eachSeries doesn't call its callback if
+        # the array is empty so we do it manually
+        return done() if konnectors.length is 0
+
         log.info 'Looking for entries to patch...'
         async.eachSeries konnectors, (konnector, callback) ->
 
@@ -42,7 +46,7 @@ module.exports = (done) ->
                     else
                         log.info "#{konnector.slug} | patching succeeded"
 
-                callback()
+                    callback()
 
             else callback()
 
