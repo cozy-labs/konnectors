@@ -25,11 +25,12 @@
     "ware": "0.3.0"
   },
   "devDependencies": {
+    "coffeelint": "0.6.1",
+    "cozy-fixtures": "1.0.1",
+    "mocha": "1.13.0",
     "nock": "0.27.0",
     "should": "2.0.1",
-    "mocha": "1.13.0",
-    "cozy-fixtures": "1.0.1",
-    "coffeelint": "0.6.1"
+    "sinon": "^1.10.3"
   },
   "scripts": {
     "test": "cake tests",
