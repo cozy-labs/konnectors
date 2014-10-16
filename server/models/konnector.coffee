@@ -20,9 +20,12 @@ Konnector::injectEncryptedFields = ->
         for name, val of parsedPasswords
             @fieldValues[name] = val
     catch error
-        console.log "injecting encrypted fields : JSON.parse error : #{error}"
+        console.log "Injecting encrypted fields : JSON.parse error : #{error}"
 
 Konnector::removeEncryptedFields = (fields) ->
+
+    if not fields?
+        console.log "Removing encrypted fields : error : fields variable undefined"
 
     password = {}
     for name, type of fields
@@ -49,6 +52,7 @@ Konnector::import = (fieldValues, fields, callback) ->
             @injectEncryptedFields()
             konnectorModule.fetch @fieldValues, (err) =>
                 @removeEncryptedFields fields
+
                 if err
                     data =
                         isImporting: false
