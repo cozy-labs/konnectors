@@ -22,17 +22,10 @@ describe 'Testing konnector poller', ->
         @sandbox.clock.tick 6 * day
         @spy.callCount.should.equal 1
 
-        it 'But should be called one day later', (done) ->
-            @sandbox.clock.tick 1 * day
-            # Set timeout
-            setTimeout ->
-                @spy.callCount.should.equal 2
-                done
-            , 1000
+    it 'But should be called one day later', ->
+        @sandbox.clock.tick 1 * day
+        @spy.callCount.should.equal 2
 
-        it 'And the cron function should have been called again after one more week', (done) ->
-            @sandbox.clock.tick 1 * week
-            setTimeout ->
-                @spy.callCount.should.equal 3
-                done
-            , 1000
+    it 'And the cron function should have been called again after one more week', ->
+        @sandbox.clock.tick 1 * week
+        @spy.callCount.should.equal 3
