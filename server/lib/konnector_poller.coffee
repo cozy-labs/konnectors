@@ -18,18 +18,16 @@ class KonnectorPoller
         format = "DD/MM/YYYY [at] HH:mm:ss"
         msg = "Next import of konnectors on #{nextUpdate.format(format)}"
         log.info msg
-        @timeout = setTimeout(
-            () =>
-                @checkAllAccesses()
-            , nextUpdate - moment())
+        setTimeout =>
+            @checkAllAccesses()
+        , nextUpdate - moment()
 
     checkAllAccesses: ->
         log.info "Checking new entries for all konnectors..."
         importer (err) =>
             if err?
-                console.log "An error occurred during fetching -- #{err}"
-        log.info "All konnectors fetched."
-        @prepareNextCheck()
-
+                log.info "An error occurred during fetching -- #{err}"
+            log.info "All konnectors fetched."
+            @prepareNextCheck()
 
 module.exports = new KonnectorPoller
