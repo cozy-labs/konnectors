@@ -1,5 +1,7 @@
 americano = require 'americano-cozy'
-
+log = require('printit')
+    prefix: null
+    date: true
 
 module.exports = Konnector = americano.getModel 'Konnector',
     slug: String
@@ -20,12 +22,12 @@ Konnector::injectEncryptedFields = ->
         for name, val of parsedPasswords
             @fieldValues[name] = val
     catch error
-        console.log "Injecting encrypted fields : JSON.parse error : #{error}"
+        log.info "Injecting encrypted fields : JSON.parse error : #{error}"
 
 Konnector::removeEncryptedFields = (fields) ->
 
     if not fields?
-        console.log "Removing encrypted fields : error : fields variable undefined"
+        log.info "Removing encrypted fields : error : fields variable undefined"
 
     password = {}
     for name, type of fields
