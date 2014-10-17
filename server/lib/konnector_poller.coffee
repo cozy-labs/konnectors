@@ -28,6 +28,6 @@ class KonnectorPoller
             if err?
                 log.info "An error occurred during fetching -- #{err}"
             log.info "All konnectors fetched."
-            @prepareNextCheck()
+        @prepareNextCheck()
 
 module.exports = new KonnectorPoller
