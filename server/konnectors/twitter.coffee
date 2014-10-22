@@ -52,18 +52,10 @@ module.exports =
 
     fetch: (requiredFields, callback) ->
         log.info "Import started"
-        params = limit: 1, descending: true
-        TwitterTweet.request 'byDate', params, (err, tweets) =>
-            if tweets.length > 0
-                start = moment(tweets[0].date)
-            else
-                start = moment().subtract('years', 10)
-
-            log.info "Start import since #{start.format()}"
-            saveTweets requiredFields, start, callback
+        saveTweets requiredFields, callback
 
 
-saveTweets = (requiredFields, start, callback) ->
+saveTweets = (requiredFields, callback) ->
     url = "https://api.twitter.com/1.1/"
     client = requestJson.newClient url
     client.options =
@@ -80,48 +72,48 @@ saveTweets = (requiredFields, start, callback) ->
         contributor_details: false
         count: 200
 
-    recSave = (lastId) ->
+    params = descending: true
 
-        if lastId?
-            if lastId isnt 'id'
-                newPath = path + "&" + querystring.stringify
-                    max_id: lastId
-            else
-                newPath = path
-
-            saveTweetGroup client, newPath, start, (err, lastId) ->
-                if err then callback err
-                else recSave lastId
+    TwitterTweet.request 'byDate', params, (err, tweets) =>
+        if tweets.length > 0
+            start = moment(tweets[0].date)
         else
-            log.info "Import finished"
+            start = moment().subtract('years', 10)
+
+        log.info "Start import since #{start.format()}"
+
+        saveTweetGroup client, path, start, tweets.length, (err, lastId) ->
+            if err then callback err
+            else
+                log.info "Import finished"
 
             callback()
 
-    recSave 'id'
 
+saveTweetGroup = (client, path, start, tweetLength, callback) ->
 
-saveTweetGroup = (client, path, start, callback) ->
-
-    log.debug path
     client.get path, (err, res, tweets) ->
+        log.debug "#{tweetLength} tweet in DB, #{tweets.length} in the response"
         if err
             callback err
         else if res.statusCode isnt 200
             callback new Error 'Bad authentication data'
+        else if tweetLength is tweets.length
+            log.info 'No new tweet to import'
+            callback()
         else
-            log.info "#{tweets.length} tweets to import"
+            log.info "#{tweets.length - tweetLength} tweet(s) to import"
             tweets = tweets.reverse()
             tweets.pop() if path.indexOf('max_id') isnt -1
 
             lastId = null
             async.eachSeries tweets, (tweet, cb) ->
-                date = moment tweet.created_at
 
-                log.debug tweet.created_at
-                log.debug moment tweet.created_at
+                date = moment tweet.created_at
                 log.debug date
+
+                lastId = tweet.id_str
                 if date > start
-                    lastId = tweet.id_str
 
                     twitterTweet = TwitterTweet
                         date: date
@@ -141,5 +133,4 @@ saveTweetGroup = (client, path, start, callback) ->
                 else
                     cb()
             , (err) ->
-                log.debug lastId
                 callback err, lastId
