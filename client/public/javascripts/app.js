@@ -465,7 +465,7 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var fieldHtml, isImporting, lastImport, name, slug, val, values, _ref, _results;
+    var fieldHtml, importInterval, intervals, isImporting, key, lastImport, name, selected, slug, val, value, values, _ref;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
@@ -482,7 +482,6 @@ module.exports = KonnectorView = (function(_super) {
       values = {};
     }
     _ref = this.model.get('fields');
-    _results = [];
     for (name in _ref) {
       val = _ref[name];
       if (values[name] == null) {
@@ -490,17 +489,35 @@ module.exports = KonnectorView = (function(_super) {
       }
       fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + name + "</label></div>";
       if (val === 'folder') {
-        fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\"\n             value=\"" + values[name] + "\"></select></div>\n</div>";
+        fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\" class=\"folder\"\n             value=\"" + values[name] + "\"></select></div>\n</div>";
       } else {
         fieldHtml += "<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + values[name] + "\"/></div>\n</div>";
       }
-      _results.push(this.$('.fields').append(fieldHtml));
+      this.$('.fields').append(fieldHtml);
     }
-    return _results;
+    importInterval = this.model.get('importInterval');
+    if (importInterval == null) {
+      importInterval = '';
+    }
+    intervals = {
+      none: "None",
+      hour: "Every Hour",
+      day: "Every Day",
+      week: "Every Week",
+      month: "Each month"
+    };
+    fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-autoimport-input\">Auto Import</label></div>\n<div><select id=\"" + slug + "-autoimport-input\" class=\"autoimport\">";
+    for (key in intervals) {
+      value = intervals[key];
+      selected = importInterval === key ? 'selected' : '';
+      fieldHtml += "<option value=\"" + key + "\" " + selected + ">" + value + "</option>";
+    }
+    fieldHtml += "</select></div>\n</div>";
+    return this.$('.fields').append(fieldHtml);
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var fieldValues, name, slug, val, _ref;
+    var fieldValues, importInterval, name, slug, val, _ref;
     fieldValues = {};
     slug = this.model.get('slug');
     _ref = this.model.get('fields');
@@ -509,6 +526,10 @@ module.exports = KonnectorView = (function(_super) {
       fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
     }
     this.model.set('fieldValues', fieldValues);
+    importInterval = 'none';
+    importInterval = $("#" + slug + "-autoimport-input").val();
+    this.model.set('importInterval', importInterval);
+    console.log(importInterval);
     return this.model.save({
       success: (function(_this) {
         return function() {
@@ -628,7 +649,7 @@ module.exports = KonnectorsView = (function(_super) {
             var cid, konnector, path, _i, _len, _ref, _results;
             for (_i = 0, _len = paths.length; _i < _len; _i++) {
               path = paths[_i];
-              $("select").append("<option value=\"" + path + "\">" + path + "</option>");
+              $(".folder").append("<option value=\"" + path + "\">" + path + "</option>");
             }
             _ref = _this.views;
             _results = [];
