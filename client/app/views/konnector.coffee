@@ -34,7 +34,7 @@ module.exports = class KonnectorView extends BaseView
 
             if val is 'folder'
                 fieldHtml += """
-<div><select id="#{slug}-#{name}-input"
+<div><select id="#{slug}-#{name}-input" class="folder"
              value="#{values[name]}"></select></div>
 </div>
 """
@@ -46,6 +46,25 @@ module.exports = class KonnectorView extends BaseView
 """
             @$('.fields').append fieldHtml
 
+        # Auto Import
+        importInterval = @model.get 'importInterval'
+        importInterval ?= ''
+        intervals = {none: "None", hour: "Every Hour", day: "Every Day", week: "Every Week", month: "Each month"}
+        fieldHtml = """
+<div class="field line">
+<div><label for="#{slug}-autoimport-input">Auto Import</label></div>
+<div><select id="#{slug}-autoimport-input" class="autoimport">
+"""
+        for key, value of intervals
+            selected = if importInterval is key then 'selected' else ''
+            fieldHtml += "<option value=\"#{key}\" #{selected}>#{value}</option>"
+
+        fieldHtml += """
+</select></div>
+</div>
+ """
+        @$('.fields').append fieldHtml
+
     onImportClicked: =>
         fieldValues = {}
 
@@ -54,6 +73,11 @@ module.exports = class KonnectorView extends BaseView
         for name, val of @model.get 'fields'
             fieldValues[name] = $("##{slug}-#{name}-input").val()
         @model.set 'fieldValues', fieldValues
+        importInterval = 'none'
+        importInterval = $("##{slug}-autoimport-input").val()
+
+        @model.set 'importInterval', importInterval
+        console.log importInterval
         @model.save
             success: =>
                 alert "import succeeded"
