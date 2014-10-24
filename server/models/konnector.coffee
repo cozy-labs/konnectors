@@ -36,11 +36,11 @@ Konnector::removeEncryptedFields = (fields) ->
             delete @fieldValues[name]
     @password = JSON.stringify password
 
-Konnector::import = (body, fields, callback) ->
-    @fieldValues = body.fieldValues
+Konnector::import = (konnector, fields, callback) ->
+    @fieldValues = konnector.fieldValues
     @isImporting = true
     @removeEncryptedFields fields
-    @importInterval = body.importInterval
+    @importInterval = konnector.importInterval
     @save (err) =>
 
         if err
