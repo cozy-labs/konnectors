@@ -14,3 +14,5 @@ module.exports = (konnector) ->
         konnector.import konnector, model.fields, (err) ->
             if err
                 log.info err
+    else
+        log.debug "Connector #{konnector.slug} already importing"
