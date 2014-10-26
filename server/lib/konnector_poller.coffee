@@ -23,7 +23,6 @@ class KonnectorPoller
         Konnector.all (err, konnectors) =>
             async.eachSeries konnectors, (konnector, callback) =>
                 if konnector.importInterval? and konnector.importInterval isnt 'none'
-                    log.debug konnector.slug
                     # dirty hack for bypassing timeout limit
                     if konnector.importInterval is 'month'
                         konnector['month'] = true
