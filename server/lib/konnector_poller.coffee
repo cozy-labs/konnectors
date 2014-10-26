@@ -11,11 +11,12 @@ day = 24 * hour
 week = 7 * day
 month = 30 * day
 format = "DD/MM/YYYY [at] HH:mm:ss"
-interval = {hour: hour, day: day, week: week, month: month}
+periods = {hour: hour, day: day, week: week, month: month}
 
 class KonnectorPoller
 
     start: ->
+        log.debug "Launching Konnector Poller..."
         @init()
 
     init: ->
@@ -23,18 +24,30 @@ class KonnectorPoller
             async.eachSeries konnectors, (konnector, callback) =>
                 if konnector.importInterval? and konnector.importInterval isnt 'none'
                     log.debug konnector.slug
-                    @prepareNextCheck konnector, interval[konnector.importInterval]
+                    # dirty hack for bypassing timeout limit
+                    if konnector.importInterval is 'month'
+                        konnector['month'] = true
+                        interval = 23 * day
+                    else
+                        interval = periods[konnector.importInterval]
+                    console.log konnector
+                    @prepareNextCheck konnector, interval
                 callback()
 
      prepareNextCheck: (konnector, interval) ->
         now = moment()
         nextUpdate = now.clone()
         nextUpdate = now.add interval, 'ms'
-        log.info "Next import of konnector #{konnector.slug} on #{nextUpdate.format(format)}"
+        log.info "Next check of konnector #{konnector.slug} on #{nextUpdate.format(format)}"
         setTimeout @checkImport.bind(@, konnector, interval), interval
 
     checkImport: (konnector, interval) ->
-        importer konnector
-        @prepareNextCheck konnector, interval
+
+        if konnector.month?
+            delete konnector.month
+            @prepareNextCheck konnector, week
+        else
+            importer konnector
+            @prepareNextCheck konnector, interval
 
 module.exports = new KonnectorPoller
