@@ -29,7 +29,11 @@ class KonnectorPoller
                         interval = 23 * day
                     else
                         interval = periods[konnector.importInterval]
-                    @prepareNextCheck konnector, interval
+                    # Check interval value
+                    if interval > 0
+                        @prepareNextCheck konnector, interval
+                    else
+                        log.debug """konnector #{konnector.slug} has an incorrect importInterval value"""
                 callback()
 
      prepareNextCheck: (konnector, interval) ->
