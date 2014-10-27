@@ -23,15 +23,17 @@ class KonnectorPoller
         Konnector.all (err, konnectors) =>
             async.eachSeries konnectors, (konnector, callback) =>
                 if konnector.importInterval? and konnector.importInterval isnt 'none'
-                    log.debug konnector.slug
                     # dirty hack for bypassing timeout limit
                     if konnector.importInterval is 'month'
                         konnector['month'] = true
                         interval = 23 * day
                     else
                         interval = periods[konnector.importInterval]
-                    console.log konnector
-                    @prepareNextCheck konnector, interval
+                    # Check interval value
+                    if interval > 0
+                        @prepareNextCheck konnector, interval
+                    else
+                        log.debug """konnector #{konnector.slug} has an incorrect importInterval value"""
                 callback()
 
      prepareNextCheck: (konnector, interval) ->
