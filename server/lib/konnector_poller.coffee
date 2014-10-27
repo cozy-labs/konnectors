@@ -29,7 +29,6 @@ class KonnectorPoller
                         interval = 23 * day
                     else
                         interval = periods[konnector.importInterval]
-                    console.log konnector
                     @prepareNextCheck konnector, interval
                 callback()
 
