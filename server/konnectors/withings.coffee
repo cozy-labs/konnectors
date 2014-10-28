@@ -51,63 +51,6 @@ HeartBeat.all = (callback) ->
 BloodPressure.all = (callback) ->
     BloodPressure.request 'byDate', callback
 
-
-# Konnector
-
-module.exports =
-
-    name: "Withings"
-    slug: "withings"
-    description: "Download all your measures from your Withings account."
-    vendorLink: "https://www.withings.com/"
-
-    fields:
-        email: "text"
-        password: "password"
-    models:
-        scalemeasure: Weight
-        heartbeat: HeartBeat
-        bloodpressure: BloodPressure
-
-
-    # Define model requests.
-    init: (callback) ->
-        map = (doc) -> emit doc.date, doc
-        Weight.defineRequest 'byDate', map, (err) ->
-            callback err if err
-            HeartBeat.defineRequest 'byDate', map, (err) ->
-                callback err
-                BloodPressure.defineRequest 'byDate', map, (err) ->
-
-
-# Konnector
-
-module.exports =
-
-    name: "Withings"
-    slug: "withings"
-    description: "Download all your measures from your Withings account."
-    vendorLink: "https://www.withings.com/"
-
-    fields:
-        email: "text"
-        password: "password"
-    models:
-        scalemeasure: Weight
-        heartbeat: HeartBeat
-        bloodpressure: BloodPressure
-
-
-    # Define model requests.
-    init: (callback) ->
-        map = (doc) -> emit doc.date, doc
-        Weight.defineRequest 'byDate', map, (err) ->
-            callback err if err
-            HeartBeat.defineRequest 'byDate', map, (err) ->
-                callback err
-                BloodPressure.defineRequest 'byDate', map, (err) ->
-
-
 # Konnector
 
 module.exports =
