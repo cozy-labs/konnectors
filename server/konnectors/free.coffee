@@ -62,7 +62,6 @@ module.exports =
                 log.info "Free bills imported"
                 callback()
 
-
 # Procedure to login to Free website.
 logIn = (requiredFields, billInfos, data, next) ->
 
@@ -80,8 +79,7 @@ logIn = (requiredFields, billInfos, data, next) ->
         url: loginUrl
 
     request options, (err, res, body) ->
-        return next err if err
-
+        return next err if err or not res.headers.location?
         location = res.headers.location
         parameters = location.split('?')[1]
         url = "#{billUrl}?#{parameters}"
@@ -96,6 +94,7 @@ logIn = (requiredFields, billInfos, data, next) ->
 # Parse the fetched page to extract bill data.
 parsePage = (requiredFields, bills, data, next) ->
     bills.fetched = []
+    return next if not data.html?
     $ = cheerio.load data.html
     $('.pane li').each ->
         amount = $($(this).find('strong').get(1)).html()
@@ -115,6 +114,4 @@ parsePage = (requiredFields, bills, data, next) ->
 
         bill.pdfurl = pdfUrl if date.year() > 2011
         bills.fetched.push bill
-
     next()
-

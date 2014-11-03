@@ -48,6 +48,10 @@ module.exports =
 
 
     import: (req, res, next) ->
+        # Handle timeouts
+        poller = require "../lib/konnector_poller"
+        poller.handleTimeout(req.body)
+
         if req.konnector.isImporting
             setTimeout =>
                 data =
@@ -58,7 +62,7 @@ module.exports =
             res.send error: true, msg: 'konnector is already importing', 400
         else
             fields = konnectorHash[req.konnector.slug].fields
-            req.konnector.import req.body.fieldValues, fields, (err) ->
+            req.konnector.import req.body, fields, (err) ->
                 if err
                     next err
                 else

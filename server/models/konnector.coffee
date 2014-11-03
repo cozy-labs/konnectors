@@ -9,7 +9,7 @@ module.exports = Konnector = americano.getModel 'Konnector',
     password: type: String, default: '{}'
     lastImport: Date
     isImporting: type: Boolean, default: false
-
+    importInterval: type: String, default: 'none'
 
 Konnector.all = (callback) ->
     Konnector.request 'all', (err, konnectors) ->
@@ -36,10 +36,11 @@ Konnector::removeEncryptedFields = (fields) ->
             delete @fieldValues[name]
     @password = JSON.stringify password
 
-Konnector::import = (fieldValues, fields, callback) ->
-    @fieldValues = fieldValues
+Konnector::import = (konnector, fields, callback) ->
+    @fieldValues = konnector.fieldValues
     @isImporting = true
     @removeEncryptedFields fields
+    @importInterval = konnector.importInterval
     @save (err) =>
 
         if err

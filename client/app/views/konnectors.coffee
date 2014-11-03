@@ -21,7 +21,7 @@ module.exports = class KonnectorsView extends ViewCollection
             success: =>
                 request.get 'folders', (err, paths) =>
                     for path in paths
-                        $("select").append """
+                        $(".folder").append """
                         <option value="#{path}">#{path}</option>
                         """
 
