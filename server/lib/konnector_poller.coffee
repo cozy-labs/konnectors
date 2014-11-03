@@ -37,7 +37,6 @@ class KonnectorPoller
             delete timeouts[konnector.slug]
         if konnector.importInterval isnt 'none'
             @create konnector
-        console.log timeouts
 
     create: (konnector) ->
         # dirty hack for bypassing timeout limit
@@ -60,7 +59,6 @@ class KonnectorPoller
         log.info "Next check of konnector #{konnector.slug} on " +
         "#{nextUpdate.format(format)}"
         timeouts[konnector.slug] = setTimeout @checkImport.bind(@, konnector, interval), interval
-        console.log timeouts
 
     checkImport: (konnector, interval) ->
 
