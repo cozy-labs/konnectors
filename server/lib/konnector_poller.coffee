@@ -13,6 +13,7 @@ month = 30 * day
 format = "DD/MM/YYYY [at] HH:mm:ss"
 periods = {hour: hour, day: day, week: week, month: month}
 timeouts = {}
+
 class KonnectorPoller
 
     start: ->
@@ -39,12 +40,7 @@ class KonnectorPoller
             @create konnector
 
     create: (konnector) ->
-        # dirty hack for bypassing timeout limit
-        if konnector.importInterval is 'month'
-            konnector['month'] = true
-            interval = 23 * day
-        else
-            interval = periods[konnector.importInterval]
+        interval = periods[konnector.importInterval]
         # Check if interval value is more than 10 sec
         if interval? and interval > 10000
             @prepareNextCheck konnector, interval
@@ -53,6 +49,16 @@ class KonnectorPoller
             "incorrect importInterval value"
 
     prepareNextCheck: (konnector, interval) ->
+        # dirty hack for bypassing timeout max value
+        if konnector.importInterval is 'month'
+            if konnector.month?
+                delete konnector.month
+                interval = 7 * day
+            else
+                konnector['month'] = true
+                interval = 23 * day
+        else
+            interval = periods[konnector.importInterval]
         now = moment()
         nextUpdate = now.clone()
         nextUpdate = now.add interval, 'ms'
@@ -61,12 +67,9 @@ class KonnectorPoller
         timeouts[konnector.slug] = setTimeout @checkImport.bind(@, konnector, interval), interval
 
     checkImport: (konnector, interval) ->
-
-        if konnector.month?
-            delete konnector.month
-            @prepareNextCheck konnector, week
-        else
+        # if the timeout is not a month unfinished
+        if not konnector.month?
             importer konnector
-            @prepareNextCheck konnector, interval
+        @prepareNextCheck konnector, interval
 
 module.exports = new KonnectorPoller
