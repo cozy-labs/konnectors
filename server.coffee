@@ -14,7 +14,7 @@ params =
 
 americano.start params, (app, server) ->
     realtime = RealtimeAdapter server: server, ['konnector.update']
-    initKonnectors(patchKonnectors)
-    setTimeout ->
-        poller.start()
-    , 10000
+
+    initKonnectors ->
+        patchKonnectors -> poller.start()
+

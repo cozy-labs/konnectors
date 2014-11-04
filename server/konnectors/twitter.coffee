@@ -75,7 +75,7 @@ saveTweets = (requiredFields, callback) ->
     params = descending: true
 
     TwitterTweet.request 'byDate', params, (err, tweets) =>
-        if tweets.length > 0
+        if tweets.length? and tweets.length > 0
             start = moment(tweets[0].date)
         else
             start = moment().subtract('years', 10)

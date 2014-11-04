@@ -48,6 +48,10 @@ module.exports =
 
 
     import: (req, res, next) ->
+        # Handle timeouts
+        poller = require "../lib/konnector_poller"
+        poller.handleTimeout(req.body)
+
         if req.konnector.isImporting
             setTimeout =>
                 data =

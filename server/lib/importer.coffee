@@ -5,8 +5,6 @@ log = require('printit')
 Konnector = require '../models/konnector'
 
 module.exports = (konnector) ->
-    log.debug "fetching data ..."
-    log.debug konnector
 
     if konnector.fieldValues? and konnector.isImporting is false
         log.debug "Importing #{konnector.slug}"
