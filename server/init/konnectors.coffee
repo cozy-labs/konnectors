@@ -17,6 +17,15 @@ module.exports = (callback) ->
             konnectorHash = {}
             for konnector in konnectors
                 konnectorHash[konnector.slug] = konnector
+                # Reset isImporting state to false if value is true
+                # This happens when the app is crashing while importing
+                if konnector.isImporting is true
+                    konnector.isImporting = false
+                    konnector.save (err) ->
+                        if err
+                            log.debug "#{konnector.slug} | #{err}"
+                        else
+                            log.debug "#{konnector.slug}: reseting isImporting"
 
             konnectorsToCreate = []
 

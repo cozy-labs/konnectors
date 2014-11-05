@@ -33,19 +33,26 @@ module.exports = (done) ->
             if fieldValues? and unEncryptedFields.length isnt \
             Object.keys(parsedPasswords).length
 
-                log.info "password of #{konnector.slug} not complete"
+                # If fieldValues and model contain the same number of fields
+                # This prevents from patching when some fields are absent
+                if Object.keys(model.fields).length is \
+                Object.keys(fieldValues).length
+                    log.info "password of #{konnector.slug} not complete"
 
-                konnector.removeEncryptedFields model.fields
+                    konnector.removeEncryptedFields model.fields
 
-                log.info "#{konnector.slug} | patching password..."
+                    log.info "#{konnector.slug} | patching password..."
 
-                # updating fieldValues and password in database
-                konnector.save (err) ->
-                    if err
-                        log.info "#{konnector.slug} | #{err}"
-                    else
-                        log.info "#{konnector.slug} | patching succeeded"
+                    # updating fieldValues and password in database
+                    konnector.save (err) ->
+                        if err
+                            log.info "#{konnector.slug} | #{err}"
+                        else
+                            log.info "#{konnector.slug} | patching succeeded"
 
+                        callback()
+                else
+                    log.debug "Missing fields in #{konnector.slug}"
                     callback()
 
             else callback()
