@@ -83,7 +83,7 @@ module.exports =
     # Set start and end date to fetch all data.
     fetch: (requiredFields, callback) ->
         params = limit: 1, descending: true
-        log.debug 'fetch withings'
+        log.info 'import started'
 
         email = requiredFields.email
         password = requiredFields.password
@@ -96,7 +96,7 @@ module.exports =
         start = Math.ceil(start.valueOf() / 1000)
 
         @fetchData email, password, start, end, callback
-
+        log.info 'import finished'
 
     # Fetch data from withings website and save them as Cozy objects
     fetchData: (email, password, start, end, callback) =>
@@ -125,6 +125,9 @@ module.exports =
             # Authenticate user.
             request.post authUrl, form: data, (err, res, body) =>
                 return callback err if err
+                if not res.headers['set-cookie']?
+                    log.error 'Bad crendentials'
+                    return callback()
 
                 sessionid = \
                     res.headers['set-cookie'][1].split(';')[0].split('=')[1]

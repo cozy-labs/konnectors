@@ -83,12 +83,11 @@ saveTweets = (requiredFields, callback) ->
         log.info "Start import since #{start.format()}"
 
         saveTweetGroup client, path, start, tweets.length, (err, lastId) ->
+
             if err then callback err
             else
                 log.info "Import finished"
-
-            callback()
-
+                callback()
 
 saveTweetGroup = (client, path, start, tweetLength, callback) ->
 
@@ -97,7 +96,8 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
         if err
             callback err
         else if res.statusCode isnt 200
-            callback new Error 'Bad authentication data'
+            log.error 'Bad authentication data'
+            callback()
         else if tweetLength is tweets.length
             log.info 'No new tweet to import'
             callback()

@@ -79,7 +79,9 @@ logIn = (requiredFields, billInfos, data, next) ->
         url: loginUrl
 
     request options, (err, res, body) ->
-        return next err if err or not res.headers.location?
+        if err or not res.headers.location?
+            log.error "Bad credentials"
+            return next err
         location = res.headers.location
         parameters = location.split('?')[1]
         url = "#{billUrl}?#{parameters}"
@@ -93,8 +95,11 @@ logIn = (requiredFields, billInfos, data, next) ->
 
 # Parse the fetched page to extract bill data.
 parsePage = (requiredFields, bills, data, next) ->
+
     bills.fetched = []
-    return next if not data.html?
+
+    return next() if not data.html?
+
     $ = cheerio.load data.html
     $('.pane li').each ->
         amount = $($(this).find('strong').get(1)).html()
