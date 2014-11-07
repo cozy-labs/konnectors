@@ -142,31 +142,37 @@ module.exports =
                 email: login
                 pwd: password
                 service: "nudge"
-
         request.post url, data, (err, res, body) =>
             if err
                 callback err
             else if res.statusCode isnt 200
                 callback new Error "Cannot connect to Jawbone server."
             else
-                log.info 'Konnector successfully logged in.'
                 body = JSON.parse body
-                token = body.token
-
-                # Get CSV file containing all users data.
-                # Would be proper to use Jawbone API but it would be more
-                # painful too.
-                currentYear = moment().year()
-                startYear = parseInt year
-                recImport = ->
-                    if startYear <= currentYear
-                        importYear start, startYear, token, ->
-                            startYear++
-                            recImport()
+                if body.error?
+                    if body.error.msg?
+                        log.error body.error.msg
                     else
-                        callback()
+                        log.error 'Bad credentials'
+                    callback()
+                else
+                    log.info 'Konnector successfully logged in.'
+                    token = body.token
 
-                recImport()
+                    # Get CSV file containing all users data.
+                    # Would be proper to use Jawbone API but it would be more
+                    # painful too.
+                    currentYear = moment().year()
+                    startYear = parseInt year
+                    recImport = ->
+                        if startYear <= currentYear
+                            importYear start, startYear, token, ->
+                                startYear++
+                                recImport()
+                        else
+                            callback()
+
+                    recImport()
 
 
 # Import data for a given year. Row date should be after *start*.

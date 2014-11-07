@@ -105,7 +105,11 @@ module.exports =
                         date: date
                         vendor: 'B&You'
 
-                saveBills billInfos, requiredFields.folderPath, callback
+                if billInfos.length is 0
+                    log.error "Bad credentials"
+                    callback()
+                else
+                    saveBills billInfos, requiredFields.folderPath, callback
 
 
 createFile = (path, date, url, callback) ->
