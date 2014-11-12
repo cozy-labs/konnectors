@@ -63,7 +63,7 @@ module.exports =
             .use(logCommits)
             .args(requiredFields, {}, {})
             .fetch ->
-                log.info "Github commits imported"
+                log.info "Import finished"
                 callback()
 
 
@@ -80,16 +80,22 @@ getEvents = (requiredFields, commits, data, next) ->
     data.commits = []
     log.info "Fetch commits sha from events..."
     async.eachSeries [1..10], (page, callback) ->
-        log.info "Fetch events page #{page}..."
+
         client.get path + page, (err, res, events) ->
             unless err?
-                for event in events
-                    if event.type is 'PushEvent'
-                        for commit in event.payload.commits
-                            data.commits.push commit
+                unless events.message is 'Bad credentials'
+                    log.info "Fetch events page #{page}..."
+                    for event in events
+                        if event.type is 'PushEvent'
+                            for commit in event.payload.commits
+                                data.commits.push commit
+                    callback()
+                else
+                    log.error 'Bad credentials'
+                    callback()
             else
                 log.error err
-            callback()
+                callback()
     , (err) ->
         log.info "All events data fetched."
         next()

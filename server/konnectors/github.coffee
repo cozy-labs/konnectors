@@ -59,7 +59,7 @@ module.exports =
             .use(saveDataAndFile log, CodeBill, 'github', ['bill'])
             .args(requiredFields, {}, {})
             .fetch ->
-                log.info "Github bills imported"
+                log.info "Import finished"
                 callback()
 
 
@@ -87,6 +87,7 @@ logIn = (requiredFields, billInfos, data, next) ->
         url: "https://github.com/settings/billing"
 
     request logInOptions, (err, res, body) ->
+        if err then next err
         $ = cheerio.load body
         inputs = $('#login input')
         if inputs.length > 2
@@ -100,7 +101,6 @@ logIn = (requiredFields, billInfos, data, next) ->
                 if err then next err
                 else
                     data.html = body
-                    log.info 'login succeeded'
                     next()
 
 
@@ -125,4 +125,6 @@ parsePage = (requiredFields, bills, data, next) ->
             amount: amount
             pdfurl: pdfurl
             plan: plan
+    if bills.fetched.length is 0
+        log.error "No bills retrieved"
     next()

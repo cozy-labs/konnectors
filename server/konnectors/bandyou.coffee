@@ -105,7 +105,11 @@ module.exports =
                         date: date
                         vendor: 'B&You'
 
-                saveBills billInfos, requiredFields.folderPath, callback
+                if billInfos.length is 0
+                    log.error "No bills retrieved"
+                    callback()
+                else
+                    saveBills billInfos, requiredFields.folderPath, callback
 
 
 createFile = (path, date, url, callback) ->
@@ -192,5 +196,5 @@ saveBills = (billInfos, path, callback) ->
                             log.info "bill for #{billLabel} saved."
                         callback()
         , (err) ->
-            log.info 'B&You bills imported.'
+            log.info 'Import finished'
             callback()
