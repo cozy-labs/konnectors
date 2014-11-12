@@ -63,7 +63,7 @@ module.exports =
             .use(logCommits)
             .args(requiredFields, {}, {})
             .fetch ->
-                log.info "Github commits imported"
+                log.info "Import finished"
                 callback()
 
 

@@ -126,7 +126,7 @@ module.exports =
             request.post authUrl, form: data, (err, res, body) =>
                 return callback err if err
                 if not res.headers['set-cookie']?
-                    log.error 'Bad crendentials'
+                    log.error 'Authentification error'
                     return callback()
 
                 sessionid = \

@@ -59,7 +59,7 @@ module.exports =
             .use(saveDataAndFile log, InternetBill, 'free', ['facture'])
             .args(requiredFields, {}, {})
             .fetch ->
-                log.info "Free bills imported"
+                log.info "Import finished"
                 callback()
 
 # Procedure to login to Free website.
@@ -80,7 +80,7 @@ logIn = (requiredFields, billInfos, data, next) ->
 
     request options, (err, res, body) ->
         if err or not res.headers.location?
-            log.error "Bad credentials"
+            log.error "Authentification error"
             return next err
         location = res.headers.location
         parameters = location.split('?')[1]

@@ -106,7 +106,7 @@ module.exports =
                         vendor: 'B&You'
 
                 if billInfos.length is 0
-                    log.error "Bad credentials"
+                    log.error "No bills retrieved"
                     callback()
                 else
                     saveBills billInfos, requiredFields.folderPath, callback
@@ -196,5 +196,5 @@ saveBills = (billInfos, path, callback) ->
                             log.info "bill for #{billLabel} saved."
                         callback()
         , (err) ->
-            log.info 'B&You bills imported.'
+            log.info 'Import finished'
             callback()

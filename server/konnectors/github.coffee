@@ -59,7 +59,7 @@ module.exports =
             .use(saveDataAndFile log, CodeBill, 'github', ['bill'])
             .args(requiredFields, {}, {})
             .fetch ->
-                log.info "Github bills imported"
+                log.info "Import finished"
                 callback()
 
 
@@ -126,5 +126,5 @@ parsePage = (requiredFields, bills, data, next) ->
             pdfurl: pdfurl
             plan: plan
     if bills.fetched.length is 0
-        log.error "Bad credentials"
+        log.error "No bills retrieved"
     next()
