@@ -8,6 +8,7 @@ module.exports = Konnector = americano.getModel 'Konnector',
     fieldValues: Object
     password: type: String, default: '{}'
     lastImport: Date
+    lastAutoImport: Date
     isImporting: type: Boolean, default: false
     importInterval: type: String, default: 'none'
 
