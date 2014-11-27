@@ -11,6 +11,12 @@ module.exports = (konnector) ->
         model = require "../konnectors/#{konnector.slug}"
         konnector.import konnector, model.fields, (err) ->
             if err
-                log.info err
+                log.error err
     else
         log.debug "Connector #{konnector.slug} already importing"
+    console.log konnector
+    data =
+        lastAutoImport: new Date()
+    konnector.updateAttributes data, (err) ->
+        if err
+            log.error err
