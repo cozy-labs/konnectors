@@ -1,5 +1,6 @@
 should = require 'should'
 sinon = require 'sinon'
+moment = require 'moment'
 Konnector = require '../server/models/konnector'
 poller = require '../server/lib/konnector_poller'
 
@@ -21,6 +22,7 @@ describe 'Testing konnector poller', ->
             data =
                 isImporting: false
                 importInterval: 'week'
+                lastAutoImport: moment().format()
                 slug: 'test'
             poller.create(data)
             @spy.callCount.should.equal 1
