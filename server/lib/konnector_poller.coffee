@@ -118,15 +118,21 @@ class KonnectorPoller
 
     prepareNextCheck: (konnector, interval) ->
 
-        # dirty hack for bypassing timeout max value
+        ## dirty hack for bypassing timeout max value
+
+        # If time exists, assign that value to interval
         if konnector.time?
             interval = konnector.time
 
+        # if interval is more than 23 days,
+        # save the excess in konnector['time']
         if interval > (23 * day)
             konnector['time'] = interval - (23 * day)
             interval = 23 * day
         else
+            # if interval value is less than 23 days,
             if konnector.time?
+                # time is no longer needed
                 delete konnector.time
 
         @createTimeout konnector, interval
@@ -136,15 +142,19 @@ class KonnectorPoller
         now = moment()
         nextUpdate = now.clone()
         nextUpdate = now.add interval, 'ms'
+
         log.info "Next check of konnector #{konnector.slug} on " +
         "#{nextUpdate.format(format)}"
+        # Create the timeout and place it timeouts
         timeouts[konnector.slug] = setTimeout @checkImport.bind(@, konnector, interval), interval
 
     checkImport: (konnector, interval) ->
 
-        # if the timeout is unfinished
+        # if the timeout is unfinished, do not import
         if not konnector.time?
             importer konnector
+
+            # Update if actual interval is not the same in the konnector
             interval = periods[konnector.importInterval]
 
         @prepareNextCheck konnector, interval
