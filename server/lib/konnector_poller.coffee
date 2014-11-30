@@ -121,13 +121,13 @@ class KonnectorPoller
         # dirty hack for bypassing timeout max value
         if konnector.time?
             interval = konnector.time
-            console.log "time? #{interval}"
-            delete konnector.time
 
         if interval > (23 * day)
             konnector['time'] = interval - (23 * day)
             interval = 23 * day
-            console.log "time: #{interval}"
+        else
+            if konnector.time?
+                delete konnector.time
 
         @createTimeout konnector, interval
 
