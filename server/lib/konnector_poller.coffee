@@ -35,11 +35,6 @@ class KonnectorPoller
                     lastImport = moment(konnector.lastImport)
                     lastAutoImport = moment(konnector.lastAutoImport)
 
-                    # debug
-                    console.log "now = #{now.format(format)}"
-                    console.log "lastimport = #{lastImport.format(format)}"
-                    console.log "lastAutoimport = #{lastAutoImport.format(format)}"
-
                     # if we missed an import interval
                     if (now.valueOf() - lastAutoImport.valueOf()) > importInterval
                         log.debug "#{konnector.slug} missed an import interval"
@@ -57,7 +52,8 @@ class KonnectorPoller
 
                         nextUpdate = now.clone()
                         nextUpdate = nextUpdate.add interval, 'ms'
-                        console.log "nextupdate = #{nextUpdate.format(format)}"
+                        log.debug "#{konnector.slug} | Next update : "
+                        log.debug "#{nextUpdate.format(format)}"
 
                         @prepareNextCheck konnector, interval
                         callback()
@@ -71,7 +67,8 @@ class KonnectorPoller
 
                         nextUpdate = now.clone()
                         nextUpdate = nextUpdate.add interval, 'ms'
-                        log.debug "nextupdate = #{nextUpdate.format(format)}"
+                        log.debug "#{konnector.slug} | Next update : "
+                        log.debug "#{nextUpdate.format(format)}"
 
                         @prepareNextCheck konnector, interval
                         callback()
