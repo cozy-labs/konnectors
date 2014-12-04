@@ -100,8 +100,6 @@ class KonnectorPoller
 
                         diff = firstImportDate.valueOf() - now.valueOf()
 
-                        console.log moment(firstImportDate).isValid()
-
                         # We set the date of the first import
                         data =
                             lastAutoImport: firstImportDate
