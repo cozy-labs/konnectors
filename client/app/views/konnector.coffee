@@ -60,15 +60,30 @@ module.exports = class KonnectorView extends BaseView
             fieldHtml += "<option value=\"#{key}\" #{selected}>#{value}</option>"
 
         fieldHtml += """
-</select></div>
+
+</select>
+<span id="#{slug}-firstimport"><span>Date</span>
+<input id="#{slug}-import-date" class="autoimport" maxlength="8" type="text"></input>
+</span>
+</div>
 </div>
 """
         @$('.fields').append fieldHtml
 
+        @$("##{slug}-import-date").datepicker({minDate: 1, dateFormat: "dd-mm-yy" })
+
+        @$("##{slug}-autoimport-input").change =>
+            if @$("##{slug}-autoimport-input").val() isnt 'none'
+                @$("##{slug}-firstimport").show()
+            else
+                @$("##{slug}-firstimport").hide()
+
     onImportClicked: =>
         fieldValues = {}
-
         slug = @model.get 'slug'
+
+        importDate = $("##{slug}-import-date").val()
+        fieldValues['date'] = importDate
 
         for name, val of @model.get 'fields'
             fieldValues[name] = $("##{slug}-#{name}-input").val()
@@ -77,7 +92,6 @@ module.exports = class KonnectorView extends BaseView
         importInterval = $("##{slug}-autoimport-input").val()
 
         @model.set 'importInterval', importInterval
-        console.log importInterval
         @model.save
             success: =>
                 alert "import succeeded"

@@ -52,8 +52,8 @@ class KonnectorPoller
 
                         nextUpdate = now.clone()
                         nextUpdate = nextUpdate.add interval, 'ms'
-                        log.debug "#{konnector.slug} | Next update : "
-                        log.debug "#{nextUpdate.format(format)}"
+                        log.debug "#{konnector.slug} | Next update : " +
+                        "#{nextUpdate.format(format)}"
 
                         @prepareNextCheck konnector, interval
                         callback()
@@ -63,12 +63,12 @@ class KonnectorPoller
                         #interval = (lastAutoImport + importInterval) - now
                         interval = (lastAutoImport.valueOf() + importInterval)
                         interval -= now.valueOf()
-                        log.debug "#{konnector.slug}: didnt miss interval"
+                        log.debug "#{konnector.slug} didnt miss an interval"
 
                         nextUpdate = now.clone()
                         nextUpdate = nextUpdate.add interval, 'ms'
-                        log.debug "#{konnector.slug} | Next update : "
-                        log.debug "#{nextUpdate.format(format)}"
+                        log.debug "#{konnector.slug} | Next update : " +
+                        "#{nextUpdate.format(format)}"
 
                         @prepareNextCheck konnector, interval
                         callback()
@@ -91,19 +91,48 @@ class KonnectorPoller
                     delete timeouts[konnector.slug]
 
                 if konnector.importInterval isnt 'none'
-                    # Create/Update lastAutoImport in database
-                    data =
-                        lastAutoImport: moment()
 
-                    savedKonnector.updateAttributes data, (err) =>
-                        if err
-                            log.error err
+                    diff = 0
+                    # if date is present in fieldValues
+                    if konnector.fieldValues.date?
+                        now = moment()
+                        firstImportDate = moment(konnector.fieldValues.date, "DD-MM-YYYY")
 
-                        @create konnector
+                        diff = firstImportDate.valueOf() - now.valueOf()
 
-    create: (konnector) ->
+                        console.log moment(firstImportDate).isValid()
 
-        interval = periods[konnector.importInterval]
+                        # We set the date of the first import
+                        data =
+                            lastAutoImport: firstImportDate
+
+                        # Create/Update lastAutoImport in database
+                        savedKonnector.updateAttributes data, (err) =>
+                            if err
+                                log.error err
+
+                        log.debug "First import set to " +
+                        "#{firstImportDate.format(format)}"
+                    else
+
+                        # We set the current time
+                        data =
+                            lastAutoImport: moment()
+
+                        # Create/Update lastAutoImport in database
+                        savedKonnector.updateAttributes data, (err) =>
+                            if err
+                                log.error err
+
+                    @create konnector, diff
+
+    create: (konnector, diff) ->
+
+        # if diff is present and valid
+        if diff > 0
+            interval = diff
+        else
+            interval = periods[konnector.importInterval]
 
         # Check if interval value is more than 10 sec
         # And if the value is in the periods list
