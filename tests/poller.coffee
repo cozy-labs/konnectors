@@ -1,5 +1,6 @@
 should = require 'should'
 sinon = require 'sinon'
+moment = require 'moment'
 Konnector = require '../server/models/konnector'
 poller = require '../server/lib/konnector_poller'
 
@@ -18,9 +19,10 @@ describe 'Testing konnector poller', ->
             @sandbox.restore()
 
         it 'When the cron function is called', ->
-            data =
+            data = new Konnector
                 isImporting: false
                 importInterval: 'week'
+                lastAutoImport: moment().format()
                 slug: 'test'
             poller.create(data)
             @spy.callCount.should.equal 1
@@ -45,7 +47,7 @@ describe 'Testing konnector poller', ->
             @sandbox.restore()
 
         it 'When the cron function is called', ->
-            data =
+            data = new Konnector
                 isImporting: false
                 importInterval: 'day'
                 slug: 'test'
@@ -72,7 +74,7 @@ describe 'Testing konnector poller', ->
             @sandbox.restore()
 
         it 'When the cron function is called', ->
-            data =
+            data = new Konnector
                 isImporting: false
                 importInterval: 'hour'
                 slug: 'test'
@@ -99,7 +101,7 @@ describe 'Testing konnector poller', ->
             @sandbox.restore()
 
         it 'When the cron function is called', ->
-            data =
+            data = new Konnector
                 isImporting: false
                 importInterval: 'month'
                 slug: 'test'

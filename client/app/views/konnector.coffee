@@ -62,7 +62,7 @@ module.exports = class KonnectorView extends BaseView
         fieldHtml += """
 </select></div>
 </div>
- """
+"""
         @$('.fields').append fieldHtml
 
     onImportClicked: =>
