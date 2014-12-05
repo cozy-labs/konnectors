@@ -526,6 +526,7 @@ module.exports = KonnectorView = (function(_super) {
     });
     this.$("#" + slug + "-first-import-link").click((function(_this) {
       return function() {
+        event.preventDefault();
         return _this.$("#" + slug + "-first-import-date").toggle();
       };
     })(this));
