@@ -79,6 +79,7 @@ module.exports = class KonnectorView extends BaseView
         @$("##{slug}-first-import-date").hide()
         @$("##{slug}-import-date").datepicker({minDate: 1, dateFormat: "dd-mm-yy" })
         @$("##{slug}-first-import-link").click =>
+            event.preventDefault()
             @$("##{slug}-first-import-date").toggle()
         @$("##{slug}-autoimport-input").change =>
             if @$("##{slug}-autoimport-input").val() isnt 'none'
