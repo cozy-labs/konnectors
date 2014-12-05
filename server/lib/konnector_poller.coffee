@@ -35,9 +35,9 @@ class KonnectorPoller
                     lastImport = moment(konnector.lastImport)
                     lastAutoImport = moment(konnector.lastAutoImport)
 
-                    # if we missed an import interval
+                    # if we missed an importation cycle
                     if (now.valueOf() - lastAutoImport.valueOf()) > importInterval
-                        log.debug "#{konnector.slug} missed an import interval"
+                        log.debug "#{konnector.slug} missed an importation cycle"
 
                         # calculate the supposed last Auto-import
                         importTime = lastAutoImport.valueOf() + importInterval
@@ -63,7 +63,7 @@ class KonnectorPoller
                         #interval = (lastAutoImport + importInterval) - now
                         interval = (lastAutoImport.valueOf() + importInterval)
                         interval -= now.valueOf()
-                        log.debug "#{konnector.slug} didnt miss an interval"
+                        log.debug "#{konnector.slug} didn't miss an importation cycle"
 
                         nextUpdate = now.clone()
                         nextUpdate = nextUpdate.add interval, 'ms'
@@ -174,7 +174,7 @@ class KonnectorPoller
 
     checkImport: (konnector, interval) ->
 
-        # if the timeout is unfinished, do not import
+        # if there is time left, do not import
         if not konnector.time?
             importer konnector
 
