@@ -62,21 +62,29 @@ module.exports = class KonnectorView extends BaseView
         fieldHtml += """
 
 </select>
-<span id="#{slug}-firstimport"><span>Date</span>
+<span id="#{slug}-first-import">
+<span id="#{slug}-first-import-text">
+<a id="#{slug}-first-import-link" href="#">Select a starting date</a></span>
+<span id="#{slug}-first-import-date"><span>Date</span>
 <input id="#{slug}-import-date" class="autoimport" maxlength="8" type="text"></input>
-</span>
+</span></span>
 </div>
 </div>
 """
         @$('.fields').append fieldHtml
-
+        if @$("##{slug}-autoimport-input").val() isnt 'none'
+            @$("##{slug}-first-import").show()
+        else
+            @$("##{slug}-first-import").hide()
+        @$("##{slug}-first-import-date").hide()
         @$("##{slug}-import-date").datepicker({minDate: 1, dateFormat: "dd-mm-yy" })
-
+        @$("##{slug}-first-import-link").click =>
+            @$("##{slug}-first-import-date").toggle()
         @$("##{slug}-autoimport-input").change =>
             if @$("##{slug}-autoimport-input").val() isnt 'none'
-                @$("##{slug}-firstimport").show()
+                @$("##{slug}-first-import").show()
             else
-                @$("##{slug}-firstimport").hide()
+                @$("##{slug}-first-import").hide()
 
     onImportClicked: =>
         fieldValues = {}
