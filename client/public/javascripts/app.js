@@ -512,18 +512,29 @@ module.exports = KonnectorView = (function(_super) {
       selected = importInterval === key ? 'selected' : '';
       fieldHtml += "<option value=\"" + key + "\" " + selected + ">" + value + "</option>";
     }
-    fieldHtml += "\n</select>\n<span id=\"" + slug + "-firstimport\"><span>Date</span>\n<input id=\"" + slug + "-import-date\" class=\"autoimport\" maxlength=\"8\" type=\"text\"></input>\n</span>\n</div>\n</div>";
+    fieldHtml += "\n</select>\n<span id=\"" + slug + "-first-import\">\n<span id=\"" + slug + "-first-import-text\">\n<a id=\"" + slug + "-first-import-link\" href=\"#\">Select a starting date</a></span>\n<span id=\"" + slug + "-first-import-date\"><span>Date</span>\n<input id=\"" + slug + "-import-date\" class=\"autoimport\" maxlength=\"8\" type=\"text\"></input>\n</span></span>\n</div>\n</div>";
     this.$('.fields').append(fieldHtml);
+    if (this.$("#" + slug + "-autoimport-input").val() !== 'none') {
+      this.$("#" + slug + "-first-import").show();
+    } else {
+      this.$("#" + slug + "-first-import").hide();
+    }
+    this.$("#" + slug + "-first-import-date").hide();
     this.$("#" + slug + "-import-date").datepicker({
       minDate: 1,
       dateFormat: "dd-mm-yy"
     });
+    this.$("#" + slug + "-first-import-link").click((function(_this) {
+      return function() {
+        return _this.$("#" + slug + "-first-import-date").toggle();
+      };
+    })(this));
     return this.$("#" + slug + "-autoimport-input").change((function(_this) {
       return function() {
         if (_this.$("#" + slug + "-autoimport-input").val() !== 'none') {
-          return _this.$("#" + slug + "-firstimport").show();
+          return _this.$("#" + slug + "-first-import").show();
         } else {
-          return _this.$("#" + slug + "-firstimport").hide();
+          return _this.$("#" + slug + "-first-import").hide();
         }
       };
     })(this));
