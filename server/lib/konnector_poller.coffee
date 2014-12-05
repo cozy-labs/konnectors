@@ -94,7 +94,7 @@ class KonnectorPoller
 
                     diff = 0
                     # if date is present in fieldValues
-                    if konnector.fieldValues.date?
+                    if konnector.fieldValues.date? and konnector.fieldValues.date is not ''
                         now = moment()
                         firstImportDate = moment(konnector.fieldValues.date, "DD-MM-YYYY")
 
