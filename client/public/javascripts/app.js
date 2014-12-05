@@ -527,7 +527,8 @@ module.exports = KonnectorView = (function(_super) {
     this.$("#" + slug + "-first-import-link").click((function(_this) {
       return function() {
         event.preventDefault();
-        return _this.$("#" + slug + "-first-import-date").toggle();
+        _this.$("#" + slug + "-first-import-date").show();
+        return _this.$("#" + slug + "-first-import-text").hide();
       };
     })(this));
     return this.$("#" + slug + "-autoimport-input").change((function(_this) {
