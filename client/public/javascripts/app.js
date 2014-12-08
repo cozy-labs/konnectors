@@ -512,14 +512,42 @@ module.exports = KonnectorView = (function(_super) {
       selected = importInterval === key ? 'selected' : '';
       fieldHtml += "<option value=\"" + key + "\" " + selected + ">" + value + "</option>";
     }
-    fieldHtml += "</select></div>\n</div>";
-    return this.$('.fields').append(fieldHtml);
+    fieldHtml += "\n</select>\n<span id=\"" + slug + "-first-import\">\n<span id=\"" + slug + "-first-import-text\">\n<a id=\"" + slug + "-first-import-link\" href=\"#\">Select a starting date</a></span>\n<span id=\"" + slug + "-first-import-date\"><span>Date</span>\n<input id=\"" + slug + "-import-date\" class=\"autoimport\" maxlength=\"8\" type=\"text\"></input>\n</span></span>\n</div>\n</div>";
+    this.$('.fields').append(fieldHtml);
+    if (this.$("#" + slug + "-autoimport-input").val() !== 'none') {
+      this.$("#" + slug + "-first-import").show();
+    } else {
+      this.$("#" + slug + "-first-import").hide();
+    }
+    this.$("#" + slug + "-first-import-date").hide();
+    this.$("#" + slug + "-import-date").datepicker({
+      minDate: 1,
+      dateFormat: "dd-mm-yy"
+    });
+    this.$("#" + slug + "-first-import-link").click((function(_this) {
+      return function() {
+        event.preventDefault();
+        _this.$("#" + slug + "-first-import-date").show();
+        return _this.$("#" + slug + "-first-import-text").hide();
+      };
+    })(this));
+    return this.$("#" + slug + "-autoimport-input").change((function(_this) {
+      return function() {
+        if (_this.$("#" + slug + "-autoimport-input").val() !== 'none') {
+          return _this.$("#" + slug + "-first-import").show();
+        } else {
+          return _this.$("#" + slug + "-first-import").hide();
+        }
+      };
+    })(this));
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var fieldValues, importInterval, name, slug, val, _ref;
+    var fieldValues, importDate, importInterval, name, slug, val, _ref;
     fieldValues = {};
     slug = this.model.get('slug');
+    importDate = $("#" + slug + "-import-date").val();
+    fieldValues['date'] = importDate;
     _ref = this.model.get('fields');
     for (name in _ref) {
       val = _ref[name];
@@ -529,7 +557,6 @@ module.exports = KonnectorView = (function(_super) {
     importInterval = 'none';
     importInterval = $("#" + slug + "-autoimport-input").val();
     this.model.set('importInterval', importInterval);
-    console.log(importInterval);
     return this.model.save({
       success: (function(_this) {
         return function() {

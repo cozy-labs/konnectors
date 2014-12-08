@@ -51,7 +51,9 @@ module.exports =
         # Handle timeouts
         poller = require "../lib/konnector_poller"
         poller.handleTimeout(req.body)
-
+        # Delete unused variable
+        if req.body.fieldValues.date?
+            delete req.body.fieldValues.date
         if req.konnector.isImporting
             setTimeout =>
                 data =
