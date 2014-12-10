@@ -8,7 +8,6 @@ Konnector = require '../models/konnector'
 module.exports = (done) ->
     Konnector.all (err, konnectors) ->
 
-        console.log 'here'
         # For some reason, async.eachSeries doesn't call its callback if
         # the array is empty so we do it manually
         return done() if konnectors.length is 0

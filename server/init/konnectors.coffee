@@ -18,12 +18,12 @@ module.exports = (done) ->
             async.eachSeries konnectors, (konnector, callback) ->
                 konnectorHash[konnector.slug] = konnector
                 konnectorResetValue konnector, callback
+
             , (err) ->
                 if err
                     log.error err
                 konnectorsToCreate = getKonnectorsToCreate konnectorHash
-                console.log "konnectors existing : #{Object.keys(konnectorHash).length}"
-                console.log "konnectors to create : #{konnectorsToCreate.length}"
+
                 return done() if konnectorsToCreate.length is 0
                 createKonnectors konnectorsToCreate, done
 
@@ -54,7 +54,6 @@ getKonnectorsToCreate = (konnectorHash) ->
 
 createKonnectors = (konnectorsToCreate, done) ->
 
-    #console.log konnectorHash
     async.eachSeries konnectorsToCreate, (konnector, callback) ->
 
         initializeKonnector konnector, callback
@@ -64,15 +63,13 @@ createKonnectors = (konnectorsToCreate, done) ->
         done()
 
 initializeKonnector = (konnector, callback) ->
-    console.log "name : #{konnector.slug}"
 
     konnector.init (err) ->
         if err
-            console.log "#{konnector.slug} : err"
             log.error err
             callback err
         else
-            console.log "create : #{konnector.slug}"
+            log.debug "creating #{konnector.slug}"
             Konnector.create konnector, (err) ->
                 log.error err if err
                 callback err
