@@ -525,7 +525,7 @@ module.exports = KonnectorView = (function(_super) {
       dateFormat: "dd-mm-yy"
     });
     this.$("#" + slug + "-first-import-link").click((function(_this) {
-      return function() {
+      return function(event) {
         event.preventDefault();
         _this.$("#" + slug + "-first-import-date").show();
         return _this.$("#" + slug + "-first-import-text").hide();
