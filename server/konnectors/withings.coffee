@@ -71,14 +71,13 @@ module.exports =
 
     # Define model requests.
     init: (callback) ->
-        map = (doc) -> emit doc.date, doc
-        Weight.defineRequest 'byDate', map, (err) ->
-            callback err if err
-            HeartBeat.defineRequest 'byDate', map, (err) ->
-                callback err
-                BloodPressure.defineRequest 'byDate', map, (err) ->
-                    callback err
 
+        map = (doc) -> emit doc.date, doc
+        async.series [
+            (done) -> Weight.defineRequest 'byDate', map, done
+            (done) -> HeartBeat.defineRequest 'byDate', map, done
+            (done) -> BloodPressure.defineRequest 'byDate', map, done
+        ], callback
 
     # Set start and end date to fetch all data.
     fetch: (requiredFields, callback) ->

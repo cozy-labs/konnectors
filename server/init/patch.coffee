@@ -57,4 +57,5 @@ module.exports = (done) ->
 
             else callback()
 
-    , done()
+        , (err) ->
+            done()
