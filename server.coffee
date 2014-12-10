@@ -12,7 +12,14 @@ params =
     host: process.env.HOST or '127.0.0.1'
     root: __dirname
 
+hello = (a) ->
+    console.log 'ok'
+
 americano.start params, (app, server) ->
     realtime = RealtimeAdapter server: server, ['konnector.update']
     initKonnectors ->
-        patchKonnectors -> poller.start()
+        console.log "A"
+        patchKonnectors ->
+            console.log "B"
+            poller.start()
+
