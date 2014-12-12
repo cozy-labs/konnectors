@@ -78,6 +78,9 @@
     },
     "Commit": {
       "description": "Commit infos imported from Github."
+    },
+    "Isen": {
+      "description": "Import data from ISEN."
     }
   },
   "cozy-displayName": "Konnectors"
