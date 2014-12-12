@@ -87,6 +87,7 @@ fetchIcs = (requiredFields, callback) ->
                 callback()
             else
                 icsData = parseIcs body
+
                 if icsData.length is 0
                     log.error 'No urls found in ics file'
                     callback()
@@ -102,6 +103,7 @@ parseIcs = (data) ->
     name = 'DESCRIPTION'
     match = 'https://web.isen-bretagne.fr/cc/jsonFileList/'
     urls = []
+
     for value in icsData
         if value.substring(0,name.length) is name
             valueArray = value.split('\\n')
@@ -121,7 +123,9 @@ fetchJson = (requiredFields, url, callback) ->
     options =
         method: 'GET'
     options.uri = url
+
     request options, (err, res, body) ->
+        #try to Json.parse the data
         try
             data = JSON.parse body
 
@@ -151,6 +155,8 @@ parseJson = (data, callback) ->
         callback()
 
 parseFile = (object, path, callback) ->
+
+    # if all the required values are present
     if object['dateLastModified']? and object['fileName']? and object['url']?
         createFile object['fileName'], object['url'], object['dateLastModified'], path, (err) ->
             if err
