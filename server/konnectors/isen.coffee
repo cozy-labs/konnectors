@@ -5,11 +5,12 @@ moment = require 'moment'
 cheerio = require 'cheerio'
 async = require 'async'
 fs = require 'fs'
+Folder = require '../models/folder'
+File = require '../models/file'
 
 log = require('printit')
     prefix: "Isen"
     date: true
-
 
 # Models
 
@@ -18,21 +19,7 @@ Isen = americano.getModel 'Isen',
     fileId: String
 
 Isen.all = (callback) ->
-    PhoneBill.request 'byDate', callback
-
-File = americano.getModel 'File',
-    path: String
-    name: String
-    creationDate: String
-    lastModification: String
-    class: String
-    size: Number
-    binary: Object
-    modificationHistory: Object
-    clearance: (x) -> x
-    tags: (x) -> x
-
-# Konnector
+    Isen.request 'byDate', callback
 
 module.exports =
 
@@ -43,8 +30,7 @@ module.exports =
 
     fields:
         firstname: "text",
-        lastname: "text",
-        folderPath: "folder"
+        lastname: "text"
     models:
         isen: Isen
 
@@ -57,10 +43,11 @@ module.exports =
     fetch: (requiredFields, callback) ->
 
         log.info "Import started"
-
         fetchIcs requiredFields, (err) ->
             if err
                 log.error
+            else
+                log.info "Import finished"
             callback()
 
 
@@ -74,12 +61,14 @@ fetchIcs = (requiredFields, callback) ->
         jar: true
 
     if firstname isnt '' and lastname isnt ''
+
         fetchUrl = "#{baseUrl}/#{firstname}.#{lastname}.ics"
+        log.debug "Fetching #{fetchUrl}"
         options.uri = fetchUrl
         request options, (err, res, body) ->
 
-            console.log fetchUrl
             if err?
+                log.error err
                 log.error "No files retrieved"
                 callback()
             else if res.statusCode is 404
@@ -99,6 +88,8 @@ fetchIcs = (requiredFields, callback) ->
         callback()
 
 parseIcs = (data) ->
+
+    log.debug 'Parsing file...'
     icsData = data.split('\n')
     name = 'DESCRIPTION'
     match = 'https://web.isen-bretagne.fr/cc/jsonFileList/'
@@ -124,97 +115,134 @@ fetchJson = (requiredFields, url, callback) ->
         method: 'GET'
     options.uri = url
 
+    log.debug "Retrieving file : #{url}"
     request options, (err, res, body) ->
         #try to Json.parse the data
         try
             data = JSON.parse body
 
         catch error
-            log.error "Retrieving file : JSON.parse error : #{error}"
-            callback()
+            #log.error "JSON.parse error : #{error}"
+            callback error
 
-        parseJson data, callback
+        if data?
+            checkKeys data, callback
+
+checkKeys = (data, callback) ->
+    if data['File(s)']? and data['course']? and data['year']? \
+    and data['curriculum']?
+        processFolder data, callback
+    else
+        log.error 'Error : Missing data in the file'
+        callback()
+
+processFolder = (data, callback) ->
+
+    # Check if folder arboresecense is present, otherwise create it
+    # Structure is year/ curriculum / course
+    year = data['year']
+    curriculum = data['curriculum']
+    course = data['course']
+    checkAndCreateFolder year, '', (err) ->
+        if err
+            log.error "error: #{err}"
+            callback()
+        else
+            checkAndCreateFolder curriculum, '/' + year, (err) ->
+                if err
+                    log.error "error: #{err}"
+                    callback()
+                else
+                    checkAndCreateFolder course, '/' + year + '/' + curriculum, (err) ->
+                        if err
+                            log.error "error: #{err}"
+                            callback()
+                        else
+                            parseJson data, callback
+
+checkAndCreateFolder = (name, path, callback) ->
+    Folder.allPath (err, folders) ->
+
+        fullpath = path + '/' + name
+
+        # if the folder exists
+        if fullpath in folders
+            callback null
+        # Otherwise create it
+        else
+            now = moment().toISOString()
+            document =
+                name: name
+                path: path
+                creationDate: now
+                lastModification: now
+                class: 'document'
+
+            Folder.createNewFolder document, (err, newFolder) ->
+                if err
+                    callback err
+                else
+                    log.info "folder #{name} created"
+                    callback null
 
 parseJson = (data, callback) ->
 
-    name = 'File(s)'
-    if data[name]? and data['course']?
-        async.eachSeries data[name], (object, cb) ->
-            parseFile object, data['course'], (err) ->
-                if err
-                    log.error err
-                    cb()
-                else
-                    log.info "#{object['fileName']} imported"
-                    cb()
-        , (err) ->
-            log.info 'Import of file finished'
-            callback()
-    else
-        console.log 'Error : Missing data in the file'
+    async.eachSeries data['File(s)'], (object, cb) ->
+        parseFile object, data, (err) ->
+            if err
+                log.error err
+                cb()
+            else
+                cb()
+    , (err) ->
+        log.info 'Import of file finished'
         callback()
 
-parseFile = (object, path, callback) ->
+
+parseFile = (object, data, callback) ->
 
     # if all the required values are present
     if object['dateLastModified']? and object['fileName']? and object['url']?
-        createFile object['fileName'], object['url'], object['dateLastModified'], path, (err) ->
-            if err
-                log.error err
-                callback()
+
+        name = object['fileName']
+        path = '/' + data['year'] + '/' + data['curriculum'] + '/' + data['course']
+        fullPath = "#{path}/#{name}"
+        date = moment(object['dateLastModified'],'YYYY-MM-DD hh:mm:ss').toISOString()
+
+        File.byFullPath key: fullPath, (err, sameFiles) ->
+            return callback err if err
+            # there is already a file with the same name
+            if sameFiles.length > 0
+
+                #log.debug "#{fullPath} exists"
+                file = sameFiles[0]
+                # if the new file is newer
+                if file.lastModification < date
+                    # destroy it
+                    file.destroyWithBinary (err) ->
+                        if err
+                            log.error "Cannot destroy #{name}"
+                            callback()
+                        else
+                            log.debug "#{name} deleted"
+                            File.createNew name, path, date, object['url'], [], (err) ->
+                                if err
+                                    log.error err
+                                    callback()
+                                else
+                                    log.info "#{object['fileName']} imported"
+                                    callback()
+                else
+                    log.debug "skipping #{name}"
+                    callback()
             else
-                callback()
+                File.createNew name, path, date, object['url'], [], (err) ->
+                    if err
+                        log.error err
+                        callback()
+                    else
+                        log.info "#{object['fileName']} imported"
+                        callback()
     else
         log.error 'error: Missing keys'
         callback()
-
-createFile = (fileName, url, date, path, callback) ->
-
-    now = moment().toISOString()
-    filePath = "/tmp/#{fileName}"
-
-    data =
-        name: fileName
-        path: path
-        creationDate: now
-        lastModification: moment(date,'YYYY-MM-DD hh:mm:ss').toISOString()
-        tags: [""]
-        class: 'document'
-    #console.log data
-
-    # Index file to DS indexer.
-    index = (newFile) ->
-        newFile.index ["name"], (err) ->
-            log.error err if err
-            callback()
-
-    # Attach binary to newly created file.
-    attachBinary = (newFile) ->
-        newFile.attachBinary filePath, "name": "file", (err) ->
-            if err
-                log.error err
-                callback err
-            else
-                index newFile
-
-    # Save file in a tmp folder while attachBinary supports stream.
-    options =
-        uri: url
-        method: 'GET'
-        jar: true
-    stream = request options, (err) ->
-        if err
-            log.error err
-            callback err
-        else
-            # Once done create file metadata then attach binary to file.
-            stats = fs.statSync filePath
-            data.size = stats["size"]
-            File.create data, (err, newFile) =>
-                if err
-                    log.error err
-                    callback err
-                else
-                    attachBinary newFile
-
-    stream.pipe fs.createWriteStream filePath
