@@ -5,6 +5,8 @@ moment = require 'moment'
 log = require('printit')
     prefix: 'file'
 
+Binary = require './binary'
+
 # Required to save file fetched via a konnector.
 module.exports = File = americano.getModel 'File',
     path: String
@@ -18,6 +20,15 @@ module.exports = File = americano.getModel 'File',
     clearance: (x) -> x
     tags: (x) -> x
 
+File.all = (params, callback) ->
+    File.request "all", params, callback
+
+File.byFolder = (params, callback) ->
+    File.request "byFolder", params, callback
+
+File.byFullPath = (params, callback) ->
+    File.request "byFullPath", params, callback
+
 File.createNew = (fileName, path, date, url, tags, callback) ->
     now = moment().toISOString()
     filePath = "/tmp/#{fileName}"
@@ -26,7 +37,7 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
         name: fileName
         path: path
         creationDate: now
-        lastModification: now
+        lastModification: date
         tags: tags
         class: 'document'
 
@@ -65,3 +76,13 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
                     attachBinary newFile
 
     stream.pipe fs.createWriteStream filePath
+
+File::destroyWithBinary = (callback) ->
+    if @binary?
+        binary = new Binary @binary.file
+        binary.destroy (err) =>
+            if err
+                log.error "Cannot destroy binary linked to document #{@id}"
+            @destroy callback
+    else
+        @destroy callback
