@@ -13,3 +13,11 @@ Folder.allPath = (callback) ->
         paths = []
         paths.push folder.getFullPath() for folder in folders
         return callback null, paths
+
+Folder.createNewFolder = (folder, callback) ->
+        Folder.create folder, (err, newFolder) ->
+            if err then callback err
+            else
+                newFolder.index ["name"], (err) ->
+                console.log err if err
+                callback null, newFolder
