@@ -208,41 +208,45 @@ parseFile = (object, data, callback) ->
         path = '/' + data['year'] + '/' + data['curriculum'] + '/' + data['course']
         fullPath = "#{path}/#{name}"
         date = moment(object['dateLastModified'],'YYYY-MM-DD hh:mm:ss').toISOString()
+        url = object['url']
 
-        File.byFullPath key: fullPath, (err, sameFiles) ->
-            return callback err if err
-            # there is already a file with the same name
-            if sameFiles.length > 0
-
-                #log.debug "#{fullPath} exists"
-                file = sameFiles[0]
-                # if the new file is newer
-                if file.lastModification < date
-                    # destroy it
-                    file.destroyWithBinary (err) ->
-                        if err
-                            log.error "Cannot destroy #{name}"
-                            callback()
-                        else
-                            log.debug "#{name} deleted"
-                            File.createNew name, path, date, object['url'], [], (err) ->
-                                if err
-                                    log.error err
-                                    callback()
-                                else
-                                    log.info "#{object['fileName']} imported"
-                                    callback()
-                else
-                    log.debug "skipping #{name}"
-                    callback()
-            else
-                File.createNew name, path, date, object['url'], [], (err) ->
-                    if err
-                        log.error err
-                        callback()
-                    else
-                        log.info "#{object['fileName']} imported"
-                        callback()
+        checkFile name, path, fullPath, date, url, callback
     else
         log.error 'error: Missing keys'
         callback()
+
+checkFile = (name, path, fullPath, date, url, callback) ->
+
+    File.byFullPath key: fullPath, (err, sameFiles) ->
+        return callback err if err
+        # there is already a file with the same name
+        if sameFiles.length > 0
+
+            file = sameFiles[0]
+            # if the new file is newer
+            if file.lastModification < date
+                # destroy it
+                file.destroyWithBinary (err) ->
+                    if err
+                        log.error "Cannot destroy #{name}"
+                        callback()
+                    else
+                        log.debug "#{name} deleted"
+                        File.createNew name, path, date, url, [], (err) ->
+                            if err
+                                log.error err
+                                callback()
+                            else
+                                log.info "#{name} imported"
+                                callback()
+            else
+                log.debug "skipping #{name}"
+                callback()
+        else
+            File.createNew name, path, date, url, [], (err) ->
+                if err
+                    log.error err
+                    callback()
+                else
+                    log.info "#{name} imported"
+                    callback()
