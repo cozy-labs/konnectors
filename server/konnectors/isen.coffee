@@ -75,13 +75,13 @@ fetchIcs = (requiredFields, callback) ->
                 log.error "Error: user not found or not allowed"
                 callback()
             else
-                icsData = parseIcs body
+                data = parseIcs body
 
-                if icsData.length is 0
+                if data.length is 0
                     log.error 'No urls found in ics file'
                     callback()
                 else
-                    processUrls requiredFields, icsData, callback
+                    processUrls requiredFields, data, callback
 
     else
         log.error 'Firstname and/or Lastname not supplied'
@@ -91,20 +91,22 @@ parseIcs = (data) ->
 
     log.debug 'Parsing file...'
     icsData = data.split('\n')
-    name = 'DESCRIPTION'
-    match = 'https://web.isen-bretagne.fr/cc/jsonFileList/'
+    matchString = 'DESCRIPTION'
+    baseUrl = 'https://web.isen-bretagne.fr/cc/jsonFileList/'
     urls = []
 
+    # find all urls in the file matching with baseUrl
     for value in icsData
-        if value.substring(0,name.length) is name
+        if value.substring(0, matchString.length) is matchString
             valueArray = value.split('\\n')
-            allegedUrl = valueArray[valueArray.length-2]
-            if allegedUrl.substring(0, match.length) is match
+            allegedUrl = valueArray[valueArray.length - 2]
+            if allegedUrl.substring(0, baseUrl.length) is baseUrl
                 if allegedUrl not in urls
                     urls.push allegedUrl
     return urls
 
 processUrls = (requiredFields, list, callback) ->
+
     async.eachSeries list, (url, cb) ->
         fetchJson requiredFields, url, cb
     , (err) ->
@@ -115,18 +117,27 @@ fetchJson = (requiredFields, url, callback) ->
         method: 'GET'
     options.uri = url
 
-    log.debug "Retrieving file : #{url}"
+    log.info "Retrieving file : #{url}"
     request options, (err, res, body) ->
-        #try to Json.parse the data
-        try
-            data = JSON.parse body
 
-        catch error
-            #log.error "JSON.parse error : #{error}"
-            callback error
+        if err
+            log.error err
+            callback()
+        else if body is ""
+            log.info 'File empty, the course may be not availiable ' +
+            'for the moment'
+            callback()
+        else
+            #try to Json.parse the data
+            try
+                data = JSON.parse body
 
-        if data?
-            checkKeys data, callback
+            catch error
+                log.error "JSON.parse error : #{error}"
+                callback error
+
+            if data?
+                checkKeys data, callback
 
 checkKeys = (data, callback) ->
     if data['File(s)']? and data['course']? and data['year']? \
@@ -161,6 +172,7 @@ processFolder = (data, callback) ->
                             parseJson data, callback
 
 checkAndCreateFolder = (name, path, callback) ->
+
     Folder.allPath (err, folders) ->
 
         fullpath = path + '/' + name
