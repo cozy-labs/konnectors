@@ -53,7 +53,7 @@ module.exports =
 
 fetchIcs = (requiredFields, callback) ->
 
-    baseUrl = 'https://web.isen-bretagne.fr/cc/PublishVCalendar'
+    baseMainUrl = 'https://web.isen-bretagne.fr/cc/PublishVCalendar'
     firstname = requiredFields.firstname
     lastname = requiredFields.lastname
     options =
@@ -62,7 +62,7 @@ fetchIcs = (requiredFields, callback) ->
 
     if firstname isnt '' and lastname isnt ''
 
-        fetchUrl = "#{baseUrl}/#{firstname}.#{lastname}.ics"
+        fetchUrl = "#{baseMainUrl}/#{firstname}.#{lastname}.ics"
         log.debug "Fetching #{fetchUrl}"
         options.uri = fetchUrl
         request options, (err, res, body) ->
@@ -75,25 +75,19 @@ fetchIcs = (requiredFields, callback) ->
                 log.error "Error: user not found or not allowed"
                 callback()
             else
-                data = parseIcs body
-
-                if data.length is 0
-                    log.error 'No urls found in ics file'
-                    callback()
-                else
-                    processUrls requiredFields, data, callback
+                parseIcs body, callback
 
     else
         log.error 'Firstname and/or Lastname not supplied'
         callback()
 
-parseIcs = (data) ->
+parseIcs = (mainData, callback) ->
 
     log.debug 'Parsing file...'
-    icsData = data.split('\n')
+    icsData = mainData.split('\n')
     matchString = 'DESCRIPTION'
     baseUrl = 'https://web.isen-bretagne.fr/cc/jsonFileList/'
-    urls = []
+    list = []
 
     # find all urls in the file matching with baseUrl
     for value in icsData
@@ -101,18 +95,25 @@ parseIcs = (data) ->
             valueArray = value.split('\\n')
             allegedUrl = valueArray[valueArray.length - 2]
             if allegedUrl.substring(0, baseUrl.length) is baseUrl
-                if allegedUrl not in urls
-                    urls.push allegedUrl
-    return urls
+                if allegedUrl not in list
+                    list.push allegedUrl
 
-processUrls = (requiredFields, list, callback) ->
+    if list.length is 0
+        log.error 'No urls found in ics file'
+        callback()
+    else
+        processUrls list, callback
 
+processUrls = (list, callback) ->
+
+    # fetch Json data from every course
     async.eachSeries list, (url, cb) ->
-        fetchJson requiredFields, url, cb
+        fetchJson url, cb
     , (err) ->
         callback()
 
-fetchJson = (requiredFields, url, callback) ->
+fetchJson = (url, callback) ->
+
     options =
         method: 'GET'
     options.uri = url
@@ -124,36 +125,38 @@ fetchJson = (requiredFields, url, callback) ->
             log.error err
             callback()
         else if body is ""
-            log.info 'File empty, the course may be not availiable ' +
+            log.info 'Course file empty, the course may be not availiable ' +
             'for the moment'
             callback()
         else
             #try to Json.parse the data
             try
-                data = JSON.parse body
+                courseData = JSON.parse body
 
             catch error
                 log.error "JSON.parse error : #{error}"
                 callback error
 
-            if data?
-                checkKeys data, callback
+            if courseData?
+                checkKeys courseData, callback
 
-checkKeys = (data, callback) ->
-    if data['File(s)']? and data['course']? and data['year']? \
-    and data['curriculum']?
-        processFolder data, callback
+checkKeys = (courseData, callback) ->
+
+    # Check if all the values are present in the course file
+    if courseData['File(s)']? and courseData['course']? and courseData['year']? \
+    and courseData['curriculum']?
+        processFolder courseData, callback
     else
-        log.error 'Error : Missing data in the file'
+        log.error 'Error : Missing courseData in the file'
         callback()
 
-processFolder = (data, callback) ->
+processFolder = (courseData, callback) ->
 
     # Check if folder arboresecense is present, otherwise create it
-    # Structure is year/ curriculum / course
-    year = data['year']
-    curriculum = data['curriculum']
-    course = data['course']
+    # Structure is year / curriculum / course
+    year = courseData['year']
+    curriculum = courseData['curriculum']
+    course = courseData['course']
     checkAndCreateFolder year, '', (err) ->
         if err
             log.error "error: #{err}"
@@ -169,7 +172,7 @@ processFolder = (data, callback) ->
                             log.error "error: #{err}"
                             callback()
                         else
-                            parseJson data, callback
+                            parseJson courseData, callback
 
 checkAndCreateFolder = (name, path, callback) ->
 
@@ -197,30 +200,31 @@ checkAndCreateFolder = (name, path, callback) ->
                     log.info "folder #{name} created"
                     callback null
 
-parseJson = (data, callback) ->
+parseJson = (courseData, callback) ->
 
-    async.eachSeries data['File(s)'], (object, cb) ->
-        parseFile object, data, (err) ->
+    async.eachSeries courseData['File(s)'], (file, cb) ->
+
+        parseFile file, courseData, (err) ->
             if err
                 log.error err
                 cb()
             else
                 cb()
     , (err) ->
-        log.info 'Import of file finished'
+        log.info "Import of course #{courseData['course']} finished"
         callback()
 
 
-parseFile = (object, data, callback) ->
+parseFile = (file, courseData, callback) ->
 
     # if all the required values are present
-    if object['dateLastModified']? and object['fileName']? and object['url']?
+    if file['dateLastModified']? and file['fileName']? and file['url']?
 
-        name = object['fileName']
-        path = '/' + data['year'] + '/' + data['curriculum'] + '/' + data['course']
+        name = file['fileName']
+        path = '/' + courseData['year'] + '/' + courseData['curriculum'] + '/' + courseData['course']
         fullPath = "#{path}/#{name}"
-        date = moment(object['dateLastModified'],'YYYY-MM-DD hh:mm:ss').toISOString()
-        url = object['url']
+        date = moment(file['dateLastModified'],'YYYY-MM-DD hh:mm:ss').toISOString()
+        url = file['url']
 
         checkFile name, path, fullPath, date, url, callback
     else
