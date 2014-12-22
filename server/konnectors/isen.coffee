@@ -43,12 +43,23 @@ module.exports =
     fetch: (requiredFields, callback) ->
 
         log.info "Import started"
-        fetchIcs requiredFields, (err) ->
-            if err
-                log.error
+        fetchIcs requiredFields, (err, body) ->
+            if err?
+                log.error err
+                callback()
             else
-                log.info "Import finished"
-            callback()
+                parseIcs body, (err, list) ->
+                    if err?
+                        log.error err
+                        callback()
+                    else
+                        processUrls list, (err) ->
+                            if err?
+                                log.error err
+                                callback()
+                            else
+                                log.info "Import finished"
+                                callback()
 
 
 fetchIcs = (requiredFields, callback) ->
@@ -69,17 +80,16 @@ fetchIcs = (requiredFields, callback) ->
 
             if err?
                 log.error err
-                log.error "No files retrieved"
-                callback()
+                callback(err)
             else if res.statusCode is 404
-                log.error "Error: user not found or not allowed"
-                callback()
+                err =  "Error: user not found or not allowed"
+                callback(err)
             else
-                parseIcs body, callback
+                callback null, body
 
     else
         log.error 'Firstname and/or Lastname not supplied'
-        callback()
+        callback(err)
 
 parseIcs = (mainData, callback) ->
 
@@ -99,10 +109,10 @@ parseIcs = (mainData, callback) ->
                     list.push allegedUrl
 
     if list.length is 0
-        log.error 'No urls found in ics file'
-        callback()
+        err =  'No urls found in ics file'
+        callback(err)
     else
-        processUrls list, callback
+        callback null, list
 
 processUrls = (list, callback) ->
 
@@ -110,7 +120,10 @@ processUrls = (list, callback) ->
     async.eachSeries list, (url, cb) ->
         fetchJson url, cb
     , (err) ->
-        callback()
+        if err?
+            callback(err)
+        else
+            callback null
 
 fetchJson = (url, callback) ->
 
@@ -121,7 +134,7 @@ fetchJson = (url, callback) ->
     log.info "Retrieving file : #{url}"
     request options, (err, res, body) ->
 
-        if err
+        if err?
             log.error err
             callback()
         else if body is ""
@@ -147,7 +160,7 @@ checkKeys = (courseData, callback) ->
     and courseData['curriculum']?
         processFolder courseData, callback
     else
-        log.error 'Error : Missing courseData in the file'
+        log.error 'Error : Missing course data in the file'
         callback()
 
 processFolder = (courseData, callback) ->
@@ -158,17 +171,17 @@ processFolder = (courseData, callback) ->
     curriculum = courseData['curriculum']
     course = courseData['course']
     checkAndCreateFolder year, '', (err) ->
-        if err
+        if err?
             log.error "error: #{err}"
             callback()
         else
             checkAndCreateFolder curriculum, '/' + year, (err) ->
-                if err
+                if err?
                     log.error "error: #{err}"
                     callback()
                 else
                     checkAndCreateFolder course, '/' + year + '/' + curriculum, (err) ->
-                        if err
+                        if err?
                             log.error "error: #{err}"
                             callback()
                         else
@@ -194,7 +207,7 @@ checkAndCreateFolder = (name, path, callback) ->
                 class: 'document'
 
             Folder.createNewFolder document, (err, newFolder) ->
-                if err
+                if err?
                     callback err
                 else
                     log.info "folder #{name} created"
@@ -205,7 +218,7 @@ parseJson = (courseData, callback) ->
     async.eachSeries courseData['File(s)'], (file, cb) ->
 
         parseFile file, courseData, (err) ->
-            if err
+            if err?
                 log.error err
                 cb()
             else
@@ -228,13 +241,13 @@ parseFile = (file, courseData, callback) ->
 
         checkFile name, path, fullPath, date, url, callback
     else
-        log.error 'error: Missing keys'
+        log.error "error: Missing data in #{name}"
         callback()
 
 checkFile = (name, path, fullPath, date, url, callback) ->
 
     File.byFullPath key: fullPath, (err, sameFiles) ->
-        return callback err if err
+        return callback err if err?
         # there is already a file with the same name
         if sameFiles.length > 0
 
@@ -243,13 +256,13 @@ checkFile = (name, path, fullPath, date, url, callback) ->
             if file.lastModification < date
                 # destroy it
                 file.destroyWithBinary (err) ->
-                    if err
+                    if err?
                         log.error "Cannot destroy #{name}"
                         callback()
                     else
                         log.debug "#{name} deleted"
                         File.createNew name, path, date, url, [], (err) ->
-                            if err
+                            if err?
                                 log.error err
                                 callback()
                             else
@@ -260,7 +273,7 @@ checkFile = (name, path, fullPath, date, url, callback) ->
                 callback()
         else
             File.createNew name, path, date, url, [], (err) ->
-                if err
+                if err?
                     log.error err
                     callback()
                 else
