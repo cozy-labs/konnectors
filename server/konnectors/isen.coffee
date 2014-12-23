@@ -46,17 +46,17 @@ module.exports =
         fetchIcs requiredFields, (err, body) ->
             if err?
                 log.error err
-                callback()
+                callback err
             else
                 parseIcs body, (err, list) ->
                     if err?
                         log.error err
-                        callback()
+                        callback err
                     else
                         processUrls list, (err) ->
                             if err?
                                 log.error err
-                                callback()
+                                callback err
                             else
                                 log.info "Import finished"
                                 callback()
@@ -88,7 +88,7 @@ fetchIcs = (requiredFields, callback) ->
                 callback null, body
 
     else
-        log.error 'Firstname and/or Lastname not supplied'
+        err = 'Firstname and/or Lastname not supplied'
         callback(err)
 
 parseIcs = (mainData, callback) ->
