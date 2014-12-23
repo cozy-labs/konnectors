@@ -77,6 +77,8 @@ class KonnectorPoller
 
     handleTimeout: (konnector) ->
 
+        # if date is present in fieldValues
+        startDate = konnector.fieldValues.date if konnector.fieldValues.date?
         # Retrive current Autoimport value in database
         Konnector.find konnector.id, (err, savedKonnector) =>
 
@@ -93,10 +95,11 @@ class KonnectorPoller
                 if konnector.importInterval isnt 'none'
 
                     diff = 0
-                    # if date is present in fieldValues
-                    if konnector.fieldValues.date? and konnector.fieldValues.date is not ''
+
+                    if startDate? and startDate isnt ''
+
                         now = moment()
-                        firstImportDate = moment(konnector.fieldValues.date, "DD-MM-YYYY")
+                        firstImportDate = moment(startDate, "DD-MM-YYYY")
 
                         diff = firstImportDate.valueOf() - now.valueOf()
 
@@ -109,10 +112,10 @@ class KonnectorPoller
                             if err
                                 log.error err
 
-                        log.debug "First import set to " +
-                        "#{firstImportDate.format(format)}"
-                    else
+                            log.debug "First import set to " +
+                            "#{firstImportDate.format(format)}"
 
+                    else
                         # We set the current time
                         data =
                             lastAutoImport: moment()
