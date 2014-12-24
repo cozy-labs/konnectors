@@ -101,9 +101,13 @@ module.exports =
 
         # find all urls in the file matching with baseUrl
         for value in icsData
+            # if line begins with 'DESCRIPTION'
             if value.substring(0, matchString.length) is matchString
+                # split all values with the hardcoded '\n'
                 valueArray = value.split('\\n')
+                # Get the course url
                 allegedUrl = valueArray[valueArray.length - 2]
+                # if value mathes with the baseUrl
                 if allegedUrl.substring(0, baseUrl.length) is baseUrl
                     if allegedUrl not in list
                         list.push allegedUrl
