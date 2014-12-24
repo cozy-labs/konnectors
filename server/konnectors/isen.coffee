@@ -80,10 +80,10 @@ module.exports =
             request options, (err, res, body) =>
 
                 if err?
-                    callback(err)
+                    callback err
                 else if res.statusCode is 404
                     err =  "Error: user not found or not allowed"
-                    callback(err)
+                    callback err
                 else
                     callback null, body
 
@@ -110,7 +110,7 @@ module.exports =
 
         if list.length is 0
             err =  'No urls found in ics file'
-            callback(err)
+            callback err
         else
             callback null, list
 
@@ -131,7 +131,12 @@ module.exports =
                                 if err?
                                     log.error err
                                 else
-                                    @parseCourse courseData, cb
+                                    @parseCourse courseData, (err) =>
+                                        if err?
+                                            log.error err
+                                            cb()
+                                        else
+                                            cb()
         , (err) ->
             if err?
                 callback(err)
@@ -227,38 +232,30 @@ module.exports =
 
         async.eachSeries courseData['File(s)'], (file, cb) =>
 
-            @parseFile file, courseData, (err) =>
+            @checkFile file, courseData, (err) =>
                 if err?
                     log.error err
                     cb()
                 else
                     cb()
         , (err) ->
-            log.info "Import of course #{courseData['course']} finished"
-            callback()
+            if err?
+                callback err
+            else
+                log.info "Import of course #{courseData['course']} finished"
+                callback null
 
+    checkFile: (file, courseData, callback) ->
 
-    parseFile: (file, courseData, callback) ->
-
-        # if all the required values are present
-        if file['dateLastModified']? and file['fileName']? and file['url']?
-
-            name = file['fileName']
-            path = '/' + courseData['year'] + '/' + courseData['curriculum'] + '/' + courseData['course']
-            fullPath = "#{path}/#{name}"
-            date = moment(file['dateLastModified'],'YYYY-MM-DD hh:mm:ss').toISOString()
-            url = file['url']
-
-            @checkFile name, path, fullPath, date, url, (err) =>
-                if err?
-                    log.err err
-                else
-                    callback null
-        else
+        if not file['dateLastModified']? or not file['fileName']? or not file['url']?
             err = "error: Missing data in #{name}"
-            callback err
+            return callback err
 
-    checkFile: (name, path, fullPath, date, url, callback) ->
+        name = file['fileName']
+        path = '/' + courseData['year'] + '/' + courseData['curriculum'] + '/' + courseData['course']
+        fullPath = "#{path}/#{name}"
+        date = moment(file['dateLastModified'],'YYYY-MM-DD hh:mm:ss').toISOString()
+        url = file['url']
 
         File.byFullPath key: fullPath, (err, sameFiles) =>
             return callback err if err?
