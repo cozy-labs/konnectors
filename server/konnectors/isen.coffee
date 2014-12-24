@@ -80,7 +80,6 @@ module.exports =
             request options, (err, res, body) =>
 
                 if err?
-                    log.error err
                     callback(err)
                 else if res.statusCode is 404
                     err =  "Error: user not found or not allowed"
@@ -250,10 +249,14 @@ module.exports =
             date = moment(file['dateLastModified'],'YYYY-MM-DD hh:mm:ss').toISOString()
             url = file['url']
 
-            @checkFile name, path, fullPath, date, url, callback
+            @checkFile name, path, fullPath, date, url, (err) =>
+                if err?
+                    log.err err
+                else
+                    callback null
         else
-            log.error "error: Missing data in #{name}"
-            callback()
+            err = "error: Missing data in #{name}"
+            callback err
 
     checkFile: (name, path, fullPath, date, url, callback) ->
 
@@ -268,25 +271,22 @@ module.exports =
                     # destroy it
                     file.destroyWithBinary (err) =>
                         if err?
-                            log.error "Cannot destroy #{name}"
-                            callback()
+                            callback err
                         else
                             log.debug "#{name} deleted"
                             File.createNew name, path, date, url, [], (err) =>
                                 if err?
-                                    log.error err
-                                    callback()
+                                    callback err
                                 else
                                     log.info "#{name} imported"
-                                    callback()
+                                    callback null
                 else
                     log.debug "skipping #{name}"
-                    callback()
+                    callback null
             else
                 File.createNew name, path, date, url, [], (err) =>
                     if err?
-                        log.error err
-                        callback()
+                        callback err
                     else
                         log.info "#{name} imported"
-                        callback()
+                        callback null
