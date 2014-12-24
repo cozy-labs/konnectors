@@ -124,7 +124,15 @@ module.exports =
                     log.error err
                     cb()
                 else
-                    @checkKeys courseData, cb
+                    @checkKeys courseData, (err) =>
+                        if err?
+                            log.error err
+                        else
+                            @processFolder courseData, (err) =>
+                                if err?
+                                    log.error err
+                                else
+                                    @parseCourse courseData, cb
         , (err) ->
             if err?
                 callback(err)
@@ -164,10 +172,10 @@ module.exports =
         # Check if all the values are present in the course file
         if courseData['File(s)']? and courseData['course']? and courseData['year']? \
         and courseData['curriculum']?
-            @processFolder courseData, callback
+            callback null
         else
-            log.error 'Error : Missing course data in the file'
-            callback()
+            err = 'Error : Missing course data in the file'
+            callback err
 
     processFolder: (courseData, callback) ->
 
@@ -178,20 +186,17 @@ module.exports =
         course = courseData['course']
         @checkAndCreateFolder year, '', (err) =>
             if err?
-                log.error "error: #{err}"
-                callback()
+                callback err
             else
                 @checkAndCreateFolder curriculum, '/' + year, (err) =>
                     if err?
-                        log.error "error: #{err}"
-                        callback()
+                        callback err
                     else
                         @checkAndCreateFolder course, '/' + year + '/' + curriculum, (err) =>
                             if err?
-                                log.error "error: #{err}"
-                                callback()
+                                callback err
                             else
-                                @parseJson courseData, callback
+                                callback null
 
     checkAndCreateFolder: (name, path, callback) ->
 
@@ -219,7 +224,7 @@ module.exports =
                         log.info "folder #{name} created"
                         callback null
 
-    parseJson: (courseData, callback) ->
+    parseCourse: (courseData, callback) ->
 
         async.eachSeries courseData['File(s)'], (file, cb) =>
 
