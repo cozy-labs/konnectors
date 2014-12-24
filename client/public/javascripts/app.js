@@ -465,10 +465,11 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var fieldHtml, importInterval, intervals, isImporting, key, lastImport, name, selected, slug, val, value, values, _ref;
+    var fieldHtml, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, name, selected, slug, val, value, values, _ref;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
+    lastAutoImport = this.model.get('lastAutoImport');
     this.$el.addClass("konnector-" + slug);
     if (isImporting) {
       this.$('.last-import').html('importing...');
@@ -512,18 +513,24 @@ module.exports = KonnectorView = (function(_super) {
       selected = importInterval === key ? 'selected' : '';
       fieldHtml += "<option value=\"" + key + "\" " + selected + ">" + value + "</option>";
     }
-    fieldHtml += "\n</select>\n<span id=\"" + slug + "-first-import\">\n<span id=\"" + slug + "-first-import-text\">\n<a id=\"" + slug + "-first-import-link\" href=\"#\">Select a starting date</a></span>\n<span id=\"" + slug + "-first-import-date\"><span>Date</span>\n<input id=\"" + slug + "-import-date\" class=\"autoimport\" maxlength=\"8\" type=\"text\"></input>\n</span></span>\n</div>\n</div>";
+    fieldHtml += "\n</select>\n<span id=\"" + slug + "-first-import\">\n<span id=\"" + slug + "-first-import-text\">\n<a id=\"" + slug + "-first-import-link\" href=\"#\">Select a starting date</a></span>\n<span id=\"" + slug + "-first-import-date\"><span>From</span>\n<input id=\"" + slug + "-import-date\" class=\"autoimport\" maxlength=\"8\" type=\"text\"></input>\n</span></span>\n</div>\n</div>";
     this.$('.fields').append(fieldHtml);
-    if (this.$("#" + slug + "-autoimport-input").val() !== 'none') {
-      this.$("#" + slug + "-first-import").show();
-    } else {
-      this.$("#" + slug + "-first-import").hide();
-    }
     this.$("#" + slug + "-first-import-date").hide();
     this.$("#" + slug + "-import-date").datepicker({
       minDate: 1,
       dateFormat: "dd-mm-yy"
     });
+    if (this.$("#" + slug + "-autoimport-input").val() !== 'none' && this.$("#" + slug + "-autoimport-input").val() !== 'hour') {
+      if ((lastAutoImport != null) && moment(lastAutoImport).valueOf() > moment().valueOf()) {
+        this.$("#" + slug + "-first-import-date").show();
+        this.$("#" + slug + "-first-import-text").hide();
+        this.$("#" + slug + "-import-date").val(moment(lastAutoImport).format('DD-MM-YYYY'));
+      } else {
+        this.$("#" + slug + "-first-import").show();
+      }
+    } else {
+      this.$("#" + slug + "-first-import").hide();
+    }
     this.$("#" + slug + "-first-import-link").click((function(_this) {
       return function(event) {
         event.preventDefault();
@@ -533,7 +540,7 @@ module.exports = KonnectorView = (function(_super) {
     })(this));
     return this.$("#" + slug + "-autoimport-input").change((function(_this) {
       return function() {
-        if (_this.$("#" + slug + "-autoimport-input").val() !== 'none') {
+        if (_this.$("#" + slug + "-autoimport-input").val() !== 'none' && _this.$("#" + slug + "-autoimport-input").val() !== 'hour') {
           return _this.$("#" + slug + "-first-import").show();
         } else {
           return _this.$("#" + slug + "-first-import").hide();

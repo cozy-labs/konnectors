@@ -11,6 +11,7 @@ module.exports = class KonnectorView extends BaseView
         slug = @model.get 'slug'
         lastImport = @model.get 'lastImport'
         isImporting  = @model.get 'isImporting'
+        lastAutoImport = @model.get 'lastAutoImport'
 
         @$el.addClass "konnector-#{slug}"
 
@@ -65,25 +66,39 @@ module.exports = class KonnectorView extends BaseView
 <span id="#{slug}-first-import">
 <span id="#{slug}-first-import-text">
 <a id="#{slug}-first-import-link" href="#">Select a starting date</a></span>
-<span id="#{slug}-first-import-date"><span>Date</span>
+<span id="#{slug}-first-import-date"><span>From</span>
 <input id="#{slug}-import-date" class="autoimport" maxlength="8" type="text"></input>
 </span></span>
 </div>
 </div>
 """
         @$('.fields').append fieldHtml
-        if @$("##{slug}-autoimport-input").val() isnt 'none'
-            @$("##{slug}-first-import").show()
-        else
-            @$("##{slug}-first-import").hide()
+
         @$("##{slug}-first-import-date").hide()
         @$("##{slug}-import-date").datepicker({minDate: 1, dateFormat: "dd-mm-yy" })
+
+        # if auto-importation is set to day, week, or month
+        if @$("##{slug}-autoimport-input").val() isnt 'none' \
+        and @$("##{slug}-autoimport-input").val() isnt 'hour'
+
+            # Only show the date if the first import didn't happened yet
+            if lastAutoImport? and moment(lastAutoImport).valueOf() > moment().valueOf()
+                @$("##{slug}-first-import-date").show()
+                @$("##{slug}-first-import-text").hide()
+                @$("##{slug}-import-date").val(moment(lastAutoImport).format 'DD-MM-YYYY')
+            else
+                @$("##{slug}-first-import").show()
+        else
+            @$("##{slug}-first-import").hide()
+
         @$("##{slug}-first-import-link").click (event) =>
             event.preventDefault()
             @$("##{slug}-first-import-date").show()
             @$("##{slug}-first-import-text").hide()
+
         @$("##{slug}-autoimport-input").change =>
-            if @$("##{slug}-autoimport-input").val() isnt 'none'
+            if @$("##{slug}-autoimport-input").val() isnt 'none' \
+            and @$("##{slug}-autoimport-input").val() isnt 'hour'
                 @$("##{slug}-first-import").show()
             else
                 @$("##{slug}-first-import").hide()
@@ -94,7 +109,6 @@ module.exports = class KonnectorView extends BaseView
 
         importDate = $("##{slug}-import-date").val()
         fieldValues['date'] = importDate
-
         for name, val of @model.get 'fields'
             fieldValues[name] = $("##{slug}-#{name}-input").val()
         @model.set 'fieldValues', fieldValues
