@@ -76,6 +76,7 @@ module.exports =
             fetchUrl = "#{baseMainUrl}/#{firstname}.#{lastname}.ics"
             log.debug "Fetching #{fetchUrl}"
             options.uri = fetchUrl
+            options.timeout = 7000
             request options, (err, res, body) =>
 
                 if err?
@@ -118,7 +119,12 @@ module.exports =
 
         # fetch Json data from every course
         async.eachSeries list, (url, cb) =>
-            @fetchJson url, cb
+            @fetchJson url, (err, courseData) =>
+                if err?
+                    log.error err
+                    cb()
+                else
+                    @checkKeys courseData, cb
         , (err) ->
             if err?
                 callback(err)
@@ -130,28 +136,28 @@ module.exports =
         options =
             method: 'GET'
         options.uri = url
+        options.timeout = 7000
 
         log.info "Retrieving file : #{url}"
         request options, (err, res, body) =>
 
             if err?
-                log.error err
-                callback()
+                callback err
             else if body is ""
-                log.info 'Course file empty, the course may be not availiable ' +
+                err =  'Course file empty, the course may be not availiable ' +
                 'for the moment'
-                callback()
+                callback err
             else
                 #try to Json.parse the data
                 try
                     courseData = JSON.parse body
 
                 catch error
-                    log.error "JSON.parse error : #{error}"
-                    callback error
+                    err = "JSON.parse error : #{error}"
+                    callback err
 
                 if courseData?
-                    @checkKeys courseData, callback
+                    callback null, courseData
 
     checkKeys: (courseData, callback) ->
 
