@@ -12,15 +12,17 @@ module.exports = class KonnectorView extends BaseView
         lastImport = @model.get 'lastImport'
         isImporting  = @model.get 'isImporting'
         lastAutoImport = @model.get 'lastAutoImport'
+        @error = @$('.error')
+        @error.hide()
 
         @$el.addClass "konnector-#{slug}"
 
         if isImporting
-            @$('.last-import').html 'importing...'
+            @$('.last-import').html t('importing...')
         else if lastImport?
             @$('.last-import').html moment(lastImport).format 'LLL'
         else
-            @$('.last-import').html "no import performed."
+            @$('.last-import').html t("no import performed")
 
         values = @model.get 'fieldValues'
 
@@ -30,13 +32,13 @@ module.exports = class KonnectorView extends BaseView
 
             fieldHtml = """
 <div class="field line">
-<div><label for="#{slug}-#{name}-input">#{name}</label></div>
+<div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
 """
 
             if val is 'folder'
                 fieldHtml += """
 <div><select id="#{slug}-#{name}-input" class="folder"
-             value="#{values[name]}"></select></div>
+             value="#{t(values[name])}"></select></div>
 </div>
 """
             else
@@ -50,7 +52,7 @@ module.exports = class KonnectorView extends BaseView
         # Auto Import
         importInterval = @model.get 'importInterval'
         importInterval ?= ''
-        intervals = {none: "None", hour: "Every Hour", day: "Every Day", week: "Every Week", month: "Each month"}
+        intervals = {none: t("none"), hour: t("every hour"), day: t("every day"), week: t("every week"), month: t("each month")}
         fieldHtml = """
 <div class="field line">
 <div><label for="#{slug}-autoimport-input">Auto Import</label></div>
@@ -116,11 +118,12 @@ module.exports = class KonnectorView extends BaseView
         importInterval = $("##{slug}-autoimport-input").val()
 
         @model.set 'importInterval', importInterval
-        @model.save
-            success: =>
-                alert "import succeeded"
-            error: =>
-                alert "import failed"
+        @model.save null,
+            success: (model, success) =>
+                console.log 'success'
+            error: (mmodel, err) =>
+                @$('.error').html t(err.responseText)
+                @$('.error').show()
 
     selectPath: =>
         slug = @model.get 'slug'

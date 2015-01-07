@@ -3,14 +3,16 @@ h2.name #{model.name}
 .description #{model.description} 
 .fields
 .buttons 
-    button.import-button import
+    button.import-button #{t('import')} 
+.error
+    span.error
 .status #{status}
 .infos
     .date 
-        span.label Last import:&nbsp;
+        span.label #{t('last import')}:&nbsp;
         span.last-import
     .datas
-        | Imported data:&nbsp;
+        | #{t('imported data')}:&nbsp;
         for name in model.modelNames
             a(href="/apps/databrowser/#search/all/#{name}", target="_blank") 
                   |#{name}

@@ -93,10 +93,21 @@
 require.register("application", function(exports, require, module) {
 module.exports = {
   initialize: function() {
-    var Router;
+    var Router, e, locales;
     Router = require('router');
     this.router = new Router();
     Backbone.history.start();
+    this.locale = window.locale;
+    this.polyglot = new Polyglot();
+    try {
+      locales = require('locales/' + this.locale);
+    } catch (_error) {
+      e = _error;
+      locales = require('locales/en');
+    }
+    this.polyglot.extend(locales);
+    window.t = this.polyglot.t.bind(this.polyglot);
+    console.log(window.t);
     if (typeof Object.freeze === 'function') {
       return Object.freeze(this);
     }
@@ -355,6 +366,64 @@ module.exports = ViewCollection = (function(_super) {
 
 });
 
+require.register("locales/en", function(exports, require, module) {
+module.exports = {
+  'bad credentials': 'Bad Credentials',
+  'last import': 'Last import',
+  'import': 'Import',
+  'imported data': 'Imported data',
+  'importing...': 'importing...',
+  'no import performed': 'No import performed',
+  'firstname': 'Firstname',
+  'lastname': 'Lastname',
+  'login': 'Login',
+  'password': 'Password',
+  'email': 'Email',
+  'accessToken': 'Access token',
+  'accessTokenSecret': 'Access token secret',
+  'consumerKey': 'Consumer Key',
+  'consumerSecret': 'Consumer Secret',
+  'apikey': 'Api key',
+  'phoneNumber': 'Phone number',
+  'folderPath': 'Folder path',
+  'none': 'None',
+  'every hour': 'Every hour',
+  'every day': 'Every day',
+  'every week': 'Every week',
+  'each month': 'Each month'
+};
+
+});
+
+require.register("locales/fr", function(exports, require, module) {
+module.exports = {
+  'bad credentials': 'Mauvais identifiants',
+  'last import': 'Dernier import',
+  'import': 'Importer',
+  'imported data': 'Données importées',
+  'importing...': 'import...',
+  'no import performed': "Pas d'import effectué",
+  'firstname': 'Prénom',
+  'lastname': 'Nom',
+  'login': 'Identifiant',
+  'password': 'Mot de passe',
+  'email': 'Mail',
+  'accessToken': 'Access token',
+  'accessTokenSecret': 'Access token secret',
+  'consumerKey': 'Consumer Key',
+  'consumerSecret': 'Consumer Secret',
+  'apikey': 'Api key',
+  'phoneNumber': 'Numéro de téléphone',
+  'folderPath': 'Chemin du dossier',
+  'none': 'Aucun',
+  'every hour': 'Toutes les heures',
+  'every day': 'Tous les jours',
+  'every week': 'Toutes les semaines',
+  'each month': 'Tous les mois'
+};
+
+});
+
 require.register("models/konnector", function(exports, require, module) {
 var KonnectorModel,
   __hasProp = {}.hasOwnProperty,
@@ -470,13 +539,15 @@ module.exports = KonnectorView = (function(_super) {
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
     lastAutoImport = this.model.get('lastAutoImport');
+    this.error = this.$('.error');
+    this.error.hide();
     this.$el.addClass("konnector-" + slug);
     if (isImporting) {
-      this.$('.last-import').html('importing...');
+      this.$('.last-import').html(t('importing...'));
     } else if (lastImport != null) {
       this.$('.last-import').html(moment(lastImport).format('LLL'));
     } else {
-      this.$('.last-import').html("no import performed.");
+      this.$('.last-import').html(t("no import performed"));
     }
     values = this.model.get('fieldValues');
     if (values == null) {
@@ -488,9 +559,9 @@ module.exports = KonnectorView = (function(_super) {
       if (values[name] == null) {
         values[name] = "";
       }
-      fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + name + "</label></div>";
+      fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + (t(name)) + "</label></div>";
       if (val === 'folder') {
-        fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\" class=\"folder\"\n             value=\"" + values[name] + "\"></select></div>\n</div>";
+        fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\" class=\"folder\"\n             value=\"" + (t(values[name])) + "\"></select></div>\n</div>";
       } else {
         fieldHtml += "<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + values[name] + "\"/></div>\n</div>";
       }
@@ -501,11 +572,11 @@ module.exports = KonnectorView = (function(_super) {
       importInterval = '';
     }
     intervals = {
-      none: "None",
-      hour: "Every Hour",
-      day: "Every Day",
-      week: "Every Week",
-      month: "Each month"
+      none: t("none"),
+      hour: t("every hour"),
+      day: t("every day"),
+      week: t("every week"),
+      month: t("each month")
     };
     fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-autoimport-input\">Auto Import</label></div>\n<div><select id=\"" + slug + "-autoimport-input\" class=\"autoimport\">";
     for (key in intervals) {
@@ -564,15 +635,16 @@ module.exports = KonnectorView = (function(_super) {
     importInterval = 'none';
     importInterval = $("#" + slug + "-autoimport-input").val();
     this.model.set('importInterval', importInterval);
-    return this.model.save({
+    return this.model.save(null, {
       success: (function(_this) {
-        return function() {
-          return alert("import succeeded");
+        return function(model, success) {
+          return console.log('success');
         };
       })(this),
       error: (function(_this) {
-        return function() {
-          return alert("import failed");
+        return function(mmodel, err) {
+          _this.$('.error').html(t(err.responseText));
+          return _this.$('.error').show();
         };
       })(this)
     });
@@ -722,7 +794,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">import</button></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"> <span class="label">Last import:&nbsp;</span><span class="last-import"></span></div><div class="datas">Imported data:&nbsp;');
+buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">' + escape((interp = t('import')) == null ? '' : interp) + ' </button></div><div class="error"><span class="error"></span></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"> <span class="label">' + escape((interp = t('last import')) == null ? '' : interp) + ':&nbsp;</span><span class="last-import"></span></div><div class="datas">' + escape((interp = t('imported data')) == null ? '' : interp) + ':&nbsp;');
 // iterate model.modelNames
 ;(function(){
   if ('number' == typeof model.modelNames.length) {

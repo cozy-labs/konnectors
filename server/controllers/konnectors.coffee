@@ -66,6 +66,7 @@ module.exports =
             fields = konnectorHash[req.konnector.slug].fields
             req.konnector.import req.body, fields, (err) ->
                 if err
-                    next err
+                    #console.log res
+                    res.send err, 400
                 else
                     res.send success: true, 200

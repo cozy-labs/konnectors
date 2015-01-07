@@ -1789,6 +1789,10 @@ label {
 .konnector .autoimport {
   width: 200px;
 }
+.konnector .error {
+  color: #f00;
+  font-weight: bold;
+}
 @media (max-width: 480px) {
   body {
     padding: 0 20px;
