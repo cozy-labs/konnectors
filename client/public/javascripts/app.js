@@ -369,6 +369,8 @@ module.exports = ViewCollection = (function(_super) {
 require.register("locales/en", function(exports, require, module) {
 module.exports = {
   'bad credentials': 'Bad Credentials',
+  'no bills retrieved': 'No bills retrieved',
+  'key not found': 'Key not found',
   'last import': 'Last import',
   'import': 'Import',
   'imported data': 'Imported data',
@@ -398,6 +400,8 @@ module.exports = {
 require.register("locales/fr", function(exports, require, module) {
 module.exports = {
   'bad credentials': 'Mauvais identifiants',
+  'no bills retrieved': 'Pas de facture trouvées',
+  'key not found': 'Clé non trouvée',
   'last import': 'Dernier import',
   'import': 'Importer',
   'imported data': 'Données importées',
@@ -697,13 +701,16 @@ module.exports = KonnectorListener = (function(_super) {
   KonnectorListener.prototype.events = ['konnector.update'];
 
   KonnectorListener.prototype.onRemoteUpdate = function(model) {
-    var isImporting, slug;
+    var isImporting, lastImport, slug;
     isImporting = model.get('isImporting');
     slug = model.get('slug');
+    lastImport = model.get('lastImport');
     if (isImporting) {
-      return $(".konnector-" + slug + " .last-import").html('importing...');
-    } else {
+      return $(".konnector-" + slug + " .last-import").html(t('importing...'));
+    } else if (lastImport != null) {
       return $(".konnector-" + slug + " .last-import").html(moment().format('LLL'));
+    } else {
+      return $(".konnector-" + slug + " .last-import").html(t('no import performed'));
     }
   };
 
