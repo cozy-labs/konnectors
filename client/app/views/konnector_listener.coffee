@@ -12,8 +12,11 @@ module.exports = class KonnectorListener extends CozySocketListener
     onRemoteUpdate: (model) ->
         isImporting = model.get 'isImporting'
         slug = model.get 'slug'
+        lastImport = model.get 'lastImport'
 
         if isImporting
-            $(".konnector-#{slug} .last-import").html 'importing...'
-        else
+            $(".konnector-#{slug} .last-import").html t('importing...')
+        else if lastImport?
             $(".konnector-#{slug} .last-import").html moment().format 'LLL'
+        else
+            $(".konnector-#{slug} .last-import").html t('no import performed')

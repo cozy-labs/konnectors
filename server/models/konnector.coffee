@@ -60,7 +60,6 @@ Konnector::import = (konnector, fields, callback) ->
                 if err
                     data =
                         isImporting: false
-                        lastImport: new Date()
                     @updateAttributes data, ->
                         callback err
 
