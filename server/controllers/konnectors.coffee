@@ -38,7 +38,7 @@ module.exports =
                     konnector.modelNames = modelNames
 
                 konnectors.sort (konnectorA, konnectorB) ->
-                    konnectorA.name.localeCompare konnectorB.name
+                    konnector.name.localeCompare konnectorB.name
 
                 res.send konnectors
 
