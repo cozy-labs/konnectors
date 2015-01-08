@@ -107,7 +107,7 @@ module.exports =
 
                 if billInfos.length is 0
                     log.error "No bills retrieved"
-                    callback()
+                    callback('no bills retrieved')
                 else
                     saveBills billInfos, requiredFields.folderPath, callback
 

@@ -58,9 +58,9 @@ module.exports =
             .use(filterExisting log, CodeBill)
             .use(saveDataAndFile log, CodeBill, 'github', ['bill'])
             .args(requiredFields, {}, {})
-            .fetch ->
+            .fetch (err) ->
                 log.info "Import finished"
-                callback()
+                callback(err)
 
 
 # Procedure to login to Free website.
@@ -127,4 +127,6 @@ parsePage = (requiredFields, bills, data, next) ->
             plan: plan
     if bills.fetched.length is 0
         log.error "No bills retrieved"
-    next()
+        next('no bills retrieved')
+    else
+        next()

@@ -1,6 +1,8 @@
 module.exports =
 
     'bad credentials' : 'Mauvais identifiants'
+    'no bills retrieved': 'Pas de facture trouvées'
+    'key not found': 'Clé non trouvée'
     'last import': 'Dernier import'
     'import': 'Importer'
     'imported data': 'Données importées'

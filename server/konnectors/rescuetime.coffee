@@ -88,6 +88,9 @@ module.exports =
                 callback err
             else if res.statusCode isnt 200
                 callback new Error body
+            else if body.error?
+                log.error body.error
+                callback body.messages
             else if not body.rows?
                 callback new Error """
 Something went wrong while fetching rescue time data.
