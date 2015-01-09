@@ -4,6 +4,7 @@ CozyInstance = require '../models/cozy_instance'
 
 
 module.exports.main = (req, res) ->
+
     async.parallel
         konnectors: Konnector.getKonnectorsToDisplay
         instance: CozyInstance.first

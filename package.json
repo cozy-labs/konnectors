@@ -43,6 +43,9 @@
     "Konnector": {
       "description": "Konnector description and required fields"
     },
+    "Notification": {
+      "description": "Notification for auto importation."
+    },
     "RescueTimeActivity": {
       "description": "Activity data from RescueTime.com."
     },

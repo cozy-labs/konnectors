@@ -177,7 +177,7 @@ class KonnectorPoller
         log.info "Next check of konnector #{konnector.slug} on " +
         "#{nextUpdate.format(format)}"
         # Create the timeout and place it timeouts
-        timeouts[konnector.slug] = setTimeout @checkImport.bind(@, konnector, interval), interval
+        timeouts[konnector.slug] = setTimeout @checkImport.bind(@, konnector, interval), 1 * 60 * 1000
 
     checkImport: (konnector, interval) ->
 
