@@ -2,8 +2,12 @@
 
 konnectors = require './konnectors'
 folders = require './folders'
+index = require './index'
 
 module.exports =
+    '':
+        get: index.main
+
     'konnectorId':
         param: konnectors.getKonnector
 

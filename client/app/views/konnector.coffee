@@ -106,6 +106,7 @@ module.exports = class KonnectorView extends BaseView
                 @$("##{slug}-first-import").hide()
 
     onImportClicked: =>
+        @$('.error').hide()
         fieldValues = {}
         slug = @model.get 'slug'
 

@@ -93,11 +93,23 @@
 require.register("application", function(exports, require, module) {
 module.exports = {
   initialize: function() {
-    var Router, e, locales;
+    var KonnectorsCollection, Router, e, locales;
     Router = require('router');
     this.router = new Router();
     Backbone.history.start();
+    KonnectorsCollection = require('collections/konnectors');
+    this.konnectors = new KonnectorsCollection();
+    if (window.initkonnectors != null) {
+      this.konnectors.reset(window.initkonnectors, {
+        parse: true
+      });
+      delete window.initkonnectors;
+    } else {
+      this.konnectors.fetch();
+    }
     this.locale = window.locale;
+    console.log("locale : ");
+    console.log(window.locale);
     this.polyglot = new Polyglot();
     try {
       locales = require('locales/' + this.locale);
@@ -626,6 +638,7 @@ module.exports = KonnectorView = (function(_super) {
 
   KonnectorView.prototype.onImportClicked = function() {
     var fieldValues, importDate, importInterval, name, slug, val, _ref;
+    this.$('.error').hide();
     fieldValues = {};
     slug = this.model.get('slug');
     importDate = $("#" + slug + "-import-date").val();

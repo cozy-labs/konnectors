@@ -3,6 +3,9 @@ moment = require "moment"
 log = require('printit')
     prefix: null
     date: true
+fs = require 'fs'
+path = require 'path'
+
 importer = require "./importer"
 Konnector = require '../models/konnector'
 
@@ -28,7 +31,8 @@ class KonnectorPoller
                 # if both importInterval and lastAutoImport are valid
                 if konnector.importInterval? \
                 and konnector.importInterval isnt 'none' \
-                and konnector.lastAutoImport?
+                and konnector.lastAutoImport? \
+                and fs.existsSync path.resolve("server/konnectors/#{konnector.slug}.coffee")
 
                     importInterval = periods[konnector.importInterval]
                     now = moment()

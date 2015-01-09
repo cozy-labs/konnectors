@@ -1,7 +1,7 @@
 Konnector = require '../models/konnector'
 konnectorHash = require '../lib/konnector_hash'
-
-
+fs = require 'fs'
+path = require 'path'
 
 module.exports =
 
@@ -23,8 +23,11 @@ module.exports =
             if err
                 next err
             else
+                displayKonnectors = []
                 for konnector in konnectors
                     # here add missing fields
+                    if fs.existsSync path.resolve("server/konnectors/#{konnector.slug}.coffee")
+                        displayKonnectors.push konnector
                     konnectorData = konnectorHash[konnector.slug]
                     for key of konnectorData
                         konnector[key] = konnectorData[key]
@@ -37,10 +40,9 @@ module.exports =
                         modelNames.push name
                     konnector.modelNames = modelNames
 
-                konnectors.sort (konnectorA, konnectorB) ->
-                    konnectorA.name.localeCompare konnectorB.name
-
-                res.send konnectors
+                displayKonnectors.sort (konnectorA, konnectorB) ->
+                    konnectorA.slug.localeCompare konnectorB.slug
+                res.send displayKonnectors
 
 
     show: (req, res, next) ->
