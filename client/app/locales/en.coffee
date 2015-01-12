@@ -3,9 +3,10 @@ module.exports =
     'bad credentials' : 'Bad Credentials'
     'no bills retrieved': 'No bills retrieved'
     'key not found': 'Key not found'
-    'last import': 'Last import'
+    'last import:': 'Last import:'
     'import': 'Import'
-    'imported data': 'Imported data'
+    'auto import': 'Automatic import'
+    'imported data:': 'Imported data:'
     'importing...': 'importing...'
     'no import performed': 'No import performed'
     'firstname': 'Firstname'
@@ -25,3 +26,15 @@ module.exports =
     'every day': 'Every day'
     'every week': 'Every week'
     'each month': 'Each month'
+
+    'home headline': """
+    With Konnectors you can retrieve many data and save them into your Cozy.
+    From your phone bills to your connected scale, or your tweets. Configure the connectors you are interested in:
+    """
+    'home config step 1': "Select a connector in the menu on the left"
+    'home config step 2': "Follow the instructions to configure it"
+    'home config step 3': "Your data are retrieved and saved into your Cozy"
+
+    'home more info': "More information:"
+    'home help step 1': "You must manually trigger the import, except if you enable the auto-import."
+    'home help step 2': "Disable the auto-stop feature for the Konnector application in your Cozy, otherwise the auto-import won't work."

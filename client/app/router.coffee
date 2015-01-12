@@ -1,10 +1,18 @@
-AppView = require 'views/app_view'
-
 module.exports = class Router extends Backbone.Router
 
     routes:
         '': 'main'
+        'konnector/:slug': 'konnector'
+
+
+    initialize: (options) ->
+        super()
+        @appView = options.appView
+
 
     main: ->
-        mainView = new AppView()
-        mainView.render()
+        @appView.showDefault()
+
+
+    konnector: (slug) ->
+        @appView.showKonnector slug

@@ -1,0 +1,67 @@
+/*
+    MENU
+*/
+#menu
+    width 20%
+    float left
+    background #f2f2f2
+    height 100%
+    position fixed
+    overflow auto
+
+    h1
+        a
+            display inline-block
+            width 100%
+            padding 10px 15px
+            line-height 36px
+            background url('../images/small_icon.png') right center no-repeat
+            background-origin content-box
+
+            color dark-grey
+
+    ul
+        margin 0
+        padding 0
+        list-style-type none
+
+        li
+            display block
+            font-family regular
+            font-weight normal
+            position relative
+
+            &.configured a
+                color #555
+
+            &.selected
+                background #aedbff
+
+            a
+                display inline-block
+                width 100%
+                height 100%
+
+                outline none
+                margin-bottom -5px // dirty hack because of overflow blank space...
+
+                &:hover
+                  background #FFC47F
+
+                // remove inherit styles
+                text-decoration none
+                color #aaa
+                padding 10px 20px
+
+                text-overflow ellipsis
+                white-space nowrap
+                overflow hidden
+
+                span
+                    display block
+                    width 100%
+                .last-import
+                    font-size 12px
+                    display inline-block
+                    width 100%
+                    height 100%

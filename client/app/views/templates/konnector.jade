@@ -1,19 +1,19 @@
 <!-- .konnector -->
 h2.name #{model.name}
-.description #{model.description} 
+.description #{model.description}
 .fields
-.buttons 
-    button.import-button #{t('import')} 
+.buttons
+    button#import-button #{t('import')}
 .error
     span.error
 .status #{status}
 .infos
-    .date 
-        span.label #{t('last import')}:&nbsp;
+    .date
+        span.label #{t('last import:')}&nbsp;
         span.last-import
     .datas
-        | #{t('imported data')}:&nbsp;
+        | #{t('imported data:')}&nbsp;
         for name in model.modelNames
-            a(href="/apps/databrowser/#search/all/#{name}", target="_blank") 
+            a(href="/apps/databrowser/#search/all/#{name}", target="_blank")
                   |#{name}
             |&nbsp;

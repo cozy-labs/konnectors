@@ -1,51 +1,58 @@
 // Base Styles
-dark-grey = #444
 yellow-grey = #f5f0d7
 red = #E58067
 black = #34495E
+lightblue = #CBE4FB
 
+dark-grey = #444
+blue = #34A6FF
+orange = #fe8800
 
 @font-face
-    font-family: title
-    src: url('../fonts/chunkfive.otf')
+    font-family title
+    src url('../fonts/chunkfive.otf')
 
 @font-face
-    font-family: main
-    src: url('../fonts/district-pro-thin.otf')
+    font-family main
+    src url('../fonts/district-pro-thin.otf')
+
+@font-face
+    font-family regular
+    src url('../fonts/source-sans-pro.ttf')
+    color #333
 
 *
-    box-sizing: border-box
+    box-sizing border-box
 
-html,
+html
 body
     height 100%
     width 100%
 
 body
     text-rendering optimizeLegibility
-    background-color: yellow-grey
-    font-family: main
+    background-color #fff
+    font-family main
 
 h1
-    float: right
-    font-family: title
-    font-weight: normal
-    font-size: 28px
-    margin-bottom: 2px
-    margin-top: 0px
+    font-family title
+    font-weight normal
+    font-size 28px
+    margin-bottom 2px
+    margin-top 0px
 
 h2
-    font-family: title
-    font-weight: normal
-    margin-top: 20px
+    font-family title
+    font-weight normal
+    margin-top 20px
 
-body,
+body
 input
     color #444
     font 300 16px Geneva, Verdana, "Lucida Sans", "Lucida Grande", sans-serif
     line-height 1.2
 
-a,
+a
 a:visited
     color #0086cc
     text-decoration none
@@ -55,19 +62,19 @@ a:visited
         text-decoration none
 
 button
-    border: 0
-    border-radius: 3px
-    background-color: dark-grey
-    color: white
-    padding: 10px
-    margin-right: 5px
+    border 0
+    border-radius 3px
+    background-color dark-grey
+    color white
+    padding 10px
+    margin-right 5px
 
 button:hover
-    background-color: red
+    background-color red
 
 button:active
-    background-color: red - 20%
-    box-shadow: 2px 2px 2px red - 40% inset
+    background-color red - 20%
+    box-shadow 2px 2px 2px red - 40% inset
 
 h1
     a
@@ -75,40 +82,5 @@ h1
     a:visited
     a:active
     a:focus
-        color: black
-        outline: 0
-
-button
-    margin-bottom: 5px
-
-
-input
-textarea
-    border: 1px solid black
-    border-radius: 5px
-    background: yellow-grey + 50%
-    width: 500px
-    padding: 3px
-    font-family: main
-    font-size: 18px
-
-input:hover
-textarea:hover
-    border-color: red
-
-input:focus
-textarea:focus
-    border-color: red - 20%
-
-p
-label
-    font-family: main
-
-.pa0
-    padding: 0px
-
-.pa2
-    padding: 20px
-
-.line
-    margin-bottom: 15px
+        color black
+        outline 0

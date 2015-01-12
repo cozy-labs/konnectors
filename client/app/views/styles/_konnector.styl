@@ -1,21 +1,68 @@
-.konnector
-    margin-bottom: 30px
-    padding-bottom: 10px
-    padding: 20px
-    font-family: main
+/*
+    CONTAINER
+*/
+.container
+    margin-left 20%
+    padding 10px 40px
 
-    h2
-        padding-bottom: 0px
-        border-bottom: 1px solid black
+    #default
+        margin 0
+        padding 50px
+        display inline-block
+        vertical-align middle
 
-    div.description
-        font-size: 20px
-        font-family: main
-        margin-bottom: 15px
+    .konnector
+        margin-bottom 30px
+        padding-bottom 10px
+        font-family main
 
-    .autoimport
-        width: 200px
+        h2
+            margin 0
 
-    .error
-        color: #FF0000
-        font-weight: bold
+        div.description
+            font-size 20px
+            font-family main
+            margin 15px 0
+
+        .field
+            margin 15px 0
+
+        .autoimport
+            min-width 200px
+            max-width 500px
+
+        .error
+            color #FF0000
+            font-weight bold
+
+        .buttons
+            margin 30px 0 10px 0
+
+        .infos div
+            margin 5px 0
+
+        // Generated inputs styles
+        input
+        textarea
+            border none
+            border-left 5px solid blue
+            background #f9f9f9
+            width 500px
+            padding 10px
+            font-family main
+            font-size 15px
+            outline none
+
+        select
+            border 1px solid blue
+            outline none
+
+        input:hover
+        textarea:hover
+        select:hover
+            border-color orange
+
+        input:focus
+        textarea:focus
+        select:focus
+            border-color orange - 10%

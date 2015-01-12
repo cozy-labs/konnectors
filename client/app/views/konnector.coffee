@@ -5,7 +5,11 @@ module.exports = class KonnectorView extends BaseView
     className: 'konnector'
 
     events:
-        "click .import-button": "onImportClicked"
+        "click #import-button": "onImportClicked"
+
+    initialize: (options) ->
+        super options
+        @paths = options.paths or []
 
     afterRender: =>
         slug = @model.get 'slug'
@@ -38,9 +42,11 @@ module.exports = class KonnectorView extends BaseView
             if val is 'folder'
                 fieldHtml += """
 <div><select id="#{slug}-#{name}-input" class="folder"
-             value="#{t(values[name])}"></select></div>
-</div>
-"""
+             value="#{t(values[name])}">"""
+                for path in @paths
+                    fieldHtml += """<option value="#{path}">#{path}</option>"""
+                fieldHtml += "</select></div></div>"
+
             else
                 fieldHtml += """
 <div><input id="#{slug}-#{name}-input" type="#{val}"
@@ -55,7 +61,7 @@ module.exports = class KonnectorView extends BaseView
         intervals = {none: t("none"), hour: t("every hour"), day: t("every day"), week: t("every week"), month: t("each month")}
         fieldHtml = """
 <div class="field line">
-<div><label for="#{slug}-autoimport-input">Auto Import</label></div>
+<div><label for="#{slug}-autoimport-input">#{t 'auto import'}</label></div>
 <div><select id="#{slug}-autoimport-input" class="autoimport">
 """
         for key, value of intervals
@@ -105,7 +111,7 @@ module.exports = class KonnectorView extends BaseView
             else
                 @$("##{slug}-first-import").hide()
 
-    onImportClicked: =>
+    onImportClicked: ->
         @$('.error').hide()
         fieldValues = {}
         slug = @model.get 'slug'
@@ -125,11 +131,3 @@ module.exports = class KonnectorView extends BaseView
             error: (mmodel, err) =>
                 @$('.error').html t(err.responseText)
                 @$('.error').show()
-
-    selectPath: =>
-        slug = @model.get 'slug'
-        for name, val of @model.get 'fields'
-            if val is 'folder'
-                values = @model.get 'fieldValues'
-                values ?= {}
-                @$("##{slug}-#{name}-input").val values[name]
