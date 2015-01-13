@@ -23,7 +23,7 @@ module.exports =
     import: (req, res, next) ->
         # Handle timeouts
         poller = require "../lib/konnector_poller"
-        poller.handleTimeout(req.body)
+        poller.handleTimeout req.body
         # Delete unused variable
         if req.body.fieldValues.date?
             delete req.body.fieldValues.date

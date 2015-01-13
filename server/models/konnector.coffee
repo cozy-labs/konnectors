@@ -46,12 +46,11 @@ Konnector::import = (konnector, fields, callback) ->
     @importInterval = konnector.importInterval
     @save (err) =>
 
-        if err
+        if err?
             data =
                 isImporting: false
                 lastImport: new Date()
-            @updateAttributes data, (err) ->
-                callback err
+            @updateAttributes data, callback
 
         else
             konnectorModule = require "../konnectors/#{@slug}"
@@ -59,19 +58,15 @@ Konnector::import = (konnector, fields, callback) ->
             konnectorModule.fetch @fieldValues, (err) =>
                 @removeEncryptedFields fields
 
-                if err
-                    data =
-                        isImporting: false
-                    @updateAttributes data, ->
-                        callback err
+                if err?
+                    data = isImporting: false
+                    @updateAttributes data, callback
 
                 else
                     data =
                         isImporting: false
                         lastImport: new Date()
-                    @updateAttributes data, (err) ->
-                        if err then callback err
-                        else callback()
+                    @updateAttributes data, callback
 
 
 # Append data from connector's configuration file, if it exists

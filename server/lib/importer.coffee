@@ -30,8 +30,7 @@ module.exports = (konnector) ->
         log.debug "Connector #{konnector.slug} already importing"
 
     # Update the lastAutoImport with the current date
-    data =
-        lastAutoImport: new Date()
+    data = lastAutoImport: new Date()
     konnector.updateAttributes data, (err) ->
         if err
             log.error err
