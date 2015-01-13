@@ -408,7 +408,9 @@ module.exports = {
   'home config step 3': "Your data are retrieved and saved into your Cozy",
   'home more info': "More information:",
   'home help step 1': "You must manually trigger the import, except if you enable the auto-import.",
-  'home help step 2': "Disable the auto-stop feature for the Konnector application in your Cozy, otherwise the auto-import won't work."
+  'home help step 2': "Disable the auto-stop feature for the Konnector application in your Cozy, otherwise the auto-import won't work.",
+  'notification import success': 'Konnector %{name}: data have been successfully imported',
+  'notification import error': 'Konnector %{name}: an error occurred during import of data'
 };
 
 });
@@ -448,7 +450,9 @@ module.exports = {
   'home config step 3': "Vos données sont récupérées et intégrer à votre Cozy",
   'home more info': "Quelques informations supplémentaires :",
   'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique",
-  'home help step 2': "Désactivez la fonction d'auto-stop pour l'application Konnectors dans votre Cozy, sinon l'importation automatique ne fonctionnera pas."
+  'home help step 2': "Désactivez la fonction d'auto-stop pour l'application Konnectors dans votre Cozy, sinon l'importation automatique ne fonctionnera pas.",
+  'notification import success': 'Konnector %{name}: les données ont été importées avec succès',
+  'notification import error': "Konnector %{name}: une erreur est survenue pendant l'importation des données"
 };
 
 });
@@ -468,17 +472,17 @@ module.exports = KonnectorModel = (function(_super) {
   KonnectorModel.prototype.rootUrl = "konnectors/";
 
   KonnectorModel.prototype.isConfigured = function() {
-    var field, fieldValue, fieldValues, fields, noEmptyValue, numFieldValues, numFields;
+    var field, fieldValue, fieldValues, fields, noEmptyValue, numFieldValues, numFields, _ref;
     fieldValues = this.get('fieldValues') || {};
     fields = this.get('fields');
     numFieldValues = Object.keys(fieldValues).length;
     numFields = Object.keys(fields).length;
     noEmptyValue = true;
-    for (field in fieldValues) {
-      fieldValue = fieldValues[field];
-      noEmptyValue = noEmptyValue && fieldValue.length > 0;
+    for (field in fields) {
+      fieldValue = fields[field];
+      noEmptyValue = noEmptyValue && ((_ref = fieldValues[field]) != null ? _ref.length : void 0) > 0;
     }
-    return numFieldValues === numFields && noEmptyValue;
+    return numFieldValues >= numFields && noEmptyValue;
   };
 
   return KonnectorModel;
@@ -508,14 +512,15 @@ module.exports = KonnectorListener = (function(_super) {
   KonnectorListener.prototype.events = ['konnector.update'];
 
   KonnectorListener.prototype.onRemoteUpdate = function(model) {
-    var isImporting, lastImport, slug;
+    var formattedDate, isImporting, lastImport, slug;
     isImporting = model.get('isImporting');
     slug = model.get('slug');
     lastImport = model.get('lastImport');
+    formattedDate = moment(lastImport).format(t('date format'));
     if (isImporting) {
       return $(".konnector-" + slug + " .last-import").html(t('importing...'));
     } else if (lastImport != null) {
-      return $(".konnector-" + slug + " .last-import").html(moment().format('LLL'));
+      return $(".konnector-" + slug + " .last-import").html(formattedDate);
     } else {
       return $(".konnector-" + slug + " .last-import").html(t('no import performed'));
     }
@@ -760,7 +765,7 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var fieldValues, importDate, importInterval, name, slug, val, _ref;
+    var data, fieldValues, importDate, importInterval, name, slug, val, _ref;
     this.$('.error').hide();
     fieldValues = {};
     slug = this.model.get('slug');
@@ -771,15 +776,15 @@ module.exports = KonnectorView = (function(_super) {
       val = _ref[name];
       fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
     }
-    this.model.set('fieldValues', fieldValues);
     importInterval = 'none';
     importInterval = $("#" + slug + "-autoimport-input").val();
-    this.model.set('importInterval', importInterval);
-    return this.model.save(null, {
+    data = {
+      fieldValues: fieldValues,
+      importInterval: importInterval
+    };
+    return this.model.save(data, {
       success: (function(_this) {
-        return function(model, success) {
-          return console.log('success');
-        };
+        return function(model, success) {};
       })(this),
       error: (function(_this) {
         return function(mmodel, err) {
