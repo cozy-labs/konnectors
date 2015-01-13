@@ -1664,6 +1664,11 @@ label {
   font-family: main;
   src: url("../fonts/district-pro-thin.otf");
 }
+@font-face {
+  font-family: regular;
+  src: url("../fonts/source-sans-pro.ttf");
+  color: #333;
+}
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1676,11 +1681,10 @@ body {
 }
 body {
   text-rendering: optimizeLegibility;
-  background-color: #f5f0d7;
+  background-color: #fff;
   font-family: main;
 }
 h1 {
-  float: right;
   font-family: title;
   font-weight: normal;
   font-size: 28px;
@@ -1733,65 +1737,133 @@ h1 a:focus {
   color: #34495e;
   outline: 0;
 }
-button {
-  margin-bottom: 5px;
+#menu {
+  width: 20%;
+  float: left;
+  background: #f2f2f2;
+  height: 100%;
+  position: fixed;
+  overflow: auto;
 }
-input,
-textarea {
-  border: 1px solid #34495e;
-  -webkit-border-radius: 5px;
-  border-radius: 5px;
-  background: #faf8eb;
-  width: 500px;
-  padding: 3px;
-  font-family: main;
-  font-size: 18px;
+#menu h1 a {
+  display: inline-block;
+  width: 100%;
+  padding: 10px 15px;
+  line-height: 36px;
+  background: url("../images/small_icon.png") right center no-repeat;
+  -webkit-background-origin: content;
+  -moz-background-origin: content;
+  background-origin: content-box;
+  color: #444;
 }
-input:hover,
-textarea:hover {
-  border-color: #e58067;
+#menu ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
 }
-input:focus,
-textarea:focus {
-  border-color: #db512e;
+#menu ul li {
+  display: block;
+  font-family: regular;
+  font-weight: normal;
+  position: relative;
 }
-p,
-label {
-  font-family: main;
+#menu ul li.configured a {
+  color: #555;
 }
-.pa0 {
-  padding: 0px;
+#menu ul li.selected {
+  background: #aedbff;
 }
-.pa2 {
-  padding: 20px;
+#menu ul li a {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  margin-bottom: -5px;
+  text-decoration: none;
+  color: #aaa;
+  padding: 10px 20px;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
-.line {
-  margin-bottom: 15px;
+#menu ul li a:hover {
+  background: #ffc47f;
 }
-#content {
-  padding: 20px 40px;
+#menu ul li a span {
+  display: block;
+  width: 100%;
 }
-.konnector {
+#menu ul li a .last-import {
+  font-size: 12px;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+.container {
+  margin-left: 20%;
+  padding: 10px 40px;
+}
+.container #default {
+  margin: 0;
+  padding: 50px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.container .konnector {
   margin-bottom: 30px;
   padding-bottom: 10px;
-  padding: 20px;
   font-family: main;
 }
-.konnector h2 {
-  padding-bottom: 0px;
-  border-bottom: 1px solid #34495e;
+.container .konnector h2 {
+  margin: 0;
 }
-.konnector div.description {
+.container .konnector div.description {
   font-size: 20px;
   font-family: main;
-  margin-bottom: 15px;
+  margin: 15px 0;
 }
-.konnector .autoimport {
-  width: 200px;
+.container .konnector .field {
+  margin: 15px 0;
 }
-.konnector .error {
+.container .konnector .autoimport {
+  min-width: 200px;
+  max-width: 500px;
+}
+.container .konnector .error {
   color: #f00;
   font-weight: bold;
+}
+.container .konnector .buttons {
+  margin: 30px 0 10px 0;
+}
+.container .konnector .infos div {
+  margin: 5px 0;
+}
+.container .konnector input,
+.container .konnector textarea {
+  border: none;
+  border-left: 5px solid #34a6ff;
+  background: #f9f9f9;
+  width: 500px;
+  padding: 10px;
+  font-family: main;
+  font-size: 15px;
+  outline: none;
+}
+.container .konnector select {
+  border: 1px solid #34a6ff;
+  outline: none;
+}
+.container .konnector input:hover,
+.container .konnector textarea:hover,
+.container .konnector select:hover {
+  border-color: #fe8800;
+}
+.container .konnector input:focus,
+.container .konnector textarea:focus,
+.container .konnector select:focus {
+  border-color: #e57a00;
 }
 @media (max-width: 480px) {
   body {
