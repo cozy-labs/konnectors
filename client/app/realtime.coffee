@@ -14,9 +14,10 @@ module.exports = class KonnectorListener extends CozySocketListener
         slug = model.get 'slug'
         lastImport = model.get 'lastImport'
 
+        formattedDate = moment(lastImport).format t('date format')
         if isImporting
             $(".konnector-#{slug} .last-import").html t('importing...')
         else if lastImport?
-            $(".konnector-#{slug} .last-import").html moment().format 'LLL'
+            $(".konnector-#{slug} .last-import").html formattedDate
         else
             $(".konnector-#{slug} .last-import").html t('no import performed')
