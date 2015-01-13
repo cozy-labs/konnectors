@@ -16,7 +16,7 @@ module.exports = class KonnectorView extends BaseView
         lastImport = @model.get 'lastImport'
         isImporting  = @model.get 'isImporting'
         lastAutoImport = @model.get 'lastAutoImport'
-        @error = @$('.error')
+        @error = @$ '.error'
         @error.hide()
 
         @$el.addClass "konnector-#{slug}"
@@ -121,14 +121,12 @@ module.exports = class KonnectorView extends BaseView
         fieldValues['date'] = importDate
         for name, val of @model.get 'fields'
             fieldValues[name] = $("##{slug}-#{name}-input").val()
-        @model.set 'fieldValues', fieldValues
         importInterval = 'none'
         importInterval = $("##{slug}-autoimport-input").val()
 
-        @model.set 'importInterval', importInterval
-        @model.save null,
+        data = {fieldValues, importInterval}
+        @model.save data,
             success: (model, success) =>
-                console.log 'success'
             error: (mmodel, err) =>
                 @$('.error').html t(err.responseText)
                 @$('.error').show()
