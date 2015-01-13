@@ -27,6 +27,8 @@ module.exports =
     'every week': 'Toutes les semaines'
     'each month': 'Tous les mois'
 
+    'date format': 'DD/MM/YYYY [à] HH[h]mm'
+
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer votre Cozy.
     De vos factures de téléphone aux données de votre balance connectée en passant par vos tweets. Configurez les connecteurs qui vous intéressent :

@@ -24,7 +24,8 @@ module.exports = class KonnectorView extends BaseView
         if isImporting
             @$('.last-import').html t('importing...')
         else if lastImport?
-            @$('.last-import').html moment(lastImport).format 'LLL'
+            formattedDate = moment(lastImport).format t('date format')
+            @$('.last-import').html formattedDate
         else
             @$('.last-import').html t("no import performed")
 

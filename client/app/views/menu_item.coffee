@@ -14,7 +14,8 @@ module.exports = class MenuItemView extends BaseView
     getRenderData: ->
         lastImport = @model.get 'lastImport'
         if @model.isConfigured() and lastImport?
-            lastImport = "#{t 'last import:'}  #{moment(lastImport).format 'LLL'}"
+            formattedDate = moment(lastImport).format t('date format')
+            lastImport = "#{t 'last import:'}  #{formattedDate}"
         else if @model.isConfigured()
             lastImport = "No import performed yet"
         else

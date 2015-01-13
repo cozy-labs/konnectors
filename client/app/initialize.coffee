@@ -14,6 +14,7 @@ $ ->
     try
         locales = require "locales/#{locale}"
     catch e
+        locale = 'en'
         locales = require 'locales/en'
 
     polyglot.extend locales

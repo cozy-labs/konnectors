@@ -27,6 +27,8 @@ module.exports =
     'every week': 'Every week'
     'each month': 'Each month'
 
+    'date format': 'LLL'
+
     'home headline': """
     With Konnectors you can retrieve many data and save them into your Cozy.
     From your phone bills to your connected scale, or your tweets. Configure the connectors you are interested in:
