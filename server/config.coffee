@@ -1,3 +1,4 @@
+path = require 'path'
 americano = require 'americano'
 
 config =
@@ -10,6 +11,9 @@ config =
                 showStack: true
             americano.static __dirname + '/../client/public',
         ]
+
+        set:
+            views: path.resolve __dirname, '../client'
 
     development: [
         americano.logger 'dev'

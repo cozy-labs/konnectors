@@ -1,4 +1,6 @@
 americano = require 'americano-cozy'
+konnectorHash = require '../lib/konnector_hash'
+
 log = require('printit')
     prefix: null
     date: true
@@ -70,3 +72,48 @@ Konnector::import = (konnector, fields, callback) ->
                     @updateAttributes data, (err) ->
                         if err then callback err
                         else callback()
+
+
+# Append data from connector's configuration file, if it exists
+Konnector::appendConfigData = ->
+    konnectorData = konnectorHash[@slug]
+
+    unless konnectorData?
+        msg = "Config data cannot be appended for konnector #{@slug}: " + \
+              "missing config file."
+        throw new Error msg
+
+    # add missing fields
+    konnectorData = konnectorHash[@slug]
+    for key of konnectorData
+        @[key] = konnectorData[key]
+
+    # normalize models' name related to the connector
+    modelNames = []
+    for key, value of @models
+        name = value.toString()
+        name = name.substring '[Model '.length
+        name = name.substring 0, (name.length - 1)
+        modelNames.push name
+    @modelNames = modelNames
+
+    return @
+
+
+Konnector.getKonnectorsToDisplay = (callback) ->
+    Konnector.all (err, konnectors) ->
+        if err?
+            callback err
+        else
+            try
+                konnectorsToDisplay = konnectors
+                    .filter (konnector) ->
+                        # if the connector has config data
+                        return konnectorHash[konnector.slug]?
+                    .map (konnector) ->
+                        konnector.appendConfigData()
+                        return konnector
+
+                    callback null, konnectorsToDisplay
+            catch err
+                callback err

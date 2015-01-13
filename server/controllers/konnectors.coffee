@@ -1,7 +1,5 @@
 Konnector = require '../models/konnector'
 konnectorHash = require '../lib/konnector_hash'
-fs = require 'fs'
-path = require 'path'
 
 module.exports =
 
@@ -16,33 +14,6 @@ module.exports =
                 konnector.injectEncryptedFields()
                 req.konnector = konnector
                 next()
-
-
-    all: (req, res, next) ->
-        Konnector.all (err, konnectors) ->
-            if err
-                next err
-            else
-                displayKonnectors = []
-                for konnector in konnectors
-                    # here add missing fields
-                    if fs.existsSync path.resolve("server/konnectors/#{konnector.slug}.coffee")
-                        displayKonnectors.push konnector
-                    konnectorData = konnectorHash[konnector.slug]
-                    for key of konnectorData
-                        konnector[key] = konnectorData[key]
-
-                    modelNames = []
-                    for key, value of konnector.models
-                        name = value.toString()
-                        name = name.substring '[Model '.length
-                        name = name.substring 0, (name.length - 1)
-                        modelNames.push name
-                    konnector.modelNames = modelNames
-
-                displayKonnectors.sort (konnectorA, konnectorB) ->
-                    konnectorA.slug.localeCompare konnectorB.slug
-                res.send displayKonnectors
 
 
     show: (req, res, next) ->
