@@ -40,3 +40,6 @@ module.exports =
     'home more info': "Quelques informations supplémentaires :"
     'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique"
     'home help step 2': "Désactivez la fonction d'auto-stop pour l'application Konnectors dans votre Cozy, sinon l'importation automatique ne fonctionnera pas."
+
+    'notification import success': 'Konnector %{name}: les données ont été importées avec succès'
+    'notification import error': "Konnector %{name}: une erreur est survenue pendant l'importation des données"

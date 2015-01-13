@@ -1,9 +1,11 @@
 async = require 'async'
+notificationHelper = require 'cozy-notifications-helper'
 log = require('printit')
     prefix: null
     date: true
+
 Konnector = require '../models/konnector'
-notificationHelper = require('cozy-notifications-helper')
+localization = require './localization_manager'
 notification = new notificationHelper()
 
 module.exports = (konnector) ->
@@ -12,19 +14,17 @@ module.exports = (konnector) ->
         log.debug "Importing #{konnector.slug}"
         model = require "../konnectors/#{konnector.slug}"
         konnector.import konnector, model.fields, (err) ->
-            if err
+            if err?
                 log.error err
-                notification.createTemporary
-                    text: "#{konnector.slug}: Import error"
-                    resource:
-                        app: 'konnectors'
-                        url: '/'
+                localizationKey = 'notification import error'
             else
-                notification.createTemporary
-                    text: "#{konnector.slug}: Import success"
-                    resource:
-                        app: 'konnectors'
-                        url: '/'
+                localizationKey = 'notification import success'
+            msg = localization.t localizationKey, name: model.name
+            notification.createTemporary
+                text: msg
+                resource:
+                    app: 'konnectors'
+                    url: "konnector/#{konnector.slug}"
 
     else
         log.debug "Connector #{konnector.slug} already importing"

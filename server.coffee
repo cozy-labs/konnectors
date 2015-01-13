@@ -1,5 +1,6 @@
 americano = require 'americano'
 RealtimeAdapter = require 'cozy-realtime-adapter'
+localization = require './server/lib/localization_manager'
 initKonnectors = require './server/init/konnectors'
 patchKonnectors = require './server/init/patch'
 poller = require './server/lib/konnector_poller'
@@ -14,7 +15,8 @@ params =
 
 americano.start params, (app, server) ->
     realtime = RealtimeAdapter server: server, ['konnector.update']
-    initKonnectors ->
-        patchKonnectors ->
-            poller.start()
+    localization.initialize ->
+        initKonnectors ->
+            patchKonnectors ->
+                poller.start()
 
