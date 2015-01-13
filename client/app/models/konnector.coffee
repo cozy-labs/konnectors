@@ -9,7 +9,7 @@ module.exports = class KonnectorModel extends Backbone.Model
         numFields = Object.keys(fields).length
 
         noEmptyValue = true
-        for field, fieldValue of fieldValues
-            noEmptyValue = noEmptyValue and fieldValue.length > 0
+        for field, fieldValue of fields
+            noEmptyValue = noEmptyValue and fieldValues[field]?.length > 0
 
-        return numFieldValues is numFields and noEmptyValue
+        return numFieldValues >= numFields and noEmptyValue
