@@ -84,6 +84,9 @@
     },
     "Commit": {
       "description": "Commit infos imported from Github."
+    },
+    "CozyInstance": {
+      "description": "This information is needed to localize the application in your language."
     }
   },
   "cozy-displayName": "Konnectors"
