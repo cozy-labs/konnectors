@@ -16,29 +16,28 @@
 
     #menu
     .container
-        transition left .25s ease-in-out
+        transition transform .25s ease-in-out
         position absolute
         top 0
 
     #menu
-        left -100%
+        transform translateX(-100%)
         width 80%
 
         &.active
-            left 0
+            transform translateX(0)
 
     #menu.active ~ .container
-        left 80%
+        transform translateX(80%)
 
     .container
         position absolute
         width 100%
-        left 0
         margin-left 0
         padding 0
 
         h2 span
-                font-size 20px
+            font-size 20px
 
         .description
             font-size 13px
