@@ -163,9 +163,6 @@ $(function() {
   window.router = new Router({
     appView: appView
   });
-  if (typeof Object.freeze === 'function') {
-    Object.freeze(this);
-  }
   return request.get('folders', function(err, paths) {
     appView.setFolders(paths);
     return Backbone.history.start();
@@ -592,6 +589,10 @@ module.exports = AppView = (function(_super) {
 
   AppView.prototype.defaultTemplate = require('./templates/default');
 
+  AppView.prototype.events = {
+    'click #menu-toggler': 'toggleMenu'
+  };
+
   AppView.prototype.afterRender = function() {
     this.container = this.$('.container');
     this.menuView = new MenuView({
@@ -602,7 +603,8 @@ module.exports = AppView = (function(_super) {
 
   AppView.prototype.showDefault = function() {
     this.menuView.unselectAll();
-    return this.container.html(this.defaultTemplate());
+    this.container.html(this.defaultTemplate());
+    return this.hideMenu();
   };
 
   AppView.prototype.showKonnector = function(slug) {
@@ -615,6 +617,7 @@ module.exports = AppView = (function(_super) {
     }
     defaultView = this.container.find('#default');
     if (defaultView.length > 0) {
+      this.$('#menu-toggler').remove();
       defaultView.remove();
     }
     if (konnector != null) {
@@ -625,7 +628,8 @@ module.exports = AppView = (function(_super) {
       el = this.konnectorView.render().$el;
       this.$('.container').append(el);
       this.menuView.unselectAll();
-      return this.menuView.selectItem(konnector.cid);
+      this.menuView.selectItem(konnector.cid);
+      return this.hideMenu();
     } else {
       return window.router.navigate('', true);
     }
@@ -633,6 +637,14 @@ module.exports = AppView = (function(_super) {
 
   AppView.prototype.setFolders = function(paths) {
     return this.paths = paths;
+  };
+
+  AppView.prototype.toggleMenu = function() {
+    return this.$('#menu').toggleClass('active');
+  };
+
+  AppView.prototype.hideMenu = function() {
+    return this.$('#menu').removeClass('active');
   };
 
   return AppView;
@@ -916,7 +928,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div id="default">');
+buf.push('<div id="menu-toggler"><div class="fa fa-bars"></div></div><div id="default">');
 var __val__ = t('home headline')
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('<ul><li>');
@@ -958,7 +970,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error"></span></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"><span class="label">' + escape((interp = t('last import:')) == null ? '' : interp) + '&nbsp;</span><span class="last-import"></span></div><div class="datas">' + escape((interp = t('imported data:')) == null ? '' : interp) + '&nbsp;');
+buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error"></span></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"><span class="label">' + escape((interp = t('last import:')) == null ? '' : interp) + '&nbsp;</span><span class="last-import"></span></div><div class="datas">' + escape((interp = t('imported data:')) == null ? '' : interp) + '&nbsp;');
 // iterate model.modelNames
 ;(function(){
   if ('number' == typeof model.modelNames.length) {
@@ -1004,7 +1016,10 @@ buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('</span>');
  if(lastImport != null && lastImport.length > 0)
 {
-buf.push('<span class="last-import">(' + escape((interp = lastImport) == null ? '' : interp) + ')</span>');
+buf.push('<span class="last-import">');
+var __val__ = lastImport
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</span>');
 }
 buf.push('</a>');
 }
