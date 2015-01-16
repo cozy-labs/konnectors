@@ -7,6 +7,7 @@ module.exports = class AppView extends BaseView
     el: 'body'
     template: require './templates/home'
     defaultTemplate: require './templates/default'
+    events: 'click #menu-toggler': 'toggleMenu'
 
     afterRender: ->
         @container = @$ '.container'
@@ -18,6 +19,7 @@ module.exports = class AppView extends BaseView
     showDefault: ->
         @menuView.unselectAll()
         @container.html @defaultTemplate()
+        @hideMenu()
 
 
     showKonnector: (slug) ->
@@ -28,7 +30,9 @@ module.exports = class AppView extends BaseView
 
         # removes default view, if necessary
         defaultView = @container.find '#default'
-        defaultView.remove() if defaultView.length > 0
+        if defaultView.length > 0
+            @$('#menu-toggler').remove()
+            defaultView.remove()
 
         if konnector?
             # renders and appends view
@@ -41,9 +45,18 @@ module.exports = class AppView extends BaseView
             # mark as selected in the menu
             @menuView.unselectAll()
             @menuView.selectItem konnector.cid
+
+            @hideMenu()
         else
             # if the connector doesn't exist, redirects to home page
             window.router.navigate '', true
 
 
     setFolders: (paths) -> @paths = paths
+
+
+    toggleMenu: -> @$('#menu').toggleClass 'active'
+
+
+    hideMenu: -> @$('#menu').removeClass 'active'
+
