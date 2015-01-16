@@ -34,9 +34,6 @@ $ ->
 
     window.router = new Router {appView}
 
-    # Makes this object immutable.
-    Object.freeze this if typeof Object.freeze is 'function'
-
     # Starts the application after the konnectors have been loaded
     request.get 'folders', (err, paths) ->
         appView.setFolders paths
