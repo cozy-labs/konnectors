@@ -15,15 +15,13 @@ module.exports = (konnector) ->
         model = require "../konnectors/#{konnector.slug}"
         konnector.import konnector, model.fields, (err) ->
 
-            notificationSlug = konnector.slug
             if err?
                 log.error err
                 localizationKey = 'notification import error'
-                notificationSlug += "_err"
             else
                 localizationKey = 'notification import success'
-                notificationSlug += "_success"
 
+            notificationSlug = konnector.slug
             msg = localization.t localizationKey, name: model.name
             notification.createOrUpdatePersistent notificationSlug,
                 app: 'konnectors'
