@@ -60,7 +60,9 @@ Konnector::import = (konnector, fields, callback) ->
 
                 if err?
                     data = isImporting: false
-                    @updateAttributes data, callback
+                    @updateAttributes data, ->
+                        # raise the error from the import, not the update
+                        callback err
 
                 else
                     data =
