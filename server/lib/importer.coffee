@@ -26,7 +26,7 @@ module.exports = (konnector) ->
 
             msg = localization.t localizationKey, name: model.name
             notification.createOrUpdatePersistent notificationSlug,
-                app: 'konnector'
+                app: 'konnectors'
                 text: msg
                 resource:
                     app: 'konnectors'
