@@ -179,15 +179,20 @@ class KonnectorPoller
         # Create the timeout and place it timeouts
         timeouts[konnector.slug] = setTimeout @checkImport.bind(@, konnector, interval), interval
 
-    checkImport: (konnector, interval) ->
+    checkImport: (reference, interval) ->
+        # retrieves the last version of the konnector
+        Konnector.find reference.id, (err, konnector) =>
 
-        # if there is time left, do not import
-        if not konnector.time?
-            importer konnector
+            # mandatory injection of encrypted fields
+            konnector.injectEncryptedFields()
 
-            # Update if actual interval is not the same in the konnector
-            interval = periods[konnector.importInterval]
+            # if there is time left, do not import
+            if not konnector.time?
+                importer konnector
 
-        @prepareNextCheck konnector, interval
+                # Update if actual interval is not the same in the konnector
+                interval = periods[konnector.importInterval]
+
+            @prepareNextCheck konnector, interval
 
 module.exports = new KonnectorPoller
