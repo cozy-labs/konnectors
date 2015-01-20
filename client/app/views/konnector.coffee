@@ -10,6 +10,7 @@ module.exports = class KonnectorView extends BaseView
     initialize: (options) ->
         super options
         @paths = options.paths or []
+        @listenTo @model, 'change', @render
 
     afterRender: =>
         slug = @model.get 'slug'
@@ -17,7 +18,8 @@ module.exports = class KonnectorView extends BaseView
         isImporting  = @model.get 'isImporting'
         lastAutoImport = @model.get 'lastAutoImport'
         @error = @$ '.error'
-        @error.hide()
+        if not @model.get('errorMessage')? or isImporting
+            @error.hide()
 
         @$el.addClass "konnector-#{slug}"
 
@@ -127,6 +129,8 @@ module.exports = class KonnectorView extends BaseView
         data = {fieldValues, importInterval}
         @model.save data,
             success: (model, success) =>
-            error: (mmodel, err) =>
-                @$('.error').html t(err.responseText)
-                @$('.error').show()
+            error: (model, err) =>
+                # cozycloud.cc timeout is not considered like an error
+                unless err.status is 504
+                    @$('.error .message').html t(err.responseText)
+                    @$('.error').show()

@@ -9,9 +9,16 @@ module.exports = class KonnectorsView extends ViewCollection
     initialize: (options) ->
         super options
         @listenTo @collection, 'change', @collection.sort.bind(@collection)
+        @listenTo @collection, 'change', @render
+
+
+    afterRender: ->
+        super()
+        @selectItem @selectedCid
 
 
     selectItem: (modelCid) ->
+        @selectedCid = modelCid
         view = @views[modelCid]
         view.select() if view?
 

@@ -13,6 +13,7 @@ module.exports = Konnector = americano.getModel 'Konnector',
     lastAutoImport: Date
     isImporting: type: Boolean, default: false
     importInterval: type: String, default: 'none'
+    errorMessage: type: String, default: null
 
 Konnector.all = (callback) ->
     Konnector.request 'all', (err, konnectors) ->
@@ -59,7 +60,7 @@ Konnector::import = (konnector, fields, callback) ->
                 @removeEncryptedFields fields
 
                 if err?
-                    data = isImporting: false
+                    data = isImporting: false, errorMessage: err
                     @updateAttributes data, ->
                         # raise the error from the import, not the update
                         callback err
@@ -68,6 +69,7 @@ Konnector::import = (konnector, fields, callback) ->
                     data =
                         isImporting: false
                         lastImport: new Date()
+                        errorMessage: null
                     @updateAttributes data, callback
 
 

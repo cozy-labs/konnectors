@@ -44,3 +44,5 @@ module.exports =
     'notification import success': 'Konnector %{name}: data have been successfully imported'
     'notification import error': 'Konnector %{name}: an error occurred during import of data'
 
+    'error occurred during import.': 'An error occurred during the last import.'
+    'error occurred during import:': 'An error occurred during the last import:'
