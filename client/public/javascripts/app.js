@@ -407,7 +407,9 @@ module.exports = {
   'home help step 1': "You must manually trigger the import, except if you enable the auto-import.",
   'home help step 2': "Disable the auto-stop feature for the Konnector application in your Cozy, otherwise the auto-import won't work.",
   'notification import success': 'Konnector %{name}: data have been successfully imported',
-  'notification import error': 'Konnector %{name}: an error occurred during import of data'
+  'notification import error': 'Konnector %{name}: an error occurred during import of data',
+  'error occurred during import.': 'An error occurred during the last import.',
+  'error occurred during import:': 'An error occurred during the last import:'
 };
 
 });
@@ -449,7 +451,9 @@ module.exports = {
   'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique",
   'home help step 2': "Désactivez la fonction d'auto-stop pour l'application Konnectors dans votre Cozy, sinon l'importation automatique ne fonctionnera pas.",
   'notification import success': 'Konnector %{name}: les données ont été importées avec succès',
-  'notification import error': "Konnector %{name}: une erreur est survenue pendant l'importation des données"
+  'notification import error': "Konnector %{name}: une erreur est survenue pendant l'importation des données",
+  'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.',
+  'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
 };
 
 });
@@ -679,7 +683,8 @@ module.exports = KonnectorView = (function(_super) {
 
   KonnectorView.prototype.initialize = function(options) {
     KonnectorView.__super__.initialize.call(this, options);
-    return this.paths = options.paths || [];
+    this.paths = options.paths || [];
+    return this.listenTo(this.model, 'change', this.render);
   };
 
   KonnectorView.prototype.afterRender = function() {
@@ -689,7 +694,9 @@ module.exports = KonnectorView = (function(_super) {
     isImporting = this.model.get('isImporting');
     lastAutoImport = this.model.get('lastAutoImport');
     this.error = this.$('.error');
-    this.error.hide();
+    if ((this.model.get('errorMessage') == null) || isImporting) {
+      this.error.hide();
+    }
     this.$el.addClass("konnector-" + slug);
     if (isImporting) {
       this.$('.last-import').html(t('importing...'));
@@ -799,9 +806,11 @@ module.exports = KonnectorView = (function(_super) {
         return function(model, success) {};
       })(this),
       error: (function(_this) {
-        return function(mmodel, err) {
-          _this.$('.error').html(t(err.responseText));
-          return _this.$('.error').show();
+        return function(model, err) {
+          if (err.status !== 504) {
+            _this.$('.error .message').html(t(err.responseText));
+            return _this.$('.error').show();
+          }
         };
       })(this)
     });
@@ -835,11 +844,18 @@ module.exports = KonnectorsView = (function(_super) {
 
   KonnectorsView.prototype.initialize = function(options) {
     KonnectorsView.__super__.initialize.call(this, options);
-    return this.listenTo(this.collection, 'change', this.collection.sort.bind(this.collection));
+    this.listenTo(this.collection, 'change', this.collection.sort.bind(this.collection));
+    return this.listenTo(this.collection, 'change', this.render);
+  };
+
+  KonnectorsView.prototype.afterRender = function() {
+    KonnectorsView.__super__.afterRender.call(this);
+    return this.selectItem(this.selectedCid);
   };
 
   KonnectorsView.prototype.selectItem = function(modelCid) {
     var view;
+    this.selectedCid = modelCid;
     view = this.views[modelCid];
     if (view != null) {
       return view.select();
@@ -970,7 +986,13 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error"></span></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"><span class="label">' + escape((interp = t('last import:')) == null ? '' : interp) + '&nbsp;</span><span class="last-import"></span></div><div class="datas">' + escape((interp = t('imported data:')) == null ? '' : interp) + '&nbsp;');
+buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error">');
+var __val__ = t('error occurred during import:') + ' '
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('<span class="message">');
+var __val__ = t(model.errorMessage)
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</span></span></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"><span class="label">' + escape((interp = t('last import:')) == null ? '' : interp) + '&nbsp;</span><span class="last-import"></span></div><div class="datas">' + escape((interp = t('imported data:')) == null ? '' : interp) + '&nbsp;');
 // iterate model.modelNames
 ;(function(){
   if ('number' == typeof model.modelNames.length) {
@@ -1020,6 +1042,12 @@ buf.push('<span class="last-import">');
 var __val__ = lastImport
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('</span>');
+}
+ if (model.errorMessage != null && model.isImporting === false)
+{
+buf.push('<i');
+buf.push(attrs({ 'title':(t('error occurred during import.')), "class": ('fa') + ' ' + ('fa-warning') }, {"title":true}));
+buf.push('></i>');
 }
 buf.push('</a>');
 }
