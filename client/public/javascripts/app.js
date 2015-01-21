@@ -1043,7 +1043,11 @@ var __val__ = lastImport
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('</span>');
 }
- if (model.errorMessage != null && model.isImporting === false)
+ if (model.isImporting === true)
+{
+buf.push('<i class="fa fa-refresh fa-spin"></i>');
+}
+ else if (model.errorMessage != null)
 {
 buf.push('<i');
 buf.push(attrs({ 'title':(t('error occurred during import.')), "class": ('fa') + ' ' + ('fa-warning') }, {"title":true}));
