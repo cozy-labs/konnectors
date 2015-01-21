@@ -9,6 +9,8 @@ path = require 'path'
 importer = require "./importer"
 Konnector = require '../models/konnector'
 
+konnectorHash = require '../lib/konnector_hash'
+
 hour = 60 * 60 * 1000
 day = 24 * hour
 week = 7 * day
@@ -85,6 +87,7 @@ class KonnectorPoller
         startDate = konnector.fieldValues.date if konnector.fieldValues.date?
         # Retrive current Autoimport value in database
         Konnector.find konnector.id, (err, savedKonnector) =>
+            savedKonnector.injectEncryptedFields()
 
             currentInterval = savedKonnector.importInterval
 
@@ -108,8 +111,10 @@ class KonnectorPoller
                         diff = firstImportDate.valueOf() - now.valueOf()
 
                         # We set the date of the first import
-                        data =
-                            lastAutoImport: firstImportDate
+                        data = lastAutoImport: firstImportDate
+
+                        fields = konnectorHash[savedKonnector.slug]
+                        savedKonnector.removeEncryptedFields fields
 
                         # Create/Update lastAutoImport in database
                         savedKonnector.updateAttributes data, (err) =>
@@ -123,6 +128,9 @@ class KonnectorPoller
                         # We set the current time
                         data =
                             lastAutoImport: moment()
+
+                        fields = konnectorHash[savedKonnector.slug]
+                        savedKonnector.removeEncryptedFields fields
 
                         # Create/Update lastAutoImport in database
                         savedKonnector.updateAttributes data, (err) =>
