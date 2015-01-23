@@ -90,21 +90,6 @@
   globals.require.list = list;
   globals.require.brunch = true;
 })();
-require.register("application", function(exports, require, module) {
-module.exports = {
-  initialize: function() {
-    var Router;
-    Router = require('router');
-    this.router = new Router();
-    Backbone.history.start();
-    if (typeof Object.freeze === 'function') {
-      return Object.freeze(this);
-    }
-  }
-};
-
-});
-
 require.register("collections/konnectors", function(exports, require, module) {
 var KonnectorsCollection,
   __hasProp = {}.hasOwnProperty,
@@ -121,43 +106,72 @@ module.exports = KonnectorsCollection = (function(_super) {
 
   KonnectorsCollection.prototype.url = 'konnectors/';
 
+  KonnectorsCollection.prototype.comparator = function(a, b) {
+    if (a.isConfigured() && !b.isConfigured()) {
+      return -1;
+    } else if (!a.isConfigured() && b.isConfigured()) {
+      return 1;
+    } else if (a.get('name') > b.get('name')) {
+      return 1;
+    } else if (a.get('name') < b.get('name')) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
+
   return KonnectorsCollection;
 
 })(Backbone.Collection);
 
 });
 
-require.register("initialize", function(exports, require, module) {
-var app;
+;require.register("initialize", function(exports, require, module) {
+var AppView, KonnectorListener, KonnectorsCollection, Router, request;
 
-app = require('application');
+request = require('./lib/request');
+
+KonnectorListener = require('./realtime');
+
+KonnectorsCollection = require('../collections/konnectors');
+
+AppView = require('./views/app_view');
+
+Router = require('./router');
 
 $(function() {
-  require('lib/app_helpers');
-  return app.initialize();
+  var appView, e, initKonnectors, konnectors, locale, locales, polyglot, remoteChangeListener;
+  locale = window.locale;
+  polyglot = new Polyglot();
+  try {
+    locales = require("locales/" + locale);
+  } catch (_error) {
+    e = _error;
+    locale = 'en';
+    locales = require('locales/en');
+  }
+  polyglot.extend(locales);
+  window.t = polyglot.t.bind(polyglot);
+  initKonnectors = window.initKonnectors || [];
+  konnectors = new KonnectorsCollection(initKonnectors);
+  remoteChangeListener = new KonnectorListener();
+  remoteChangeListener.watch(konnectors);
+  appView = new AppView({
+    collection: konnectors
+  });
+  appView.render();
+  window.router = new Router({
+    appView: appView
+  });
+  return request.get('folders', function(err, paths) {
+    appView.setFolders(paths);
+    return Backbone.history.start();
+  });
 });
 
 });
 
-require.register("lib/app_helpers", function(exports, require, module) {
-(function() {
-  return (function() {
-    var console, dummy, method, methods, _results;
-    console = window.console = window.console || {};
-    method = void 0;
-    dummy = function() {};
-    methods = 'assert,count,debug,dir,dirxml,error,exception, group,groupCollapsed,groupEnd,info,log,markTimeline, profile,profileEnd,time,timeEnd,trace,warn'.split(',');
-    _results = [];
-    while (method = methods.pop()) {
-      _results.push(console[method] = console[method] || dummy);
-    }
-    return _results;
-  })();
-})();
-
-});
-
-require.register("lib/base_view", function(exports, require, module) {
+;require.register("lib/base_view", function(exports, require, module) {
 var BaseView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -204,7 +218,7 @@ module.exports = BaseView = (function(_super) {
 
 });
 
-require.register("lib/request", function(exports, require, module) {
+;require.register("lib/request", function(exports, require, module) {
 exports.request = function(type, url, data, callback) {
   return $.ajax({
     type: type,
@@ -245,7 +259,7 @@ exports.del = function(url, callback) {
 
 });
 
-require.register("lib/view_collection", function(exports, require, module) {
+;require.register("lib/view_collection", function(exports, require, module) {
 var BaseView, ViewCollection,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -286,9 +300,10 @@ module.exports = ViewCollection = (function(_super) {
   ViewCollection.prototype.initialize = function() {
     ViewCollection.__super__.initialize.apply(this, arguments);
     this.views = {};
-    this.listenTo(this.collection, "reset", this.onReset);
-    this.listenTo(this.collection, "add", this.addItem);
-    this.listenTo(this.collection, "remove", this.removeItem);
+    this.listenTo(this.collection, 'reset', this.onReset);
+    this.listenTo(this.collection, 'add', this.addItem);
+    this.listenTo(this.collection, 'remove', this.removeItem);
+    this.listenTo(this.collection, 'sort', this.render);
     return this.$collectionEl = $(this.collectionEl);
   };
 
@@ -355,7 +370,95 @@ module.exports = ViewCollection = (function(_super) {
 
 });
 
-require.register("models/konnector", function(exports, require, module) {
+;require.register("locales/en", function(exports, require, module) {
+module.exports = {
+  'bad credentials': 'Bad Credentials',
+  'no bills retrieved': 'No bills retrieved',
+  'key not found': 'Key not found',
+  'last import:': 'Last import:',
+  'import': 'Import',
+  'auto import': 'Automatic import',
+  'imported data:': 'Imported data:',
+  'importing...': 'importing...',
+  'no import performed': 'No import performed',
+  'firstname': 'Firstname',
+  'lastname': 'Lastname',
+  'login': 'Login',
+  'password': 'Password',
+  'email': 'Email',
+  'accessToken': 'Access token',
+  'accessTokenSecret': 'Access token secret',
+  'consumerKey': 'Consumer Key',
+  'consumerSecret': 'Consumer Secret',
+  'apikey': 'Api key',
+  'phoneNumber': 'Phone number',
+  'folderPath': 'Folder path',
+  'none': 'None',
+  'every hour': 'Every hour',
+  'every day': 'Every day',
+  'every week': 'Every week',
+  'each month': 'Each month',
+  'date format': 'LLL',
+  'home headline': "With Konnectors you can retrieve many data and save them into your Cozy.\nFrom your phone bills to your connected scale, or your tweets. Configure the connectors you are interested in:",
+  'home config step 1': "Select a connector in the menu on the left",
+  'home config step 2': "Follow the instructions to configure it",
+  'home config step 3': "Your data are retrieved and saved into your Cozy",
+  'home more info': "More information:",
+  'home help step 1': "You must manually trigger the import, except if you enable the auto-import.",
+  'home help step 2': "Disable the auto-stop feature for the Konnector application in your Cozy, otherwise the auto-import won't work.",
+  'notification import success': 'Konnector %{name}: data have been successfully imported',
+  'notification import error': 'Konnector %{name}: an error occurred during import of data',
+  'error occurred during import.': 'An error occurred during the last import.',
+  'error occurred during import:': 'An error occurred during the last import:'
+};
+
+});
+
+;require.register("locales/fr", function(exports, require, module) {
+module.exports = {
+  'bad credentials': 'Mauvais identifiants',
+  'no bills retrieved': 'Pas de facture trouvées',
+  'key not found': 'Clé non trouvée',
+  'last import:': 'Dernière importation :',
+  'import': 'Importer',
+  'auto import': 'Importation automatique',
+  'imported data:': 'Données importées :',
+  'importing...': 'importation en cours...',
+  'no import performed': "Pas d'importation effectuée",
+  'firstname': 'Prénom',
+  'lastname': 'Nom',
+  'login': 'Identifiant',
+  'password': 'Mot de passe',
+  'email': 'Mail',
+  'accessToken': 'Access token',
+  'accessTokenSecret': 'Access token secret',
+  'consumerKey': 'Consumer Key',
+  'consumerSecret': 'Consumer Secret',
+  'apikey': 'Api key',
+  'phoneNumber': 'Numéro de téléphone',
+  'folderPath': 'Chemin du dossier',
+  'none': 'Aucun',
+  'every hour': 'Toutes les heures',
+  'every day': 'Tous les jours',
+  'every week': 'Toutes les semaines',
+  'each month': 'Tous les mois',
+  'date format': 'DD/MM/YYYY [à] HH[h]mm',
+  'home headline': "Konnectors vous permet de récupérer de nombreuses données et de les intégrer votre Cozy.\nDe vos factures de téléphone aux données de votre balance connectée en passant par vos tweets. Configurez les connecteurs qui vous intéressent :",
+  'home config step 1': "Sélectionnez un connecteur dans le menu à gauche",
+  'home config step 2': "Suivez les instructions pour le configurer",
+  'home config step 3': "Vos données sont récupérées et intégrer à votre Cozy",
+  'home more info': "Quelques informations supplémentaires :",
+  'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique",
+  'home help step 2': "Désactivez la fonction d'auto-stop pour l'application Konnectors dans votre Cozy, sinon l'importation automatique ne fonctionnera pas.",
+  'notification import success': 'Konnector %{name}: les données ont été importées avec succès',
+  'notification import error': "Konnector %{name}: une erreur est survenue pendant l'importation des données",
+  'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.',
+  'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
+};
+
+});
+
+;require.register("models/konnector", function(exports, require, module) {
 var KonnectorModel,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -369,18 +472,71 @@ module.exports = KonnectorModel = (function(_super) {
 
   KonnectorModel.prototype.rootUrl = "konnectors/";
 
+  KonnectorModel.prototype.isConfigured = function() {
+    var field, fieldValue, fieldValues, fields, noEmptyValue, numFieldValues, numFields, _ref;
+    fieldValues = this.get('fieldValues') || {};
+    fields = this.get('fields');
+    numFieldValues = Object.keys(fieldValues).length;
+    numFields = Object.keys(fields).length;
+    noEmptyValue = true;
+    for (field in fields) {
+      fieldValue = fields[field];
+      noEmptyValue = noEmptyValue && ((_ref = fieldValues[field]) != null ? _ref.length : void 0) > 0;
+    }
+    return numFieldValues >= numFields && noEmptyValue;
+  };
+
   return KonnectorModel;
 
 })(Backbone.Model);
 
 });
 
-require.register("router", function(exports, require, module) {
-var AppView, Router,
+;require.register("realtime", function(exports, require, module) {
+var Konnector, KonnectorListener,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-AppView = require('views/app_view');
+Konnector = require('../models/konnector');
+
+module.exports = KonnectorListener = (function(_super) {
+  __extends(KonnectorListener, _super);
+
+  function KonnectorListener() {
+    return KonnectorListener.__super__.constructor.apply(this, arguments);
+  }
+
+  KonnectorListener.prototype.models = {
+    konnector: Konnector
+  };
+
+  KonnectorListener.prototype.events = ['konnector.update'];
+
+  KonnectorListener.prototype.onRemoteUpdate = function(model) {
+    var formattedDate, isImporting, lastImport, slug;
+    isImporting = model.get('isImporting');
+    slug = model.get('slug');
+    lastImport = model.get('lastImport');
+    formattedDate = moment(lastImport).format(t('date format'));
+    if (isImporting) {
+      return $(".konnector-" + slug + " .last-import").html(t('importing...'));
+    } else if (lastImport != null) {
+      return $(".konnector-" + slug + " .last-import").html(formattedDate);
+    } else {
+      return $(".konnector-" + slug + " .last-import").html(t('no import performed'));
+    }
+  };
+
+  return KonnectorListener;
+
+})(CozySocketListener);
+
+});
+
+;require.register("router", function(exports, require, module) {
+var Router,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 module.exports = Router = (function(_super) {
   __extends(Router, _super);
@@ -390,13 +546,21 @@ module.exports = Router = (function(_super) {
   }
 
   Router.prototype.routes = {
-    '': 'main'
+    '': 'main',
+    'konnector/:slug': 'konnector'
+  };
+
+  Router.prototype.initialize = function(options) {
+    Router.__super__.initialize.call(this);
+    return this.appView = options.appView;
   };
 
   Router.prototype.main = function() {
-    var mainView;
-    mainView = new AppView();
-    return mainView.render();
+    return this.appView.showDefault();
+  };
+
+  Router.prototype.konnector = function(slug) {
+    return this.appView.showKonnector(slug);
   };
 
   return Router;
@@ -405,14 +569,16 @@ module.exports = Router = (function(_super) {
 
 });
 
-require.register("views/app_view", function(exports, require, module) {
-var AppView, BaseView, Konnectors,
+;require.register("views/app_view", function(exports, require, module) {
+var AppView, BaseView, KonnectorView, MenuView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 BaseView = require('../lib/base_view');
 
-Konnectors = require('./konnectors');
+KonnectorView = require('./konnector');
+
+MenuView = require('./menu');
 
 module.exports = AppView = (function(_super) {
   __extends(AppView, _super);
@@ -421,15 +587,68 @@ module.exports = AppView = (function(_super) {
     return AppView.__super__.constructor.apply(this, arguments);
   }
 
-  AppView.prototype.el = 'body.application';
+  AppView.prototype.el = 'body';
 
   AppView.prototype.template = require('./templates/home');
 
+  AppView.prototype.defaultTemplate = require('./templates/default');
+
+  AppView.prototype.events = {
+    'click #menu-toggler': 'toggleMenu'
+  };
+
   AppView.prototype.afterRender = function() {
-    var konnectors;
-    konnectors = new Konnectors();
-    konnectors.render();
-    return konnectors.fetch();
+    this.container = this.$('.container');
+    this.menuView = new MenuView({
+      collection: this.collection
+    });
+    return this.menuView.render();
+  };
+
+  AppView.prototype.showDefault = function() {
+    this.menuView.unselectAll();
+    this.container.html(this.defaultTemplate());
+    return this.hideMenu();
+  };
+
+  AppView.prototype.showKonnector = function(slug) {
+    var defaultView, el, konnector;
+    konnector = this.collection.findWhere({
+      slug: slug
+    });
+    if (this.konnectorView != null) {
+      this.konnectorView.destroy();
+    }
+    defaultView = this.container.find('#default');
+    if (defaultView.length > 0) {
+      this.$('#menu-toggler').remove();
+      defaultView.remove();
+    }
+    if (konnector != null) {
+      this.konnectorView = new KonnectorView({
+        model: konnector,
+        paths: this.paths
+      });
+      el = this.konnectorView.render().$el;
+      this.$('.container').append(el);
+      this.menuView.unselectAll();
+      this.menuView.selectItem(konnector.cid);
+      return this.hideMenu();
+    } else {
+      return window.router.navigate('', true);
+    }
+  };
+
+  AppView.prototype.setFolders = function(paths) {
+    return this.paths = paths;
+  };
+
+  AppView.prototype.toggleMenu = function() {
+    return this.$('#menu').toggleClass('active');
+  };
+
+  AppView.prototype.hideMenu = function() {
+    return this.$('#menu').removeClass('active');
   };
 
   return AppView;
@@ -438,7 +657,7 @@ module.exports = AppView = (function(_super) {
 
 });
 
-require.register("views/konnector", function(exports, require, module) {
+;require.register("views/konnector", function(exports, require, module) {
 var BaseView, KonnectorView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -450,8 +669,6 @@ module.exports = KonnectorView = (function(_super) {
   __extends(KonnectorView, _super);
 
   function KonnectorView() {
-    this.selectPath = __bind(this.selectPath, this);
-    this.onImportClicked = __bind(this.onImportClicked, this);
     this.afterRender = __bind(this.afterRender, this);
     return KonnectorView.__super__.constructor.apply(this, arguments);
   }
@@ -461,22 +678,33 @@ module.exports = KonnectorView = (function(_super) {
   KonnectorView.prototype.className = 'konnector';
 
   KonnectorView.prototype.events = {
-    "click .import-button": "onImportClicked"
+    "click #import-button": "onImportClicked"
+  };
+
+  KonnectorView.prototype.initialize = function(options) {
+    KonnectorView.__super__.initialize.call(this, options);
+    this.paths = options.paths || [];
+    return this.listenTo(this.model, 'change', this.render);
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var fieldHtml, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, name, selected, slug, val, value, values, _ref;
+    var fieldHtml, formattedDate, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, name, path, selected, slug, val, value, values, _i, _len, _ref, _ref1;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
     lastAutoImport = this.model.get('lastAutoImport');
+    this.error = this.$('.error');
+    if ((this.model.get('errorMessage') == null) || isImporting) {
+      this.error.hide();
+    }
     this.$el.addClass("konnector-" + slug);
     if (isImporting) {
-      this.$('.last-import').html('importing...');
+      this.$('.last-import').html(t('importing...'));
     } else if (lastImport != null) {
-      this.$('.last-import').html(moment(lastImport).format('LLL'));
+      formattedDate = moment(lastImport).format(t('date format'));
+      this.$('.last-import').html(formattedDate);
     } else {
-      this.$('.last-import').html("no import performed.");
+      this.$('.last-import').html(t("no import performed"));
     }
     values = this.model.get('fieldValues');
     if (values == null) {
@@ -488,9 +716,15 @@ module.exports = KonnectorView = (function(_super) {
       if (values[name] == null) {
         values[name] = "";
       }
-      fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + name + "</label></div>";
+      fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + (t(name)) + "</label></div>";
       if (val === 'folder') {
-        fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\" class=\"folder\"\n             value=\"" + values[name] + "\"></select></div>\n</div>";
+        fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\" class=\"folder\"\n             value=\"" + (t(values[name])) + "\">";
+        _ref1 = this.paths;
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          path = _ref1[_i];
+          fieldHtml += "<option value=\"" + path + "\">" + path + "</option>";
+        }
+        fieldHtml += "</select></div></div>";
       } else {
         fieldHtml += "<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + values[name] + "\"/></div>\n</div>";
       }
@@ -501,13 +735,13 @@ module.exports = KonnectorView = (function(_super) {
       importInterval = '';
     }
     intervals = {
-      none: "None",
-      hour: "Every Hour",
-      day: "Every Day",
-      week: "Every Week",
-      month: "Each month"
+      none: t("none"),
+      hour: t("every hour"),
+      day: t("every day"),
+      week: t("every week"),
+      month: t("each month")
     };
-    fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-autoimport-input\">Auto Import</label></div>\n<div><select id=\"" + slug + "-autoimport-input\" class=\"autoimport\">";
+    fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-autoimport-input\">" + (t('auto import')) + "</label></div>\n<div><select id=\"" + slug + "-autoimport-input\" class=\"autoimport\">";
     for (key in intervals) {
       value = intervals[key];
       selected = importInterval === key ? 'selected' : '';
@@ -550,7 +784,8 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var fieldValues, importDate, importInterval, name, slug, val, _ref;
+    var data, fieldValues, importDate, importInterval, name, slug, val, _ref;
+    this.$('.error').hide();
     fieldValues = {};
     slug = this.model.get('slug');
     importDate = $("#" + slug + "-import-date").val();
@@ -560,42 +795,25 @@ module.exports = KonnectorView = (function(_super) {
       val = _ref[name];
       fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
     }
-    this.model.set('fieldValues', fieldValues);
     importInterval = 'none';
     importInterval = $("#" + slug + "-autoimport-input").val();
-    this.model.set('importInterval', importInterval);
-    return this.model.save({
+    data = {
+      fieldValues: fieldValues,
+      importInterval: importInterval
+    };
+    return this.model.save(data, {
       success: (function(_this) {
-        return function() {
-          return alert("import succeeded");
-        };
+        return function(model, success) {};
       })(this),
       error: (function(_this) {
-        return function() {
-          return alert("import failed");
+        return function(model, err) {
+          if (err.status !== 504) {
+            _this.$('.error .message').html(t(err.responseText));
+            return _this.$('.error').show();
+          }
         };
       })(this)
     });
-  };
-
-  KonnectorView.prototype.selectPath = function() {
-    var name, slug, val, values, _ref, _results;
-    slug = this.model.get('slug');
-    _ref = this.model.get('fields');
-    _results = [];
-    for (name in _ref) {
-      val = _ref[name];
-      if (val === 'folder') {
-        values = this.model.get('fieldValues');
-        if (values == null) {
-          values = {};
-        }
-        _results.push(this.$("#" + slug + "-" + name + "-input").val(values[name]));
-      } else {
-        _results.push(void 0);
-      }
-    }
-    return _results;
   };
 
   return KonnectorView;
@@ -604,57 +822,14 @@ module.exports = KonnectorView = (function(_super) {
 
 });
 
-require.register("views/konnector_listener", function(exports, require, module) {
-var Konnector, KonnectorListener,
+;require.register("views/menu", function(exports, require, module) {
+var KonnectorsView, MenuItemView, ViewCollection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-Konnector = require('../models/konnector');
-
-module.exports = KonnectorListener = (function(_super) {
-  __extends(KonnectorListener, _super);
-
-  function KonnectorListener() {
-    return KonnectorListener.__super__.constructor.apply(this, arguments);
-  }
-
-  KonnectorListener.prototype.models = {
-    konnector: Konnector
-  };
-
-  KonnectorListener.prototype.events = ['konnector.update'];
-
-  KonnectorListener.prototype.onRemoteUpdate = function(model) {
-    var isImporting, slug;
-    isImporting = model.get('isImporting');
-    slug = model.get('slug');
-    if (isImporting) {
-      return $(".konnector-" + slug + " .last-import").html('importing...');
-    } else {
-      return $(".konnector-" + slug + " .last-import").html(moment().format('LLL'));
-    }
-  };
-
-  return KonnectorListener;
-
-})(CozySocketListener);
-
-});
-
-require.register("views/konnectors", function(exports, require, module) {
-var KonnectorListener, KonnectorView, KonnectorsCollection, KonnectorsView, ViewCollection, request,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-request = require('../lib/request');
 
 ViewCollection = require('../lib/view_collection');
 
-KonnectorsCollection = require('../collections/konnectors');
-
-KonnectorView = require('./konnector');
-
-KonnectorListener = require('./konnector_listener');
+MenuItemView = require('./menu_item');
 
 module.exports = KonnectorsView = (function(_super) {
   __extends(KonnectorsView, _super);
@@ -665,37 +840,37 @@ module.exports = KonnectorsView = (function(_super) {
 
   KonnectorsView.prototype.collectionEl = '#konnectors';
 
-  KonnectorsView.prototype.collection = new KonnectorsCollection();
+  KonnectorsView.prototype.itemview = MenuItemView;
 
-  KonnectorsView.prototype.itemview = KonnectorView;
-
-  KonnectorsView.prototype.afterRender = function() {
-    KonnectorsView.__super__.afterRender.apply(this, arguments);
-    this.remoteChangeListener = new KonnectorListener();
-    return this.remoteChangeListener.watch(this.collection);
+  KonnectorsView.prototype.initialize = function(options) {
+    KonnectorsView.__super__.initialize.call(this, options);
+    this.listenTo(this.collection, 'change', this.collection.sort.bind(this.collection));
+    return this.listenTo(this.collection, 'change', this.render);
   };
 
-  KonnectorsView.prototype.fetch = function() {
-    return this.collection.fetch({
-      success: (function(_this) {
-        return function() {
-          return request.get('folders', function(err, paths) {
-            var cid, konnector, path, _i, _len, _ref, _results;
-            for (_i = 0, _len = paths.length; _i < _len; _i++) {
-              path = paths[_i];
-              $(".folder").append("<option value=\"" + path + "\">" + path + "</option>");
-            }
-            _ref = _this.views;
-            _results = [];
-            for (cid in _ref) {
-              konnector = _ref[cid];
-              _results.push(konnector.selectPath());
-            }
-            return _results;
-          });
-        };
-      })(this)
-    });
+  KonnectorsView.prototype.afterRender = function() {
+    KonnectorsView.__super__.afterRender.call(this);
+    return this.selectItem(this.selectedCid);
+  };
+
+  KonnectorsView.prototype.selectItem = function(modelCid) {
+    var view;
+    this.selectedCid = modelCid;
+    view = this.views[modelCid];
+    if (view != null) {
+      return view.select();
+    }
+  };
+
+  KonnectorsView.prototype.unselectAll = function() {
+    var index, view, _ref, _results;
+    _ref = this.views;
+    _results = [];
+    for (index in _ref) {
+      view = _ref[index];
+      _results.push(view.unselect());
+    }
+    return _results;
   };
 
   return KonnectorsView;
@@ -704,25 +879,120 @@ module.exports = KonnectorsView = (function(_super) {
 
 });
 
-require.register("views/templates/home", function(exports, require, module) {
+;require.register("views/menu_item", function(exports, require, module) {
+var BaseView, MenuItemView,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+BaseView = require('../lib/base_view');
+
+module.exports = MenuItemView = (function(_super) {
+  __extends(MenuItemView, _super);
+
+  function MenuItemView() {
+    return MenuItemView.__super__.constructor.apply(this, arguments);
+  }
+
+  MenuItemView.prototype.tagName = 'li';
+
+  MenuItemView.prototype.template = require('./templates/menu_item');
+
+  MenuItemView.prototype.initialize = function(options) {
+    MenuItemView.__super__.initialize.call(this, options);
+    return this.listenTo(this.model, 'change', this.render);
+  };
+
+  MenuItemView.prototype.getRenderData = function() {
+    var formattedDate, lastImport;
+    lastImport = this.model.get('lastImport');
+    if (this.model.isConfigured() && (lastImport != null)) {
+      formattedDate = moment(lastImport).format(t('date format'));
+      lastImport = "" + (t('last import:')) + "  " + formattedDate;
+    } else if (this.model.isConfigured()) {
+      lastImport = "No import performed yet";
+    } else {
+      lastImport = "";
+    }
+    return _.extend({}, MenuItemView.__super__.getRenderData.call(this), {
+      lastImport: lastImport
+    });
+  };
+
+  MenuItemView.prototype.afterRender = function() {
+    if (this.model.isConfigured()) {
+      return this.$el.addClass('configured');
+    }
+  };
+
+  MenuItemView.prototype.select = function() {
+    return this.$el.addClass('selected');
+  };
+
+  MenuItemView.prototype.unselect = function() {
+    return this.$el.removeClass('selected');
+  };
+
+  return MenuItemView;
+
+})(BaseView);
+
+});
+
+;require.register("views/templates/default", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div id="content"><div class="line clearfix"><img src="images/small_icon.png" class="right"/><h1>Konnectors</h1></div><div id="konnectors"></div></div>');
+buf.push('<div id="menu-toggler"><div class="fa fa-bars"></div></div><div id="default">');
+var __val__ = t('home headline')
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('<ul><li>');
+var __val__ = t('home config step 1')
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</li><li>');
+var __val__ = t('home config step 2')
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</li><li>');
+var __val__ = t('home config step 3')
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</li></ul>' + escape((interp = t('home more info')) == null ? '' : interp) + '<ul><li>');
+var __val__ = t('home help step 1')
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</li><li>');
+var __val__ = t('home help step 2')
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</li></ul></div>');
 }
 return buf.join("");
 };
 });
 
-require.register("views/templates/konnector", function(exports, require, module) {
+;require.register("views/templates/home", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) == null ? '' : interp) + '</h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + ' </div><div class="fields"></div><div class="buttons"> <button class="import-button">import</button></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"> <span class="label">Last import:&nbsp;</span><span class="last-import"></span></div><div class="datas">Imported data:&nbsp;');
+buf.push('<div id="menu"><h1><a href="#">Konnectors</a></h1><ul id="konnectors"></ul></div><div class="container"></div>');
+}
+return buf.join("");
+};
+});
+
+;require.register("views/templates/konnector", function(exports, require, module) {
+module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var buf = [];
+with (locals || {}) {
+var interp;
+buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error">');
+var __val__ = t('error occurred during import:') + ' '
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('<span class="message">');
+var __val__ = t(model.errorMessage)
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</span></span></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"><span class="label">' + escape((interp = t('last import:')) == null ? '' : interp) + '&nbsp;</span><span class="last-import"></span></div><div class="datas">' + escape((interp = t('imported data:')) == null ? '' : interp) + '&nbsp;');
 // iterate model.modelNames
 ;(function(){
   if ('number' == typeof model.modelNames.length) {
@@ -732,7 +1002,7 @@ buf.push('<!-- .konnector --><h2 class="name">' + escape((interp = model.name) =
 
 buf.push('<a');
 buf.push(attrs({ 'href':("/apps/databrowser/#search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
-buf.push('> \n' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
+buf.push('>' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
     }
 
   } else {
@@ -742,7 +1012,7 @@ buf.push('> \n' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
 
 buf.push('<a');
 buf.push(attrs({ 'href':("/apps/databrowser/#search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
-buf.push('> \n' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
+buf.push('>' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
     }
 
   }
@@ -754,5 +1024,40 @@ return buf.join("");
 };
 });
 
+;require.register("views/templates/menu_item", function(exports, require, module) {
+module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var buf = [];
+with (locals || {}) {
+var interp;
+buf.push('<a');
+buf.push(attrs({ 'href':("#konnector/" + (model.slug) + "") }, {"href":true}));
+buf.push('><span class="name">');
+var __val__ = model.name
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</span>');
+ if(lastImport != null && lastImport.length > 0)
+{
+buf.push('<span class="last-import">');
+var __val__ = lastImport
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</span>');
+}
+ if (model.isImporting === true)
+{
+buf.push('<i class="fa fa-refresh fa-spin"></i>');
+}
+ else if (model.errorMessage != null)
+{
+buf.push('<i');
+buf.push(attrs({ 'title':(t('error occurred during import.')), "class": ('fa') + ' ' + ('fa-warning') }, {"title":true}));
+buf.push('></i>');
+}
+buf.push('</a>');
+}
+return buf.join("");
+};
+});
 
+;
 //# sourceMappingURL=app.js.map

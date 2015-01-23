@@ -1,0 +1,10 @@
+a(href="#konnector/#{model.slug}")
+    span.name= model.name
+    - if(lastImport != null && lastImport.length > 0)
+        span.last-import= lastImport
+
+    - if (model.isImporting === true)
+        i.fa.fa-refresh.fa-spin
+    - else if (model.errorMessage != null)
+        i.fa.fa-warning(title=t('error occurred during import.'))
+

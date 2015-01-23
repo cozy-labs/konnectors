@@ -1,17 +1,25 @@
 <!-- .konnector -->
-h2.name #{model.name}
-.description #{model.description} 
+
+h2.name
+    #menu-toggler
+        .fa.fa-bars
+    span #{model.name}
+
+.description #{model.description}
 .fields
-.buttons 
-    button.import-button import
+.buttons
+    button#import-button #{t('import')}
+.error
+    span.error=t('error occurred during import:') + ' '
+        span.message=t(model.errorMessage)
 .status #{status}
 .infos
-    .date 
-        span.label Last import:&nbsp;
+    .date
+        span.label #{t('last import:')}&nbsp;
         span.last-import
     .datas
-        | Imported data:&nbsp;
+        | #{t('imported data:')}&nbsp;
         for name in model.modelNames
-            a(href="/apps/databrowser/#search/all/#{name}", target="_blank") 
+            a(href="/apps/databrowser/#search/all/#{name}", target="_blank")
                   |#{name}
             |&nbsp;

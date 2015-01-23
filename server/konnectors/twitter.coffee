@@ -97,7 +97,7 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
             callback err
         else if res.statusCode isnt 200
             log.error 'Authentication error'
-            callback()
+            callback('bad credentials')
         else if tweetLength is tweets.length
             log.info 'No new tweet to import'
             callback()

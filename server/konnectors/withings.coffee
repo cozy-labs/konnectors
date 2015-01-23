@@ -126,7 +126,7 @@ module.exports =
                 return callback err if err
                 if not res.headers['set-cookie']?
                     log.error 'Authentification error'
-                    return callback()
+                    return callback('bad credentials')
 
                 sessionid = \
                     res.headers['set-cookie'][1].split(';')[0].split('=')[1]

@@ -154,7 +154,7 @@ module.exports =
                         log.error body.error.msg
                     else
                         log.error 'Bad credentials'
-                    callback()
+                    callback('bad credentials')
                 else
                     log.info 'Konnector successfully logged in.'
                     token = body.token

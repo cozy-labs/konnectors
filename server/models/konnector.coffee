@@ -1,4 +1,6 @@
 americano = require 'americano-cozy'
+konnectorHash = require '../lib/konnector_hash'
+
 log = require('printit')
     prefix: null
     date: true
@@ -11,6 +13,7 @@ module.exports = Konnector = americano.getModel 'Konnector',
     lastAutoImport: Date
     isImporting: type: Boolean, default: false
     importInterval: type: String, default: 'none'
+    errorMessage: type: String, default: null
 
 Konnector.all = (callback) ->
     Konnector.request 'all', (err, konnectors) ->
@@ -44,12 +47,11 @@ Konnector::import = (konnector, fields, callback) ->
     @importInterval = konnector.importInterval
     @save (err) =>
 
-        if err
+        if err?
             data =
                 isImporting: false
                 lastImport: new Date()
-            @updateAttributes data, (err) ->
-                callback err
+            @updateAttributes data, callback
 
         else
             konnectorModule = require "../konnectors/#{@slug}"
@@ -57,17 +59,60 @@ Konnector::import = (konnector, fields, callback) ->
             konnectorModule.fetch @fieldValues, (err) =>
                 @removeEncryptedFields fields
 
-                if err
-                    data =
-                        isImporting: false
-                        lastImport: new Date()
+                if err?
+                    data = isImporting: false, errorMessage: err
                     @updateAttributes data, ->
+                        # raise the error from the import, not the update
                         callback err
 
                 else
                     data =
                         isImporting: false
                         lastImport: new Date()
-                    @updateAttributes data, (err) ->
-                        if err then callback err
-                        else callback()
+                        errorMessage: null
+                    @updateAttributes data, callback
+
+
+# Append data from connector's configuration file, if it exists
+Konnector::appendConfigData = ->
+    konnectorData = konnectorHash[@slug]
+
+    unless konnectorData?
+        msg = "Config data cannot be appended for konnector #{@slug}: " + \
+              "missing config file."
+        throw new Error msg
+
+    # add missing fields
+    konnectorData = konnectorHash[@slug]
+    for key of konnectorData
+        @[key] = konnectorData[key]
+
+    # normalize models' name related to the connector
+    modelNames = []
+    for key, value of @models
+        name = value.toString()
+        name = name.substring '[Model '.length
+        name = name.substring 0, (name.length - 1)
+        modelNames.push name
+    @modelNames = modelNames
+
+    return @
+
+
+Konnector.getKonnectorsToDisplay = (callback) ->
+    Konnector.all (err, konnectors) ->
+        if err?
+            callback err
+        else
+            try
+                konnectorsToDisplay = konnectors
+                    .filter (konnector) ->
+                        # if the connector has config data
+                        return konnectorHash[konnector.slug]?
+                    .map (konnector) ->
+                        konnector.appendConfigData()
+                        return konnector
+
+                    callback null, konnectorsToDisplay
+            catch err
+                callback err

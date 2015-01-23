@@ -37,11 +37,12 @@ module.exports = class ViewCollection extends BaseView
     initialize: ->
         super
         @views = {}
-        @listenTo @collection, "reset",   @onReset
-        @listenTo @collection, "add",     @addItem
-        @listenTo @collection, "remove",  @removeItem
+        @listenTo @collection, 'reset',   @onReset
+        @listenTo @collection, 'add',     @addItem
+        @listenTo @collection, 'remove',  @removeItem
+        @listenTo @collection, 'sort',    @render
 
-        @$collectionEl = $(@collectionEl)
+        @$collectionEl = $ @collectionEl
 
     # if we have views before a render call, we detach them
     render: ->

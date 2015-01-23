@@ -58,9 +58,9 @@ module.exports =
             .use(filterExisting log, InternetBill)
             .use(saveDataAndFile log, InternetBill, 'free', ['facture'])
             .args(requiredFields, {}, {})
-            .fetch ->
+            .fetch (err) ->
                 log.info "Import finished"
-                callback()
+                callback(err)
 
 # Procedure to login to Free website.
 logIn = (requiredFields, billInfos, data, next) ->
@@ -79,9 +79,9 @@ logIn = (requiredFields, billInfos, data, next) ->
         url: loginUrl
 
     request options, (err, res, body) ->
-        if err or not res.headers.location?
+        if err or not res.headers.location? or res.statusCode is 302
             log.error "Authentification error"
-            return next err
+            return next 'bad credentials'
         location = res.headers.location
         parameters = location.split('?')[1]
         url = "#{billUrl}?#{parameters}"

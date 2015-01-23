@@ -1,8 +1,6 @@
 Konnector = require '../models/konnector'
 konnectorHash = require '../lib/konnector_hash'
 
-
-
 module.exports =
 
 
@@ -18,31 +16,6 @@ module.exports =
                 next()
 
 
-    all: (req, res, next) ->
-        Konnector.all (err, konnectors) ->
-            if err
-                next err
-            else
-                for konnector in konnectors
-                    # here add missing fields
-                    konnectorData = konnectorHash[konnector.slug]
-                    for key of konnectorData
-                        konnector[key] = konnectorData[key]
-
-                    modelNames = []
-                    for key, value of konnector.models
-                        name = value.toString()
-                        name = name.substring '[Model '.length
-                        name = name.substring 0, (name.length - 1)
-                        modelNames.push name
-                    konnector.modelNames = modelNames
-
-                konnectors.sort (konnectorA, konnectorB) ->
-                    konnectorA.name.localeCompare konnectorB.name
-
-                res.send konnectors
-
-
     show: (req, res, next) ->
         res.send req.konnector
 
@@ -50,7 +23,7 @@ module.exports =
     import: (req, res, next) ->
         # Handle timeouts
         poller = require "../lib/konnector_poller"
-        poller.handleTimeout(req.body)
+        poller.handleTimeout req.body
         # Delete unused variable
         if req.body.fieldValues.date?
             delete req.body.fieldValues.date
@@ -63,9 +36,8 @@ module.exports =
             , 6
             res.send error: true, msg: 'konnector is already importing', 400
         else
+            res.send success:true, 200
             fields = konnectorHash[req.konnector.slug].fields
             req.konnector.import req.body, fields, (err) ->
                 if err
-                    next err
-                else
-                    res.send success: true, 200
+                    console.log err

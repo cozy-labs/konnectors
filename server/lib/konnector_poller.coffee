@@ -3,8 +3,13 @@ moment = require "moment"
 log = require('printit')
     prefix: null
     date: true
+fs = require 'fs'
+path = require 'path'
+
 importer = require "./importer"
 Konnector = require '../models/konnector'
+
+konnectorHash = require '../lib/konnector_hash'
 
 hour = 60 * 60 * 1000
 day = 24 * hour
@@ -28,7 +33,8 @@ class KonnectorPoller
                 # if both importInterval and lastAutoImport are valid
                 if konnector.importInterval? \
                 and konnector.importInterval isnt 'none' \
-                and konnector.lastAutoImport?
+                and konnector.lastAutoImport? \
+                and fs.existsSync path.resolve("server/konnectors/#{konnector.slug}.coffee")
 
                     importInterval = periods[konnector.importInterval]
                     now = moment()
@@ -81,6 +87,7 @@ class KonnectorPoller
         startDate = konnector.fieldValues.date if konnector.fieldValues.date?
         # Retrive current Autoimport value in database
         Konnector.find konnector.id, (err, savedKonnector) =>
+            savedKonnector.injectEncryptedFields()
 
             currentInterval = savedKonnector.importInterval
 
@@ -104,8 +111,10 @@ class KonnectorPoller
                         diff = firstImportDate.valueOf() - now.valueOf()
 
                         # We set the date of the first import
-                        data =
-                            lastAutoImport: firstImportDate
+                        data = lastAutoImport: firstImportDate
+
+                        fields = konnectorHash[savedKonnector.slug]
+                        savedKonnector.removeEncryptedFields fields
 
                         # Create/Update lastAutoImport in database
                         savedKonnector.updateAttributes data, (err) =>
@@ -119,6 +128,9 @@ class KonnectorPoller
                         # We set the current time
                         data =
                             lastAutoImport: moment()
+
+                        fields = konnectorHash[savedKonnector.slug]
+                        savedKonnector.removeEncryptedFields fields
 
                         # Create/Update lastAutoImport in database
                         savedKonnector.updateAttributes data, (err) =>
@@ -175,15 +187,20 @@ class KonnectorPoller
         # Create the timeout and place it timeouts
         timeouts[konnector.slug] = setTimeout @checkImport.bind(@, konnector, interval), interval
 
-    checkImport: (konnector, interval) ->
+    checkImport: (reference, interval) ->
+        # retrieves the last version of the konnector
+        Konnector.find reference.id, (err, konnector) =>
 
-        # if there is time left, do not import
-        if not konnector.time?
-            importer konnector
+            # mandatory injection of encrypted fields
+            konnector.injectEncryptedFields()
 
-            # Update if actual interval is not the same in the konnector
-            interval = periods[konnector.importInterval]
+            # if there is time left, do not import
+            if not konnector.time?
+                importer konnector
 
-        @prepareNextCheck konnector, interval
+                # Update if actual interval is not the same in the konnector
+                interval = periods[konnector.importInterval]
+
+            @prepareNextCheck konnector, interval
 
 module.exports = new KonnectorPoller

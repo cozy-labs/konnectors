@@ -5,22 +5,31 @@ module.exports = class KonnectorView extends BaseView
     className: 'konnector'
 
     events:
-        "click .import-button": "onImportClicked"
+        "click #import-button": "onImportClicked"
+
+    initialize: (options) ->
+        super options
+        @paths = options.paths or []
+        @listenTo @model, 'change', @render
 
     afterRender: =>
         slug = @model.get 'slug'
         lastImport = @model.get 'lastImport'
         isImporting  = @model.get 'isImporting'
         lastAutoImport = @model.get 'lastAutoImport'
+        @error = @$ '.error'
+        if not @model.get('errorMessage')? or isImporting
+            @error.hide()
 
         @$el.addClass "konnector-#{slug}"
 
         if isImporting
-            @$('.last-import').html 'importing...'
+            @$('.last-import').html t('importing...')
         else if lastImport?
-            @$('.last-import').html moment(lastImport).format 'LLL'
+            formattedDate = moment(lastImport).format t('date format')
+            @$('.last-import').html formattedDate
         else
-            @$('.last-import').html "no import performed."
+            @$('.last-import').html t("no import performed")
 
         values = @model.get 'fieldValues'
 
@@ -30,15 +39,17 @@ module.exports = class KonnectorView extends BaseView
 
             fieldHtml = """
 <div class="field line">
-<div><label for="#{slug}-#{name}-input">#{name}</label></div>
+<div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
 """
 
             if val is 'folder'
                 fieldHtml += """
 <div><select id="#{slug}-#{name}-input" class="folder"
-             value="#{values[name]}"></select></div>
-</div>
-"""
+             value="#{t(values[name])}">"""
+                for path in @paths
+                    fieldHtml += """<option value="#{path}">#{path}</option>"""
+                fieldHtml += "</select></div></div>"
+
             else
                 fieldHtml += """
 <div><input id="#{slug}-#{name}-input" type="#{val}"
@@ -50,10 +61,10 @@ module.exports = class KonnectorView extends BaseView
         # Auto Import
         importInterval = @model.get 'importInterval'
         importInterval ?= ''
-        intervals = {none: "None", hour: "Every Hour", day: "Every Day", week: "Every Week", month: "Each month"}
+        intervals = {none: t("none"), hour: t("every hour"), day: t("every day"), week: t("every week"), month: t("each month")}
         fieldHtml = """
 <div class="field line">
-<div><label for="#{slug}-autoimport-input">Auto Import</label></div>
+<div><label for="#{slug}-autoimport-input">#{t 'auto import'}</label></div>
 <div><select id="#{slug}-autoimport-input" class="autoimport">
 """
         for key, value of intervals
@@ -103,7 +114,8 @@ module.exports = class KonnectorView extends BaseView
             else
                 @$("##{slug}-first-import").hide()
 
-    onImportClicked: =>
+    onImportClicked: ->
+        @$('.error').hide()
         fieldValues = {}
         slug = @model.get 'slug'
 
@@ -111,21 +123,14 @@ module.exports = class KonnectorView extends BaseView
         fieldValues['date'] = importDate
         for name, val of @model.get 'fields'
             fieldValues[name] = $("##{slug}-#{name}-input").val()
-        @model.set 'fieldValues', fieldValues
         importInterval = 'none'
         importInterval = $("##{slug}-autoimport-input").val()
 
-        @model.set 'importInterval', importInterval
-        @model.save
-            success: =>
-                alert "import succeeded"
-            error: =>
-                alert "import failed"
-
-    selectPath: =>
-        slug = @model.get 'slug'
-        for name, val of @model.get 'fields'
-            if val is 'folder'
-                values = @model.get 'fieldValues'
-                values ?= {}
-                @$("##{slug}-#{name}-input").val values[name]
+        data = {fieldValues, importInterval}
+        @model.save data,
+            success: (model, success) =>
+            error: (model, err) =>
+                # cozycloud.cc timeout is not considered like an error
+                unless err.status is 504
+                    @$('.error .message').html t(err.responseText)
+                    @$('.error').show()

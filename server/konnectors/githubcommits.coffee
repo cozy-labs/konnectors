@@ -62,9 +62,9 @@ module.exports =
             .use(buildCommitDateHash)
             .use(logCommits)
             .args(requiredFields, {}, {})
-            .fetch ->
+            .fetch (err) ->
                 log.info "Import finished"
-                callback()
+                callback(err)
 
 
 # Get latest events list to know wich commits were pushed.
@@ -91,14 +91,14 @@ getEvents = (requiredFields, commits, data, next) ->
                                 data.commits.push commit
                     callback()
                 else
-                    log.error 'Bad credentials'
-                    callback()
+                    log.error 'bad credentials'
+                    callback('bad credentials')
             else
                 log.error err
                 callback()
     , (err) ->
         log.info "All events data fetched."
-        next()
+        next(err)
 
 
 # Build hash listing all already downloaded commits.

@@ -1,31 +1,57 @@
+// Landscape phones and down
 @media (max-width: 480px)
-    // Landscape phones and down
 
-    body
-        padding 0 20px
-        text-rendering optimizeSpeed
+    // nothing
 
-    .layout-container
-        width auto
 
+// Landscape phone to portrait tablet
 @media (max-width: 767px)
-    // Landscape phone to portrait tablet
 
     body
-        padding 0 20px
         text-rendering optimizeSpeed
+        overflow hidden
 
-    .layout-container
-        width auto
+    #menu-toggler
+        display inline-block
 
+    #menu
+    .container
+        transition transform .25s ease-in-out
+        position absolute
+        top 0
+
+    #menu
+        transform translateX(-100%)
+        width 80%
+
+        &.active
+            transform translateX(0)
+
+    #menu.active ~ .container
+        transform translateX(80%)
+
+    .container
+        position absolute
+        width 100%
+        margin-left 0
+        padding 0
+
+        h2 span
+            font-size 20px
+
+        .description
+            font-size 13px
+
+        #default
+        .konnector
+            padding 0 25px
+
+
+// Portrait tablet to landscape and desktop
 @media (min-width: 768px) and (max-width: 979px)
-    // Portrait tablet to landscape and desktop
+    // nothing
 
-    .layout-container
-        width 724px
 
+// Large desktop
 @media (min-width: 1200px)
-    // Large desktop
-
-    .layout-container
-        width 1170px
+    // nothing
