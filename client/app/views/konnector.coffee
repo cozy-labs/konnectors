@@ -41,13 +41,14 @@ module.exports = class KonnectorView extends BaseView
 <div class="field line">
 <div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
 """
-
             if val is 'folder'
                 fieldHtml += """
-<div><select id="#{slug}-#{name}-input" class="folder"
-             value="#{t(values[name])}">"""
+<div><select id="#{slug}-#{name}-input" class="folder"">"""
                 for path in @paths
-                    fieldHtml += """<option value="#{path}">#{path}</option>"""
+                    if path is values[name]
+                        fieldHtml += """<option selected value="#{path}">#{path}</option>"""
+                    else
+                        fieldHtml += """<option value="#{path}">#{path}</option>"""
                 fieldHtml += "</select></div></div>"
 
             else
