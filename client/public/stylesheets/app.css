@@ -3335,7 +3335,7 @@ label {
 }
 @font-face {
   font-family: main;
-  src: url("../fonts/district-pro-thin.otf");
+  src: url("../fonts/signika-light.ttf");
 }
 @font-face {
   font-family: regular;
@@ -3365,7 +3365,7 @@ h1 {
   margin-top: 0px;
 }
 h2 {
-  font-family: title;
+  font-family: regular;
   font-weight: normal;
   margin-top: 20px;
 }
@@ -3490,12 +3490,15 @@ h2 #menu-toggler {
   height: 100%;
 }
 #menu ul li a .fa-warning,
-#menu ul li a .fa-refresh {
+#menu ul li a .spinholder {
   position: absolute;
-  top: 15px;
   right: 20px;
 }
+#menu ul li a .spinholder {
+  top: 8px;
+}
 #menu ul li a .fa-warning {
+  top: 15px;
   color: #e58067;
 }
 .container {

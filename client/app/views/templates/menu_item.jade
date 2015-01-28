@@ -4,7 +4,8 @@ a(href="#konnector/#{model.slug}")
         span.last-import= lastImport
 
     - if (model.isImporting === true)
-        i.fa.fa-refresh.fa-spin
+        div.spinholder
+            img(src="images/spinner.svg")
     - else if (model.errorMessage != null)
         i.fa.fa-warning(title=t('error occurred during import.'))
 
