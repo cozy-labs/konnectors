@@ -17,7 +17,7 @@ module.exports = class MenuItemView extends BaseView
             formattedDate = moment(lastImport).format t('date format')
             lastImport = "#{t 'last import:'}  #{formattedDate}"
         else if @model.isConfigured()
-            lastImport = "No import performed yet"
+            lastImport = t "no import performed"
         else
             lastImport = ""
 
