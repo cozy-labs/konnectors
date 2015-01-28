@@ -25,11 +25,15 @@ module.exports = class KonnectorView extends BaseView
 
         if isImporting
             @$('.last-import').html t('importing...')
+            @disableImportButton()
+
         else if lastImport?
             formattedDate = moment(lastImport).format t('date format')
             @$('.last-import').html formattedDate
+            @enableImportButton()
         else
             @$('.last-import').html t("no import performed")
+            @enableImportButton()
 
         values = @model.get 'fieldValues'
 
@@ -115,23 +119,35 @@ module.exports = class KonnectorView extends BaseView
             else
                 @$("##{slug}-first-import").hide()
 
+    disableImportButton: ->
+        @$('#import-button').addClass 'disable'
+        @$('#import-button').attr 'aria-busy', true
+        @$('#import-button').attr 'aria-disabed', true
+
+    enableImportButton: ->
+        @$('#import-button').removeClass 'disable'
+        @$('#import-button').attr 'aria-busy', false
+        @$('#import-button').attr 'aria-disabed', false
+
     onImportClicked: ->
-        @$('.error').hide()
-        fieldValues = {}
-        slug = @model.get 'slug'
+        # don't restart the import if an import is running
+        unless @model.get('isImporting')
+            @$('.error').hide()
+            fieldValues = {}
+            slug = @model.get 'slug'
 
-        importDate = $("##{slug}-import-date").val()
-        fieldValues['date'] = importDate
-        for name, val of @model.get 'fields'
-            fieldValues[name] = $("##{slug}-#{name}-input").val()
-        importInterval = 'none'
-        importInterval = $("##{slug}-autoimport-input").val()
+            importDate = $("##{slug}-import-date").val()
+            fieldValues['date'] = importDate
+            for name, val of @model.get 'fields'
+                fieldValues[name] = $("##{slug}-#{name}-input").val()
+            importInterval = 'none'
+            importInterval = $("##{slug}-autoimport-input").val()
 
-        data = {fieldValues, importInterval}
-        @model.save data,
-            success: (model, success) =>
-            error: (model, err) =>
-                # cozycloud.cc timeout is not considered like an error
-                unless err.status is 504
-                    @$('.error .message').html t(err.responseText)
-                    @$('.error').show()
+            data = {fieldValues, importInterval}
+            @model.save data,
+                success: (model, success) =>
+                error: (model, err) =>
+                    # cozycloud.cc timeout is not considered like an error
+                    unless err.status is 504
+                        @$('.error .message').html t(err.responseText)
+                        @$('.error').show()
