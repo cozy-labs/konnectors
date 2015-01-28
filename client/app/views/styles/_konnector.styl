@@ -39,9 +39,10 @@
             margin 30px 0 10px 0
             button
                 outline none
-                &.disable
+                &[aria-disabled=true]
                     background #666
                     color #bbb
+                &[aria-busy=true]
                     cursor wait
 
         .infos div

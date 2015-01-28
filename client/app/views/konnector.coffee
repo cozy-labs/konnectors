@@ -120,14 +120,12 @@ module.exports = class KonnectorView extends BaseView
                 @$("##{slug}-first-import").hide()
 
     disableImportButton: ->
-        @$('#import-button').addClass 'disable'
         @$('#import-button').attr 'aria-busy', true
-        @$('#import-button').attr 'aria-disabed', true
+        @$('#import-button').attr 'aria-disabled', true
 
     enableImportButton: ->
-        @$('#import-button').removeClass 'disable'
         @$('#import-button').attr 'aria-busy', false
-        @$('#import-button').attr 'aria-disabed', false
+        @$('#import-button').attr 'aria-disabled', false
 
     onImportClicked: ->
         # don't restart the import if an import is running
