@@ -15,16 +15,19 @@ describe 'Testing konnector poller', ->
         before ->
             @sandbox = sinon.sandbox.create useFakeTimers: true
             @spy = @sandbox.spy poller, 'prepareNextCheck'
-        after ->
-            @sandbox.restore()
-
-        it 'When the cron function is called', ->
-            data = new Konnector
+            @data = new Konnector
                 isImporting: false
                 importInterval: 'week'
                 lastAutoImport: moment().format()
                 slug: 'test'
-            poller.create(data)
+            @sandbox.stub Konnector, 'find', (id, callback) =>
+                callback null, @data
+
+        after ->
+            @sandbox.restore()
+
+        it 'When the cron function is called', ->
+            poller.create @data
             @spy.callCount.should.equal 1
 
         it 'Then the cron function should not have been called after 6 days', ->
@@ -43,15 +46,17 @@ describe 'Testing konnector poller', ->
         before ->
             @sandbox = sinon.sandbox.create useFakeTimers: true
             @spy = @sandbox.spy poller, 'prepareNextCheck'
+            @data = new Konnector
+                isImporting: false
+                importInterval: 'day'
+                slug: 'test'
+            @sandbox.stub Konnector, 'find', (id, callback) =>
+                callback null, @data
         after ->
             @sandbox.restore()
 
         it 'When the cron function is called', ->
-            data = new Konnector
-                isImporting: false
-                importInterval: 'day'
-                slug: 'test'
-            poller.create(data)
+            poller.create @data
             @spy.callCount.should.equal 1
 
         it 'Then the cron function should not have been called after 23 hours', ->
@@ -70,15 +75,17 @@ describe 'Testing konnector poller', ->
         before ->
             @sandbox = sinon.sandbox.create useFakeTimers: true
             @spy = @sandbox.spy poller, 'prepareNextCheck'
+            @data = new Konnector
+                isImporting: false
+                importInterval: 'hour'
+                slug: 'test'
+            @sandbox.stub Konnector, 'find', (id, callback) =>
+                callback null, @data
         after ->
             @sandbox.restore()
 
         it 'When the cron function is called', ->
-            data = new Konnector
-                isImporting: false
-                importInterval: 'hour'
-                slug: 'test'
-            poller.create(data)
+            poller.create @data
             @spy.callCount.should.equal 1
 
         it 'Then the cron function should not have been called after 59 minutes', ->
@@ -97,15 +104,17 @@ describe 'Testing konnector poller', ->
         before ->
             @sandbox = sinon.sandbox.create useFakeTimers: true
             @spy = @sandbox.spy poller, 'prepareNextCheck'
+            @data = new Konnector
+                isImporting: false
+                importInterval: 'month'
+                slug: 'test'
+            @sandbox.stub Konnector, 'find', (id, callback) =>
+                callback null, @data
         after ->
             @sandbox.restore()
 
         it 'When the cron function is called', ->
-            data = new Konnector
-                isImporting: false
-                importInterval: 'month'
-                slug: 'test'
-            poller.create(data)
+            poller.create @data
             @spy.callCount.should.equal 1
 
         it 'Then the cron function should not have been called after 22 days', ->
