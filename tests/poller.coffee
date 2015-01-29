@@ -23,7 +23,6 @@ describe 'Testing konnector poller', ->
             before ->
                 @sandbox = sinon.sandbox.create useFakeTimers: true
                 @spy = @sandbox.spy poller, 'checkImport'
-                @spy2 = @sandbox.spy poller, 'prepareNextCheck'
             after ->
                 @sandbox.restore()
 
@@ -153,7 +152,6 @@ describe 'Testing konnector poller', ->
             before ->
                 @sandbox = sinon.sandbox.create useFakeTimers: true
                 @spy = @sandbox.spy poller, 'checkImport'
-                @spy2 = @sandbox.spy poller, 'prepareNextCheck'
             after ->
                 @sandbox.restore()
 
