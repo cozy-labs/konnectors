@@ -42,8 +42,6 @@ task 'tests', "Run tests #{taskDetails}", (opts) ->
     unless options.dir or options.file
         files = walk "tests"
     env = if options['env'] then "NODE_ENV=#{options.env}" else "NODE_ENV=test"
-    env += " DB_NAME=cozy_test AXON_PORT=9223 "
-    env += "USE_JS=true" if options['use-js']? and options['use-js']
     logger.info "Running tests with #{env}..."
     command = "#{env} mocha " + files.join(" ") + " --reporter spec --colors "
     command += "--globals clearImmediate,setImmediate "
@@ -51,6 +49,7 @@ task 'tests', "Run tests #{taskDetails}", (opts) ->
     exec command, (err, stdout, stderr) ->
         console.log stdout
         if err
+            console.log stderr if process.env.TRAVIS
             logger.error "Running mocha caught exception:\n" + err
             process.exit 1
         else
