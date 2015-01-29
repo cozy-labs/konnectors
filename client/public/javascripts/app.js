@@ -913,7 +913,7 @@ module.exports = MenuItemView = (function(_super) {
       formattedDate = moment(lastImport).format(t('date format'));
       lastImport = "" + (t('last import:')) + "  " + formattedDate;
     } else if (this.model.isConfigured()) {
-      lastImport = "No import performed yet";
+      lastImport = t("no import performed");
     } else {
       lastImport = "";
     }
@@ -1049,7 +1049,7 @@ buf.push('</span>');
 }
  if (model.isImporting === true)
 {
-buf.push('<i class="fa fa-refresh fa-spin"></i>');
+buf.push('<div class="spinholder"><img src="images/spinner.svg"/></div>');
 }
  else if (model.errorMessage != null)
 {
