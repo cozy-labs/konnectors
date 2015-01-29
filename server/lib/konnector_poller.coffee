@@ -30,7 +30,6 @@ class KonnectorPoller
             nextUpdates = {}
         if Object.keys(nextUpdates).length is 0
             Konnector.all (err, konnectors) =>
-                #console.log konnectors
                 async.eachSeries konnectors, (konnector, callback) =>
                     # if both importInterval and lastAutoImport are valid
                     if konnector.importInterval? \
@@ -134,7 +133,7 @@ class KonnectorPoller
                         fields = konnectorHash[savedKonnector.slug]
                         savedKonnector.removeEncryptedFields fields
                         # Create/Update lastAutoImport in database
-                        savedKonnector.updateAttributes data, (err, body) =>
+                        savedKonnector.updateAttributes data, (err, body) ->
                             if err
                                 log.error err
                         @create konnector, @findNextUpdate(konnector)
