@@ -40,12 +40,17 @@ Konnector::removeEncryptedFields = (fields) ->
             delete @fieldValues[name]
     @password = JSON.stringify password
 
-Konnector::import = (konnector, fields, callback) ->
-    @fieldValues = konnector.fieldValues
-    @isImporting = true
+
+Konnector::updateFieldValues = (newValues, callback) ->
+    fields = konnectorHash[@slug].fields
+    @fieldValues = newValues.fieldValues
     @removeEncryptedFields fields
-    @importInterval = konnector.importInterval
-    @save (err) =>
+    @importInterval = newValues.importInterval
+    @save callback
+
+
+Konnector::import = (callback) ->
+    @updateAttributes isImporting: true, (err) =>
 
         if err?
             data =
@@ -57,6 +62,7 @@ Konnector::import = (konnector, fields, callback) ->
             konnectorModule = require "../konnectors/#{@slug}"
             @injectEncryptedFields()
             konnectorModule.fetch @fieldValues, (err) =>
+                fields = konnectorHash[@slug].fields
                 @removeEncryptedFields fields
 
                 if err?

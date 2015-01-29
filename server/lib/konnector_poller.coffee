@@ -177,7 +177,6 @@ class KonnectorPoller
         @createTimeout konnector, interval
 
     createTimeout: (konnector, interval) ->
-
         now = moment()
         nextUpdate = now.clone()
         nextUpdate = now.add interval, 'ms'
@@ -190,7 +189,6 @@ class KonnectorPoller
     checkImport: (reference, interval) ->
         # retrieves the last version of the konnector
         Konnector.find reference.id, (err, konnector) =>
-
             # mandatory injection of encrypted fields
             konnector.injectEncryptedFields()
 

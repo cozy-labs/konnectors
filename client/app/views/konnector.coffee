@@ -144,12 +144,16 @@ module.exports = class KonnectorView extends BaseView
             importInterval = $("##{slug}-autoimport-input").val()
             importDate = $("##{slug}-import-date").val()
 
+            # disable the button when it's being clicked, realtime changes will
+            # re-enable it when necessary.
+            @disableImportButton()
+
             # save field values and start importing
             data = {fieldValues, importInterval}
             @model.save data,
                 success: (model, success) =>
                 error: (model, err) =>
                     # cozycloud.cc timeout is not considered like an error
-                    unless err.status is 504
+                    if err.status >= 400 and err.status isnt 504
                         @$('.error .message').html t(err.responseText)
                         @$('.error').show()

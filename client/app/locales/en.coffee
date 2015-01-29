@@ -4,7 +4,7 @@ module.exports =
     'no bills retrieved': 'No bills retrieved'
     'key not found': 'Key not found'
     'last import:': 'Last import:'
-    'import': 'Import'
+    'save and import': 'Save and import'
     'auto import': 'Automatic import'
     'imported data:': 'Imported data:'
     'importing...': 'importing...'

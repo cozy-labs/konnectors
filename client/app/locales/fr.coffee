@@ -4,7 +4,7 @@ module.exports =
     'no bills retrieved': 'Pas de facture trouvées'
     'key not found': 'Clé non trouvée'
     'last import:': 'Dernière importation :'
-    'import': 'Importer'
+    'save and import': 'Sauvegarder et importer'
     'auto import': 'Importation automatique'
     'imported data:': 'Données importées :'
     'importing...': 'importation en cours...'
