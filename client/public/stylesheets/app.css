@@ -3541,6 +3541,11 @@ h2 #menu-toggler {
 .container .konnector .buttons button {
   outline: none;
 }
+.container .konnector .buttons button.disable {
+  background: #666;
+  color: #bbb;
+  cursor: wait;
+}
 .container .konnector .infos div {
   margin: 5px 0;
 }
