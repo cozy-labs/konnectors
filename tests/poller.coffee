@@ -17,7 +17,7 @@ describe 'Testing konnector poller', ->
                     konnector.destroy()
                     done()
 
-    describe "Initialize of suto import", ->
+    describe "Initialize of auto import", ->
 
         describe 'When calling poller.create with 1 week auto-import..', ->
             before ->

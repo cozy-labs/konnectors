@@ -126,7 +126,7 @@ module.exports = KonnectorsCollection = (function(_super) {
 
 });
 
-require.register("initialize", function(exports, require, module) {
+;require.register("initialize", function(exports, require, module) {
 var AppView, KonnectorListener, KonnectorsCollection, Router, request;
 
 request = require('./lib/request');
@@ -171,7 +171,7 @@ $(function() {
 
 });
 
-require.register("lib/base_view", function(exports, require, module) {
+;require.register("lib/base_view", function(exports, require, module) {
 var BaseView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -218,7 +218,7 @@ module.exports = BaseView = (function(_super) {
 
 });
 
-require.register("lib/request", function(exports, require, module) {
+;require.register("lib/request", function(exports, require, module) {
 exports.request = function(type, url, data, callback) {
   return $.ajax({
     type: type,
@@ -259,7 +259,7 @@ exports.del = function(url, callback) {
 
 });
 
-require.register("lib/view_collection", function(exports, require, module) {
+;require.register("lib/view_collection", function(exports, require, module) {
 var BaseView, ViewCollection,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -370,13 +370,13 @@ module.exports = ViewCollection = (function(_super) {
 
 });
 
-require.register("locales/en", function(exports, require, module) {
+;require.register("locales/en", function(exports, require, module) {
 module.exports = {
   'bad credentials': 'Bad Credentials',
   'no bills retrieved': 'No bills retrieved',
   'key not found': 'Key not found',
   'last import:': 'Last import:',
-  'import': 'Import',
+  'save and import': 'Save and import',
   'auto import': 'Automatic import',
   'imported data:': 'Imported data:',
   'importing...': 'importing...',
@@ -414,13 +414,13 @@ module.exports = {
 
 });
 
-require.register("locales/fr", function(exports, require, module) {
+;require.register("locales/fr", function(exports, require, module) {
 module.exports = {
   'bad credentials': 'Mauvais identifiants',
   'no bills retrieved': 'Pas de facture trouvées',
   'key not found': 'Clé non trouvée',
   'last import:': 'Dernière importation :',
-  'import': 'Importer',
+  'save and import': 'Sauvegarder et importer',
   'auto import': 'Importation automatique',
   'imported data:': 'Données importées :',
   'importing...': 'importation en cours...',
@@ -458,7 +458,7 @@ module.exports = {
 
 });
 
-require.register("models/konnector", function(exports, require, module) {
+;require.register("models/konnector", function(exports, require, module) {
 var KonnectorModel,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -492,7 +492,7 @@ module.exports = KonnectorModel = (function(_super) {
 
 });
 
-require.register("realtime", function(exports, require, module) {
+;require.register("realtime", function(exports, require, module) {
 var Konnector, KonnectorListener,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -533,7 +533,7 @@ module.exports = KonnectorListener = (function(_super) {
 
 });
 
-require.register("router", function(exports, require, module) {
+;require.register("router", function(exports, require, module) {
 var Router,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -569,7 +569,7 @@ module.exports = Router = (function(_super) {
 
 });
 
-require.register("views/app_view", function(exports, require, module) {
+;require.register("views/app_view", function(exports, require, module) {
 var AppView, BaseView, KonnectorView, MenuView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -657,7 +657,7 @@ module.exports = AppView = (function(_super) {
 
 });
 
-require.register("views/konnector", function(exports, require, module) {
+;require.register("views/konnector", function(exports, require, module) {
 var BaseView, KonnectorView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -700,11 +700,14 @@ module.exports = KonnectorView = (function(_super) {
     this.$el.addClass("konnector-" + slug);
     if (isImporting) {
       this.$('.last-import').html(t('importing...'));
+      this.disableImportButton();
     } else if (lastImport != null) {
       formattedDate = moment(lastImport).format(t('date format'));
       this.$('.last-import').html(formattedDate);
+      this.enableImportButton();
     } else {
       this.$('.last-import').html(t("no import performed"));
+      this.enableImportButton();
     }
     values = this.model.get('fieldValues');
     if (values == null) {
@@ -787,37 +790,49 @@ module.exports = KonnectorView = (function(_super) {
     })(this));
   };
 
+  KonnectorView.prototype.disableImportButton = function() {
+    this.$('#import-button').attr('aria-busy', true);
+    return this.$('#import-button').attr('aria-disabled', true);
+  };
+
+  KonnectorView.prototype.enableImportButton = function() {
+    this.$('#import-button').attr('aria-busy', false);
+    return this.$('#import-button').attr('aria-disabled', false);
+  };
+
   KonnectorView.prototype.onImportClicked = function() {
     var data, fieldValues, importDate, importInterval, name, slug, val, _ref;
-    this.$('.error').hide();
-    fieldValues = {};
-    slug = this.model.get('slug');
-    importDate = $("#" + slug + "-import-date").val();
-    fieldValues['date'] = importDate;
-    _ref = this.model.get('fields');
-    for (name in _ref) {
-      val = _ref[name];
-      fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
+    if (!this.model.get('isImporting')) {
+      this.$('.error').hide();
+      fieldValues = {};
+      slug = this.model.get('slug');
+      fieldValues['date'] = importDate;
+      _ref = this.model.get('fields');
+      for (name in _ref) {
+        val = _ref[name];
+        fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
+      }
+      importInterval = $("#" + slug + "-autoimport-input").val();
+      importDate = $("#" + slug + "-import-date").val();
+      this.disableImportButton();
+      data = {
+        fieldValues: fieldValues,
+        importInterval: importInterval
+      };
+      return this.model.save(data, {
+        success: (function(_this) {
+          return function(model, success) {};
+        })(this),
+        error: (function(_this) {
+          return function(model, err) {
+            if (err.status >= 400 && err.status !== 504) {
+              _this.$('.error .message').html(t(err.responseText));
+              return _this.$('.error').show();
+            }
+          };
+        })(this)
+      });
     }
-    importInterval = 'none';
-    importInterval = $("#" + slug + "-autoimport-input").val();
-    data = {
-      fieldValues: fieldValues,
-      importInterval: importInterval
-    };
-    return this.model.save(data, {
-      success: (function(_this) {
-        return function(model, success) {};
-      })(this),
-      error: (function(_this) {
-        return function(model, err) {
-          if (err.status !== 504) {
-            _this.$('.error .message').html(t(err.responseText));
-            return _this.$('.error').show();
-          }
-        };
-      })(this)
-    });
   };
 
   return KonnectorView;
@@ -826,7 +841,7 @@ module.exports = KonnectorView = (function(_super) {
 
 });
 
-require.register("views/menu", function(exports, require, module) {
+;require.register("views/menu", function(exports, require, module) {
 var KonnectorsView, MenuItemView, ViewCollection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -883,7 +898,7 @@ module.exports = KonnectorsView = (function(_super) {
 
 });
 
-require.register("views/menu_item", function(exports, require, module) {
+;require.register("views/menu_item", function(exports, require, module) {
 var BaseView, MenuItemView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -942,7 +957,7 @@ module.exports = MenuItemView = (function(_super) {
 
 });
 
-require.register("views/templates/default", function(exports, require, module) {
+;require.register("views/templates/default", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -972,7 +987,7 @@ return buf.join("");
 };
 });
 
-require.register("views/templates/home", function(exports, require, module) {
+;require.register("views/templates/home", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -984,13 +999,13 @@ return buf.join("");
 };
 });
 
-require.register("views/templates/konnector", function(exports, require, module) {
+;require.register("views/templates/konnector", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error">');
+buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('save and import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error">');
 var __val__ = t('error occurred during import:') + ' '
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('<span class="message">');
@@ -1028,7 +1043,7 @@ return buf.join("");
 };
 });
 
-require.register("views/templates/menu_item", function(exports, require, module) {
+;require.register("views/templates/menu_item", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1063,5 +1078,5 @@ return buf.join("");
 };
 });
 
-
+;
 //# sourceMappingURL=app.js.map

@@ -140,6 +140,7 @@ class KonnectorPoller
                         cb() if cb?
 
     create: (konnector, nextUpdate) ->
+
         now = moment()
         nextUpdates[konnector.slug] = [nextUpdate, konnector]
         interval = nextUpdate.diff now.clone(), 'ms'
@@ -159,10 +160,12 @@ class KonnectorPoller
     createTimeout: (konnector, interval) ->
         timeouts[konnector.slug] = setTimeout @checkImport.bind(@, konnector, interval), interval
 
+
     checkImport: (konnector, interval) ->
         importer konnector
         now = moment()
         nextUpdate = now.add periods[konnector.importInterval], 'ms'
         @create konnector, nextUpdate
+
 
 module.exports = new KonnectorPoller

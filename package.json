@@ -28,6 +28,7 @@
     "ware": "0.3.0"
   },
   "devDependencies": {
+    "coffee-script": "1.8.0",
     "coffeelint": "1.6.0",
     "cozy-fixtures": "1.1.3",
     "mocha": "1.21.5",

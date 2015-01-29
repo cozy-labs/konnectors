@@ -1,5 +1,4 @@
 Konnector = require '../models/konnector'
-konnectorHash = require '../lib/konnector_hash'
 
 module.exports =
 
@@ -21,23 +20,22 @@ module.exports =
 
 
     import: (req, res, next) ->
-        # Handle timeouts
-        poller = require "../lib/konnector_poller"
-        poller.handleTimeout req.body
-        # Delete unused variable
-        if req.body.fieldValues.date?
-            delete req.body.fieldValues.date
+
+        # don't save during import
         if req.konnector.isImporting
-            setTimeout =>
-                data =
-                    isImporting: false
-                    lastImport: new Date()
-                req.konnector.updateAttributes data, (err) ->
-            , 6
-            res.send error: true, msg: 'konnector is already importing', 400
+            res.send 400, message: 'konnector is importing'
         else
-            res.send success:true, 200
-            fields = konnectorHash[req.konnector.slug].fields
-            req.konnector.import req.body, fields, (err) ->
-                if err
-                    console.log err
+
+            # Delete unused variable
+            if req.body.fieldValues.date?
+                delete req.body.fieldValues.date
+
+            req.konnector.updateFieldValues req.body, (err) ->
+                if err?
+                    next err
+                else
+                    res.send 200
+                    poller = require "../lib/konnector_poller"
+                    poller.handleTimeout req.body
+                    req.konnector.import (err) ->
+                        console.log err if err?
