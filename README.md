@@ -16,3 +16,14 @@ into your Cozy.
 # What we would like to see
 
 * weather tracker: store your location and track temperature and pluviometry.
+
+# Tests
+
+![Build
+Status](https://travis-ci.org/cozy-labs/konnectors.png?branch=master)
+
+To run tests type the following command into the app folder:
+
+    npm test
+
+In order to run the tests, you must only have the Data System started.

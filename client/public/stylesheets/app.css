@@ -3541,9 +3541,11 @@ h2 #menu-toggler {
 .container .konnector .buttons button {
   outline: none;
 }
-.container .konnector .buttons button.disable {
+.container .konnector .buttons button[aria-disabled=true] {
   background: #666;
   color: #bbb;
+}
+.container .konnector .buttons button[aria-busy=true] {
   cursor: wait;
 }
 .container .konnector .infos div {

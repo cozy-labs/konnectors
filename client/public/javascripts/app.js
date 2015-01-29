@@ -376,7 +376,7 @@ module.exports = {
   'no bills retrieved': 'No bills retrieved',
   'key not found': 'Key not found',
   'last import:': 'Last import:',
-  'import': 'Import',
+  'save and import': 'Save and import',
   'auto import': 'Automatic import',
   'imported data:': 'Imported data:',
   'importing...': 'importing...',
@@ -420,7 +420,7 @@ module.exports = {
   'no bills retrieved': 'Pas de facture trouvées',
   'key not found': 'Clé non trouvée',
   'last import:': 'Dernière importation :',
-  'import': 'Importer',
+  'save and import': 'Sauvegarder et importer',
   'auto import': 'Importation automatique',
   'imported data:': 'Données importées :',
   'importing...': 'importation en cours...',
@@ -791,15 +791,13 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.disableImportButton = function() {
-    this.$('#import-button').addClass('disable');
     this.$('#import-button').attr('aria-busy', true);
-    return this.$('#import-button').attr('aria-disabed', true);
+    return this.$('#import-button').attr('aria-disabled', true);
   };
 
   KonnectorView.prototype.enableImportButton = function() {
-    this.$('#import-button').removeClass('disable');
     this.$('#import-button').attr('aria-busy', false);
-    return this.$('#import-button').attr('aria-disabed', false);
+    return this.$('#import-button').attr('aria-disabled', false);
   };
 
   KonnectorView.prototype.onImportClicked = function() {
@@ -808,15 +806,15 @@ module.exports = KonnectorView = (function(_super) {
       this.$('.error').hide();
       fieldValues = {};
       slug = this.model.get('slug');
-      importDate = $("#" + slug + "-import-date").val();
       fieldValues['date'] = importDate;
       _ref = this.model.get('fields');
       for (name in _ref) {
         val = _ref[name];
         fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
       }
-      importInterval = 'none';
       importInterval = $("#" + slug + "-autoimport-input").val();
+      importDate = $("#" + slug + "-import-date").val();
+      this.disableImportButton();
       data = {
         fieldValues: fieldValues,
         importInterval: importInterval
@@ -827,7 +825,7 @@ module.exports = KonnectorView = (function(_super) {
         })(this),
         error: (function(_this) {
           return function(model, err) {
-            if (err.status !== 504) {
+            if (err.status >= 400 && err.status !== 504) {
               _this.$('.error .message').html(t(err.responseText));
               return _this.$('.error').show();
             }
@@ -1007,7 +1005,7 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error">');
+buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('save and import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error">');
 var __val__ = t('error occurred during import:') + ' '
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('<span class="message">');

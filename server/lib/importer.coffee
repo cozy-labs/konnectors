@@ -13,7 +13,7 @@ module.exports = (konnector) ->
     if konnector.fieldValues? and konnector.isImporting is false
         log.debug "Importing #{konnector.slug}"
         model = require "../konnectors/#{konnector.slug}"
-        konnector.import konnector, model.fields, (err) ->
+        konnector.import (err) ->
 
             if err?
                 log.error err
@@ -32,10 +32,10 @@ module.exports = (konnector) ->
             , (err) ->
                 log.error err if err?
 
+            # Update the lastAutoImport with the current date
+            data = lastAutoImport: new Date()
+            konnector.updateAttributes data, (err) ->
+                log.error err if err?
+
     else
         log.debug "Connector #{konnector.slug} already importing"
-
-    # Update the lastAutoImport with the current date
-    data = lastAutoImport: new Date()
-    konnector.updateAttributes data, (err) ->
-        log.error err if err?
