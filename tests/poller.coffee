@@ -10,6 +10,11 @@ day = 24 * hour
 week = 7 * day
 month = 30 * day
 describe 'Testing konnector poller', ->
+    before (done) ->
+        Konnector.defineRequest 'all', (doc) ->
+            return emit(doc._id, doc);
+        , (err) ->
+            done()
     after (done) ->
         Konnector.all (err, body) =>
             for konnector in body
@@ -288,14 +293,14 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
-                poller.start true, ()=>
-                    Konnector.all (err, body) =>
-                        for konnector in body
-                            if konnector.slug is 'free'
-                                konnector.importInterval = 'week'
-                                konnector.lastAutoImport = moment().format()
-                                konnector.fieldValues = {date: moment().add month, 'ms'}
-                                poller.handleTimeout konnector, () =>
+                @timeout 4000
+                Konnector.all (err, body) =>
+                    for konnector in body
+                        if konnector.slug is 'free'
+                            konnector.importInterval = 'week'
+                            konnector.lastAutoImport = moment().add month, 'ms'
+                            konnector.save (err, res, body) =>
+                                poller.start true, () =>
                                     @spy.callCount.should.equal 0
                                     done()
 
@@ -329,13 +334,15 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
-                Konnector.all (err, body) =>
-                    for konnector in body
-                        if konnector.slug is 'free'
-                            konnector.importInterval = 'week'
-                            konnector.lastAutoImport = moment().add month, 'ms'
-                            konnector.save (err, res, body) =>
-                                poller.start true, () =>
+                @timeout 4000
+                poller.start true, () =>
+                    Konnector.all (err, body) =>
+                        for konnector in body
+                            if konnector.slug is 'free'
+                                konnector.importInterval = 'week'
+                                konnector.lastAutoImport = moment().format()
+                                konnector.fieldValues = {date: moment().add month, 'ms'}
+                                poller.handleTimeout konnector, () =>
                                     @spy.callCount.should.equal 0
                                     done()
 
