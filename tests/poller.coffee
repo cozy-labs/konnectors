@@ -18,10 +18,9 @@ describe 'Testing konnector poller', ->
             done()
     after (done) ->
         Konnector.all (err, body) =>
-            for konnector in body
-                if konnector.slug is 'free'
-                    konnector.destroy()
-                    done()
+            for konnector in body when konnector.slug is 'free'
+                konnector.destroy()
+                done()
 
     describe "Initialize of auto import", ->
 
@@ -67,14 +66,13 @@ describe 'Testing konnector poller', ->
             it 'When the cron function is called', (done) ->
                 @timeout 4000
                 Konnector.all (err, body) =>
-                    for konnector in body
-                        if konnector.slug is 'free'
-                            konnector.importInterval = 'day'
-                            konnector.lastAutoImport = moment().format()
-                            konnector.save (err, res, body) =>
-                                poller.start true, () =>
-                                    @spy.callCount.should.equal 0
-                                    done()
+                    for konnector in body when konnector.slug is 'free'
+                        konnector.importInterval = 'day'
+                        konnector.lastAutoImport = moment().format()
+                        konnector.save (err, res, body) =>
+                            poller.start true, () =>
+                                @spy.callCount.should.equal 0
+                                done()
 
             it 'Then the cron function should not have been called after 23 hours', ->
                 @sandbox.clock.tick 23 * hour
@@ -98,14 +96,13 @@ describe 'Testing konnector poller', ->
             it 'When the cron function is called', (done) ->
                 @timeout 4000
                 Konnector.all (err, body) =>
-                    for konnector in body
-                        if konnector.slug is 'free'
-                            konnector.importInterval = 'hour'
-                            konnector.lastAutoImport = moment().format()
-                            konnector.save (err, res, body) =>
-                                poller.start true, () =>
-                                    @spy.callCount.should.equal 0
-                                    done()
+                    for konnector in body when konnector.slug is 'free'
+                        konnector.importInterval = 'hour'
+                        konnector.lastAutoImport = moment().format()
+                        konnector.save (err, res, body) =>
+                            poller.start true, () =>
+                                @spy.callCount.should.equal 0
+                                done()
 
 
             it 'Then the cron function should not have been called after 59 minutes', ->
@@ -130,14 +127,13 @@ describe 'Testing konnector poller', ->
             it 'When the cron function is called', (done) ->
                 @timeout 4000
                 Konnector.all (err, body) =>
-                    for konnector in body
-                        if konnector.slug is 'free'
-                            konnector.importInterval = 'month'
-                            konnector.lastAutoImport = moment().format()
-                            konnector.save (err, res, body) =>
-                                poller.start true, () =>
-                                    @spy.callCount.should.equal 0
-                                    done()
+                    for konnector in body when konnector.slug is 'free'
+                        konnector.importInterval = 'month'
+                        konnector.lastAutoImport = moment().format()
+                        konnector.save (err, res, body) =>
+                            poller.start true, () =>
+                                @spy.callCount.should.equal 0
+                                done()
 
             it 'Then the cron function should not have been called after 22 days', ->
                 @sandbox.clock.tick 22 * day
@@ -169,14 +165,13 @@ describe 'Testing konnector poller', ->
                 @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
-                        for konnector in body
-                            if konnector.slug is 'free'
-                                konnector.importInterval = 'week'
-                                konnector.lastAutoImport = moment().format()
-                                konnector.fieldValues = {}
-                                poller.handleTimeout konnector, () =>
-                                    @spy.callCount.should.equal 0
-                                    done()
+                        for konnector in body when konnector.slug is 'free'
+                            konnector.importInterval = 'week'
+                            konnector.lastAutoImport = moment().format()
+                            konnector.fieldValues = {}
+                            poller.handleTimeout konnector, () =>
+                                @spy.callCount.should.equal 0
+                                done()
 
             it 'Then the cron function should not have been called after 6 days', (done) ->
                 @sandbox.clock.tick 6 * day
@@ -202,14 +197,13 @@ describe 'Testing konnector poller', ->
                 @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
-                        for konnector in body
-                            if konnector.slug is 'free'
-                                konnector.importInterval = 'day'
-                                konnector.lastAutoImport = moment().format()
-                                konnector.fieldValues = {}
-                                poller.handleTimeout konnector, () =>
-                                    @spy.callCount.should.equal 0
-                                    done()
+                        for konnector in body when konnector.slug is 'free'
+                            konnector.importInterval = 'day'
+                            konnector.lastAutoImport = moment().format()
+                            konnector.fieldValues = {}
+                            poller.handleTimeout konnector, () =>
+                                @spy.callCount.should.equal 0
+                                done()
 
             it 'Then the cron function should not have been called after 23 hours', ->
                 @sandbox.clock.tick 23 * hour
@@ -234,14 +228,13 @@ describe 'Testing konnector poller', ->
                 @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
-                        for konnector in body
-                            if konnector.slug is 'free'
-                                konnector.importInterval = 'hour'
-                                konnector.lastAutoImport = moment().format()
-                                konnector.fieldValues = {}
-                                poller.handleTimeout konnector, () =>
-                                    @spy.callCount.should.equal 0
-                                    done()
+                        for konnector in body when konnector.slug is 'free'
+                            konnector.importInterval = 'hour'
+                            konnector.lastAutoImport = moment().format()
+                            konnector.fieldValues = {}
+                            poller.handleTimeout konnector, () =>
+                                @spy.callCount.should.equal 0
+                                done()
 
             it 'Then the cron function should not have been called after 59 minutes', ->
                 @sandbox.clock.tick 59 * minute
@@ -266,14 +259,13 @@ describe 'Testing konnector poller', ->
                 @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
-                        for konnector in body
-                            if konnector.slug is 'free'
-                                konnector.importInterval = 'month'
-                                konnector.lastAutoImport = moment().format()
-                                konnector.fieldValues = {}
-                                poller.handleTimeout konnector, () =>
-                                    @spy.callCount.should.equal 0
-                                    done()
+                        for konnector in body when konnector.slug is 'free'
+                            konnector.importInterval = 'month'
+                            konnector.lastAutoImport = moment().format()
+                            konnector.fieldValues = {}
+                            poller.handleTimeout konnector, () =>
+                                @spy.callCount.should.equal 0
+                                done()
 
             it 'Then the cron function should not have been called after 22 days', ->
                 @sandbox.clock.tick 22 * day
@@ -304,14 +296,13 @@ describe 'Testing konnector poller', ->
             it 'When the cron function is called', (done) ->
                 @timeout 8000
                 Konnector.all (err, body) =>
-                    for konnector in body
-                        if konnector.slug is 'free'
-                            konnector.importInterval = 'week'
-                            konnector.lastAutoImport = moment().add month, 'ms'
-                            konnector.save (err, res, body) =>
-                                poller.start true, () =>
-                                    @spy.callCount.should.equal 0
-                                    done()
+                    for konnector in body when konnector.slug is 'free'
+                        konnector.importInterval = 'week'
+                        konnector.lastAutoImport = moment().add month, 'ms'
+                        konnector.save (err, res, body) =>
+                            poller.start true, () =>
+                                @spy.callCount.should.equal 0
+                                done()
 
             it 'Then the cron function should not have been called after 7 days', (done) ->
                 @sandbox.clock.tick 7 * day
@@ -346,14 +337,13 @@ describe 'Testing konnector poller', ->
                 @timeout 8000
                 poller.start true, () =>
                     Konnector.all (err, body) =>
-                        for konnector in body
-                            if konnector.slug is 'free'
-                                konnector.importInterval = 'week'
-                                konnector.lastAutoImport = moment().format()
-                                konnector.fieldValues = {date: moment().add month, 'ms'}
-                                poller.handleTimeout konnector, () =>
-                                    @spy.callCount.should.equal 0
-                                    done()
+                        for konnector in body when konnector.slug is 'free'
+                            konnector.importInterval = 'week'
+                            konnector.lastAutoImport = moment().format()
+                            konnector.fieldValues = {date: moment().add month, 'ms'}
+                            poller.handleTimeout konnector, () =>
+                                @spy.callCount.should.equal 0
+                                done()
 
             it 'Then the cron function should not have been called after 7 days', (done) ->
                 @sandbox.clock.tick 7 * day
