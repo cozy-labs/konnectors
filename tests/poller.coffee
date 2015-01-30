@@ -11,6 +11,7 @@ week = 7 * day
 month = 30 * day
 describe 'Testing konnector poller', ->
     before (done) ->
+        @timeout 4000
         Konnector.defineRequest 'all', (doc) ->
             return emit(doc._id, doc);
         , (err) ->
@@ -32,6 +33,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
+                @timeout 4000
                 data = new Konnector
                     isImporting: false
                     importInterval: 'week'
@@ -63,6 +65,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
+                @timeout 4000
                 Konnector.all (err, body) =>
                     for konnector in body
                         if konnector.slug is 'free'
@@ -93,6 +96,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
+                @timeout 4000
                 Konnector.all (err, body) =>
                     for konnector in body
                         if konnector.slug is 'free'
@@ -124,6 +128,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
+                @timeout 4000
                 Konnector.all (err, body) =>
                     for konnector in body
                         if konnector.slug is 'free'
@@ -161,6 +166,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
+                @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
                         for konnector in body
@@ -193,6 +199,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
+                @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
                         for konnector in body
@@ -224,6 +231,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
+                @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
                         for konnector in body
@@ -255,6 +263,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
+                @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
                         for konnector in body
@@ -293,7 +302,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
-                @timeout 4000
+                @timeout 8000
                 Konnector.all (err, body) =>
                     for konnector in body
                         if konnector.slug is 'free'
@@ -334,7 +343,7 @@ describe 'Testing konnector poller', ->
                 @sandbox.restore()
 
             it 'When the cron function is called', (done) ->
-                @timeout 4000
+                @timeout 8000
                 poller.start true, () =>
                     Konnector.all (err, body) =>
                         for konnector in body
