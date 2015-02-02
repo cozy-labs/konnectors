@@ -23,7 +23,8 @@ class KonnectorPoller
     constructor: () ->
         # Timeout for prepareNextCheck (call every day)
         @timeout = null
-        # Timeouts for all konnectors (contains only timeout for the current day)
+        # Timeouts for all konnectors
+        #    * Contains only timeout for the current day
         @timeouts = {}
         # Contains all nextUpdate for each konnector.
         @nextUpdates = {}
@@ -170,7 +171,8 @@ class KonnectorPoller
 
     # Start timeout for konnector
     startTimeout: (konnector, interval) ->
-        @timeouts[konnector.slug] = setTimeout @checkImport.bind(@, konnector, interval), interval
+        nextImport = @checkImport.bind(@, konnector, interval)
+        @timeouts[konnector.slug] = setTimeout nextImport, interval
 
 
     # Import konnector and update nextUpdate
