@@ -105,10 +105,9 @@ class KonnectorPoller
 
 
     # Update timeouts and nextUpdates for this new/modified konnector
-    handleTimeout: (konnector, callback=null) ->
+    handleTimeout: (startDate, konnector, callback=null) ->
         konnector = new Konnector konnector
         # If date is present in fieldValues
-        startDate = konnector.fieldValues.date if konnector.fieldValues.date?
         # if there is already a timeout for this konnector, destroy it
         if @timeouts[konnector.slug]?
             clearTimeout @timeouts[konnector.slug]
@@ -116,19 +115,16 @@ class KonnectorPoller
         if konnector.importInterval isnt 'none'
             konnector.injectEncryptedFields()
             # Auto import present
-
-            if startDate? and startDate isnt ''
+            if startDate?
                 # We set the date of the first import
-                data = lastAutoImport: moment(startDate, "DD-MM-YYYY")
+                data = lastAutoImport:  moment(startDate, "DD-MM-YYYY")
                 fields = konnectorHash[konnector.slug]
                 konnector.removeEncryptedFields fields
                 # Create/Update lastAutoImport in database
-                konnector.updateAttributes data, (err) =>
+                konnector.updateAttributes data, (err, body) =>
                     if err
                         log.error err
-                    log.debug "First import set to " +
-                    "#{moment(startDate, "DD-MM-YYYY")}"
-                    @create konnector, moment(startDate, "DD-MM-YYYY")
+                    @create konnector,  moment(startDate, 'DD-MM-YYYY')
                     callback() if callback?
 
             else
@@ -152,6 +148,7 @@ class KonnectorPoller
         # Add konnector in nextUpdates
         @nextUpdates[konnector.slug] = [nextUpdate, konnector]
         # Create timeout if necessary
+        log.info "#{konnector.slug} : Next update #{nextUpdate.format(format)}"
         @createTimeout konnector, nextUpdate
 
 

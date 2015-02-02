@@ -169,7 +169,7 @@ describe 'Testing konnector poller', ->
                             konnector.importInterval = 'week'
                             konnector.lastAutoImport = moment().format()
                             konnector.fieldValues = {}
-                            poller.handleTimeout konnector, () =>
+                            poller.handleTimeout null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
@@ -201,7 +201,7 @@ describe 'Testing konnector poller', ->
                             konnector.importInterval = 'day'
                             konnector.lastAutoImport = moment().format()
                             konnector.fieldValues = {}
-                            poller.handleTimeout konnector, () =>
+                            poller.handleTimeout null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
@@ -232,7 +232,7 @@ describe 'Testing konnector poller', ->
                             konnector.importInterval = 'hour'
                             konnector.lastAutoImport = moment().format()
                             konnector.fieldValues = {}
-                            poller.handleTimeout konnector, () =>
+                            poller.handleTimeout null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
@@ -263,7 +263,7 @@ describe 'Testing konnector poller', ->
                             konnector.importInterval = 'month'
                             konnector.lastAutoImport = moment().format()
                             konnector.fieldValues = {}
-                            poller.handleTimeout konnector, () =>
+                            poller.handleTimeout null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
@@ -340,8 +340,8 @@ describe 'Testing konnector poller', ->
                         for konnector in body when konnector.slug is 'free'
                             konnector.importInterval = 'week'
                             konnector.lastAutoImport = moment().format()
-                            konnector.fieldValues = {date: moment().add month, 'ms'}
-                            poller.handleTimeout konnector, () =>
+                            date = moment().add month, 'ms'
+                            poller.handleTimeout date, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
