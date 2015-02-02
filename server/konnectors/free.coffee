@@ -32,7 +32,7 @@ module.exports =
 
     name: "Free"
     slug: "free"
-    description: "Download all your internet bills from Free."
+    description: 'konnector description free'
     vendorLink: "https://www.free.fr/"
 
     fields:
