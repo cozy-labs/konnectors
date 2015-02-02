@@ -57,7 +57,7 @@ module.exports =
 
     name: "Withings"
     slug: "withings"
-    description: "Download all your measures from your Withings account."
+    description: 'konnector description withings'
     vendorLink: "https://www.withings.com/"
 
     fields:

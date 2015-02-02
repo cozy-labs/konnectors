@@ -46,3 +46,12 @@ module.exports =
 
     'error occurred during import.': 'An error occurred during the last import.'
     'error occurred during import:': 'An error occurred during the last import:'
+
+    # Konnectors' description
+    'konnector description free': "Download all your internet bills from Free."
+    'konnector description github': "Download all your Github Bills."
+    'konnector description github commits': "Save infos from all your Github Commits."
+    'konnector description jawbone': "Download Move and Sleep Data from Jawbone CSV file."
+    'konnector description rescuetime': "Download all your activities from Rescue Time"
+    'konnector description withings': "Download all your measures from your Withings account."
+    'konnector description twitter': "Download all your tweets published on Twitter."

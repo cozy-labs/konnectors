@@ -33,7 +33,7 @@ module.exports =
 
     name: "Github"
     slug: "github"
-    description: "Download all your Github Bills."
+    description: 'konnector description github'
     vendorLink: "https://www.github.com/"
 
     fields:

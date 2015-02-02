@@ -39,7 +39,7 @@ module.exports =
 
     name: "Github Commits"
     slug: "githubcommits"
-    description: "Save infos from all your Github Commits."
+    description: 'konnector description github commits'
     vendorLink: "https://www.github.com/"
 
     fields:
@@ -79,7 +79,7 @@ getEvents = (requiredFields, commits, data, next) ->
 
     data.commits = []
     log.info "Fetch commits sha from events..."
-    async.eachSeries [1..10], (page, callback) ->
+    async.eachSeries [1..1], (page, callback) ->
 
         client.get path + page, (err, res, events) ->
             unless err?

@@ -46,3 +46,12 @@ module.exports =
 
     'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.'
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
+
+    # Konnectors' description
+    'konnector description free': "Téléchargez toutes vos factures internet de Free."
+    'konnector description github': "Téléchargez toutes vos factures Github."
+    'konnector description github commits': "Sauvegardez les informations de tous vos commits Github."
+    'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone."
+    'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime."
+    'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."
+    'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter."
