@@ -141,7 +141,7 @@ class KonnectorPoller
                 @create konnector, @findNextUpdate(konnector)
                 callback() if callback?
         else
-            callback() is callback()
+            callback() if callback?
 
 
     # Add new konnector

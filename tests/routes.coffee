@@ -170,6 +170,7 @@ describe 'Testing konnector controller', ->
 
             it "And lastAutoImport should be updated", (done) ->
                 Konnector.find @id, (err, body) =>
+                    # Retry to be sure to have the last konnector version
                     Konnector.find @id, (err, body) =>
                         should.exist body.lastAutoImport
                         lastAutoImport = moment(body.lastAutoImport)
@@ -241,9 +242,11 @@ describe 'Testing konnector controller', ->
                     count += 1
                     Konnector.find id, (err, body) =>
                         if count is 1
-                            body.isImporting.should.equal true
-                            # Without that fetch doesn't start.
-                            @sandbox.clock.tick 1 * minute
+                            if body.isImporting is false
+                                count = 0
+                            else
+                                # Without that fetch doesn't start.
+                                @sandbox.clock.tick 1 * minute
                         else if count is 2
                             body.isImporting.should.equal false
                             done() if done?
@@ -256,7 +259,7 @@ describe 'Testing konnector controller', ->
                     lastAutoImport.format(format).should.equal '03/01/1970'
                     done()
 
-            it 'Then the fetch function should have been called after the one day', (done) ->
+            it 'Then the fetch function have been called after the one day', (done) ->
                 @timeout 6000
                 @sandbox.clock.tick 1 * day
                 count = 0
@@ -266,9 +269,11 @@ describe 'Testing konnector controller', ->
                     count += 1
                     Konnector.find id, (err, body) =>
                         if count is 1
-                            body.isImporting.should.equal true
-                            # Without that fetch doesn't start.
-                            @sandbox.clock.tick 1 * minute
+                            if body.isImporting is false
+                                count = 0
+                            else
+                                # Without that fetch doesn't start.
+                                @sandbox.clock.tick 1 * minute
                         else
                             body.isImporting.should.equal false
                             done() if done?

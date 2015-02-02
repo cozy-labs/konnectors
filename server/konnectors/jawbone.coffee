@@ -68,7 +68,7 @@ module.exports =
 
     name: "Jawbone"
     slug: "jawbone"
-    description: "Download Move and Sleep Data from Jawbone CSV file."
+    description: 'konnector description jawbone'
     vendorLink: "https://jawbone.com/up"
 
     fields:

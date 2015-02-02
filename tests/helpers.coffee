@@ -28,7 +28,6 @@ helpers.getClient = (url = null) ->
 initializeApplication = require "#{helpers.prefix}server"
 
 helpers.startApp = (done) ->
-    console.log "start app"
     initializeApplication (app, server) =>
         @app = app
         @app.server = server

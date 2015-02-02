@@ -409,7 +409,14 @@ module.exports = {
   'notification import success': 'Konnector %{name}: data have been successfully imported',
   'notification import error': 'Konnector %{name}: an error occurred during import of data',
   'error occurred during import.': 'An error occurred during the last import.',
-  'error occurred during import:': 'An error occurred during the last import:'
+  'error occurred during import:': 'An error occurred during the last import:',
+  'konnector description free': "Download all your internet bills from Free.",
+  'konnector description github': "Download all your Github Bills.",
+  'konnector description github commits': "Save infos from all your Github Commits.",
+  'konnector description jawbone': "Download Move and Sleep Data from Jawbone CSV file.",
+  'konnector description rescuetime': "Download all your activities from Rescue Time",
+  'konnector description withings': "Download all your measures from your Withings account.",
+  'konnector description twitter': "Download all your tweets published on Twitter."
 };
 
 });
@@ -453,7 +460,14 @@ module.exports = {
   'notification import success': 'Konnector %{name}: les données ont été importées avec succès',
   'notification import error': "Konnector %{name}: une erreur est survenue pendant l'importation des données",
   'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.',
-  'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
+  'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :',
+  'konnector description free': "Téléchargez toutes vos factures internet de Free.",
+  'konnector description github': "Téléchargez toutes vos factures Github.",
+  'konnector description github commits': "Sauvegardez les informations de tous vos commits Github.",
+  'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone.",
+  'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime.",
+  'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings.",
+  'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter."
 };
 
 });
@@ -1005,7 +1019,10 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">' + escape((interp = model.description) == null ? '' : interp) + '</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('save and import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error">');
+buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">');
+var __val__ = t(model.description)
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('save and import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error">');
 var __val__ = t('error occurred during import:') + ' '
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('<span class="message">');

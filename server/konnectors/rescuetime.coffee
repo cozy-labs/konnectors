@@ -29,7 +29,7 @@ module.exports =
 
     name: "Rescue Time"
     slug: "rescuetime"
-    description: "Download all your activities from Rescue Time"
+    description: 'konnector description rescuetime'
     vendorLink: "https://www.rescuetime.com/"
 
     fields:

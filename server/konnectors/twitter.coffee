@@ -30,7 +30,7 @@ module.exports =
 
     name: "Twitter"
     slug: "twitter"
-    description: "Download all your tweets published on Twitter."
+    description: 'konnector description twitter'
     vendorLink: "https://twitter.com/"
 
     fields:
