@@ -26,9 +26,13 @@ describe 'Testing konnector controller', ->
                 @timeout 4000
                 @sandbox = sinon.sandbox.create useFakeTimers: true
                 @spy = @sandbox.spy free, 'fetch'
-                helpers.startApp (appli)->
-                    app = appli
-                    done()
+                Konnector.defineRequest 'all', (doc) ->
+                    return emit(doc._id, doc);
+                , (err) ->
+                    helpers.startApp (appli)->
+                        app = appli
+                        done()
+
             after (done) ->
                 @sandbox.restore()
                 helpers.stopApp () ->
@@ -37,7 +41,7 @@ describe 'Testing konnector controller', ->
                             konnector.destroy()
                             done()
 
-            it 'When the cron function is called', (done) ->
+            it 'When the import function is called', (done) ->
                 Konnector.all (err, body) =>
                     for konnector in body when konnector.slug is 'free'
                         konnector.fieldValues = "login": "test", "password": "password", "date": "", 'folderPath': ""
@@ -84,9 +88,13 @@ describe 'Testing konnector controller', ->
                 @timeout 4000
                 @sandbox = sinon.sandbox.create useFakeTimers: true
                 @spy = @sandbox.spy free, 'fetch'
-                helpers.startApp (appli)->
-                    app = appli
-                    done()
+                Konnector.defineRequest 'all', (doc) ->
+                    return emit(doc._id, doc);
+                , (err) ->
+                    helpers.startApp (appli)->
+                        app = appli
+                        done()
+
             after (done) ->
                 @sandbox.restore()
                 helpers.stopApp () ->
@@ -95,8 +103,7 @@ describe 'Testing konnector controller', ->
                             konnector.destroy()
                             done()
 
-
-            it 'When the cron function is called', (done) ->
+            it 'When import function is called', (done) ->
                 Konnector.all (err, body) =>
                     for konnector in body when konnector.slug is 'free'
                         konnector.fieldValues = "login": "test", "password": "password", "date": "", 'folderPath': ""
@@ -147,7 +154,6 @@ describe 'Testing konnector controller', ->
                 lastAutoImport = moment(@body.lastAutoImport)
                 lastAutoImport.format(format).should.equal '01/01/1970'
 
-
             it 'Then the fetch function should have been called after a day', (done) ->
                 @sandbox.clock.tick 1 * day
                 count = 0
@@ -170,7 +176,7 @@ describe 'Testing konnector controller', ->
 
             it "And lastAutoImport should be updated", (done) ->
                 Konnector.find @id, (err, body) =>
-                    # Retry to be sure to have the last konnector version
+                    # Retry once to be sure to have the last konnector version
                     Konnector.find @id, (err, body) =>
                         should.exist body.lastAutoImport
                         lastAutoImport = moment(body.lastAutoImport)
@@ -183,9 +189,13 @@ describe 'Testing konnector controller', ->
                 @timeout 4000
                 @sandbox = sinon.sandbox.create useFakeTimers: true
                 @spy = @sandbox.spy free, 'fetch'
-                helpers.startApp (appli)->
-                    app = appli
-                    done()
+                Konnector.defineRequest 'all', (doc) ->
+                    return emit(doc._id, doc);
+                , (err) ->
+                    helpers.startApp (appli)->
+                        app = appli
+                        done()
+
             after (done) ->
                 @sandbox.restore()
                 helpers.stopApp () ->
