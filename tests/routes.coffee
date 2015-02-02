@@ -53,18 +53,19 @@ describe 'Testing konnector controller', ->
                             done()
 
             it 'Then konnector state should be updating', (done) ->
-                @timeout 10000
+                @timeout 6000
                 count = 0
-
                 realtime = RealtimeAdapter app, 'konnector.*'
 
                 realtime.on 'konnector.update', (event, id) =>
                     count += 1
                     Konnector.find id, (err, body) =>
                         if count is 1
-                            body.isImporting.should.equal true
-                            # Without that fetch doesn't start.
-                            @sandbox.clock.tick 1 * minute
+                            if body.isImporting is false
+                                count = 0
+                            else
+                                # Without that fetch doesn't start.
+                                @sandbox.clock.tick 1 * minute
                         else if count is 2
                             body.isImporting.should.equal false
                             done() if done?
@@ -115,19 +116,20 @@ describe 'Testing konnector controller', ->
                             done()
 
             it 'Then konnector state should be updating', (done) ->
-                @timeout 10000
+                @timeout 6000
                 count = 0
-
                 realtime = RealtimeAdapter app, 'konnector.*'
 
                 realtime.on 'konnector.update', (event, id) =>
                     count += 1
                     Konnector.find id, (err, body) =>
-                        if count is 2
-                            body.isImporting.should.equal true
-                            # Without that fetch doesn't start.
-                            @sandbox.clock.tick 1 * minute
-                        else if count is 3
+                        if count is 1
+                            if body.isImporting is false
+                                count = 0
+                            else
+                                # Without that fetch doesn't start.
+                                @sandbox.clock.tick 1 * minute
+                        else if count is 2
                             body.isImporting.should.equal false
                             done() if done?
                             done = null
@@ -155,6 +157,7 @@ describe 'Testing konnector controller', ->
                 lastAutoImport.format(format).should.equal '01/01/1970'
 
             it 'Then the fetch function should have been called after a day', (done) ->
+                @timeout 6000
                 @sandbox.clock.tick 1 * day
                 count = 0
                 realtime = RealtimeAdapter app, 'konnector.*'
@@ -163,9 +166,11 @@ describe 'Testing konnector controller', ->
                     count += 1
                     Konnector.find id, (err, body) =>
                         if count is 1
-                            body.isImporting.should.equal true
-                            # Without that fetch doesn't start.
-                            @sandbox.clock.tick 1 * minute
+                            if body.isImporting is false
+                                count = 0
+                            else
+                                # Without that fetch doesn't start.
+                                @sandbox.clock.tick 1 * minute
                         else if count is 2
                             body.isImporting.should.equal false
                             done() if done?
