@@ -135,6 +135,7 @@ module.exports = class KonnectorView extends BaseView
             # get the field values from inputs
             fieldValues = {}
             slug = @model.get 'slug'
+            importDate = $("##{slug}-import-date").val()
             fieldValues['date'] = importDate
             for name, val of @model.get 'fields'
                 fieldValues[name] = $("##{slug}-#{name}-input").val()
@@ -142,7 +143,6 @@ module.exports = class KonnectorView extends BaseView
             # auto import interval and start date work separately from field
             # values
             importInterval = $("##{slug}-autoimport-input").val()
-            importDate = $("##{slug}-import-date").val()
 
             # disable the button when it's being clicked, realtime changes will
             # re-enable it when necessary.

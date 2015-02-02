@@ -20,7 +20,6 @@ module.exports =
 
 
     import: (req, res, next) ->
-
         # don't save during import
         if req.konnector.isImporting
             res.send 400, message: 'konnector is importing'
@@ -28,6 +27,8 @@ module.exports =
 
             # Delete unused variable
             if req.body.fieldValues.date?
+                if req.body.fieldValues.date isnt ''
+                    date = req.body.fieldValues.date
                 delete req.body.fieldValues.date
 
             req.konnector.updateFieldValues req.body, (err) ->
@@ -36,6 +37,8 @@ module.exports =
                 else
                     res.send 200
                     poller = require "../lib/konnector_poller"
-                    poller.handleTimeout req.body
-                    req.konnector.import (err) ->
-                        console.log err if err?
+                    poller.handleTimeout date, req.body
+                    # Don't import data if a start date is defined
+                    unless date?
+                        req.konnector.import (err) ->
+                            console.log err if err?

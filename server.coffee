@@ -12,11 +12,16 @@ params =
     port: process.env.PORT or 9358
     host: process.env.HOST or '127.0.0.1'
     root: __dirname
+application = module.exports = (callback) ->
+    americano.start params, (app, server) ->
+        realtime = RealtimeAdapter server: server, ['konnector.update']
+        localization.initialize ->
+            initKonnectors ->
+                patchKonnectors ->
+                    poller.start()
+                    callback(app, server) if callback?
 
-americano.start params, (app, server) ->
-    realtime = RealtimeAdapter server: server, ['konnector.update']
-    localization.initialize ->
-        initKonnectors ->
-            patchKonnectors ->
-                poller.start()
+
+if not module.parent
+    application()
 
