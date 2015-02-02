@@ -51,7 +51,6 @@ Konnector::updateFieldValues = (newValues, callback) ->
 
 Konnector::import = (callback) ->
     @updateAttributes isImporting: true, (err) =>
-
         if err?
             data =
                 isImporting: false
@@ -64,7 +63,6 @@ Konnector::import = (callback) ->
             konnectorModule.fetch @fieldValues, (err) =>
                 fields = konnectorHash[@slug].fields
                 @removeEncryptedFields fields
-
                 if err?
                     data = isImporting: false, errorMessage: err
                     @updateAttributes data, ->
