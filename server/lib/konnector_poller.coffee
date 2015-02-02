@@ -106,48 +106,45 @@ class KonnectorPoller
 
     # Update timeouts and nextUpdates for this new/modified konnector
     handleTimeout: (konnector, callback=null) ->
+        konnector = new Konnector konnector
         # If date is present in fieldValues
         startDate = konnector.fieldValues.date if konnector.fieldValues.date?
-        # Retrive current Autoimport value in database
-        Konnector.find konnector.id, (err, savedKonnector) =>
-            savedKonnector.injectEncryptedFields()
-            currentInterval = savedKonnector.importInterval
-            # If the importInterval has changed or it's a new
-            if konnector.importInterval isnt currentInterval
+        # if there is already a timeout for this konnector, destroy it
+        if @timeouts[konnector.slug]?
+            clearTimeout @timeouts[konnector.slug]
+            delete @timeouts[konnector.slug]
+        if konnector.importInterval isnt 'none'
+            konnector.injectEncryptedFields()
+            # Auto import present
 
-                # if there is already a timeout for this konnector, destroy it
-                if @timeouts[konnector.slug]?
-                    clearTimeout @timeouts[konnector.slug]
-                    delete @timeouts[konnector.slug]
-                if konnector.importInterval isnt 'none'
-                    # Auto import present
+            if startDate? and startDate isnt ''
+                # We set the date of the first import
+                data = lastAutoImport: moment(startDate, "DD-MM-YYYY")
+                fields = konnectorHash[konnector.slug]
+                konnector.removeEncryptedFields fields
+                # Create/Update lastAutoImport in database
+                konnector.updateAttributes data, (err) =>
+                    if err
+                        log.error err
+                    log.debug "First import set to " +
+                    "#{moment(startDate, "DD-MM-YYYY")}"
+                    @create konnector, moment(startDate, "DD-MM-YYYY")
+                    callback() if callback?
 
-                    if startDate? and startDate isnt ''
-                        # We set the date of the first import
-                        data = lastAutoImport: moment(startDate, "DD-MM-YYYY")
-                        fields = konnectorHash[savedKonnector.slug]
-                        savedKonnector.removeEncryptedFields fields
-                        # Create/Update lastAutoImport in database
-                        savedKonnector.updateAttributes data, (err) =>
-                            if err
-                                log.error err
-                            log.debug "First import set to " +
-                            "#{moment(startDate, "DD-MM-YYYY")}"
-                            @create konnector, moment(startDate, "DD-MM-YYYY")
-                            callback() if callback?
-
-                    else
-                        # We set the current time
-                        data = lastAutoImport: new Date()
-                        konnector.lastAutoImport = new Date()
-                        fields = konnectorHash[savedKonnector.slug]
-                        savedKonnector.removeEncryptedFields fields
-                        # Create/Update lastAutoImport in database
-                        savedKonnector.updateAttributes data, (err, body) ->
-                            if err
-                                log.error err
-                        @create konnector, @findNextUpdate(konnector)
-                        callback() if callback?
+            else
+                # We set the current time
+                data = lastAutoImport: new Date()
+                konnector.lastAutoImport = new Date()
+                fields = konnectorHash[konnector.slug]
+                konnector.removeEncryptedFields fields
+                # Create/Update lastAutoImport in database
+                konnector.updateAttributes data, (err, body) ->
+                    if err
+                        log.error err
+                @create konnector, @findNextUpdate(konnector)
+                callback() if callback?
+        else
+            callback() is callback()
 
 
     # Add new konnector
