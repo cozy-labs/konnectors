@@ -7,6 +7,8 @@ fs = require 'fs'
 async = require 'async'
 
 fetcher = require '../lib/fetcher'
+localization = require '../lib/localization_manager'
+
 
 log = require('printit')
     prefix: "Github"
@@ -62,9 +64,16 @@ module.exports =
             .use(buildCommitDateHash)
             .use(logCommits)
             .args(requiredFields, {}, {})
-            .fetch (err) ->
+            .fetch (err, fields, commits, data) ->
                 log.info "Import finished"
-                callback(err)
+                notifContent = null
+
+                if commits.numImportedCommits > 0
+                    localizationKey = 'notification github commits'
+                    options = smart_count: commits.numImportedCommits
+                    notifContent = localization.t localizationKey, options
+
+                callback err, notifContent
 
 
 # Get latest events list to know wich commits were pushed.
@@ -120,6 +129,7 @@ logCommits = (requiredFields, entries, data, next) ->
     username = requiredFields.login
     pass = requiredFields.password
 
+    numImportedCommits = 0
     client.setBasicAuth username, pass
     async.eachSeries data.commits, (commit, callback) ->
         path = commit.url.substring 'https://api.github.com/'.length
@@ -152,6 +162,7 @@ logCommits = (requiredFields, entries, data, next) ->
                         additions: commit.stats.additions
                         deletions: commit.stats.deletions
                         files: commit.files
+                    numImportedCommits++
                     Commit.create data, (err) ->
                         if err
                             log.error err
@@ -159,4 +170,5 @@ logCommits = (requiredFields, entries, data, next) ->
                             log.info "Commit #{commit.sha} saved."
                         callback()
     , (err) ->
+        entries.numImportedCommits = numImportedCommits
         next()

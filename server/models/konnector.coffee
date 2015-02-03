@@ -60,21 +60,21 @@ Konnector::import = (callback) ->
         else
             konnectorModule = require "../konnectors/#{@slug}"
             @injectEncryptedFields()
-            konnectorModule.fetch @fieldValues, (err) =>
+            konnectorModule.fetch @fieldValues, (err, notifContent) =>
                 fields = konnectorHash[@slug].fields
                 @removeEncryptedFields fields
                 if err?
                     data = isImporting: false, errorMessage: err
                     @updateAttributes data, ->
                         # raise the error from the import, not the update
-                        callback err
+                        callback err, notifContent
 
                 else
                     data =
                         isImporting: false
                         lastImport: new Date()
                         errorMessage: null
-                    @updateAttributes data, callback
+                    @updateAttributes data, (err) -> callback err, notifContent
 
 
 # Append data from connector's configuration file, if it exists

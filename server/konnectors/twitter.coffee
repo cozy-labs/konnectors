@@ -8,6 +8,7 @@ log = require('printit')
     prefix: "Twitter"
     date: true
 
+localization = require '../lib/localization_manager'
 
 # Models
 
@@ -82,12 +83,19 @@ saveTweets = (requiredFields, callback) ->
 
         log.info "Start import since #{start.format()}"
 
-        saveTweetGroup client, path, start, tweets.length, (err, lastId) ->
+        saveTweetGroup client, path, start, tweets.length, (err, numItems) ->
 
             if err then callback err
             else
                 log.info "Import finished"
-                callback()
+
+                notifContent = null
+                if numItems > 0
+                    localizationKey = 'notification twitter'
+                    options = smart_count: numItems
+                    notifContent = localization.t localizationKey, options
+
+                callback null, notifContent
 
 saveTweetGroup = (client, path, start, tweetLength, callback) ->
 
@@ -97,22 +105,20 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
             callback err
         else if res.statusCode isnt 200
             log.error 'Authentication error'
-            callback('bad credentials')
+            callback 'bad credentials'
         else if tweetLength is tweets.length
             log.info 'No new tweet to import'
-            callback()
+            callback null, 0
         else
             log.info "#{tweets.length - tweetLength} tweet(s) to import"
             tweets = tweets.reverse()
             tweets.pop() if path.indexOf('max_id') isnt -1
 
-            lastId = null
+            numItems = 0
             async.eachSeries tweets, (tweet, cb) ->
-
                 date = moment tweet.created_at
                 log.debug date
 
-                lastId = tweet.id_str
                 if date > start
 
                     twitterTweet = TwitterTweet
@@ -124,6 +130,7 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
                         isReplyTo: tweet.in_reply_to_status_id?
                         isRetweet: tweet.retweeted_status?
 
+                    numItems++
                     twitterTweet.save (err) ->
                         if err
                             cb err
@@ -133,4 +140,4 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
                 else
                     cb()
             , (err) ->
-                callback err, lastId
+                callback err, numItems

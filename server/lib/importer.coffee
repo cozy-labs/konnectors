@@ -13,24 +13,29 @@ module.exports = (konnector) ->
     if konnector.fieldValues? and konnector.isImporting is false
         log.debug "Importing #{konnector.slug}"
         model = require "../konnectors/#{konnector.slug}"
-        konnector.import (err) ->
-
+        konnector.import (err, notifContent) ->
             if err?
                 log.error err
                 localizationKey = 'notification import error'
-            else
-                localizationKey = 'notification import success'
+                notifContent = localization.t localizationKey, name: model.name
 
             notificationSlug = konnector.slug
-            msg = localization.t localizationKey, name: model.name
-            notification.createOrUpdatePersistent notificationSlug,
-                app: 'konnectors'
-                text: msg
-                resource:
+            if notifContent?
+                prefix = localization.t 'notification prefix', name: model.name
+                notification.createOrUpdatePersistent notificationSlug,
                     app: 'konnectors'
-                    url: "konnector/#{konnector.slug}"
-            , (err) ->
-                log.error err if err?
+                    text: "#{prefix} #{notifContent}"
+                    resource:
+                        app: 'konnectors'
+                        url: "konnector/#{konnector.slug}"
+                , (err) ->
+                    log.error err if err?
+            else
+                # If there was an error before, but that last import was
+                # successful AND didn't not return a notification content, the
+                # error notification is simply removed.
+                notification.destroy notificationSlug, (err) ->
+                    log.error err if err?
 
             # Update the lastAutoImport with the current date
             data = lastAutoImport: new Date()
