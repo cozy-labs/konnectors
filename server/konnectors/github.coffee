@@ -10,6 +10,8 @@ fetcher = require '../lib/fetcher'
 filterExisting = require '../lib/filter_existing'
 saveDataAndFile = require '../lib/save_data_and_file'
 
+localization = require '../lib/localization_manager'
+
 log = require('printit')
     prefix: "Github"
     date: true
@@ -58,9 +60,16 @@ module.exports =
             .use(filterExisting log, CodeBill)
             .use(saveDataAndFile log, CodeBill, 'github', ['bill'])
             .args(requiredFields, {}, {})
-            .fetch (err) ->
+            .fetch (err, fields, entries) ->
                 log.info "Import finished"
-                callback(err)
+
+                notifContent = null
+                if entries?.filtered?.length > 0
+                    localizationKey = 'notification github'
+                    options = smart_count: entries.filtered.length
+                    notifContent = localization.t localizationKey, options
+
+                callback err, notifContent
 
 
 # Procedure to login to Free website.

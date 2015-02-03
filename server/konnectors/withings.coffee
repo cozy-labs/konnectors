@@ -4,6 +4,8 @@ moment = require 'moment'
 crypto = require 'crypto'
 async = require 'async'
 
+localization = require '../lib/localization_manager'
+
 # helpers
 
 log = require('printit')
@@ -237,20 +239,24 @@ saveMeasures = (measures, callback) ->
         log.debug 'Save weights...'
         saveAll measuresToSave, (err) ->
             log.debug 'Weights saved...'
-            if err then callback err
-            else
+            return callback err if err
 
-                log.debug 'Save heartbeats...'
-                saveAll heartBeatsToSave, (err) ->
-                    log.debug 'Heartbeats saved...'
-                    if err then callback err
-                    else
+            log.debug 'Save heartbeats...'
+            saveAll heartBeatsToSave, (err) ->
+                log.debug 'Heartbeats saved...'
+                return callback err if err
 
-                        log.debug 'Save blood pressures...'
-                        saveAll bloodPressuresToSave, (err) ->
-                            log.debug 'Blood pressures saved...'
-                            if err then callback err
-                            else callback()
+                log.debug 'Save blood pressures...'
+                saveAll bloodPressuresToSave, (err) ->
+                    log.debug 'Blood pressures saved...'
+                    return callback err if err
+
+                    notifContent = null
+                    if measuresToSave.length > 0
+                        localizationKey = 'notification withings'
+                        options = smart_count: measuresToSave.length
+                        notifContent = localization.t localizationKey, options
+                    callback null, notifContent
 
     log.debug 'fetch old measures'
     Weight.all (err, scaleMeasures) ->

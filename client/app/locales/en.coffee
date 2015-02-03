@@ -59,3 +59,8 @@ module.exports =
     'notification prefix': "Konnector %{name}:"
     'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported"
     'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported"
+    'notification free': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification github': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification jawbone': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
+    'notification rescuetime': "%{smart_count} new activity imported |||| %{smart_count} new activites imported"
+    'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"

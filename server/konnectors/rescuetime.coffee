@@ -3,6 +3,9 @@ querystring = require 'querystring'
 request = require 'request-json'
 moment = require 'moment'
 async = require 'async'
+
+localization = require '../lib/localization_manager'
+
 log = require('printit')
     date: true
     prefix: 'rescuetime'
@@ -110,4 +113,11 @@ Something went wrong while fetching rescue time data.
 
                         cb err
                 , (err) ->
-                    callback()
+
+                    notifContent = null
+                    if body.rows?.length > 0
+                        localizationKey = 'notification rescuetime'
+                        options = smart_count: body.rows.length
+                        notifContent = localization.t localizationKey, options
+
+                    callback err, notifContent

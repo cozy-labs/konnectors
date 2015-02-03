@@ -3,6 +3,9 @@ querystring = require 'querystring'
 request = require 'request'
 moment = require 'moment'
 async = require 'async'
+
+localization = require '../lib/localization_manager'
+
 log = require('printit')
     prefix: "Jawbone"
     date: true
@@ -208,7 +211,7 @@ importData = (start, csvData, callback) ->
         columns[attr] = j if attr?
         j++
     columns["date"] = 0
-
+    numItems = 0
     saveLine = (line, callback) ->
         line = line.split ','
         date = moment(line[columns["date"]], "YYYYMMDD")
@@ -225,7 +228,7 @@ importData = (start, csvData, callback) ->
                 longestIdleTime: line[columns["longestIdleTime"]]
                 steps: line[columns["steps"]]
                 totalCalories: line[columns["totalCalories"]]
-
+            numItems++
             move.save (err) ->
                 if err then callback err
                 else if line[columns["asleepTime"]] isnt ''
@@ -242,6 +245,7 @@ importData = (start, csvData, callback) ->
                         sleepDuration: line[columns["sleepDuration"]]
                         lightSleepDuration: line[columns["lightSleepDuration"]]
                         sleepQuality: line[columns["sleepQuality"]]
+                    numItems++
                     sleep.save (err) ->
                         if err
                             callback err
@@ -257,8 +261,13 @@ importData = (start, csvData, callback) ->
         else
             callback()
 
-    async.eachSeries lines, (line, cb) ->
-        saveLine line, cb
-    , (err) ->
+    async.eachSeries lines, saveLine, (err) ->
         log.info 'CSV file imported.'
-        callback err
+
+        notifContent = null
+        if numItems > 0
+            localizationKey = 'notification jawbone'
+            options = smart_count: numItems
+            notifContent = localization.t localizationKey, options
+
+        callback err, notifContent
