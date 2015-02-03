@@ -41,8 +41,7 @@ module.exports =
     'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique"
     'home help step 2': "Désactivez la fonction d'auto-stop pour l'application Konnectors dans votre Cozy, sinon l'importation automatique ne fonctionnera pas."
 
-    'notification import success': 'Konnector %{name}: les données ont été importées avec succès'
-    'notification import error': "Konnector %{name}: une erreur est survenue pendant l'importation des données"
+    'notification import error': "Konnector %{name} : une erreur est survenue pendant l'importation des données"
 
     'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.'
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
@@ -55,3 +54,13 @@ module.exports =
     'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime."
     'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."
     'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter."
+
+    # Konnectors' notifications
+    'notification prefix': "Konnector %{name} :"
+    'notification github commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés"
+    'notification twitter': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés"
+    'notification free': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification github': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification jawbone': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
+    'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées"
+    'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"

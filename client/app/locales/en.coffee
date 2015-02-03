@@ -41,7 +41,6 @@ module.exports =
     'home help step 1': "You must manually trigger the import, except if you enable the auto-import."
     'home help step 2': "Disable the auto-stop feature for the Konnector application in your Cozy, otherwise the auto-import won't work."
 
-    'notification import success': 'Konnector %{name}: data have been successfully imported'
     'notification import error': 'Konnector %{name}: an error occurred during import of data'
 
     'error occurred during import.': 'An error occurred during the last import.'
@@ -55,3 +54,13 @@ module.exports =
     'konnector description rescuetime': "Download all your activities from Rescue Time"
     'konnector description withings': "Download all your measures from your Withings account."
     'konnector description twitter': "Download all your tweets published on Twitter."
+
+    # Konnectors' notifications
+    'notification prefix': "Konnector %{name}:"
+    'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported"
+    'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported"
+    'notification free': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification github': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification jawbone': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
+    'notification rescuetime': "%{smart_count} new activity imported |||| %{smart_count} new activites imported"
+    'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
