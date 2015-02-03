@@ -88,7 +88,7 @@ getEvents = (requiredFields, commits, data, next) ->
 
     data.commits = []
     log.info "Fetch commits sha from events..."
-    async.eachSeries [1..1], (page, callback) ->
+    async.eachSeries [1..10], (page, callback) ->
 
         client.get path + page, (err, res, events) ->
             unless err?
