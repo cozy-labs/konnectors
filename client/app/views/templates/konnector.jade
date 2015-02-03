@@ -9,9 +9,12 @@ h2.name
 .fields
 .buttons
     button#import-button #{t('save and import')}
-.error
-    span.error=t('error occurred during import:') + ' '
-        span.message=t(model.errorMessage)
+
+if model.errorMessage
+    .error
+        span.error=t('error occurred during import:') + ' '
+            span.message=t(model.errorMessage)
+            
 .status #{status}
 .infos
     .date

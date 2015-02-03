@@ -126,7 +126,7 @@ module.exports = KonnectorsCollection = (function(_super) {
 
 });
 
-;require.register("initialize", function(exports, require, module) {
+require.register("initialize", function(exports, require, module) {
 var AppView, KonnectorListener, KonnectorsCollection, Router, request;
 
 request = require('./lib/request');
@@ -171,7 +171,7 @@ $(function() {
 
 });
 
-;require.register("lib/base_view", function(exports, require, module) {
+require.register("lib/base_view", function(exports, require, module) {
 var BaseView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -218,7 +218,7 @@ module.exports = BaseView = (function(_super) {
 
 });
 
-;require.register("lib/request", function(exports, require, module) {
+require.register("lib/request", function(exports, require, module) {
 exports.request = function(type, url, data, callback) {
   return $.ajax({
     type: type,
@@ -259,7 +259,7 @@ exports.del = function(url, callback) {
 
 });
 
-;require.register("lib/view_collection", function(exports, require, module) {
+require.register("lib/view_collection", function(exports, require, module) {
 var BaseView, ViewCollection,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -370,7 +370,7 @@ module.exports = ViewCollection = (function(_super) {
 
 });
 
-;require.register("locales/en", function(exports, require, module) {
+require.register("locales/en", function(exports, require, module) {
 module.exports = {
   'bad credentials': 'Bad Credentials',
   'no bills retrieved': 'No bills retrieved',
@@ -418,12 +418,17 @@ module.exports = {
   'konnector description twitter': "Download all your tweets published on Twitter.",
   'notification prefix': "Konnector %{name}:",
   'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported",
-  'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported"
+  'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported",
+  'notification free': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
+  'notification github': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
+  'notification jawbone': "%{smart_count} new measure imported |||| %{smart_count} new measures imported",
+  'notification rescuetime': "%{smart_count} new activity imported |||| %{smart_count} new activites imported",
+  'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
 };
 
 });
 
-;require.register("locales/fr", function(exports, require, module) {
+require.register("locales/fr", function(exports, require, module) {
 module.exports = {
   'bad credentials': 'Mauvais identifiants',
   'no bills retrieved': 'Pas de facture trouvées',
@@ -471,12 +476,17 @@ module.exports = {
   'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter.",
   'notification prefix': "Konnector %{name} :",
   'notification github commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés",
-  'notification twitter': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés"
+  'notification twitter': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés",
+  'notification free': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
+  'notification github': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
+  'notification jawbone': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées",
+  'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées",
+  'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
 };
 
 });
 
-;require.register("models/konnector", function(exports, require, module) {
+require.register("models/konnector", function(exports, require, module) {
 var KonnectorModel,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -510,7 +520,7 @@ module.exports = KonnectorModel = (function(_super) {
 
 });
 
-;require.register("realtime", function(exports, require, module) {
+require.register("realtime", function(exports, require, module) {
 var Konnector, KonnectorListener,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -551,7 +561,7 @@ module.exports = KonnectorListener = (function(_super) {
 
 });
 
-;require.register("router", function(exports, require, module) {
+require.register("router", function(exports, require, module) {
 var Router,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -587,7 +597,7 @@ module.exports = Router = (function(_super) {
 
 });
 
-;require.register("views/app_view", function(exports, require, module) {
+require.register("views/app_view", function(exports, require, module) {
 var AppView, BaseView, KonnectorView, MenuView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -675,7 +685,7 @@ module.exports = AppView = (function(_super) {
 
 });
 
-;require.register("views/konnector", function(exports, require, module) {
+require.register("views/konnector", function(exports, require, module) {
 var BaseView, KonnectorView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -859,7 +869,7 @@ module.exports = KonnectorView = (function(_super) {
 
 });
 
-;require.register("views/menu", function(exports, require, module) {
+require.register("views/menu", function(exports, require, module) {
 var KonnectorsView, MenuItemView, ViewCollection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -916,7 +926,7 @@ module.exports = KonnectorsView = (function(_super) {
 
 });
 
-;require.register("views/menu_item", function(exports, require, module) {
+require.register("views/menu_item", function(exports, require, module) {
 var BaseView, MenuItemView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -975,7 +985,7 @@ module.exports = MenuItemView = (function(_super) {
 
 });
 
-;require.register("views/templates/default", function(exports, require, module) {
+require.register("views/templates/default", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1005,7 +1015,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/home", function(exports, require, module) {
+require.register("views/templates/home", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1017,7 +1027,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/konnector", function(exports, require, module) {
+require.register("views/templates/konnector", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1026,13 +1036,18 @@ var interp;
 buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">');
 var __val__ = t(model.description)
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('save and import')) == null ? '' : interp) + '</button></div><div class="error"><span class="error">');
+buf.push('</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('save and import')) == null ? '' : interp) + '</button></div>');
+if ( model.errorMessage)
+{
+buf.push('<div class="error"><span class="error">');
 var __val__ = t('error occurred during import:') + ' '
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('<span class="message">');
 var __val__ = t(model.errorMessage)
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></span></div><div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"><span class="label">' + escape((interp = t('last import:')) == null ? '' : interp) + '&nbsp;</span><span class="last-import"></span></div><div class="datas">' + escape((interp = t('imported data:')) == null ? '' : interp) + '&nbsp;');
+buf.push('</span></span></div>');
+}
+buf.push('<div class="status">' + escape((interp = status) == null ? '' : interp) + '</div><div class="infos"><div class="date"><span class="label">' + escape((interp = t('last import:')) == null ? '' : interp) + '&nbsp;</span><span class="last-import"></span></div><div class="datas">' + escape((interp = t('imported data:')) == null ? '' : interp) + '&nbsp;');
 // iterate model.modelNames
 ;(function(){
   if ('number' == typeof model.modelNames.length) {
@@ -1064,7 +1079,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/menu_item", function(exports, require, module) {
+require.register("views/templates/menu_item", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1099,5 +1114,5 @@ return buf.join("");
 };
 });
 
-;
+
 //# sourceMappingURL=app.js.map
