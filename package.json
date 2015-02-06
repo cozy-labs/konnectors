@@ -90,5 +90,6 @@
       "description": "This information is needed to localize the application in your language."
     }
   },
-  "cozy-displayName": "Konnectors"
+  "cozy-displayName": "Konnectors",
+  "cozy-color": "#e26987"
 }
