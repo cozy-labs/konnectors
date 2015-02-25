@@ -107,7 +107,6 @@ class KonnectorPoller
 
     # Update timeouts and nextUpdates for this new/modified konnector
     handleTimeout: (startDate, konnector, callback=null) ->
-        konnector = new Konnector konnector
         # If date is present in fieldValues
         # if there is already a timeout for this konnector, destroy it
         if @timeouts[konnector.slug]?
@@ -136,8 +135,8 @@ class KonnectorPoller
                 konnector.removeEncryptedFields fields
                 # Create/Update lastAutoImport in database
                 konnector.updateAttributes data, (err, body) ->
-                    if err
-                        log.error err
+                    log.error err if err?
+
                 @create konnector, @findNextUpdate(konnector)
                 callback() if callback?
         else
