@@ -37,7 +37,7 @@ module.exports =
                 else
                     res.send 200
                     poller = require "../lib/konnector_poller"
-                    poller.handleTimeout date, req.body
+                    poller.handleTimeout date, req.konnector
                     # Don't import data if a start date is defined
                     unless date?
                         req.konnector.import (err) ->
