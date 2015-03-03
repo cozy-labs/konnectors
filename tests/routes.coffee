@@ -55,7 +55,7 @@ describe 'Testing konnector controller', ->
             it 'Then konnector state should be updating', (done) ->
                 @timeout 6000
                 count = 0
-                realtime = RealtimeAdapter app, 'konnector.*'
+                realtime = RealtimeAdapter app.server, 'konnector.*'
 
                 realtime.on 'konnector.update', (event, id) =>
                     count += 1
@@ -118,7 +118,7 @@ describe 'Testing konnector controller', ->
             it 'Then konnector state should be updating', (done) ->
                 @timeout 6000
                 count = 0
-                realtime = RealtimeAdapter app, 'konnector.*'
+                realtime = RealtimeAdapter app.server, 'konnector.*'
 
                 realtime.on 'konnector.update', (event, id) =>
                     count += 1
@@ -160,7 +160,7 @@ describe 'Testing konnector controller', ->
                 @timeout 6000
                 @sandbox.clock.tick 1 * day
                 count = 0
-                realtime = RealtimeAdapter app, 'konnector.*'
+                realtime = RealtimeAdapter app.server, 'konnector.*'
 
                 realtime.on 'konnector.update', (event, id) =>
                     count += 1
@@ -251,7 +251,7 @@ describe 'Testing konnector controller', ->
                 @timeout 6000
                 @sandbox.clock.tick 1 * day
                 count = 0
-                realtime = RealtimeAdapter app, 'konnector.*'
+                realtime = RealtimeAdapter app.server, 'konnector.*'
 
                 realtime.on 'konnector.update', (event, id) =>
                     count += 1
@@ -278,7 +278,7 @@ describe 'Testing konnector controller', ->
                 @timeout 6000
                 @sandbox.clock.tick 1 * day
                 count = 0
-                realtime = RealtimeAdapter app, 'konnector.*'
+                realtime = RealtimeAdapter app.server, 'konnector.*'
 
                 realtime.on 'konnector.update', (event, id) =>
                     count += 1
