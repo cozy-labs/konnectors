@@ -31,7 +31,7 @@ helpers.startApp = (done) ->
     initializeApplication (app, server) =>
         @app = app
         @app.server = server
-        done(app)
+        done(app, server)
 
 helpers.stopApp = (done) ->
     setTimeout =>
