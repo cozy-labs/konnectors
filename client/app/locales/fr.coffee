@@ -16,9 +16,9 @@ module.exports =
     'email': 'Mail'
     'accessToken': 'Access token'
     'accessTokenSecret': 'Access token secret'
-    'consumerKey': 'Consumer Key'
-    'consumerSecret': 'Consumer Secret'
-    'apikey': 'Api key'
+    'consumerKey': 'Consumer key'
+    'consumerSecret': 'Consumer secret'
+    'apikey': 'API key'
     'phoneNumber': 'Numéro de téléphone'
     'folderPath': 'Chemin du dossier'
     'none' : 'Aucun'
@@ -47,6 +47,7 @@ module.exports =
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
 
     # Konnectors' description
+    'konnector description currencies': "Téléchargez les taux de change officiels de la Banque Centrale Européenne."
     'konnector description free': "Téléchargez toutes vos factures internet de Free."
     'konnector description github': "Téléchargez toutes vos factures Github."
     'konnector description github commits': "Sauvegardez les informations de tous vos commits Github."
@@ -57,6 +58,7 @@ module.exports =
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
+    'notification currencies': "%{smart_count} nouveau taux importé |||| %{smart_count} nouveaux taux importés"
     'notification github commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés"
     'notification twitter': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés"
     'notification free': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
@@ -64,3 +66,38 @@ module.exports =
     'notification jawbone': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
     'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées"
     'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
+
+    # Currency codes and names
+    'EUR': 'Euro (EUR)'
+    'USD': 'Dollar US (USD)'
+    'JPY': 'Yen Japonais (JPY)'
+    'BGN': 'Lev Bulgare (BGN)'
+    'CZK': 'Couronne Tchèque (CZK)'
+    'DKK': 'Couronne Danoise (DKK)'
+    'GBP': 'Livre Sterling (GBP)'
+    'HUF': 'Forint Hongrois (HUF)'
+    'PLN': 'Zloty Polonais (PLN)'
+    'RON': 'Leu Roumain (RON)'
+    'SEK': 'Couronne Suédoise (SEK)'
+    'CHF': 'Franc Suisse (CHF)'
+    'NOK': 'Couronne Norvégienne (NOK)'
+    'HRK': 'Kuna Croate (HRK)'
+    'RUB': 'Rouble Russe (RUB)'
+    'TRY': 'Lire Turque (TRY)'
+    'AUD': 'Dollar Australien (AUD)'
+    'BRL': 'Real Brésilien (BRL)'
+    'CAD': 'Dollar Canadien (CAD)'
+    'CNY': 'Yuan Chinois (CNY)'
+    'HKD': 'Dollar Hong-Kongais (HKD)'
+    'IDR': 'Roupie Indonésienne (IDR)'
+    'ILS': 'Shekel Israélien (ILS)'
+    'INR': 'Roupie Indienne (INR)'
+    'KRW': 'Won Sud-Coréen (KRW)'
+    'MXN': 'Peso Méxicain (MXN)'
+    'MYR': 'Ringgit Malaisien (MYR)'
+    'NZD': 'Dollar Néo-Zélandais (NZD)'
+    'PHP': 'Peso Philippin (PHP)'
+    'SGD': 'Dollar de Singapour (SGD)'
+    'THB': 'Baht Thaïlandais (THB)'
+    'ZAR': 'Rand Sud-Africain (ZAR)'
+    'ISK': 'Couronne Icelandaise (ISK)'
