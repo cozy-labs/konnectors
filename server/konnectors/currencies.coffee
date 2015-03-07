@@ -35,7 +35,7 @@ histUrl = 'https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml'
 
 # Models
 
-CurrencyRate = americano.getModel 'CurrencyRate'
+CurrencyRate = americano.getModel 'CurrencyRate',
     date: Date
     rate: Number
     currency: String
