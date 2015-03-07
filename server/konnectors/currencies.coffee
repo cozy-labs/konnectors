@@ -7,13 +7,21 @@ xml2js = require 'xml2js'
 
 localization = require '../lib/localization_manager'
 
-# helpers
+# Helpers
 
 log = require('printit')
     prefix: 'currencies'
     date: true
 
-# Urls
+# Supported ISO 4217 currency codes
+
+CURRENCIES = [
+    'EUR', 'USD', 'JPY', 'BGN', 'CZK', 'DKK', 'GBP', 'HUF', 'PLN', 'RON', 'SEK',
+    'CHF', 'NOK', 'HRK', 'RUB', 'TRY', 'AUD', 'BRL', 'CAD', 'CNY', 'HKD', 'IDR',
+    'ILS', 'INR', 'KRW', 'MXN', 'MYR', 'NZD', 'PHP', 'SGD', 'THB', 'ZAR'
+]
+
+# URLs
 
 dailyUrl = 'https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml'
 recentUrl = 'http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml'
@@ -40,44 +48,44 @@ CurrencyRate.all = (callback) ->
 
 module.exports =
 
-    name: "Currencies"
-    slug: "currencies"
+    name: 'Currencies'
+    slug: 'currencies'
     description: 'konnector description currencies'
-    vendorLink: "https://www.ecb.europa.eu/"
+    vendorLink: 'https://www.ecb.europa.eu/'
 
-    fields:
-        EUR: "checkbox"
-        USD: "checkbox"
-        JPY: "checkbox"
-        BGN: "checkbox"
-        CZK: "checkbox"
-        DKK: "checkbox"
-        GBP: "checkbox"
-        HUF: "checkbox"
-        PLN: "checkbox"
-        RON: "checkbox"
-        SEK: "checkbox"
-        CHF: "checkbox"
-        NOK: "checkbox"
-        HRK: "checkbox"
-        RUB: "checkbox"
-        TRY: "checkbox"
-        AUD: "checkbox"
-        BRL: "checkbox"
-        CAD: "checkbox"
-        CNY: "checkbox"
-        HKD: "checkbox"
-        IDR: "checkbox"
-        ILS: "checkbox"
-        INR: "checkbox"
-        KRW: "checkbox"
-        MXN: "checkbox"
-        MYR: "checkbox"
-        NZD: "checkbox"
-        PHP: "checkbox"
-        SGD: "checkbox"
-        THB: "checkbox"
-        ZAR: "checkbox"
+    fields: # TODO Can we use the `CURRENCIES` array here?
+        EUR: 'checkbox'
+        USD: 'checkbox'
+        JPY: 'checkbox'
+        BGN: 'checkbox'
+        CZK: 'checkbox'
+        DKK: 'checkbox'
+        GBP: 'checkbox'
+        HUF: 'checkbox'
+        PLN: 'checkbox'
+        RON: 'checkbox'
+        SEK: 'checkbox'
+        CHF: 'checkbox'
+        NOK: 'checkbox'
+        HRK: 'checkbox'
+        RUB: 'checkbox'
+        TRY: 'checkbox'
+        AUD: 'checkbox'
+        BRL: 'checkbox'
+        CAD: 'checkbox'
+        CNY: 'checkbox'
+        HKD: 'checkbox'
+        IDR: 'checkbox'
+        ILS: 'checkbox'
+        INR: 'checkbox'
+        KRW: 'checkbox'
+        MXN: 'checkbox'
+        MYR: 'checkbox'
+        NZD: 'checkbox'
+        PHP: 'checkbox'
+        SGD: 'checkbox'
+        THB: 'checkbox'
+        ZAR: 'checkbox'
     models:
         currencyrate: CurrencyRate
 
@@ -91,29 +99,24 @@ module.exports =
     fetch: (requiredFields, callback) ->
         log.info 'import started'
 
-        url = dailyUrl
-        today = new Date() # FIXME day-precision, not millisecond-precision.
+        # TODO Compute the last recent (max 90 days old) rates we know.
+        lastRates = {}
 
-        # Compute the latest rates we know.
-        # FIXME maybe this doesn't need to go through all the rates?
-        latestRates = {}
-        CurrencyRate.all, (err, rates) ->
-            return callback err if err
-            for rate in rates
-                date = latestRates[rate.currency].date
-                if !date or date < rate.date
-                    latestRates[rate.currency] = rate
-        
+        yesterday = moment().subtract('days', 1).format('YYYY-MM-DD')
+
         # Figure out how far back in time we need to fetch.
-        for currency in requiredFields
+        url = dailyUrl
+        for currency of CURRENCIES
             if !requiredFields[currency] #.checked ?
+                # We don't care about this currency.
                 continue
-            date = latestRates[currency].date
-            if !date or date #older than 90days
-                # Jackpot! We have to refetch from the beginning.
+            date = lastRates[currency].date
+            if !date
+                # Jackpot! We have to refetch everything from the beginning...
                 url = histUrl
                 break
-            if date #older than yesterday
+            if moment(date) < moment(yesterday)
+                # Older than yesterday, refetch the last 90 days.
                 url = recentUrl
 
         options =
@@ -129,22 +132,24 @@ module.exports =
                 days = result['gesmes:Envelope'].Cube[0].Cube
 
                 for day of days
-                    date = new Date(day.$.time)
+                    date = moment day.$.time
                     for quote of day.Cube
+                        rate = parseFloat quote.$.rate
                         currency = quote.$.currency
-                        rate = quote.$.rate
-                        latest = latestRates[currency]
-                        if latest and latest >= date
+                        last = lastRates[currency]
+                        if last and date <= moment(last.date)
+                            # We already know this rate.
+                            # TODO log.error if rate !== last.rate
                             continue
                         currencyrate = new CurrencyRate
                             date: date
                             rate: rate
                             currency: currency
-                            base: "EUR"
+                            base: 'EUR'
                         currencyrate.save (err) ->
                             if err
                                 log.error err
                             else
-                                log.debug "rate imported"
+                                log.debug 'rate imported'
                                 log.debug currencyrate
                                 callback()
