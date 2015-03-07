@@ -3,6 +3,7 @@ request = require 'request'
 moment = require 'moment'
 crypto = require 'crypto'
 async = require 'async'
+xml2js = require 'xml2js'
 
 localization = require '../lib/localization_manager'
 
@@ -127,26 +128,28 @@ module.exports =
         request options, (err, res, body) ->
             return callback err if err
 
-            result = parseXMLString body # FIXME use npm module xml2js?
-            days = result['gesmes:Envelope'].Cube[0].Cube
+            result = xml2js.parseString body, (err, result) ->
+                if err log.error err
 
-            for day of days
-                date = new Date(day.$.time)
-                for quote of day.Cube
-                    currency = quote.$.currency
-                    rate = quote.$.rate
-                    latest = latestRates[currency]
-                    if latest and latest >= date
-                        continue
-                    currencyrate = new CurrencyRate
-                        date: date
-                        rate: rate
-                        currency: currency
-                        base: "EUR"
-                    currencyrate.save (err) ->
-                        if err
-                            log.error err
-                        else
-                            log.debug "rate imported"
-                            log.debug currencyrate
-                            callback()
+                days = result['gesmes:Envelope'].Cube[0].Cube
+    
+                for day of days
+                    date = new Date(day.$.time)
+                    for quote of day.Cube
+                        currency = quote.$.currency
+                        rate = quote.$.rate
+                        latest = latestRates[currency]
+                        if latest and latest >= date
+                            continue
+                        currencyrate = new CurrencyRate
+                            date: date
+                            rate: rate
+                            currency: currency
+                            base: "EUR"
+                        currencyrate.save (err) ->
+                            if err
+                                log.error err
+                            else
+                                log.debug "rate imported"
+                                log.debug currencyrate
+                                callback()
