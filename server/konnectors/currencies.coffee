@@ -27,11 +27,6 @@ histUrl = 'https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml'
 
 # Models
 
-#Currency = americano.getModel 'Currency',
-#    code: String # ISO 4217 currency code
-#    title: String
-#    symbol: String
-
 CurrencyRate = americano.getModel 'CurrencyRate'
     date: Date
     rate: Number
@@ -132,7 +127,7 @@ module.exports =
                 if err log.error err
 
                 days = result['gesmes:Envelope'].Cube[0].Cube
-    
+
                 for day of days
                     date = new Date(day.$.time)
                     for quote of day.Cube
