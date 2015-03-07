@@ -124,10 +124,10 @@ module.exports =
             url: url
 
         request options, (err, res, body) ->
-            return callback err if err
+            if err return callback err
 
-            result = xml2js.parseString body, (err, result) ->
-                if err log.error err
+            xml2js.parseString body, (err, result) ->
+                if err return callback err
 
                 days = result['gesmes:Envelope'].Cube[0].Cube
 
@@ -152,4 +152,6 @@ module.exports =
                             else
                                 log.debug 'rate imported'
                                 log.debug currencyrate
-                                callback()
+
+                log.info 'import finished'
+                callback()
