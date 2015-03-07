@@ -88,7 +88,7 @@
       "description": "Commit infos imported from Github."
     },
     "CurrencyRate": {
-      "description": "Exchange rates importent from the European Central Bank."
+      "description": "Exchange rates imported from the European Central Bank."
     },
     "CozyInstance": {
       "description": "This information is needed to localize the application in your language."
