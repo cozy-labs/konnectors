@@ -46,6 +46,10 @@ CurrencyRate.all = (callback) ->
 
 # Konnector
 
+# Build fields: We want one checkbox for each supported currency.
+fields = {}
+fields[currency] = 'checkbox' for currency in CURRENCIES
+
 module.exports =
 
     name: 'Currencies'
@@ -53,70 +57,36 @@ module.exports =
     description: 'konnector description currencies'
     vendorLink: 'https://www.ecb.europa.eu/'
 
-    fields: # TODO Can we use the `CURRENCIES` array here?
-        EUR: 'checkbox'
-        USD: 'checkbox'
-        JPY: 'checkbox'
-        BGN: 'checkbox'
-        CZK: 'checkbox'
-        DKK: 'checkbox'
-        GBP: 'checkbox'
-        HUF: 'checkbox'
-        PLN: 'checkbox'
-        RON: 'checkbox'
-        SEK: 'checkbox'
-        CHF: 'checkbox'
-        NOK: 'checkbox'
-        HRK: 'checkbox'
-        RUB: 'checkbox'
-        TRY: 'checkbox'
-        AUD: 'checkbox'
-        BRL: 'checkbox'
-        CAD: 'checkbox'
-        CNY: 'checkbox'
-        HKD: 'checkbox'
-        IDR: 'checkbox'
-        ILS: 'checkbox'
-        INR: 'checkbox'
-        KRW: 'checkbox'
-        MXN: 'checkbox'
-        MYR: 'checkbox'
-        NZD: 'checkbox'
-        PHP: 'checkbox'
-        SGD: 'checkbox'
-        THB: 'checkbox'
-        ZAR: 'checkbox'
+    fields: fields
+
     models:
         currencyrate: CurrencyRate
 
     # Define model requests.
     init: (callback) ->
         map = (doc) -> emit doc.date, doc
-        CurrencyRate.defineRequest 'byDate', map, (err) ->
-            callback err
+        CurrencyRate.defineRequest 'byDate', map, callback
 
     # Fetch rates data from the ECB website and save them as Cozy objects.
     fetch: (requiredFields, callback) ->
         log.info 'import started'
 
-        # TODO Compute the last recent (max 90 days old) rates we know.
+        # TODO Compute the last recent rates (max 90 days old) that we know.
         lastRates = {}
 
         yesterday = moment().subtract('days', 1).format('YYYY-MM-DD')
 
         # Figure out how far back in time we need to fetch.
         url = dailyUrl
-        for currency of CURRENCIES
-            if !requiredFields[currency] #.checked ?
-                # We don't care about this currency.
-                continue
-            date = lastRates[currency].date
-            if !date
-                # Jackpot! We have to refetch everything from the beginning...
+        for currency in CURRENCIES
+            continue if not requiredFields[currency]
+            date = lastRates[currency]?.date
+            if not date
+                # No known recent rate, refetch all the history.
                 url = histUrl
                 break
             if moment(date) < moment(yesterday)
-                # Older than yesterday, refetch the last 90 days.
+                # Older rate than yesterday, refetch the last 90 days.
                 url = recentUrl
 
         options =
@@ -124,16 +94,16 @@ module.exports =
             url: url
 
         request options, (err, res, body) ->
-            if err return callback err
+            return callback err if err
 
             xml2js.parseString body, (err, result) ->
-                if err return callback err
+                return callback err if err
 
                 days = result['gesmes:Envelope'].Cube[0].Cube
 
-                for day of days
+                for day in days
                     date = moment day.$.time
-                    for quote of day.Cube
+                    for quote in day.Cube
                         rate = parseFloat quote.$.rate
                         currency = quote.$.currency
                         last = lastRates[currency]
