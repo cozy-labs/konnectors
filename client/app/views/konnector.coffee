@@ -41,26 +41,26 @@ module.exports = class KonnectorView extends BaseView
         for name, val of @model.get 'fields'
             values[name] = "" unless values[name]?
 
-            fieldHtml = """
-<div class="field line">
-<div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
-"""
+            fieldHtml = """<div class="field line">"""
             if val is 'folder'
                 fieldHtml += """
+<div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
 <div><select id="#{slug}-#{name}-input" class="folder"">"""
                 for path in @paths
                     if path is values[name]
                         fieldHtml += """<option selected value="#{path}">#{path}</option>"""
                     else
                         fieldHtml += """<option value="#{path}">#{path}</option>"""
-                fieldHtml += "</select></div></div>"
-
+                fieldHtml += "</select></div>"
+            else if val is 'checkbox'
+                fieldHtml += """
+<div><label><input id="#{slug}-#{name}-input" type="checkbox" value="#{values[name]}"/>
+#{t(name)}</label></div>"""
             else
                 fieldHtml += """
-<div><input id="#{slug}-#{name}-input" type="#{val}"
-            value="#{values[name]}"/></div>
-</div>
-"""
+<div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
+<div><input id="#{slug}-#{name}-input" type="#{val}" value="#{values[name]}"/></div>"""
+            fieldHtml += "</div>"
             @$('.fields').append fieldHtml
 
         # Auto Import

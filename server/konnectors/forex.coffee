@@ -10,15 +10,15 @@ localization = require '../lib/localization_manager'
 # Helpers
 
 log = require('printit')
-    prefix: 'currencies'
+    prefix: 'forex'
     date: true
 
 # Supported ISO 4217 currency codes
 
 CURRENCIES = [
-    'EUR', 'USD', 'JPY', 'BGN', 'CZK', 'DKK', 'GBP', 'HUF', 'PLN', 'RON', 'SEK',
-    'CHF', 'NOK', 'HRK', 'RUB', 'TRY', 'AUD', 'BRL', 'CAD', 'CNY', 'HKD', 'IDR',
-    'ILS', 'INR', 'KRW', 'MXN', 'MYR', 'NZD', 'PHP', 'SGD', 'THB', 'ZAR'
+    "USD", "JPY", "GBP", "AUD", "CAD", "CHF", "BGN", "BRL", "CNY", "CZK", "DKK",
+    "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "KRW", "MXN", "MYR", "NOK", "NZD",
+    "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "ZAR"
 ]
 
 # URLs
@@ -52,9 +52,9 @@ fields[currency] = 'checkbox' for currency in CURRENCIES
 
 module.exports =
 
-    name: 'Currencies'
-    slug: 'currencies'
-    description: 'konnector description currencies'
+    name: 'Forex'
+    slug: 'forex'
+    description: 'konnector description forex'
     vendorLink: 'https://www.ecb.europa.eu/'
 
     fields: fields

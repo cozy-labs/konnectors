@@ -47,7 +47,7 @@ module.exports =
     'error occurred during import:': 'An error occurred during the last import:'
 
     # Konnectors' description
-    'konnector description currencies': "Download reference exchange rates from the European Central Bank."
+    'konnector description forex': "Download currency exchange rates from the European Central Bank (based on the Euro)."
     'konnector description free': "Download all your internet bills from Free."
     'konnector description github': "Download all your Github Bills."
     'konnector description github commits': "Save infos from all your Github Commits."
@@ -58,7 +58,7 @@ module.exports =
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
-    'notification currencies': "%{smart_count} new exchange rate imported |||| %{smart_count} new exchange rates imported"
+    'notification forex': "%{smart_count} new exchange rate imported |||| %{smart_count} new exchange rates imported"
     'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported"
     'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported"
     'notification free': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
@@ -68,36 +68,35 @@ module.exports =
     'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
 
     # Currency codes and names
-    'EUR': 'Euro (EUR)'
-    'USD': 'US Dollar (USD)'
-    'JPY': 'Japanese Yen (JPY)'
-    'BGN': 'Bulgarian Lev (BGN)'
-    'CZK': 'Czech Koruna (CZK)'
-    'DKK': 'Danish Krone (DKK)'
-    'GBP': 'Pound Sterling (GBP)'
-    'HUF': 'Hungarian Forint (HUF)'
-    'PLN': 'Polish Zloty (PLN)'
-    'RON': 'Romanian Leu (RON)'
-    'SEK': 'Swedish Krona (SEK)'
-    'CHF': 'Swiss Franc (CHF)'
-    'NOK': 'Norwegian Krone (NOK)'
-    'HRK': 'Croatian Kuna (HRK)'
-    'RUB': 'Russian Rouble (RUB)'
-    'TRY': 'Turkish Lira (TRY)'
-    'AUD': 'Australian Dollar (AUD)'
-    'BRL': 'Brasilian Real (BRL)'
-    'CAD': 'Canadian Dollar (CAD)'
-    'CNY': 'Chinese Yuan Renminbi (CNY)'
-    'HKD': 'Hong Kong Dollar (HKD)'
-    'IDR': 'Indonesian Rupiah (IDR)'
-    'ILS': 'Israeli Shekel (ILS)'
-    'INR': 'Indian Rupee (INR)'
-    'KRW': 'South Korean Won (KRW)'
-    'MXN': 'Mexican Peso (MXN)'
-    'MYR': 'Malaysian Ringgit (MYR)'
-    'NZD': 'New Zealand Dollar (NZD)'
-    'PHP': 'Philippine Peso (PHP)'
-    'SGD': 'Singapore Dollar (SGD)'
-    'THB': 'Thai Baht (THB)'
-    'ZAR': 'South African Rand (ZAR)'
-    'ISK': 'Icelandic Krona (ISK)'
+    'USD': 'USD - US Dollar'
+    'JPY': 'JPY - Japanese Yen'
+    'BGN': 'BGN - Bulgarian Lev'
+    'CZK': 'CZK - Czech Koruna'
+    'DKK': 'DKK - Danish Krone'
+    'GBP': 'GBP - Pound Sterling'
+    'HUF': 'HUF - Hungarian Forint'
+    'PLN': 'PLN - Polish Zloty'
+    'RON': 'RON - Romanian Leu'
+    'SEK': 'SEK - Swedish Krona'
+    'CHF': 'CHF - Swiss Franc'
+    'NOK': 'NOK - Norwegian Krone'
+    'HRK': 'HRK - Croatian Kuna'
+    'RUB': 'RUB - Russian Rouble'
+    'TRY': 'TRY - Turkish Lira'
+    'AUD': 'AUD - Australian Dollar'
+    'BRL': 'BRL - Brasilian Real'
+    'CAD': 'CAD - Canadian Dollar'
+    'CNY': 'CNY - Chinese Yuan Renminbi'
+    'HKD': 'HKD - Hong Kong Dollar'
+    'IDR': 'IDR - Indonesian Rupiah'
+    'ILS': 'ILS - Israeli Shekel'
+    'INR': 'INR - Indian Rupee'
+    'KRW': 'KRW - South Korean Won'
+    'MXN': 'MXN - Mexican Peso'
+    'MYR': 'MYR - Malaysian Ringgit'
+    'NZD': 'NZD - New Zealand Dollar'
+    'PHP': 'PHP - Philippine Peso'
+    'SGD': 'SGD - Singapore Dollar'
+    'THB': 'THB - Thai Baht'
+    'ZAR': 'ZAR - South African Rand'
+    'ISK': 'ISK - Icelandic Krona'
