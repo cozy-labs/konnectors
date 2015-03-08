@@ -409,7 +409,7 @@ module.exports = {
   'notification import error': 'an error occurred during import of data',
   'error occurred during import.': 'An error occurred during the last import.',
   'error occurred during import:': 'An error occurred during the last import:',
-  'konnector description forex': "Download currency exchange rates from the European Central Bank (based on the Euro).",
+  'konnector description forex': "Download exchange rates (in EUR) from the European Central Bank.",
   'konnector description free': "Download all your internet bills from Free.",
   'konnector description github': "Download all your Github Bills.",
   'konnector description github commits': "Save infos from all your Github Commits.",
@@ -501,7 +501,7 @@ module.exports = {
   'notification import error': "une erreur est survenue pendant l'importation des données",
   'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.',
   'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :',
-  'konnector description forex': "Téléchargez les taux de change officiels de la Banque Centrale Européenne (basé sur l'Euro).",
+  'konnector description forex': "Téléchargez les taux de change (en EUR) de la Banque Centrale Européenne.",
   'konnector description free': "Téléchargez toutes vos factures internet de Free.",
   'konnector description github': "Téléchargez toutes vos factures Github.",
   'konnector description github commits': "Sauvegardez les informations de tous vos commits Github.",
@@ -784,7 +784,7 @@ module.exports = KonnectorView = (function(superClass) {
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var fieldHtml, formattedDate, i, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, len, name, path, ref, ref1, selected, slug, val, value, values;
+    var checked, fieldHtml, formattedDate, i, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, len, name, path, ref, ref1, selected, slug, val, value, values;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
@@ -829,9 +829,10 @@ module.exports = KonnectorView = (function(superClass) {
         }
         fieldHtml += "</select></div>";
       } else if (val === 'checkbox') {
-        fieldHtml += "<div><label><input id=\"" + slug + "-" + name + "-input\" type=\"checkbox\" value=\"" + values[name] + "\"/>\n" + (t(name)) + "</label></div>";
+        checked = values[name] ? 'checked' : '';
+        fieldHtml += "<div><label><input id=\"" + slug + "-" + name + "-input\" type=\"checkbox\" " + checked + ">\n" + (t(name)) + "</label></div>";
       } else {
-        fieldHtml += "<div><label for=\"" + slug + "-" + name + "-input\">" + (t(name)) + "</label></div>\n<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\" value=\"" + values[name] + "\"/></div>";
+        fieldHtml += "<div><label for=\"" + slug + "-" + name + "-input\">" + (t(name)) + "</label></div>\n<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\" value=\"" + values[name] + "\"></div>";
       }
       fieldHtml += "</div>";
       this.$('.fields').append(fieldHtml);
@@ -900,7 +901,7 @@ module.exports = KonnectorView = (function(superClass) {
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var data, fieldValues, importDate, importInterval, name, ref, slug, val;
+    var data, fieldValues, importDate, importInterval, input, name, ref, slug, val;
     if (!this.model.get('isImporting')) {
       this.$('.error').hide();
       fieldValues = {};
@@ -910,7 +911,12 @@ module.exports = KonnectorView = (function(superClass) {
       ref = this.model.get('fields');
       for (name in ref) {
         val = ref[name];
-        fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
+        input = $("#" + slug + "-" + name + "-input");
+        if (input.prop('type') === 'checkbox') {
+          fieldValues[name] = input.prop('checked');
+        } else {
+          fieldValues[name] = input.val();
+        }
       }
       importInterval = $("#" + slug + "-autoimport-input").val();
       this.disableImportButton();

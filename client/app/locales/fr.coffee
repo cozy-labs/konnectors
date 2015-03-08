@@ -47,7 +47,7 @@ module.exports =
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
 
     # Konnectors' description
-    'konnector description forex': "Téléchargez les taux de change officiels de la Banque Centrale Européenne (basé sur l'Euro)."
+    'konnector description forex': "Téléchargez les taux de change (en EUR) de la Banque Centrale Européenne."
     'konnector description free': "Téléchargez toutes vos factures internet de Free."
     'konnector description github': "Téléchargez toutes vos factures Github."
     'konnector description github commits': "Sauvegardez les informations de tous vos commits Github."

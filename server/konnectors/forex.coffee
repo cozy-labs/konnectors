@@ -16,9 +16,9 @@ log = require('printit')
 # Supported ISO 4217 currency codes
 
 CURRENCIES = [
-    "USD", "JPY", "GBP", "AUD", "CAD", "CHF", "BGN", "BRL", "CNY", "CZK", "DKK",
-    "HKD", "HRK", "HUF", "IDR", "ILS", "INR", "KRW", "MXN", "MYR", "NOK", "NZD",
-    "PHP", "PLN", "RON", "RUB", "SEK", "SGD", "THB", "TRY", "ZAR"
+    'USD', 'JPY', 'GBP', 'AUD', 'CAD', 'CHF', 'BGN', 'BRL', 'CNY', 'CZK', 'DKK',
+    'HKD', 'HRK', 'HUF', 'IDR', 'ILS', 'INR', 'KRW', 'MXN', 'MYR', 'NOK', 'NZD',
+    'PHP', 'PLN', 'RON', 'RUB', 'SEK', 'SGD', 'THB', 'TRY', 'ZAR'
 ]
 
 # URLs
@@ -100,6 +100,7 @@ module.exports =
                 return callback err if err
 
                 days = result['gesmes:Envelope'].Cube[0].Cube
+                imported = 0
 
                 for day in days
                     date = moment day.$.time
@@ -107,10 +108,9 @@ module.exports =
                         rate = parseFloat quote.$.rate
                         currency = quote.$.currency
                         last = lastRates[currency]
-                        if last and date <= moment(last.date)
-                            # We already know this rate.
-                            # TODO log.error if rate !== last.rate
-                            continue
+                        # See if we already know this rate.
+                        # TODO? If we do, log.error if rate !== last.rate
+                        continue if last and date <= moment(last.date)
                         currencyrate = new CurrencyRate
                             date: date
                             rate: rate
@@ -120,8 +120,16 @@ module.exports =
                             if err
                                 log.error err
                             else
+                                imported++
                                 log.debug 'rate imported'
                                 log.debug currencyrate
 
                 log.info 'import finished'
-                callback()
+                notifContent = null
+
+                if imported > 0
+                    localizationKey = 'notification forex'
+                    options = smart_count: imported
+                    notifContent = localization.t localizationKey, options
+
+                callback err, notifContent
