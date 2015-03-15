@@ -92,11 +92,11 @@
 })();
 require.register("collections/konnectors", function(exports, require, module) {
 var KonnectorsCollection,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
-module.exports = KonnectorsCollection = (function(_super) {
-  __extends(KonnectorsCollection, _super);
+module.exports = KonnectorsCollection = (function(superClass) {
+  extend(KonnectorsCollection, superClass);
 
   function KonnectorsCollection() {
     return KonnectorsCollection.__super__.constructor.apply(this, arguments);
@@ -126,7 +126,7 @@ module.exports = KonnectorsCollection = (function(_super) {
 
 });
 
-;require.register("initialize", function(exports, require, module) {
+require.register("initialize", function(exports, require, module) {
 var AppView, KonnectorListener, KonnectorsCollection, Router, request;
 
 request = require('./lib/request');
@@ -171,13 +171,13 @@ $(function() {
 
 });
 
-;require.register("lib/base_view", function(exports, require, module) {
+require.register("lib/base_view", function(exports, require, module) {
 var BaseView,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
-module.exports = BaseView = (function(_super) {
-  __extends(BaseView, _super);
+module.exports = BaseView = (function(superClass) {
+  extend(BaseView, superClass);
 
   function BaseView() {
     return BaseView.__super__.constructor.apply(this, arguments);
@@ -188,9 +188,9 @@ module.exports = BaseView = (function(_super) {
   BaseView.prototype.initialize = function() {};
 
   BaseView.prototype.getRenderData = function() {
-    var _ref;
+    var ref;
     return {
-      model: (_ref = this.model) != null ? _ref.toJSON() : void 0
+      model: (ref = this.model) != null ? ref.toJSON() : void 0
     };
   };
 
@@ -218,7 +218,7 @@ module.exports = BaseView = (function(_super) {
 
 });
 
-;require.register("lib/request", function(exports, require, module) {
+require.register("lib/request", function(exports, require, module) {
 exports.request = function(type, url, data, callback) {
   return $.ajax({
     type: type,
@@ -259,21 +259,21 @@ exports.del = function(url, callback) {
 
 });
 
-;require.register("lib/view_collection", function(exports, require, module) {
+require.register("lib/view_collection", function(exports, require, module) {
 var BaseView, ViewCollection,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 BaseView = require('lib/base_view');
 
-module.exports = ViewCollection = (function(_super) {
-  __extends(ViewCollection, _super);
+module.exports = ViewCollection = (function(superClass) {
+  extend(ViewCollection, superClass);
 
   function ViewCollection() {
-    this.fetch = __bind(this.fetch, this);
-    this.removeItem = __bind(this.removeItem, this);
-    this.addItem = __bind(this.addItem, this);
+    this.fetch = bind(this.fetch, this);
+    this.removeItem = bind(this.removeItem, this);
+    this.addItem = bind(this.addItem, this);
     return ViewCollection.__super__.constructor.apply(this, arguments);
   }
 
@@ -308,20 +308,20 @@ module.exports = ViewCollection = (function(_super) {
   };
 
   ViewCollection.prototype.render = function() {
-    var id, view, _ref;
-    _ref = this.views;
-    for (id in _ref) {
-      view = _ref[id];
+    var id, ref, view;
+    ref = this.views;
+    for (id in ref) {
+      view = ref[id];
       view.$el.detach();
     }
     return ViewCollection.__super__.render.apply(this, arguments);
   };
 
   ViewCollection.prototype.afterRender = function() {
-    var id, view, _ref;
-    _ref = this.views;
-    for (id in _ref) {
-      view = _ref[id];
+    var id, ref, view;
+    ref = this.views;
+    for (id in ref) {
+      view = ref[id];
       this.appendView(view.$el);
     }
     this.onReset(this.collection);
@@ -334,10 +334,10 @@ module.exports = ViewCollection = (function(_super) {
   };
 
   ViewCollection.prototype.onReset = function(newcollection) {
-    var id, view, _ref;
-    _ref = this.views;
-    for (id in _ref) {
-      view = _ref[id];
+    var id, ref, view;
+    ref = this.views;
+    for (id in ref) {
+      view = ref[id];
       view.remove();
     }
     return newcollection.forEach(this.addItem);
@@ -370,9 +370,9 @@ module.exports = ViewCollection = (function(_super) {
 
 });
 
-;require.register("locales/en", function(exports, require, module) {
+require.register("locales/en", function(exports, require, module) {
 module.exports = {
-  'bad credentials': 'Bad Credentials',
+  'bad credentials': 'Bad credentials',
   'no bills retrieved': 'No bills retrieved',
   'key not found': 'Key not found',
   'last import:': 'Last import:',
@@ -381,23 +381,23 @@ module.exports = {
   'imported data:': 'Imported data:',
   'importing...': 'importing...',
   'no import performed': 'No import performed',
-  'firstname': 'Firstname',
-  'lastname': 'Lastname',
+  'firstname': 'First name',
+  'lastname': 'Last name',
   'login': 'Login',
   'password': 'Password',
   'email': 'Email',
   'accessToken': 'Access token',
   'accessTokenSecret': 'Access token secret',
-  'consumerKey': 'Consumer Key',
-  'consumerSecret': 'Consumer Secret',
-  'apikey': 'Api key',
+  'consumerKey': 'Consumer key',
+  'consumerSecret': 'Consumer secret',
+  'apikey': 'API key',
   'phoneNumber': 'Phone number',
   'folderPath': 'Folder path',
   'none': 'None',
   'every hour': 'Every hour',
   'every day': 'Every day',
   'every week': 'Every week',
-  'each month': 'Each month',
+  'each month': 'Every month',
   'date format': 'LLL',
   'home headline': "With Konnectors you can retrieve many data and save them into your Cozy.\nFrom your phone bills to your connected scale, or your tweets. Configure the connectors you are interested in:",
   'home config step 1': "Select a connector in the menu on the left",
@@ -409,6 +409,7 @@ module.exports = {
   'notification import error': 'an error occurred during import of data',
   'error occurred during import.': 'An error occurred during the last import.',
   'error occurred during import:': 'An error occurred during the last import:',
+  'konnector description forex': "Download exchange rates (in EUR) from the European Central Bank.",
   'konnector description free': "Download all your internet bills from Free.",
   'konnector description github': "Download all your Github Bills.",
   'konnector description github commits': "Save infos from all your Github Commits.",
@@ -417,18 +418,51 @@ module.exports = {
   'konnector description withings': "Download all your measures from your Withings account.",
   'konnector description twitter': "Download all your tweets published on Twitter.",
   'notification prefix': "Konnector %{name}:",
+  'notification forex': "%{smart_count} new exchange rate imported |||| %{smart_count} new exchange rates imported",
   'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported",
   'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported",
   'notification free': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
   'notification github': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
   'notification jawbone': "%{smart_count} new measure imported |||| %{smart_count} new measures imported",
   'notification rescuetime': "%{smart_count} new activity imported |||| %{smart_count} new activites imported",
-  'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
+  'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported",
+  'USD': 'USD - US Dollar',
+  'JPY': 'JPY - Japanese Yen',
+  'BGN': 'BGN - Bulgarian Lev',
+  'CZK': 'CZK - Czech Koruna',
+  'DKK': 'DKK - Danish Krone',
+  'GBP': 'GBP - Pound Sterling',
+  'HUF': 'HUF - Hungarian Forint',
+  'PLN': 'PLN - Polish Zloty',
+  'RON': 'RON - Romanian Leu',
+  'SEK': 'SEK - Swedish Krona',
+  'CHF': 'CHF - Swiss Franc',
+  'NOK': 'NOK - Norwegian Krone',
+  'HRK': 'HRK - Croatian Kuna',
+  'RUB': 'RUB - Russian Rouble',
+  'TRY': 'TRY - Turkish Lira',
+  'AUD': 'AUD - Australian Dollar',
+  'BRL': 'BRL - Brasilian Real',
+  'CAD': 'CAD - Canadian Dollar',
+  'CNY': 'CNY - Chinese Yuan Renminbi',
+  'HKD': 'HKD - Hong Kong Dollar',
+  'IDR': 'IDR - Indonesian Rupiah',
+  'ILS': 'ILS - Israeli Shekel',
+  'INR': 'INR - Indian Rupee',
+  'KRW': 'KRW - South Korean Won',
+  'MXN': 'MXN - Mexican Peso',
+  'MYR': 'MYR - Malaysian Ringgit',
+  'NZD': 'NZD - New Zealand Dollar',
+  'PHP': 'PHP - Philippine Peso',
+  'SGD': 'SGD - Singapore Dollar',
+  'THB': 'THB - Thai Baht',
+  'ZAR': 'ZAR - South African Rand',
+  'ISK': 'ISK - Icelandic Krona'
 };
 
 });
 
-;require.register("locales/fr", function(exports, require, module) {
+require.register("locales/fr", function(exports, require, module) {
 module.exports = {
   'bad credentials': 'Mauvais identifiants',
   'no bills retrieved': 'Pas de facture trouvées',
@@ -446,9 +480,9 @@ module.exports = {
   'email': 'Mail',
   'accessToken': 'Access token',
   'accessTokenSecret': 'Access token secret',
-  'consumerKey': 'Consumer Key',
-  'consumerSecret': 'Consumer Secret',
-  'apikey': 'Api key',
+  'consumerKey': 'Consumer key',
+  'consumerSecret': 'Consumer secret',
+  'apikey': 'API key',
   'phoneNumber': 'Numéro de téléphone',
   'folderPath': 'Chemin du dossier',
   'none': 'Aucun',
@@ -467,6 +501,7 @@ module.exports = {
   'notification import error': "une erreur est survenue pendant l'importation des données",
   'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.',
   'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :',
+  'konnector description forex': "Téléchargez les taux de change (en EUR) de la Banque Centrale Européenne.",
   'konnector description free': "Téléchargez toutes vos factures internet de Free.",
   'konnector description github': "Téléchargez toutes vos factures Github.",
   'konnector description github commits': "Sauvegardez les informations de tous vos commits Github.",
@@ -475,24 +510,57 @@ module.exports = {
   'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings.",
   'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter.",
   'notification prefix': "Konnector %{name} :",
+  'notification forex': "%{smart_count} nouveau taux importé |||| %{smart_count} nouveaux taux importés",
   'notification github commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés",
   'notification twitter': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés",
   'notification free': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
   'notification github': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
   'notification jawbone': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées",
   'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées",
-  'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
+  'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées",
+  'USD': 'USD - Dollar US',
+  'JPY': 'JPY - Yen Japonais',
+  'BGN': 'BGN - Lev Bulgare',
+  'CZK': 'CZK - Couronne Tchèque',
+  'DKK': 'DKK - Couronne Danoise',
+  'GBP': 'GBP - Livre Sterling',
+  'HUF': 'HUF - Forint Hongrois',
+  'PLN': 'PLN - Zloty Polonais',
+  'RON': 'RON - Leu Roumain',
+  'SEK': 'SEK - Couronne Suédoise',
+  'CHF': 'CHF - Franc Suisse',
+  'NOK': 'NOK - Couronne Norvégienne',
+  'HRK': 'HRK - Kuna Croate',
+  'RUB': 'RUB - Rouble Russe',
+  'TRY': 'TRY - Lire Turque',
+  'AUD': 'AUD - Dollar Australien',
+  'BRL': 'BRL - Real Brésilien',
+  'CAD': 'CAD - Dollar Canadien',
+  'CNY': 'CNY - Yuan Chinois',
+  'HKD': 'HKD - Dollar Hong-Kongais',
+  'IDR': 'IDR - Roupie Indonésienne',
+  'ILS': 'ILS - Shekel Israélien',
+  'INR': 'INR - Roupie Indienne',
+  'KRW': 'KRW - Won Sud-Coréen',
+  'MXN': 'MXN - Peso Méxicain',
+  'MYR': 'MYR - Ringgit Malaisien',
+  'NZD': 'NZD - Dollar Néo-Zélandais',
+  'PHP': 'PHP - Peso Philippin',
+  'SGD': 'SGD - Dollar de Singapour',
+  'THB': 'THB - Baht Thaïlandais',
+  'ZAR': 'ZAR - Rand Sud-Africain',
+  'ISK': 'ISK - Couronne Icelandaise'
 };
 
 });
 
-;require.register("models/konnector", function(exports, require, module) {
+require.register("models/konnector", function(exports, require, module) {
 var KonnectorModel,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
-module.exports = KonnectorModel = (function(_super) {
-  __extends(KonnectorModel, _super);
+module.exports = KonnectorModel = (function(superClass) {
+  extend(KonnectorModel, superClass);
 
   function KonnectorModel() {
     return KonnectorModel.__super__.constructor.apply(this, arguments);
@@ -501,7 +569,7 @@ module.exports = KonnectorModel = (function(_super) {
   KonnectorModel.prototype.rootUrl = "konnectors/";
 
   KonnectorModel.prototype.isConfigured = function() {
-    var field, fieldValue, fieldValues, fields, noEmptyValue, numFieldValues, numFields, _ref;
+    var field, fieldValue, fieldValues, fields, noEmptyValue, numFieldValues, numFields, ref;
     fieldValues = this.get('fieldValues') || {};
     fields = this.get('fields');
     numFieldValues = Object.keys(fieldValues).length;
@@ -509,7 +577,7 @@ module.exports = KonnectorModel = (function(_super) {
     noEmptyValue = true;
     for (field in fields) {
       fieldValue = fields[field];
-      noEmptyValue = noEmptyValue && ((_ref = fieldValues[field]) != null ? _ref.length : void 0) > 0;
+      noEmptyValue = noEmptyValue && ((ref = fieldValues[field]) != null ? ref.length : void 0) > 0;
     }
     return numFieldValues >= numFields && noEmptyValue;
   };
@@ -520,15 +588,15 @@ module.exports = KonnectorModel = (function(_super) {
 
 });
 
-;require.register("realtime", function(exports, require, module) {
+require.register("realtime", function(exports, require, module) {
 var Konnector, KonnectorListener,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 Konnector = require('../models/konnector');
 
-module.exports = KonnectorListener = (function(_super) {
-  __extends(KonnectorListener, _super);
+module.exports = KonnectorListener = (function(superClass) {
+  extend(KonnectorListener, superClass);
 
   function KonnectorListener() {
     return KonnectorListener.__super__.constructor.apply(this, arguments);
@@ -561,13 +629,13 @@ module.exports = KonnectorListener = (function(_super) {
 
 });
 
-;require.register("router", function(exports, require, module) {
+require.register("router", function(exports, require, module) {
 var Router,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
-module.exports = Router = (function(_super) {
-  __extends(Router, _super);
+module.exports = Router = (function(superClass) {
+  extend(Router, superClass);
 
   function Router() {
     return Router.__super__.constructor.apply(this, arguments);
@@ -597,10 +665,10 @@ module.exports = Router = (function(_super) {
 
 });
 
-;require.register("views/app_view", function(exports, require, module) {
+require.register("views/app_view", function(exports, require, module) {
 var AppView, BaseView, KonnectorView, MenuView,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 BaseView = require('../lib/base_view');
 
@@ -608,8 +676,8 @@ KonnectorView = require('./konnector');
 
 MenuView = require('./menu');
 
-module.exports = AppView = (function(_super) {
-  __extends(AppView, _super);
+module.exports = AppView = (function(superClass) {
+  extend(AppView, superClass);
 
   function AppView() {
     return AppView.__super__.constructor.apply(this, arguments);
@@ -685,19 +753,19 @@ module.exports = AppView = (function(_super) {
 
 });
 
-;require.register("views/konnector", function(exports, require, module) {
+require.register("views/konnector", function(exports, require, module) {
 var BaseView, KonnectorView,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 BaseView = require('../lib/base_view');
 
-module.exports = KonnectorView = (function(_super) {
-  __extends(KonnectorView, _super);
+module.exports = KonnectorView = (function(superClass) {
+  extend(KonnectorView, superClass);
 
   function KonnectorView() {
-    this.afterRender = __bind(this.afterRender, this);
+    this.afterRender = bind(this.afterRender, this);
     return KonnectorView.__super__.constructor.apply(this, arguments);
   }
 
@@ -716,7 +784,7 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var fieldHtml, formattedDate, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, name, path, selected, slug, val, value, values, _i, _len, _ref, _ref1;
+    var checked, fieldHtml, formattedDate, i, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, len, name, path, ref, ref1, selected, slug, val, value, values;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
@@ -741,28 +809,32 @@ module.exports = KonnectorView = (function(_super) {
     if (values == null) {
       values = {};
     }
-    _ref = this.model.get('fields');
-    for (name in _ref) {
-      val = _ref[name];
+    ref = this.model.get('fields');
+    for (name in ref) {
+      val = ref[name];
       if (values[name] == null) {
         values[name] = "";
       }
-      fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + (t(name)) + "</label></div>";
+      fieldHtml = "<div class=\"field line\">";
       if (val === 'folder') {
-        fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\" class=\"folder\"\">";
-        _ref1 = this.paths;
-        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-          path = _ref1[_i];
+        fieldHtml += "<div><label for=\"" + slug + "-" + name + "-input\">" + (t(name)) + "</label></div>\n<div><select id=\"" + slug + "-" + name + "-input\" class=\"folder\"\">";
+        ref1 = this.paths;
+        for (i = 0, len = ref1.length; i < len; i++) {
+          path = ref1[i];
           if (path === values[name]) {
             fieldHtml += "<option selected value=\"" + path + "\">" + path + "</option>";
           } else {
             fieldHtml += "<option value=\"" + path + "\">" + path + "</option>";
           }
         }
-        fieldHtml += "</select></div></div>";
+        fieldHtml += "</select></div>";
+      } else if (val === 'checkbox') {
+        checked = values[name] ? 'checked' : '';
+        fieldHtml += "<div><label><input id=\"" + slug + "-" + name + "-input\" type=\"checkbox\" " + checked + ">\n" + (t(name)) + "</label></div>";
       } else {
-        fieldHtml += "<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\"\n            value=\"" + values[name] + "\"/></div>\n</div>";
+        fieldHtml += "<div><label for=\"" + slug + "-" + name + "-input\">" + (t(name)) + "</label></div>\n<div><input id=\"" + slug + "-" + name + "-input\" type=\"" + val + "\" value=\"" + values[name] + "\"></div>";
       }
+      fieldHtml += "</div>";
       this.$('.fields').append(fieldHtml);
     }
     importInterval = this.model.get('importInterval');
@@ -829,17 +901,22 @@ module.exports = KonnectorView = (function(_super) {
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var data, fieldValues, importDate, importInterval, name, slug, val, _ref;
+    var data, fieldValues, importDate, importInterval, input, name, ref, slug, val;
     if (!this.model.get('isImporting')) {
       this.$('.error').hide();
       fieldValues = {};
       slug = this.model.get('slug');
       importDate = $("#" + slug + "-import-date").val();
       fieldValues['date'] = importDate;
-      _ref = this.model.get('fields');
-      for (name in _ref) {
-        val = _ref[name];
-        fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
+      ref = this.model.get('fields');
+      for (name in ref) {
+        val = ref[name];
+        input = $("#" + slug + "-" + name + "-input");
+        if (input.prop('type') === 'checkbox') {
+          fieldValues[name] = input.prop('checked');
+        } else {
+          fieldValues[name] = input.val();
+        }
       }
       importInterval = $("#" + slug + "-autoimport-input").val();
       this.disableImportButton();
@@ -869,17 +946,17 @@ module.exports = KonnectorView = (function(_super) {
 
 });
 
-;require.register("views/menu", function(exports, require, module) {
+require.register("views/menu", function(exports, require, module) {
 var KonnectorsView, MenuItemView, ViewCollection,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 ViewCollection = require('../lib/view_collection');
 
 MenuItemView = require('./menu_item');
 
-module.exports = KonnectorsView = (function(_super) {
-  __extends(KonnectorsView, _super);
+module.exports = KonnectorsView = (function(superClass) {
+  extend(KonnectorsView, superClass);
 
   function KonnectorsView() {
     return KonnectorsView.__super__.constructor.apply(this, arguments);
@@ -910,14 +987,14 @@ module.exports = KonnectorsView = (function(_super) {
   };
 
   KonnectorsView.prototype.unselectAll = function() {
-    var index, view, _ref, _results;
-    _ref = this.views;
-    _results = [];
-    for (index in _ref) {
-      view = _ref[index];
-      _results.push(view.unselect());
+    var index, ref, results, view;
+    ref = this.views;
+    results = [];
+    for (index in ref) {
+      view = ref[index];
+      results.push(view.unselect());
     }
-    return _results;
+    return results;
   };
 
   return KonnectorsView;
@@ -926,15 +1003,15 @@ module.exports = KonnectorsView = (function(_super) {
 
 });
 
-;require.register("views/menu_item", function(exports, require, module) {
+require.register("views/menu_item", function(exports, require, module) {
 var BaseView, MenuItemView,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
 
 BaseView = require('../lib/base_view');
 
-module.exports = MenuItemView = (function(_super) {
-  __extends(MenuItemView, _super);
+module.exports = MenuItemView = (function(superClass) {
+  extend(MenuItemView, superClass);
 
   function MenuItemView() {
     return MenuItemView.__super__.constructor.apply(this, arguments);
@@ -954,7 +1031,7 @@ module.exports = MenuItemView = (function(_super) {
     lastImport = this.model.get('lastImport');
     if (this.model.isConfigured() && (lastImport != null)) {
       formattedDate = moment(lastImport).format(t('date format'));
-      lastImport = "" + (t('last import:')) + "  " + formattedDate;
+      lastImport = (t('last import:')) + "  " + formattedDate;
     } else if (this.model.isConfigured()) {
       lastImport = t("no import performed");
     } else {
@@ -985,7 +1062,7 @@ module.exports = MenuItemView = (function(_super) {
 
 });
 
-;require.register("views/templates/default", function(exports, require, module) {
+require.register("views/templates/default", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1015,7 +1092,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/home", function(exports, require, module) {
+require.register("views/templates/home", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1027,7 +1104,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/konnector", function(exports, require, module) {
+require.register("views/templates/konnector", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1079,7 +1156,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/menu_item", function(exports, require, module) {
+require.register("views/templates/menu_item", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1114,5 +1191,5 @@ return buf.join("");
 };
 });
 
-;
+
 //# sourceMappingURL=app.js.map

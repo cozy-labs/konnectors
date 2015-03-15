@@ -25,7 +25,8 @@
     "querystring": "0.2.0",
     "request": "2.34.0",
     "request-json": "0.4.10",
-    "ware": "0.3.0"
+    "ware": "0.3.0",
+    "xml2js": "0.4.5"
   },
   "devDependencies": {
     "coffee-script": "1.8.0",
@@ -85,6 +86,9 @@
     },
     "Commit": {
       "description": "Commit infos imported from Github."
+    },
+    "CurrencyRate": {
+      "description": "Import currency exchange rates from the European Central Bank."
     },
     "CozyInstance": {
       "description": "This information is needed to localize the application in your language."

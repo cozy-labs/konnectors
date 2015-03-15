@@ -12,6 +12,7 @@ into your Cozy.
 * Github (Bill PDFs, commits)
 * B&You (Bill PDFs)
 * Free (Bill PDFs, only Internet)
+* Forex (currency exchange rates)
 
 # What we would like to see
 
