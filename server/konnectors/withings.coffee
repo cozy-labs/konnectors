@@ -13,7 +13,10 @@ log = require('printit')
     prefix: 'withings'
 
 hexMd5 = (name) ->
-    crypto.createHash('md5').update(name).digest('hex')
+    if name?
+        crypto.createHash('md5').update(name).digest('hex')
+    else
+        ''
 
 # Urls
 
