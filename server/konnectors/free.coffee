@@ -88,18 +88,20 @@ logIn = (requiredFields, billInfos, data, next) ->
         url: loginUrl
 
     request options, (err, res, body) ->
-        if err or not res.headers.location? or res.statusCode is 302
+        console.log body
+        if err or not res.headers.location? or res.statusCode isnt 302
             log.error "Authentification error"
-            return next 'bad credentials'
-        location = res.headers.location
-        parameters = location.split('?')[1]
-        url = "#{billUrl}?#{parameters}"
+            next 'bad credentials'
+        else
+            location = res.headers.location
+            parameters = location.split('?')[1]
+            url = "#{billUrl}?#{parameters}"
 
-        request.get url, (err, res, body) ->
-            if err then next err
-            else
-                data.html = body
-                next()
+            request.get url, (err, res, body) ->
+                if err then next err
+                else
+                    data.html = body
+                    next()
 
 
 # Parse the fetched page to extract bill data.
