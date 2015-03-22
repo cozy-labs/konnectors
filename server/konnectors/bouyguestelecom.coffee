@@ -35,7 +35,7 @@ module.exports =
 
     name: "Bouygues Telecom"
     slug: "bouyguestelecom"
-    description: 'konnector description free'
+    description: 'konnector description bouygues'
     vendorLink: "https://www.bouyguestelecom.fr/"
 
     fields:
@@ -96,7 +96,6 @@ logIn = (requiredFields, bills, data, next) ->
         $ = cheerio.load body
         lt = $('input[name="lt"]').val()
         execution = $('input[name="execution"]').val()
-        cookie = res.headers['set-cookie'][1]
 
         # Second request to log in (post the form).
         form =
