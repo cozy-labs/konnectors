@@ -12,6 +12,7 @@ module.exports = File = americano.getModel 'File',
     creationDate: String
     lastModification: String
     class: String
+    mime: String
     size: Number
     binary: Object
     modificationHistory: Object
