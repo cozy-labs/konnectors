@@ -60,7 +60,7 @@
       "description": "Tweets you published on Twitter."
     },
     "PhoneBill": {
-      "description": "Phone bills fetched by B&You Konnector."
+      "description": "Phone bills fetched by Bouygues Telecom Konnector."
     },
     "InternetBill": {
       "description": "Internet bills fetched by Free Konnector."
