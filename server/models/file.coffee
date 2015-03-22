@@ -29,6 +29,7 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
         lastModification: now
         tags: tags
         class: 'document'
+        mime: 'application/pdf'
 
     # Index file to DS indexer.
     index = (newFile) ->
