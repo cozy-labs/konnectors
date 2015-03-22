@@ -60,7 +60,8 @@ module.exports =
             .use(filterExisting log, PhoneBill)
             .use(saveDataAndFile log, PhoneBill, 'bouygues', ['facture'])
             .args(requiredFields, {}, {})
-            .fetch (err) ->
+            .fetch (err, fields, entries) ->
+                return callback err if err
                 log.info "Import finished"
 
                 # TODO move this in a procedure.
@@ -70,8 +71,7 @@ module.exports =
                     options = smart_count: entries.filtered.length
                     notifContent = localization.t localizationKey, options
 
-                callback err, notifContent
-                callback()
+                callback null, notifContent
 
 
 # Procedure to login to Bouygues website.
