@@ -23,6 +23,7 @@ hexMd5 = (name) ->
 authUrl = 'https://auth.withings.com/fr/'
 accountUrl = 'https://healthmate.withings.com/index/service/account'
 measureUrl = 'https://healthmate.withings.com/index/service/measure'
+aggregateUrl = 'https://healthmate.withings.com/index/service/v2/aggregate'
 
 # Models
 
@@ -47,6 +48,18 @@ BloodPressure = americano.getModel 'BloodPressure',
     user: String
     vendor: {type: String, default: 'Withings'}
 
+Steps = americano.getModel 'Steps',
+    date: Date
+    activeTime: Number
+    activeTimeCalories: Number
+    distance: Number
+    inactiveTime: Number
+    longestActiveTime: Number
+    longestIdleTime: Number
+    steps: Number
+    totalCalories: Number
+    vendor: {type: String, default: 'Jawbone'}
+
 Weight.all = (callback) ->
     Weight.request 'byDate', callback
 
@@ -55,6 +68,9 @@ HeartBeat.all = (callback) ->
 
 BloodPressure.all = (callback) ->
     BloodPressure.request 'byDate', callback
+
+Steps.all = (callback) ->
+    Steps.request 'byDate', callback
 
 # Konnector
 
@@ -72,6 +88,7 @@ module.exports =
         scalemeasure: Weight
         heartbeat: HeartBeat
         bloodpressure: BloodPressure
+        steps: Steps
 
 
     # Define model requests.
@@ -82,6 +99,7 @@ module.exports =
             (done) -> Weight.defineRequest 'byDate', map, done
             (done) -> HeartBeat.defineRequest 'byDate', map, done
             (done) -> BloodPressure.defineRequest 'byDate', map, done
+            (done) -> Steps.defineRequest 'byDate', map, done
         ], callback
 
     # Set start and end date to fetch all data.
@@ -169,31 +187,46 @@ module.exports =
                         enddate: end
                         userid: userid
 
-                    # Fetch withings measures
+                    # Fetch withings body measures
                     request.post measureUrl, form: data, (err, res, body) =>
                         return callback err if err
                         measures = JSON.parse body
-                        saveMeasures measures.body.measuregrps, callback
+                        saveBodyMeasures measures.body.measuregrps, (err) ->
+                            return callback err if err
+
+                            # Fetch withings activity measures
+                            data =
+                                sessionid: sessionid
+                                userid: userid
+                                range: '1'
+                                meastype: '36,40'
+                                appname: 'my2'
+                                appliver: '20140428120105'
+                                apppfm: 'web'
+                                action: 'getbyuserid'
+                                startdateymd: moment().years(2014).month(0).date(1).format('YYYY-MM-DD')
+                                enddateymd: moment().format('YYYY-MM-DD')
+
+                            request.post aggregateUrl, form: data, (err, res, body) =>
+                                return callback err if err
+                                measures = JSON.parse body
+                                saveActivityMeasures measures, callback
 
 
-saveMeasures = (measures, callback) ->
+hashMeasuresByDate = (measures) ->
+    hash = {}
+    for m in measures
+        date = moment m.date
+        hash[date] = true
+    hash
+
+
+saveBodyMeasures = (measures, callback) ->
 
     processData = (scaleMeasures, heartBeats, bloodPressures) ->
-        scaleMeasureHash = {}
-        heartBeatHash = {}
-        bloodPressureHash = {}
-
-        for scaleMeasure in scaleMeasures
-            date = moment scaleMeasure.date
-            scaleMeasureHash[date] = true
-
-        for heartBeat in heartBeats
-            date = moment heartBeat.date
-            heartBeatHash[date] = true
-
-        for bloodPressure in bloodPressures
-            date = moment bloodPressure.date
-            bloodPressureHash[date] = true
+        scaleMeasureHash = hashMeasuresByDate scaleMeasures
+        heartBeatHash = hashMeasuresByDate heartBeats
+        bloodPressureHash = hashMeasuresByDate bloodPressures
 
         log.debug 'analyse new measures'
 
@@ -270,3 +303,52 @@ saveMeasures = (measures, callback) ->
             BloodPressure.all (err, bloodPressures) ->
                 return callback err if err
                 processData scaleMeasures, heartBeats, bloodPressures
+
+
+saveActivityMeasures = (measures, callback) ->
+
+    console.log 'Processing activity measures...'
+    processData = (stepsMeasures) ->
+
+        stepsHash = hashMeasuresByDate stepsMeasures
+
+        newSteps = measures.body?.series?.type_36
+        newDistances = measures.body?.series?.type_40
+
+        return callback() if not newSteps? and not newDistances?
+
+        stepsToSave = []
+        for date, valueObj of newSteps
+            dateAsMom = moment date
+            steps = valueObj.sum
+            if not stepsHash[dateAsMom]?
+                stepMeasure = new Steps
+                stepMeasure.date = dateAsMom
+                stepMeasure.steps = steps
+                stepMeasure.vendor = 'Withings'
+                if newDistances[date]?
+                    stepMeasure.distance = newDistances[date].sum
+                stepsToSave.push stepMeasure
+
+        console.log "Found #{stepsToSave.length} new steps measures to save!"
+        saveInstance = (model, cb) ->
+            model.save cb
+        async.forEach stepsToSave, saveInstance, (err) ->
+            return callback err if err?
+
+            console.log 'Steps measures saved.'
+            notifContent = null
+            if stepsToSave.length
+                localizationKey = 'notification withings'
+                options = smart_count: stepsToSave.length
+                notifContent = localization.t localizationKey, options
+            callback null, notifContent
+
+        callback()
+        return
+
+    console.log 'Fetching former activity measures...'
+    Steps.all (err, stepsMeasures) ->
+        return callback err if err
+        console.log 'Steps', stepsMeasures
+        processData stepsMeasures
