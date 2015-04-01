@@ -92,11 +92,11 @@
 })();
 require.register("collections/konnectors", function(exports, require, module) {
 var KonnectorsCollection,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-module.exports = KonnectorsCollection = (function(superClass) {
-  extend(KonnectorsCollection, superClass);
+module.exports = KonnectorsCollection = (function(_super) {
+  __extends(KonnectorsCollection, _super);
 
   function KonnectorsCollection() {
     return KonnectorsCollection.__super__.constructor.apply(this, arguments);
@@ -173,11 +173,11 @@ $(function() {
 
 ;require.register("lib/base_view", function(exports, require, module) {
 var BaseView,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-module.exports = BaseView = (function(superClass) {
-  extend(BaseView, superClass);
+module.exports = BaseView = (function(_super) {
+  __extends(BaseView, _super);
 
   function BaseView() {
     return BaseView.__super__.constructor.apply(this, arguments);
@@ -188,9 +188,9 @@ module.exports = BaseView = (function(superClass) {
   BaseView.prototype.initialize = function() {};
 
   BaseView.prototype.getRenderData = function() {
-    var ref;
+    var _ref;
     return {
-      model: (ref = this.model) != null ? ref.toJSON() : void 0
+      model: (_ref = this.model) != null ? _ref.toJSON() : void 0
     };
   };
 
@@ -261,19 +261,19 @@ exports.del = function(url, callback) {
 
 ;require.register("lib/view_collection", function(exports, require, module) {
 var BaseView, ViewCollection,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 BaseView = require('lib/base_view');
 
-module.exports = ViewCollection = (function(superClass) {
-  extend(ViewCollection, superClass);
+module.exports = ViewCollection = (function(_super) {
+  __extends(ViewCollection, _super);
 
   function ViewCollection() {
-    this.fetch = bind(this.fetch, this);
-    this.removeItem = bind(this.removeItem, this);
-    this.addItem = bind(this.addItem, this);
+    this.fetch = __bind(this.fetch, this);
+    this.removeItem = __bind(this.removeItem, this);
+    this.addItem = __bind(this.addItem, this);
     return ViewCollection.__super__.constructor.apply(this, arguments);
   }
 
@@ -308,20 +308,20 @@ module.exports = ViewCollection = (function(superClass) {
   };
 
   ViewCollection.prototype.render = function() {
-    var id, ref, view;
-    ref = this.views;
-    for (id in ref) {
-      view = ref[id];
+    var id, view, _ref;
+    _ref = this.views;
+    for (id in _ref) {
+      view = _ref[id];
       view.$el.detach();
     }
     return ViewCollection.__super__.render.apply(this, arguments);
   };
 
   ViewCollection.prototype.afterRender = function() {
-    var id, ref, view;
-    ref = this.views;
-    for (id in ref) {
-      view = ref[id];
+    var id, view, _ref;
+    _ref = this.views;
+    for (id in _ref) {
+      view = _ref[id];
       this.appendView(view.$el);
     }
     this.onReset(this.collection);
@@ -334,10 +334,10 @@ module.exports = ViewCollection = (function(superClass) {
   };
 
   ViewCollection.prototype.onReset = function(newcollection) {
-    var id, ref, view;
-    ref = this.views;
-    for (id in ref) {
-      view = ref[id];
+    var id, view, _ref;
+    _ref = this.views;
+    for (id in _ref) {
+      view = _ref[id];
       view.remove();
     }
     return newcollection.forEach(this.addItem);
@@ -488,11 +488,11 @@ module.exports = {
 
 ;require.register("models/konnector", function(exports, require, module) {
 var KonnectorModel,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-module.exports = KonnectorModel = (function(superClass) {
-  extend(KonnectorModel, superClass);
+module.exports = KonnectorModel = (function(_super) {
+  __extends(KonnectorModel, _super);
 
   function KonnectorModel() {
     return KonnectorModel.__super__.constructor.apply(this, arguments);
@@ -501,7 +501,7 @@ module.exports = KonnectorModel = (function(superClass) {
   KonnectorModel.prototype.rootUrl = "konnectors/";
 
   KonnectorModel.prototype.isConfigured = function() {
-    var field, fieldValue, fieldValues, fields, noEmptyValue, numFieldValues, numFields, ref;
+    var field, fieldValue, fieldValues, fields, noEmptyValue, numFieldValues, numFields, _ref;
     fieldValues = this.get('fieldValues') || {};
     fields = this.get('fields');
     numFieldValues = Object.keys(fieldValues).length;
@@ -509,7 +509,7 @@ module.exports = KonnectorModel = (function(superClass) {
     noEmptyValue = true;
     for (field in fields) {
       fieldValue = fields[field];
-      noEmptyValue = noEmptyValue && ((ref = fieldValues[field]) != null ? ref.length : void 0) > 0;
+      noEmptyValue = noEmptyValue && ((_ref = fieldValues[field]) != null ? _ref.length : void 0) > 0;
     }
     return numFieldValues >= numFields && noEmptyValue;
   };
@@ -522,13 +522,13 @@ module.exports = KonnectorModel = (function(superClass) {
 
 ;require.register("realtime", function(exports, require, module) {
 var Konnector, KonnectorListener,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Konnector = require('../models/konnector');
 
-module.exports = KonnectorListener = (function(superClass) {
-  extend(KonnectorListener, superClass);
+module.exports = KonnectorListener = (function(_super) {
+  __extends(KonnectorListener, _super);
 
   function KonnectorListener() {
     return KonnectorListener.__super__.constructor.apply(this, arguments);
@@ -563,11 +563,11 @@ module.exports = KonnectorListener = (function(superClass) {
 
 ;require.register("router", function(exports, require, module) {
 var Router,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-module.exports = Router = (function(superClass) {
-  extend(Router, superClass);
+module.exports = Router = (function(_super) {
+  __extends(Router, _super);
 
   function Router() {
     return Router.__super__.constructor.apply(this, arguments);
@@ -599,8 +599,8 @@ module.exports = Router = (function(superClass) {
 
 ;require.register("views/app_view", function(exports, require, module) {
 var AppView, BaseView, KonnectorView, MenuView,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 BaseView = require('../lib/base_view');
 
@@ -608,8 +608,8 @@ KonnectorView = require('./konnector');
 
 MenuView = require('./menu');
 
-module.exports = AppView = (function(superClass) {
-  extend(AppView, superClass);
+module.exports = AppView = (function(_super) {
+  __extends(AppView, _super);
 
   function AppView() {
     return AppView.__super__.constructor.apply(this, arguments);
@@ -687,17 +687,17 @@ module.exports = AppView = (function(superClass) {
 
 ;require.register("views/konnector", function(exports, require, module) {
 var BaseView, KonnectorView,
-  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 BaseView = require('../lib/base_view');
 
-module.exports = KonnectorView = (function(superClass) {
-  extend(KonnectorView, superClass);
+module.exports = KonnectorView = (function(_super) {
+  __extends(KonnectorView, _super);
 
   function KonnectorView() {
-    this.afterRender = bind(this.afterRender, this);
+    this.afterRender = __bind(this.afterRender, this);
     return KonnectorView.__super__.constructor.apply(this, arguments);
   }
 
@@ -716,7 +716,7 @@ module.exports = KonnectorView = (function(superClass) {
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var fieldHtml, formattedDate, i, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, len, name, path, ref, ref1, selected, slug, val, value, values;
+    var fieldHtml, formattedDate, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, name, path, selected, slug, val, value, values, _i, _len, _ref, _ref1;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
@@ -741,18 +741,18 @@ module.exports = KonnectorView = (function(superClass) {
     if (values == null) {
       values = {};
     }
-    ref = this.model.get('fields');
-    for (name in ref) {
-      val = ref[name];
+    _ref = this.model.get('fields');
+    for (name in _ref) {
+      val = _ref[name];
       if (values[name] == null) {
         values[name] = "";
       }
       fieldHtml = "<div class=\"field line\">\n<div><label for=\"" + slug + "-" + name + "-input\">" + (t(name)) + "</label></div>";
       if (val === 'folder') {
         fieldHtml += "<div><select id=\"" + slug + "-" + name + "-input\" class=\"folder\"\">";
-        ref1 = this.paths;
-        for (i = 0, len = ref1.length; i < len; i++) {
-          path = ref1[i];
+        _ref1 = this.paths;
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          path = _ref1[_i];
           if (path === values[name]) {
             fieldHtml += "<option selected value=\"" + path + "\">" + path + "</option>";
           } else {
@@ -829,16 +829,16 @@ module.exports = KonnectorView = (function(superClass) {
   };
 
   KonnectorView.prototype.onImportClicked = function() {
-    var data, fieldValues, importDate, importInterval, name, ref, slug, val;
+    var data, fieldValues, importDate, importInterval, name, slug, val, _ref;
     if (!this.model.get('isImporting')) {
       this.$('.error').hide();
       fieldValues = {};
       slug = this.model.get('slug');
       importDate = $("#" + slug + "-import-date").val();
       fieldValues['date'] = importDate;
-      ref = this.model.get('fields');
-      for (name in ref) {
-        val = ref[name];
+      _ref = this.model.get('fields');
+      for (name in _ref) {
+        val = _ref[name];
         fieldValues[name] = $("#" + slug + "-" + name + "-input").val();
       }
       importInterval = $("#" + slug + "-autoimport-input").val();
@@ -871,15 +871,15 @@ module.exports = KonnectorView = (function(superClass) {
 
 ;require.register("views/menu", function(exports, require, module) {
 var KonnectorsView, MenuItemView, ViewCollection,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 ViewCollection = require('../lib/view_collection');
 
 MenuItemView = require('./menu_item');
 
-module.exports = KonnectorsView = (function(superClass) {
-  extend(KonnectorsView, superClass);
+module.exports = KonnectorsView = (function(_super) {
+  __extends(KonnectorsView, _super);
 
   function KonnectorsView() {
     return KonnectorsView.__super__.constructor.apply(this, arguments);
@@ -910,14 +910,14 @@ module.exports = KonnectorsView = (function(superClass) {
   };
 
   KonnectorsView.prototype.unselectAll = function() {
-    var index, ref, results, view;
-    ref = this.views;
-    results = [];
-    for (index in ref) {
-      view = ref[index];
-      results.push(view.unselect());
+    var index, view, _ref, _results;
+    _ref = this.views;
+    _results = [];
+    for (index in _ref) {
+      view = _ref[index];
+      _results.push(view.unselect());
     }
-    return results;
+    return _results;
   };
 
   return KonnectorsView;
@@ -928,13 +928,13 @@ module.exports = KonnectorsView = (function(superClass) {
 
 ;require.register("views/menu_item", function(exports, require, module) {
 var BaseView, MenuItemView,
-  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 BaseView = require('../lib/base_view');
 
-module.exports = MenuItemView = (function(superClass) {
-  extend(MenuItemView, superClass);
+module.exports = MenuItemView = (function(_super) {
+  __extends(MenuItemView, _super);
 
   function MenuItemView() {
     return MenuItemView.__super__.constructor.apply(this, arguments);
@@ -954,7 +954,7 @@ module.exports = MenuItemView = (function(superClass) {
     lastImport = this.model.get('lastImport');
     if (this.model.isConfigured() && (lastImport != null)) {
       formattedDate = moment(lastImport).format(t('date format'));
-      lastImport = (t('last import:')) + "  " + formattedDate;
+      lastImport = "" + (t('last import:')) + "  " + formattedDate;
     } else if (this.model.isConfigured()) {
       lastImport = t("no import performed");
     } else {
