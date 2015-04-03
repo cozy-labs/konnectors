@@ -37,4 +37,4 @@ BankOperation::setBinaryFromFile = (fileId, callback) ->
                 callback()
 
         else
-            callback new Error "No binary for this file #{file.id}"
+            callback new Error "No binary for this file #{fileId}"

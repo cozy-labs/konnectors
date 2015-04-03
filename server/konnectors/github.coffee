@@ -9,6 +9,7 @@ File = require '../models/file'
 fetcher = require '../lib/fetcher'
 filterExisting = require '../lib/filter_existing'
 saveDataAndFile = require '../lib/save_data_and_file'
+linkBankOperation = require '../lib/link_bank_operation'
 
 localization = require '../lib/localization_manager'
 
@@ -59,7 +60,13 @@ module.exports =
             .use(parsePage)
             .use(filterExisting log, CodeBill)
             .use(saveDataAndFile log, CodeBill, 'github', ['bill'])
-            .use(linkBankOperation log, CodeBill)
+            .use(linkBankOperation
+                log: log
+                model: CodeBill
+                identifier: 'github'
+                dateDelta: 4
+                amountDelta: 5
+            )
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
                 log.info "Import finished"

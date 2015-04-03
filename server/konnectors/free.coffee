@@ -9,6 +9,7 @@ File = require '../models/file'
 fetcher = require '../lib/fetcher'
 filterExisting = require '../lib/filter_existing'
 saveDataAndFile = require '../lib/save_data_and_file'
+linkBankOperation = require '../lib/link_bank_operation'
 
 localization = require '../lib/localization_manager'
 
@@ -59,7 +60,13 @@ module.exports =
             .use(parsePage)
             .use(filterExisting log, InternetBill)
             .use(saveDataAndFile log, InternetBill, 'free', ['facture'])
-            .use(linkBankOperation log, InternetBill)
+            .use(linkBankOperation
+                log: log
+                model: InternetBill
+                identifier: 'free telecom'
+                dateDelta: 10
+                amountDelta: 0.1
+            )
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
                 log.info "Import finished"

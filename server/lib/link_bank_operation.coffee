@@ -1,4 +1,5 @@
 async = require 'async'
+
 moment = require 'moment'
 
 BankOperation = require '../models/bankoperation'
@@ -11,18 +12,27 @@ BankOperation = require '../models/bankoperation'
 class BankOperationLinker
 
 
-    constructor: (@model, @log) ->
+    constructor: (options) ->
+        @log = options.log
+        @model = options.model
+        @identifier = options.identifier.toLowerCase()
+        @amountDelta = options.amountDelta or 0
+        @dateDelta = options.dateDelta or 15
 
 
     link: (entries, callback) ->
         async.eachSeries entries, @linkOperationIfExist, callback
 
+
     # For a given entry we look for an operation with same date and same
     # amount.
     linkOperationIfExist: (entry, callback) =>
-        date = "#{moment(entry.date).format "YYYY-MM-DDT00:00:00.000"}Z"
+        startDate = moment(entry.date).subtract @dateDelta, 'days'
+        endDate = moment(entry.date).add @dateDelta, 'days'
+        startkey = "#{startDate.format "YYYY-MM-DDT00:00:00.000"}Z"
+        endkey = "#{endDate.format "YYYY-MM-DDT00:00:00.000"}Z"
 
-        BankOperation.all key: date, (err, operations) =>
+        BankOperation.all {startkey, endkey}, (err, operations) =>
             return callback err if err
             @linkRightOperation operations, entry, callback
 
@@ -41,7 +51,10 @@ class BankOperationLinker
             operationAmount = operation.amount
             if operationAmount < 0
                 operationAmount = operationAmount * -1
-            if amount is operationAmount
+
+            if operation.title.toLowerCase().indexOf(@identifier) >= 0 and \
+            (amount - @amountDelta) <= operation.amount and \
+            (amount + @amountDelta) >= operation.amount
                 operationToLink = operation
 
         if not operationToLink?
@@ -57,8 +70,9 @@ class BankOperationLinker
     # Save the binary ID and the file ID as an extra attribute of the
     # operation.
     linkOperation: (operation, entry, callback) =>
+        key = "#{moment(entry.date).format "YYYY-MM-DDT00:00:00.000"}Z"
 
-        @model.request 'byDate', key: entry.date, (err, entries) =>
+        @model.request 'byDate', key: key, (err, entries) =>
 
             # We ignore error, no need to make fail the import for that.
             # We just log it.
@@ -76,22 +90,22 @@ class BankOperationLinker
 
                     if err
                         @log.raw err
-                        callback()
 
                     else
                         @log.debug """
 Binary #{operation.binary.file.id} linked with operation:
 #{operation.title} - #{operation.amount}
 """
+                    callback()
+
 
 
 # Procedure that link fetched bills to bank operation contained inside the
 # Cozy.
-module.exports = (log, model) ->
+module.exports = (options) ->
 
     (requiredFields, entries, data, next) ->
 
-        linker = new BankOperationLinker model, log
-
+        linker = new BankOperationLinker options
         linker.link entries.fetched, next
 

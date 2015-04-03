@@ -1,0 +1,22 @@
+[
+  {
+    "docType": "BankOperation",
+    "bankAccount": "111",
+    "title": "Operation 01 - vendor01",
+    "date": "2015-03-01T00:00:00.000Z", 
+    "amount": 20,
+    "raw": "Operation 01 raw",
+    "dateImport": "2015-04-01T00:00:00.000Z", 
+    "categoryId": "444"
+  },
+  {
+    "docType": "BankOperation",
+    "bankAccount": "111",
+    "title": "Operation 02 - vendor01",
+    "date": "2015-02-01T00:00:00.000Z", 
+    "amount": 20,
+    "raw": "Operation 02 raw",
+    "dateImport": "2015-04-01T00:00:00.000Z", 
+    "categoryId": "444"
+  }
+]

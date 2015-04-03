@@ -60,7 +60,13 @@ module.exports =
             .use(parsePage)
             .use(filterExisting log, PhoneBill)
             .use(saveDataAndFile log, PhoneBill, 'bouygues', ['facture'])
-            .use(linkBankOperation log, PhoneBill)
+            .use(linkBankOperation
+                log: log
+                model: PhoneBill
+                identifier: 'bouygues'
+                dateDelta: 20
+                amountDelta: 0.1
+            )
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
                 return callback err if err
