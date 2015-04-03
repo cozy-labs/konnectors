@@ -59,6 +59,7 @@ module.exports =
             .use(parsePage)
             .use(filterExisting log, CodeBill)
             .use(saveDataAndFile log, CodeBill, 'github', ['bill'])
+            .use(linkBankOperation log, CodeBill)
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
                 log.info "Import finished"

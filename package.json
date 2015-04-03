@@ -68,6 +68,9 @@
     "CodeBill": {
       "description": "Code bills fetched by Github Konnector."
     },
+    "BankOperation": {
+      "description": "Bank operation to link with downloaded bills."
+    },
     "File": {
       "description": "To import CSV or PDF file in the Cozy File System."
     },

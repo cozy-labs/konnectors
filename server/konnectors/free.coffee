@@ -59,6 +59,7 @@ module.exports =
             .use(parsePage)
             .use(filterExisting log, InternetBill)
             .use(saveDataAndFile log, InternetBill, 'free', ['facture'])
+            .use(linkBankOperation log, InternetBill)
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
                 log.info "Import finished"

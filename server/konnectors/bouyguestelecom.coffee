@@ -12,6 +12,7 @@ fetcher = require '../lib/fetcher'
 filterExisting = require '../lib/filter_existing'
 saveDataAndFile = require '../lib/save_data_and_file'
 localization = require '../lib/localization_manager'
+linkBankOperation = require '../lib/link_bank_operation'
 
 log = require('printit')
     prefix: "Bouygues Telecom"
@@ -59,6 +60,7 @@ module.exports =
             .use(parsePage)
             .use(filterExisting log, PhoneBill)
             .use(saveDataAndFile log, PhoneBill, 'bouygues', ['facture'])
+            .use(linkBankOperation log, PhoneBill)
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
                 return callback err if err
@@ -165,7 +167,7 @@ parsePage = (requiredFields, bills, data, next) ->
             # Build bill object.
             bill =
                 date: moment date, 'DD/MM/YYYY'
-                amount: amount
+                amount: amount.replace ',', '.'
                 pdfurl: url
             bills.fetched.push bill
     next()

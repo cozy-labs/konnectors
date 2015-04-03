@@ -36,7 +36,8 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
     index = (newFile) ->
         newFile.index ["name"], (err) ->
             log.error err if err
-            callback null, newFile
+            File.find newFile.id, (err, file) ->
+                callback err, file
 
     # Attach binary to newly created file.
     attachBinary = (newFile) ->
