@@ -72,6 +72,7 @@ BloodPressure.all = (callback) ->
 Steps.all = (callback) ->
     Steps.request 'byDate', callback
 
+
 # Konnector
 
 module.exports =
@@ -262,9 +263,9 @@ saveBodyMeasures = (measures, callback) ->
             if bloodPressure.systolic? and not bloodPressureHash[date]?
                 bloodPressuresToSave.push bloodPressure
 
-        log.debug "#{measuresToSave.length} weight measures to save"
-        log.debug "#{heartBeatsToSave.length} heartbeat measures to save"
-        log.debug "#{bloodPressuresToSave.length} blood pressure measures to save"
+        log.info "#{measuresToSave.length} weight measures to save"
+        log.info "#{heartBeatsToSave.length} heartbeat measures to save"
+        log.info "#{bloodPressuresToSave.length} blood pressure measures to save"
 
         saveAll = (models, done) ->
             async.forEach models, (model, callback) ->
@@ -272,19 +273,19 @@ saveBodyMeasures = (measures, callback) ->
             , (err) ->
                 done err
 
-        log.debug 'Save weights...'
+        log.info 'Save weights...'
         saveAll measuresToSave, (err) ->
-            log.debug 'Weights saved...'
+            log.info 'Weights saved...'
             return callback err if err
 
-            log.debug 'Save heartbeats...'
+            log.info 'Save heartbeats...'
             saveAll heartBeatsToSave, (err) ->
-                log.debug 'Heartbeats saved...'
+                log.info 'Heartbeats saved...'
                 return callback err if err
 
-                log.debug 'Save blood pressures...'
+                log.info 'Save blood pressures...'
                 saveAll bloodPressuresToSave, (err) ->
-                    log.debug 'Blood pressures saved...'
+                    log.info 'Blood pressures saved...'
                     return callback err if err
 
                     notifContent = null
@@ -294,12 +295,14 @@ saveBodyMeasures = (measures, callback) ->
                         notifContent = localization.t localizationKey, options
                     callback null, notifContent
 
+
     log.debug 'fetch old measures'
     Weight.all (err, scaleMeasures) ->
         return callback err if err
-        console.log scaleMeasures
+
         HeartBeat.all (err, heartBeats) ->
             return callback err if err
+
             BloodPressure.all (err, bloodPressures) ->
                 return callback err if err
                 processData scaleMeasures, heartBeats, bloodPressures
@@ -307,7 +310,7 @@ saveBodyMeasures = (measures, callback) ->
 
 saveActivityMeasures = (measures, callback) ->
 
-    console.log 'Processing activity measures...'
+    log.info 'Processing activity measures...'
     processData = (stepsMeasures) ->
 
         stepsHash = hashMeasuresByDate stepsMeasures
@@ -315,40 +318,44 @@ saveActivityMeasures = (measures, callback) ->
         newSteps = measures.body?.series?.type_36
         newDistances = measures.body?.series?.type_40
 
-        return callback() if not newSteps? and not newDistances?
+        if not newSteps? and not newDistances?
+            callback()
 
-        stepsToSave = []
-        for date, valueObj of newSteps
-            dateAsMom = moment date
-            steps = valueObj.sum
-            if not stepsHash[dateAsMom]?
-                stepMeasure = new Steps
-                stepMeasure.date = dateAsMom
-                stepMeasure.steps = steps
-                stepMeasure.vendor = 'Withings'
-                if newDistances[date]?
-                    stepMeasure.distance = newDistances[date].sum
-                stepsToSave.push stepMeasure
+        else
+            stepsToSave = []
+            for date, valueObj of newSteps
+                dateAsMom = moment date
+                steps = valueObj.sum
 
-        console.log "Found #{stepsToSave.length} new steps measures to save!"
-        saveInstance = (model, cb) ->
-            model.save cb
-        async.forEach stepsToSave, saveInstance, (err) ->
-            return callback err if err?
+                if not stepsHash[dateAsMom]?
+                    stepMeasure = new Steps
+                    stepMeasure.date = dateAsMom
+                    stepMeasure.steps = steps
+                    stepMeasure.vendor = 'Withings'
 
-            console.log 'Steps measures saved.'
-            notifContent = null
-            if stepsToSave.length
-                localizationKey = 'notification withings'
-                options = smart_count: stepsToSave.length
-                notifContent = localization.t localizationKey, options
-            callback null, notifContent
+                    if newDistances[date]?
+                        stepMeasure.distance = newDistances[date].sum
 
-        callback()
-        return
+                    stepsToSave.push stepMeasure
 
-    console.log 'Fetching former activity measures...'
+            log.info "Found #{stepsToSave.length} new steps measures to save!"
+            saveInstance = (model, cb) ->
+                model.save cb
+
+            async.forEach stepsToSave, saveInstance, (err) ->
+                return callback err if err?
+
+                log.info 'Steps measures saved.'
+                notifContent = null
+                if stepsToSave.length
+                    localizationKey = 'notification withings'
+                    options = smart_count: stepsToSave.length
+                    notifContent = localization.t localizationKey, options
+                callback null, notifContent
+
+
+    log.debug 'Fetching former activity measures...'
     Steps.all (err, stepsMeasures) ->
         return callback err if err
-        console.log 'Steps', stepsMeasures
         processData stepsMeasures
+
