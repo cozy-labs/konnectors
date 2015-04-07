@@ -28,6 +28,7 @@ module.exports = (log, model, suffix, tags) ->
                     else
                         log.info "File for #{entryLabel} created."
                         entry.fileId = file.id
+                        entry.binaryId = file.binary.file.id
                         saveEntry entry, entryLabel
 
             entryLabel = entry.date.format 'MMYYYY'

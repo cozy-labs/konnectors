@@ -21,35 +21,35 @@ log = require('printit')
 
 # Models
 
-PhoneBill = americano.getModel 'PhoneBill',
+InternetBill = americano.getModel 'InternetBill',
     date: Date
     vendor: String
     amount: Number
     fileId: String
 
-PhoneBill.all = (callback) ->
-    PhoneBill.request 'byDate', callback
+InternetBill.all = (callback) ->
+    InternetBill.request 'byDate', callback
 
 # Konnector
 
 module.exports =
 
-    name: "Bouygues Telecom"
-    slug: "bouyguestelecom"
-    description: 'konnector description bouygues'
+    name: "Bouygues Box"
+    slug: "bouyguesbox"
+    description: 'konnector description bouygues box'
     vendorLink: "https://www.bouyguestelecom.fr/"
 
     fields:
-        phoneNumber: "text"
+        email: "text"
         password: "password"
         folderPath: "folder"
     models:
-        phonebill: PhoneBill
+        phonebill: InternetBill
 
     # Define model requests.
     init: (callback) ->
         map = (doc) -> emit doc.date, doc
-        PhoneBill.defineRequest 'byDate', map, (err) ->
+        InternetBill.defineRequest 'byDate', map, (err) ->
             callback err
 
     fetch: (requiredFields, callback) ->
@@ -58,11 +58,11 @@ module.exports =
         fetcher.new()
             .use(logIn)
             .use(parsePage)
-            .use(filterExisting log, PhoneBill)
-            .use(saveDataAndFile log, PhoneBill, 'bouygues', ['facture'])
+            .use(filterExisting log, InternetBill)
+            .use(saveDataAndFile log, InternetBill, 'bouygues', ['facture'])
             .use(linkBankOperation
                 log: log
-                model: PhoneBill
+                model: InternetBill
                 identifier: 'bouygues'
                 dateDelta: 20
                 amountDelta: 0.1
@@ -107,7 +107,7 @@ logIn = (requiredFields, bills, data, next) ->
 
         # Second request to log in (post the form).
         form =
-            "username": requiredFields.phoneNumber
+            "username": requiredFields.email
             "password": requiredFields.password
             "lt": lt
             "execution": execution
@@ -139,7 +139,7 @@ logIn = (requiredFields, bills, data, next) ->
 
 # Procedure to extract bill data from the page.
 parsePage = (requiredFields, bills, data, next) ->
-    baseDlUrl = 'https://www.bouyguestelecom.fr/mon-compte/suiviconso/index/facturepdf'
+    baseDlUrl = 'https://www.bouyguestelecom.fr/mon-compte/suiviconso/index/facturepdffixe'
     bills.fetched = []
 
     # Load page to make it browseable easily.
@@ -164,13 +164,14 @@ parsePage = (requiredFields, bills, data, next) ->
             # when the link is clicked.
             dataArray = urlData.split ','
             params =
-                id: dataArray[4].replace /[\/']/g, ''
-                date: dataArray[5].replace /[\/']/g, ''
-                type: dataArray[6].replace /[\/']/g, ''
-                no_reference:dataArray[7].replace /[\/)']/g, ''
+                id: dataArray[4].replace /[\/'\s]/g, ''
+                date: dataArray[5].replace /[\/'\s]/g, ''
+                type: dataArray[6].replace /[\/'\s]/g, ''
+                no_reference:dataArray[7].replace /[\/)'\s]/g, ''
             url = "#{baseDlUrl}?#{qs.stringify params}"
 
-            if params.type is 'Mobile'
+            console.log url
+            if params.type is 'Bbox'
                 # Build bill object.
                 bill =
                     date: moment date, 'DD/MM/YYYY'
