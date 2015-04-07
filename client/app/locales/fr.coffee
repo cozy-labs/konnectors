@@ -49,6 +49,7 @@ module.exports =
     # Konnectors' description
     'konnector description free': "Téléchargez toutes vos factures internet de Free."
     'konnector description bouygues': "Téléchargez toutes vos factures téléphones de Bouygues Telecom."
+    'konnector description bouygues box': "Téléchargez toutes vos factures internet de Bouygues Telecom."
     'konnector description github': "Téléchargez toutes vos factures Github."
     'konnector description github commits': "Sauvegardez les informations de tous vos commits Github."
     'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone."
