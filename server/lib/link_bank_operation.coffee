@@ -17,7 +17,11 @@ class BankOperationLinker
         @model = options.model
         @identifier = options.identifier.toLowerCase()
         @amountDelta = options.amountDelta or 0
+        @minAmountDelta = options.minAmountDelta or @amountDelta
+        @maxAmountDelta = options.maxAmountDelta or @amountDelta
         @dateDelta = options.dateDelta or 15
+        @minDateDelta = options.minDateDelta or @dateDelta
+        @maxDateDelta = options.maxDateDelta or @dateDelta
 
 
     link: (entries, callback) ->
@@ -27,8 +31,8 @@ class BankOperationLinker
     # For a given entry we look for an operation with same date and same
     # amount.
     linkOperationIfExist: (entry, callback) =>
-        startDate = moment(entry.date).subtract @dateDelta, 'days'
-        endDate = moment(entry.date).add @dateDelta, 'days'
+        startDate = moment(entry.date).subtract @minDateDelta, 'days'
+        endDate = moment(entry.date).add @maxDateDelta, 'days'
         startkey = "#{startDate.format "YYYY-MM-DDT00:00:00.000"}Z"
         endkey = "#{endDate.format "YYYY-MM-DDT00:00:00.000"}Z"
 
@@ -53,8 +57,8 @@ class BankOperationLinker
                 operationAmount = operationAmount * -1
 
             if operation.title.toLowerCase().indexOf(@identifier) >= 0 and \
-            (amount - @amountDelta) <= operation.amount and \
-            (amount + @amountDelta) >= operation.amount
+            (amount - @minAmountDelta) <= operation.amount and \
+            (amount + @maxAmountDelta) >= operation.amount
                 operationToLink = operation
 
         if not operationToLink?
