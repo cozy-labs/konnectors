@@ -57,8 +57,8 @@ class BankOperationLinker
                 operationAmount = operationAmount * -1
 
             if operation.title.toLowerCase().indexOf(@identifier) >= 0 and \
-            (amount - @minAmountDelta) <= operation.amount and \
-            (amount + @maxAmountDelta) >= operation.amount
+            (amount - @minAmountDelta) <= operationAmount and \
+            (amount + @maxAmountDelta) >= operationAmount
                 operationToLink = operation
 
         if not operationToLink?

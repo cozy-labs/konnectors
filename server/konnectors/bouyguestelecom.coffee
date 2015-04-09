@@ -64,8 +64,8 @@ module.exports =
                 log: log
                 model: PhoneBill
                 identifier: 'bouygues'
-                minDateDelta: 20
-                maxDateDelta: 4
+                minDateDelta: 4
+                maxDateDelta: 20
                 amountDelta: 0.1
             )
             .args(requiredFields, {}, {})
