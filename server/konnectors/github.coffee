@@ -128,7 +128,9 @@ parsePage = (requiredFields, bills, data, next) ->
 
     $('.succeeded').each ->
         date = $(this).find('.date time').text()
-        amount = parseFloat $(this).find('.amount').text().substring 5
+        amountText = $(this).find('.amount').text()
+        amountText = amountText.trim().substring 1
+        amount = parseFloat amountText
         pdfurl = "https://github.com#{$(this).find('.receipt a').attr 'href'}"
 
         switch amount

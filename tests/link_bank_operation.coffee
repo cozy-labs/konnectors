@@ -74,7 +74,7 @@ describe 'Running link_operation', ->
                 ]
 
             loadFixtures ->
-                linker {}, bills, {}:4, ->
+                linker {}, bills, {}, ->
                     BankOperation.all (err, operations) ->
                         operations.length.should.equal 2
                         should.exist operations[1].binary
