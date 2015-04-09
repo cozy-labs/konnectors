@@ -165,9 +165,9 @@ parsePage = (requiredFields, bills, data, next) ->
             # when the link is clicked.
             dataArray = urlData.split ','
             params =
-                id: dataArray[4].replace /[\/']/g, ''
-                date: dataArray[5].replace /[\/']/g, ''
-                type: dataArray[6].replace /[\/']/g, ''
+                id: dataArray[4].replace /[\/'\s]/g, ''
+                date: dataArray[5].replace /[\/'\s]/g, ''
+                type: dataArray[6].replace /[\/'\s]/g, ''
                 no_reference:dataArray[7].replace /[\/)']/g, ''
             url = "#{baseDlUrl}?#{qs.stringify params}"
 
