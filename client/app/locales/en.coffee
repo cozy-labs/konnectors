@@ -1,6 +1,6 @@
 module.exports =
 
-    'bad credentials' : 'Bad Credentials'
+    'bad credentials' : 'Bad credentials'
     'no bills retrieved': 'No bills retrieved'
     'key not found': 'Key not found'
     'last import:': 'Last import:'
@@ -9,23 +9,23 @@ module.exports =
     'imported data:': 'Imported data:'
     'importing...': 'importing...'
     'no import performed': 'No import performed'
-    'firstname': 'Firstname'
-    'lastname': 'Lastname'
+    'firstname': 'First name'
+    'lastname': 'Last name'
     'login': 'Login'
     'password': 'Password'
     'email': 'Email'
     'accessToken': 'Access token'
     'accessTokenSecret': 'Access token secret'
-    'consumerKey': 'Consumer Key'
-    'consumerSecret': 'Consumer Secret'
-    'apikey': 'Api key'
+    'consumerKey': 'Consumer key'
+    'consumerSecret': 'Consumer secret'
+    'apikey': 'API key'
     'phoneNumber': 'Phone number'
     'folderPath': 'Folder path'
     'none' : 'None'
     'every hour': 'Every hour'
     'every day': 'Every day'
     'every week': 'Every week'
-    'each month': 'Each month'
+    'each month': 'Every month'
 
     'date format': 'LLL'
 
@@ -47,6 +47,7 @@ module.exports =
     'error occurred during import:': 'An error occurred during the last import:'
 
     # Konnectors' description
+    'konnector description forex': "Download exchange rates (in EUR) from the European Central Bank."
     'konnector description free': "Download all your internet bills from Free."
     'konnector description bouygues': "Download all your phone bills from Bouygues Telecom."
     'konnector description bouygues box': "Download all your internet bills from Bouygues Telecom."
@@ -59,6 +60,7 @@ module.exports =
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
+    'notification forex': "%{smart_count} new exchange rate imported |||| %{smart_count} new exchange rates imported"
     'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported"
     'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported"
     'notification free': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
@@ -66,3 +68,37 @@ module.exports =
     'notification jawbone': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
     'notification rescuetime': "%{smart_count} new activity imported |||| %{smart_count} new activites imported"
     'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
+
+    # Currency codes and names
+    'USD': 'USD - US Dollar'
+    'JPY': 'JPY - Japanese Yen'
+    'BGN': 'BGN - Bulgarian Lev'
+    'CZK': 'CZK - Czech Koruna'
+    'DKK': 'DKK - Danish Krone'
+    'GBP': 'GBP - Pound Sterling'
+    'HUF': 'HUF - Hungarian Forint'
+    'PLN': 'PLN - Polish Zloty'
+    'RON': 'RON - Romanian Leu'
+    'SEK': 'SEK - Swedish Krona'
+    'CHF': 'CHF - Swiss Franc'
+    'NOK': 'NOK - Norwegian Krone'
+    'HRK': 'HRK - Croatian Kuna'
+    'RUB': 'RUB - Russian Rouble'
+    'TRY': 'TRY - Turkish Lira'
+    'AUD': 'AUD - Australian Dollar'
+    'BRL': 'BRL - Brasilian Real'
+    'CAD': 'CAD - Canadian Dollar'
+    'CNY': 'CNY - Chinese Yuan Renminbi'
+    'HKD': 'HKD - Hong Kong Dollar'
+    'IDR': 'IDR - Indonesian Rupiah'
+    'ILS': 'ILS - Israeli Shekel'
+    'INR': 'INR - Indian Rupee'
+    'KRW': 'KRW - South Korean Won'
+    'MXN': 'MXN - Mexican Peso'
+    'MYR': 'MYR - Malaysian Ringgit'
+    'NZD': 'NZD - New Zealand Dollar'
+    'PHP': 'PHP - Philippine Peso'
+    'SGD': 'SGD - Singapore Dollar'
+    'THB': 'THB - Thai Baht'
+    'ZAR': 'ZAR - South African Rand'
+    'ISK': 'ISK - Icelandic Krona'

@@ -8,10 +8,11 @@ into your Cozy.
 * RescueTime
 * Jawbone (Move and Sleep data)
 * Withings (Weight, Heartbeat and Blood Presure data)
-* Twitter (published tweets)
-* Github (Bill PDFs, commits)
+* Twitter (Published Tweets)
+* Github (Bill PDFs, Commits)
 * B&You (Bill PDFs)
 * Free (Bill PDFs, only Internet)
+* Forex (Currency Exchange Rates)
 
 # What we would like to see
 
