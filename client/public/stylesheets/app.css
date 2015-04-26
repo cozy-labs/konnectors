@@ -3551,7 +3551,7 @@ h2 #menu-toggler {
 .container .konnector .infos div {
   margin: 5px 0;
 }
-.container .konnector input,
+.container .konnector input:not([type='checkbox']),
 .container .konnector textarea {
   border: none;
   border-left: 5px solid #34a6ff;
