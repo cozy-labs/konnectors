@@ -2,7 +2,7 @@ logger = require('printit')
         date: false
         prefix: 'cake'
 fs     = require 'fs'
-{exec} = require 'child_process'
+{exec, spawn} = require 'child_process'
 
 option '-f' , '--file [FILE*]' , 'test file to run'
 option ''   , '--dir [DIR*]'   , 'directory where to grab test files'
@@ -58,17 +58,11 @@ task 'tests', "Run tests #{taskDetails}", (opts) ->
 
 task "lint", "Run coffeelint on source files", ->
 
-    lintFiles = walk '.',  ['node_modules', 'tests']
+    lintFiles = walk '.',  ['node_modules', 'tests', 'locales']
 
-    # if installed globally, output will be colored
-    testCommand = "coffeelint -v"
-    exec testCommand, (err, stdout, stderr) ->
-        if err or stderr
-            command = "./node_modules/coffeelint/bin/coffeelint"
-        else
-            command = "coffeelint"
+    command = "./node_modules/coffeelint/bin/coffeelint"
+    args = ["-f", "coffeelint.json", "-r", "--color=always"]
 
-        command += " -f coffeelint.json -r " + lintFiles.join " "
-        exec command, (err, stdout, stderr) ->
-            console.log stderr
-            console.log stdout
+    coffeelint = spawn command, args.concat lintFiles
+    coffeelint.stdout.pipe process.stdout
+    coffeelint.stderr.pipe process.stderr
