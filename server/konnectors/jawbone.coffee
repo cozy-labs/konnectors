@@ -116,7 +116,8 @@ module.exports =
                     start.hours 0, 0, 0, 0
                     moves[0].destroy (err) =>
                         Sleep.request 'byDate', params, (err, sleeps) =>
-                            if sleeps.length > 0 and sleeps[0].date is moves[0].date
+                            isSameDate = sleeps[0].date is moves[0].date
+                            if sleeps.length > 0 and isSameDate
                                 sleeps[0].destroy (err) =>
                                     if err
                                         callback err
@@ -135,7 +136,7 @@ module.exports =
                     @fetchData login, password, start, year, callback
 
 
-    fetchData: (login, password, start, year, callback) =>
+    fetchData: (login, password, start, year, callback) ->
         log.info 'Import started'
 
         # Get logged in
@@ -145,7 +146,7 @@ module.exports =
                 email: login
                 pwd: password
                 service: "nudge"
-        request.post url, data, (err, res, body) =>
+        request.post url, data, (err, res, body) ->
             if err
                 callback err
             else if res.statusCode isnt 200
@@ -190,7 +191,7 @@ importYear = (start, year, token, callback) ->
         headers:
             'x-nudge-token': token
 
-    request.get options, (err, res, csvData) =>
+    request.get options, (err, res, csvData) ->
         if err
             callback err
         else if res.statusCode isnt 200

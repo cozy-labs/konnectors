@@ -50,9 +50,13 @@ module.exports = class KonnectorView extends BaseView
 <div><select id="#{slug}-#{name}-input" class="folder"">"""
                 for path in @paths
                     if path is values[name]
-                        fieldHtml += """<option selected value="#{path}">#{path}</option>"""
+                        fieldHtml += """
+                        <option selected value="#{path}">#{path}</option>
+                        """
                     else
-                        fieldHtml += """<option value="#{path}">#{path}</option>"""
+                        fieldHtml += """
+                        <option value="#{path}">#{path}</option>
+                        """
                 fieldHtml += "</select></div></div>"
 
             else
@@ -66,7 +70,12 @@ module.exports = class KonnectorView extends BaseView
         # Auto Import
         importInterval = @model.get 'importInterval'
         importInterval ?= ''
-        intervals = {none: t("none"), hour: t("every hour"), day: t("every day"), week: t("every week"), month: t("each month")}
+        intervals =
+            none: t "none"
+            hour: t "every hour"
+            day: t "every day"
+            week: t "every week"
+            month: t "each month"
         fieldHtml = """
 <div class="field line">
 <div><label for="#{slug}-autoimport-input">#{t 'auto import'}</label></div>
@@ -74,7 +83,9 @@ module.exports = class KonnectorView extends BaseView
 """
         for key, value of intervals
             selected = if importInterval is key then 'selected' else ''
-            fieldHtml += "<option value=\"#{key}\" #{selected}>#{value}</option>"
+            fieldHtml += """
+            <option value=\"#{key}\" #{selected}>#{value}</option>
+            """
 
         fieldHtml += """
 
@@ -83,7 +94,8 @@ module.exports = class KonnectorView extends BaseView
 <span id="#{slug}-first-import-text">
 <a id="#{slug}-first-import-link" href="#">Select a starting date</a></span>
 <span id="#{slug}-first-import-date"><span>From</span>
-<input id="#{slug}-import-date" class="autoimport" maxlength="8" type="text"></input>
+<input id="#{slug}-import-date" class="autoimport" maxlength="8" type="text">
+</input>
 </span></span>
 </div>
 </div>
@@ -91,17 +103,22 @@ module.exports = class KonnectorView extends BaseView
         @$('.fields').append fieldHtml
 
         @$("##{slug}-first-import-date").hide()
-        @$("##{slug}-import-date").datepicker({minDate: 1, dateFormat: "dd-mm-yy" })
+        @$("##{slug}-import-date").datepicker
+            minDate: 1
+            dateFormat: "dd-mm-yy"
 
         # if auto-importation is set to day, week, or month
         if @$("##{slug}-autoimport-input").val() isnt 'none' \
         and @$("##{slug}-autoimport-input").val() isnt 'hour'
 
             # Only show the date if the first import didn't happened yet
-            if lastAutoImport? and moment(lastAutoImport).valueOf() > moment().valueOf()
+            isLater = moment(lastAutoImport).valueOf() > moment().valueOf()
+            if lastAutoImport? and isLater
+                val = moment(lastAutoImport).format 'DD-MM-YYYY'
+
                 @$("##{slug}-first-import-date").show()
                 @$("##{slug}-first-import-text").hide()
-                @$("##{slug}-import-date").val(moment(lastAutoImport).format 'DD-MM-YYYY')
+                @$("##{slug}-import-date").val val
             else
                 @$("##{slug}-first-import").show()
         else
@@ -151,7 +168,7 @@ module.exports = class KonnectorView extends BaseView
             # save field values and start importing
             data = {fieldValues, importInterval}
             @model.save data,
-                success: (model, success) =>
+                success: (model, success) ->
                 error: (model, err) =>
                     # cozycloud.cc timeout is not considered like an error
                     if err.status >= 400 and err.status isnt 504

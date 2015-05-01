@@ -20,7 +20,7 @@ periods = {hour: hour, day: day, week: week, month: month}
 class KonnectorPoller
 
 
-    constructor: () ->
+    constructor: ->
         # Timeout for prepareNextCheck (call every day)
         @timeout = null
         # Timeouts for all konnectors
@@ -61,7 +61,7 @@ class KonnectorPoller
 
 
     # Prepare next check and timeout for the following
-    manageNextChecks: () ->
+    manageNextChecks: ->
         # Initialize every day to avoid to have lots of long timeout.
         @prepareNextCheck()
         if @timeout?
@@ -153,7 +153,7 @@ class KonnectorPoller
 
 
     # Check all konnectors and create timeout if necessary
-    prepareNextCheck: () ->
+    prepareNextCheck: ->
         for slug in Object.keys(@nextUpdates)
             [nextUpdate, konnector]  = @nextUpdates[slug]
             @createTimeout konnector, nextUpdate

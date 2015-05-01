@@ -121,8 +121,9 @@ module.exports =
         @fetchData email, password, start, end, callback
         log.info 'import finished'
 
+
     # Fetch data from withings website and save them as Cozy objects
-    fetchData: (email, password, start, end, callback) =>
+    fetchData: (email, password, start, end, callback) ->
 
         data =
             action: 'get'
@@ -133,7 +134,7 @@ module.exports =
 
         # Get auth token.
         onceUrl = 'https://auth.withings.com/index/service/once/'
-        request.post onceUrl, form: data, (err, res, body) =>
+        request.post onceUrl, form: data, (err, res, body) ->
             return callback err if err
 
             body = JSON.parse body
@@ -146,7 +147,7 @@ module.exports =
                 once: once
 
             # Authenticate user.
-            request.post authUrl, form: data, (err, res, body) =>
+            request.post authUrl, form: data, (err, res, body) ->
                 return callback err if err
                 if not res.headers['set-cookie']?
                     log.error 'Authentification error'
@@ -166,7 +167,7 @@ module.exports =
                     sessionid: sessionid
 
                 # Get user id.
-                request.post accountUrl, form: data, (err, res, body) =>
+                request.post accountUrl, form: data, (err, res, body) ->
                     return callback err if err
 
                     body = JSON.parse body
@@ -189,11 +190,18 @@ module.exports =
                         userid: userid
 
                     # Fetch withings body measures
-                    request.post measureUrl, form: data, (err, res, body) =>
+                    request.post measureUrl, form: data, (err, res, body) ->
                         return callback err if err
+
                         measures = JSON.parse body
                         saveBodyMeasures measures.body.measuregrps, (err) ->
                             return callback err if err
+
+                            startDate = moment()
+                                .years(2014)
+                                .month(0)
+                                .date(1)
+                                .format('YYYY-MM-DD')
 
                             # Fetch withings activity measures
                             data =
@@ -205,13 +213,15 @@ module.exports =
                                 appliver: '20140428120105'
                                 apppfm: 'web'
                                 action: 'getbyuserid'
-                                startdateymd: moment().years(2014).month(0).date(1).format('YYYY-MM-DD')
+                                startdateymd: startDate
                                 enddateymd: moment().format('YYYY-MM-DD')
 
-                            request.post aggregateUrl, form: data, (err, res, body) =>
+                            onMeasures = (err, res, body) ->
                                 return callback err if err
                                 measures = JSON.parse body
                                 saveActivityMeasures measures, callback
+
+                            request.post aggregateUrl, form: data, onMeasures
 
 
 hashMeasuresByDate = (measures) ->
@@ -265,7 +275,8 @@ saveBodyMeasures = (measures, callback) ->
 
         log.info "#{measuresToSave.length} weight measures to save"
         log.info "#{heartBeatsToSave.length} heartbeat measures to save"
-        log.info "#{bloodPressuresToSave.length} blood pressure measures to save"
+        log.info(
+            "#{bloodPressuresToSave.length} blood pressure measures to save")
 
         saveAll = (models, done) ->
             async.forEach models, (model, callback) ->

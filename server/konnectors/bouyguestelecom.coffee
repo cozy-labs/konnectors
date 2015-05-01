@@ -88,7 +88,8 @@ logIn = (requiredFields, bills, data, next) ->
 
     loginUrl = 'https://www.mon-compte.bouyguestelecom.fr/cas/login'
     billUrl = 'http://www.bouyguestelecom.fr/mon-compte/suivi-conso/factures'
-    userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) Gecko/20100101 Firefox/36.0'
+    userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + \
+                'Gecko/20100101 Firefox/36.0'
 
     # First request to grab the login form
     loginOptions =
@@ -140,7 +141,8 @@ logIn = (requiredFields, bills, data, next) ->
 
 # Procedure to extract bill data from the page.
 parsePage = (requiredFields, bills, data, next) ->
-    baseDlUrl = 'https://www.bouyguestelecom.fr/mon-compte/suiviconso/index/facturepdf'
+    baseDlUrl = 'https://www.bouyguestelecom.fr/mon-compte/suiviconso' + \
+                '/index/facturepdf'
     bills.fetched = []
 
     # Load page to make it browseable easily.

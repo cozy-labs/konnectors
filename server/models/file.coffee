@@ -60,7 +60,7 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
             # Once done create file metadata then attach binary to file.
             stats = fs.statSync filePath
             data.size = stats["size"]
-            File.create data, (err, newFile) =>
+            File.create data, (err, newFile) ->
                 if err
                     log.error err
                     callback err

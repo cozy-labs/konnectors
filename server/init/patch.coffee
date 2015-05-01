@@ -50,7 +50,7 @@ module.exports = (done) ->
                             if err
                                 log.info "#{konnector.slug} | #{err}"
                             else
-                                log.info "#{konnector.slug} | patching succeeded"
+                                log.info "#{konnector.slug} | patch succeeded"
 
                             callback()
                     else
