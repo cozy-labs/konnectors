@@ -1,6 +1,6 @@
 {
   "name": "konnectors",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "engines": [
     "node = 0.8.x"
   ],
@@ -51,7 +51,7 @@
       "description": "Activity data from RescueTime.com."
     },
     "Steps": {
-      "description": "Move data from jawbone.com."
+      "description": "Import step and travelled distance data from jawbone.com or withings."
     },
     "Sleep": {
       "description": "Sleep data from jawbone.com."
