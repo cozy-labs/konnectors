@@ -25,7 +25,8 @@
     "querystring": "0.2.0",
     "request": "2.34.0",
     "request-json": "0.4.10",
-    "ware": "0.3.0"
+    "ware": "1.3.0",
+    "pngjs-image": "0.11.2"
   },
   "devDependencies": {
     "coffee-script": "1.8.0",
@@ -60,7 +61,7 @@
       "description": "Tweets you published on Twitter."
     },
     "PhoneBill": {
-      "description": "Phone bills fetched by Bouygues Telecom Konnector."
+      "description": "Phone bills fetched by B&You or Free Mobile Konnector."
     },
     "InternetBill": {
       "description": "Internet bills fetched by Free Konnector."
