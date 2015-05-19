@@ -46,3 +46,4 @@ module.exports = (log, model, suffix, tags) ->
 
         , (err) ->
             next()
+

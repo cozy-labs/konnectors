@@ -1,9 +1,11 @@
 americano = require 'americano-cozy'
+async = require 'async'
 konnectorHash = require '../lib/konnector_hash'
 
 log = require('printit')
     prefix: null
     date: true
+
 
 module.exports = Konnector = americano.getModel 'Konnector',
     slug: String
@@ -15,10 +17,12 @@ module.exports = Konnector = americano.getModel 'Konnector',
     importInterval: type: String, default: 'none'
     errorMessage: type: String, default: null
 
+
 Konnector.all = (callback) ->
     Konnector.request 'all', (err, konnectors) ->
         konnectors.forEach (konnector) -> konnector.injectEncryptedFields()
         callback err, konnectors
+
 
 Konnector::injectEncryptedFields = ->
     try
@@ -27,6 +31,7 @@ Konnector::injectEncryptedFields = ->
             @fieldValues[name] = val
     catch error
         log.info "Injecting encrypted fields : JSON.parse error : #{error}"
+
 
 Konnector::removeEncryptedFields = (fields) ->
 
@@ -117,6 +122,23 @@ Konnector.getKonnectorsToDisplay = (callback) ->
                         konnector.appendConfigData()
                         return konnector
 
+                async.eachSeries konnectorsToDisplay, (konnector, next) ->
+                    konnector.addAmount next
+                , (err) ->
                     callback null, konnectorsToDisplay
             catch err
                 callback err
+
+
+Konnector::addAmount = (callback) ->
+    @amounts = {}
+
+    async.eachSeries Object.keys(@models), (modelName, next) =>
+        model = @models[modelName]
+        model.all (err, instances) =>
+           @amounts[modelName] = instances.length
+           next()
+    , (err) ->
+        callback()
+
+

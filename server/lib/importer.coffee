@@ -9,10 +9,12 @@ localization = require './localization_manager'
 notification = new NotificationHelper 'konnectors'
 
 module.exports = (konnector) ->
+
     # check if the konnector is created and if its not already importing
     if konnector.fieldValues? and konnector.isImporting is false
         log.debug "Importing #{konnector.slug}"
         model = require "../konnectors/#{konnector.slug}"
+
         konnector.import (err, notifContent) ->
             if err?
                 log.error err
