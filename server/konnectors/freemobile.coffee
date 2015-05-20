@@ -176,6 +176,12 @@ logIn = (requiredFields, billInfos, data, next) ->
             if err? or not res.headers.location? or res.statusCode isnt 302
                 log.error "Authentification error"
                 next 'bad credentials'
+            else
+                #We check that there is no connection form (the statusCode is always 302 even if the credential are wrong)
+                $ = cheerio.load body
+                if $.contains($.root(),$('#form_connect'))
+                    log.error "Authentification error"
+                    next 'bad credentials'
             options =
                 method: 'GET'
                 jar: true
