@@ -1,6 +1,6 @@
 {
   "name": "konnectors",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "engines": [
     "node = 0.8.x"
   ],
@@ -52,7 +52,7 @@
       "description": "Activity data from RescueTime.com."
     },
     "Steps": {
-      "description": "Move data from jawbone.com."
+      "description": "Import step and travelled distance data from jawbone.com or withings."
     },
     "Sleep": {
       "description": "Sleep data from jawbone.com."
@@ -61,13 +61,16 @@
       "description": "Tweets you published on Twitter."
     },
     "PhoneBill": {
-      "description": "Phone bills fetched by Bouygues Telecom or Free Mobile Konnector."
+      "description": "Phone bills fetched by Bouygues Telecom Konnector."
     },
     "InternetBill": {
       "description": "Internet bills fetched by Free Konnector."
     },
     "CodeBill": {
       "description": "Code bills fetched by Github Konnector."
+    },
+    "BankOperation": {
+      "description": "Bank operation to link with downloaded bills."
     },
     "File": {
       "description": "To import CSV or PDF file in the Cozy File System."
