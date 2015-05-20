@@ -179,7 +179,7 @@ logIn = (requiredFields, billInfos, data, next) ->
             else
                 #We check that there is no connection form (the statusCode is always 302 even if the credential are wrong)
                 $ = cheerio.load body
-                if $.contains($.root(),$('#form_connect'))
+                if $.contains $.root(),'#form_connect'
                     log.error "Authentification error"
                     next 'bad credentials'
             options =
