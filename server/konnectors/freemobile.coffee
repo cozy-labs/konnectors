@@ -22,7 +22,7 @@ log = require('printit')
     date: true
 #Useragent is required
 request = require 'request'
-request = request.defaults 
+request = request.defaults
     headers:
         "User-Agent": "Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:37.0) Gecko/20100101 Firefox/37.0"
 
@@ -120,7 +120,7 @@ prepareLogIn = (requiredFields, billInfos, data, next) ->
         if err?
             log.error "Could not reach connection page of Free Mobile : #{homeUrl}"
             next err
-        loginPageData = body            
+        loginPageData = body
         data.imageUrlAndPosition = []
         $ = cheerio.load loginPageData
         $('img[class="ident_chiffre_img pointer"]').each ->
@@ -170,7 +170,7 @@ logIn = (requiredFields, billInfos, data, next) ->
             jar: true
             url: homeUrl
             headers :
-                referer : homeUrl                
+                referer : homeUrl
         #We login to Free Mobile
         request options, (err, res, body) ->
             if err? or not res.headers.location? or res.statusCode isnt 302
@@ -179,7 +179,9 @@ logIn = (requiredFields, billInfos, data, next) ->
             else
                 #We check that there is no connection form (the statusCode is always 302 even if the credential are wrong)
                 $ = cheerio.load body
-                if $.contains $.root(),'#form_connect'
+                connectionForm = $('#form_connect')
+                console.log connectionForm
+                if not connectionForm?
                     log.error "Authentification error"
                     next 'bad credentials'
             options =
@@ -197,7 +199,7 @@ getBillPage = (requiredFields, billInfos, data, next) ->
     options =
         method: 'GET'
         url:  billUrl
-        jar: true        
+        jar: true
     request options, (err, res, body) ->
         if err?
             next err
@@ -242,7 +244,7 @@ getImageAndIdentifyNumber = (imageInfo, callback) ->
         #We dowload the image located at imageInfo.imagePath
         request options, (err, res, body) ->
             if err?
-                callback err, null            
+                callback err, null
             pngjs.loadImage body, (err, resultImage) ->
                 if resultImage.getWidth() < 24 or resultImage.getHeight() < 28
                     callback 'Wrong image size', null
@@ -270,7 +272,7 @@ getSound = (position, callback) ->
         url:  baseUrl+"chiffre.php?getsound=1&pos="+position
         jar: true
         headers :
-            referer: baseUrl+"sound/soundmanager2_flash9.swf"        
+            referer: baseUrl+"sound/soundmanager2_flash9.swf"
     request options, (err, res, body) ->
         if err?
             callback err
