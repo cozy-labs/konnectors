@@ -56,6 +56,7 @@ module.exports =
     'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime."
     'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."
     'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter."
+    'konnector description free mobile': "Téléchargez toutes vos factures Free Mobile"
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -66,3 +67,4 @@ module.exports =
     'notification jawbone': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
     'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées"
     'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
+    'notification free mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
