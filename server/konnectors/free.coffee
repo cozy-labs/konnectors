@@ -97,7 +97,7 @@ logIn = (requiredFields, billInfos, data, next) ->
 
     request options, (err, res, body) ->
         console.log body
-        if err or not res.headers.location? or res.statusCode isnt 302
+        if err or not res.headers.location? or res.statusCode isnt 302 or res.headers.location.indexOf "error" isnt -1
             log.error "Authentification error"
             next 'bad credentials'
         else
