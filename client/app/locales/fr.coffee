@@ -57,6 +57,14 @@ module.exports =
     'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime."
     'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."
     'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter."
+    'konnector description twitter': """
+    Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert
+    deux identifiants and deux clés secrètes. Vous pouvez les générer via le
+    href="https://apps.twitter.com/">tableau Twitter de gestion
+    d'applications</a>. Vous pourrez y créez une application. Twitter vous
+    fournira des identifiants pour cette application. Avec ces identifiants
+    ce connecteur pourra récupérer vos données.
+    """
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"

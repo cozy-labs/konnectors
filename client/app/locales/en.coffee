@@ -56,7 +56,14 @@ module.exports =
     'konnector description jawbone': "Download Move and Sleep Data from Jawbone CSV file."
     'konnector description rescuetime': "Download all your activities from Rescue Time"
     'konnector description withings': "Download all your measures from your Withings account."
-    'konnector description twitter': "Download all your tweets published on Twitter."
+    'konnector description twitter': """
+    Download all your tweets published on Twitter. This konnector requires two
+    identifiers and two secret keys. They can be generated on the <a
+    href="https://apps.twitter.com/">Twitter app dashboard</a>. There you will
+    be able to create an app. They will give you credentials for this app. The
+    current konnector will use them to connect to Twitter and fetch your data.
+    """
+
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
     'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported"
