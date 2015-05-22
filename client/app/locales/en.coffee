@@ -47,17 +47,16 @@ module.exports =
     'error occurred during import:': 'An error occurred during the last import:'
 
     # Konnectors' description
-    'konnector description free': "Download all your internet bills from Free."
-    'konnector description bouygues': "Download all your phone bills from Bouygues Telecom."
-    'konnector description bouygues box': "Download all your internet bills from Bouygues Telecom."
-    'konnector description github': "Download all your Github Bills."
+    'konnector description free': "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files."
+    'konnector description free mobile': "Download all your phone bills from Free Mobile. This konnector requires the Files application to store the bill PDF files."
+    'konnector description bouygues': "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
+    'konnector description bouygues box': "Download all your internet bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
+    'konnector description github': "Download all your Github Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description github commits': "Save infos from all your Github Commits."
     'konnector description jawbone': "Download Move and Sleep Data from Jawbone CSV file."
     'konnector description rescuetime': "Download all your activities from Rescue Time"
     'konnector description withings': "Download all your measures from your Withings account."
     'konnector description twitter': "Download all your tweets published on Twitter."
-    'konnector description free mobile': "Download all your phone bills from Free Mobile."
-
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
     'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported"
