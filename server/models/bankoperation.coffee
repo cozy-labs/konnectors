@@ -28,12 +28,15 @@ BankOperation::setBinaryFromFile = (fileId, callback) ->
             attributes =
                 binary:
                     file: file.binary.file
-
+                    fileName: file.name
+                    fileMime: file.mime
             @updateAttributes attributes, (err) =>
                 return callback err if err
 
                 @binary =
                     file: file.binary.file
+                    fileName: file.name
+                    fileMime: file.mime
                 callback()
 
         else
