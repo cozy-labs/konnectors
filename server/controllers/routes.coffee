@@ -17,3 +17,6 @@ module.exports =
 
     'folders':
         get: folders.all
+
+    'folders/:folderId':
+        get: folders.show

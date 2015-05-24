@@ -1,6 +1,7 @@
 BaseView = require '../lib/base_view'
 KonnectorView = require './konnector'
 MenuView = require './menu'
+request = require '../lib/request'
 
 module.exports = class AppView extends BaseView
 
@@ -8,6 +9,18 @@ module.exports = class AppView extends BaseView
     template: require './templates/home'
     defaultTemplate: require './templates/default'
     events: 'click #menu-toggler': 'toggleMenu'
+
+
+    subscriptions:
+        'folders:create': 'onFolderRemoteCreate'
+        'folders:update': 'onFolderRemoteUpdate'
+        'folders:delete': 'onFolderRemoteDelete'
+
+
+    constructor: (options) ->
+        super options
+        @folders = options.folders
+
 
     afterRender: ->
         @container = @$ '.container'
@@ -24,6 +37,7 @@ module.exports = class AppView extends BaseView
 
     showKonnector: (slug) ->
         konnector = @collection.findWhere {slug}
+        paths = @folders.getAllPaths()
 
         # removes existing view, if necessary
         @konnectorView.destroy() if @konnectorView?
@@ -38,7 +52,7 @@ module.exports = class AppView extends BaseView
             # renders and appends view
             @konnectorView = new KonnectorView
                 model: konnector
-                paths: @paths
+                paths: paths
             el = @konnectorView.render().$el
             @$('.container').append el
 
@@ -52,11 +66,35 @@ module.exports = class AppView extends BaseView
             window.router.navigate '', true
 
 
-    setFolders: (paths) -> @paths = paths
+    toggleMenu: ->
+        @$('#menu').toggleClass 'active'
 
 
-    toggleMenu: -> @$('#menu').toggleClass 'active'
+    hideMenu: ->
+        @$('#menu').removeClass 'active'
 
 
-    hideMenu: -> @$('#menu').removeClass 'active'
+    # When a folder is created remotely, it updates the current konnector view
+    # to show changes in the folder list selector.
+    onFolderRemoteCreate: (model) ->
+        @folders.add model
+        @konnectorView.paths = @folders.getAllPaths()
+        @konnectorView.render()
+
+
+    # When a folder is updated remotely, it updates the current konnector view
+    # to show changes in the folder list selector.
+    onFolderRemoteUpdate: (model) ->
+        if model?
+            @folders.add model, merge: true
+            @konnectorView.paths = @folders.getAllPaths()
+            @konnectorView.render()
+
+
+    # When a folder is deleted remotely, it updates the current konnector view
+    # to show changes in the folder list selector.
+    onFolderRemoteDelete: (model) ->
+        @folders.remove model
+        @konnectorView.paths = @folders.getAllPaths()
+        @konnectorView.render()
 

@@ -47,15 +47,24 @@ module.exports =
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
 
     # Konnectors' description
-    'konnector description free': "Téléchargez toutes vos factures internet de Free."
-    'konnector description bouygues': "Téléchargez toutes vos factures téléphones de Bouygues Telecom."
-    'konnector description bouygues box': "Téléchargez toutes vos factures internet de Bouygues Telecom."
-    'konnector description github': "Téléchargez toutes vos factures Github."
+    'konnector description free': "Téléchargez toutes vos factures internet de Free. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description free mobile': "Téléchargez toutes vos factures Free Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description bouygues': "Téléchargez toutes vos factures téléphones de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description bouygues box': "Téléchargez toutes vos factures internet de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description github': "Téléchargez toutes vos factures Github. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description github commits': "Sauvegardez les informations de tous vos commits Github."
     'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone."
     'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime."
     'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."
     'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter."
+    'konnector description twitter': """
+    Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert
+    deux identifiants and deux clés secrètes. Vous pouvez les générer via le
+    href="https://apps.twitter.com/">tableau Twitter de gestion
+    d'applications</a>. Vous pourrez y créez une application. Twitter vous
+    fournira des identifiants pour cette application. Avec ces identifiants
+    ce connecteur pourra récupérer vos données.
+    """
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -66,3 +75,4 @@ module.exports =
     'notification jawbone': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
     'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées"
     'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
+    'notification free mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"

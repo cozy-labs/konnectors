@@ -7,10 +7,12 @@ module.exports = class KonnectorView extends BaseView
     events:
         "click #import-button": "onImportClicked"
 
+
     initialize: (options) ->
         super options
         @paths = options.paths or []
         @listenTo @model, 'change', @render
+
 
     afterRender: =>
         slug = @model.get 'slug'
@@ -138,13 +140,16 @@ module.exports = class KonnectorView extends BaseView
             else
                 @$("##{slug}-first-import").hide()
 
+
     disableImportButton: ->
         @$('#import-button').attr 'aria-busy', true
         @$('#import-button').attr 'aria-disabled', true
 
+
     enableImportButton: ->
         @$('#import-button').attr 'aria-busy', false
         @$('#import-button').attr 'aria-disabled', false
+
 
     onImportClicked: ->
         # don't restart the import if an import is running

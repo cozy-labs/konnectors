@@ -9,3 +9,6 @@ module.exports =
     bankoperation:
         byDate: (doc) ->
             emit doc.date, doc
+
+    folder:
+        byFullPath: (doc) -> emit "#{doc.path}/#{doc.name}", doc

@@ -11,7 +11,8 @@ into your Cozy.
 * Twitter (published tweets)
 * Github (Bill PDFs, commits)
 * B&You (Bill PDFs)
-* Free (Bill PDFs, only Internet)
+* Free (Bill PDFs)
+* Free Mobile (Bill PDFs)
 
 # What we would like to see
 

@@ -5,7 +5,7 @@ h2.name
         .fa.fa-bars
     span #{model.name}
 
-.description=t(model.description)
+.description!= t(model.description)
 .fields
 .buttons
     button#import-button #{t('save and import')}

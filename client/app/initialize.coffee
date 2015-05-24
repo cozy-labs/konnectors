@@ -1,6 +1,7 @@
 request = require './lib/request'
 KonnectorListener = require './realtime'
-KonnectorsCollection = require '../collections/konnectors'
+KonnectorCollection = require '../collections/konnectors'
+FolderCollection = require '../collections/folders'
 AppView = require './views/app_view'
 Router = require './router'
 
@@ -22,20 +23,22 @@ $ ->
 
     # Initialize data
     initKonnectors = window.initKonnectors or []
-    konnectors = new KonnectorsCollection initKonnectors
+    initFolders = window.initFolders or []
+    konnectors = new KonnectorCollection initKonnectors
+    folders = new FolderCollection initFolders
 
     # Initialize realtime
     remoteChangeListener = new KonnectorListener()
     remoteChangeListener.watch konnectors
+    remoteChangeListener.watch folders
 
     # Initialize main view
-    appView = new AppView collection: konnectors
+    appView = new AppView
+        collection: konnectors
+        folders: folders
     appView.render()
 
+    # Init Backbone router
     window.router = new Router {appView}
-
-    # Starts the application after the konnectors have been loaded
-    request.get 'folders', (err, paths) ->
-        appView.setFolders paths
-        Backbone.history.start()
+    Backbone.history.start()
 

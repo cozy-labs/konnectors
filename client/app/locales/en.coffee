@@ -47,15 +47,22 @@ module.exports =
     'error occurred during import:': 'An error occurred during the last import:'
 
     # Konnectors' description
-    'konnector description free': "Download all your internet bills from Free."
-    'konnector description bouygues': "Download all your phone bills from Bouygues Telecom."
-    'konnector description bouygues box': "Download all your internet bills from Bouygues Telecom."
-    'konnector description github': "Download all your Github Bills."
+    'konnector description free': "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files."
+    'konnector description free mobile': "Download all your phone bills from Free Mobile. This konnector requires the Files application to store the bill PDF files."
+    'konnector description bouygues': "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
+    'konnector description bouygues box': "Download all your internet bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
+    'konnector description github': "Download all your Github Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description github commits': "Save infos from all your Github Commits."
     'konnector description jawbone': "Download Move and Sleep Data from Jawbone CSV file."
     'konnector description rescuetime': "Download all your activities from Rescue Time"
     'konnector description withings': "Download all your measures from your Withings account."
-    'konnector description twitter': "Download all your tweets published on Twitter."
+    'konnector description twitter': """
+    Download all your tweets published on Twitter. This konnector requires two
+    identifiers and two secret keys. They can be generated on the <a
+    href="https://apps.twitter.com/">Twitter app dashboard</a>. There you will
+    be able to create an app. They will give you credentials for this app. The
+    current konnector will use them to connect to Twitter and fetch your data.
+    """
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
@@ -66,3 +73,4 @@ module.exports =
     'notification jawbone': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
     'notification rescuetime': "%{smart_count} new activity imported |||| %{smart_count} new activites imported"
     'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
+    'notification free mobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"

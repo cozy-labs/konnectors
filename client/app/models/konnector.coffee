@@ -1,5 +1,7 @@
 module.exports = class KonnectorModel extends Backbone.Model
     rootUrl: "konnectors/"
+    url: ->
+        "konnectors/#{@get 'id'}"
 
     # returns true if the user has configured the konnector
     isConfigured: ->
