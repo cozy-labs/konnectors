@@ -1,42 +1,59 @@
-(function(/*! Brunch !*/) {
+(function() {
   'use strict';
 
-  var globals = typeof window !== 'undefined' ? window : global;
+  var globals = typeof window === 'undefined' ? global : window;
   if (typeof globals.require === 'function') return;
 
   var modules = {};
   var cache = {};
+  var has = ({}).hasOwnProperty;
 
-  var has = function(object, name) {
-    return ({}).hasOwnProperty.call(object, name);
+  var aliases = {};
+
+  var endsWith = function(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
   };
 
-  var expand = function(root, name) {
-    var results = [], parts, part;
-    if (/^\.\.?(\/|$)/.test(name)) {
-      parts = [root, name].join('/').split('/');
-    } else {
-      parts = name.split('/');
-    }
-    for (var i = 0, length = parts.length; i < length; i++) {
-      part = parts[i];
-      if (part === '..') {
-        results.pop();
-      } else if (part !== '.' && part !== '') {
-        results.push(part);
+  var unalias = function(alias, loaderPath) {
+    var start = 0;
+    if (loaderPath) {
+      if (loaderPath.indexOf('components/' === 0)) {
+        start = 'components/'.length;
+      }
+      if (loaderPath.indexOf('/', start) > 0) {
+        loaderPath = loaderPath.substring(start, loaderPath.indexOf('/', start));
       }
     }
-    return results.join('/');
+    var result = aliases[alias + '/index.js'] || aliases[loaderPath + '/deps/' + alias + '/index.js'];
+    if (result) {
+      return 'components/' + result.substring(0, result.length - '.js'.length);
+    }
+    return alias;
   };
 
+  var expand = (function() {
+    var reg = /^\.\.?(\/|$)/;
+    return function(root, name) {
+      var results = [], parts, part;
+      parts = (reg.test(name) ? root + '/' + name : name).split('/');
+      for (var i = 0, length = parts.length; i < length; i++) {
+        part = parts[i];
+        if (part === '..') {
+          results.pop();
+        } else if (part !== '.' && part !== '') {
+          results.push(part);
+        }
+      }
+      return results.join('/');
+    };
+  })();
   var dirname = function(path) {
     return path.split('/').slice(0, -1).join('/');
   };
 
   var localRequire = function(path) {
     return function(name) {
-      var dir = dirname(path);
-      var absolute = expand(dir, name);
+      var absolute = expand(dirname(path), name);
       return globals.require(absolute, path);
     };
   };
@@ -51,21 +68,26 @@
   var require = function(name, loaderPath) {
     var path = expand(name, '.');
     if (loaderPath == null) loaderPath = '/';
+    path = unalias(name, loaderPath);
 
-    if (has(cache, path)) return cache[path].exports;
-    if (has(modules, path)) return initModule(path, modules[path]);
+    if (has.call(cache, path)) return cache[path].exports;
+    if (has.call(modules, path)) return initModule(path, modules[path]);
 
     var dirIndex = expand(path, './index');
-    if (has(cache, dirIndex)) return cache[dirIndex].exports;
-    if (has(modules, dirIndex)) return initModule(dirIndex, modules[dirIndex]);
+    if (has.call(cache, dirIndex)) return cache[dirIndex].exports;
+    if (has.call(modules, dirIndex)) return initModule(dirIndex, modules[dirIndex]);
 
     throw new Error('Cannot find module "' + name + '" from '+ '"' + loaderPath + '"');
   };
 
-  var define = function(bundle, fn) {
+  require.alias = function(from, to) {
+    aliases[to] = from;
+  };
+
+  require.register = require.define = function(bundle, fn) {
     if (typeof bundle === 'object') {
       for (var key in bundle) {
-        if (has(bundle, key)) {
+        if (has.call(bundle, key)) {
           modules[key] = bundle[key];
         }
       }
@@ -74,39 +96,68 @@
     }
   };
 
-  var list = function() {
+  require.list = function() {
     var result = [];
     for (var item in modules) {
-      if (has(modules, item)) {
+      if (has.call(modules, item)) {
         result.push(item);
       }
     }
     return result;
   };
 
+  require.brunch = true;
   globals.require = require;
-  globals.require.define = define;
-  globals.require.register = define;
-  globals.require.list = list;
-  globals.require.brunch = true;
 })();
-require.register("collections/konnectors", function(exports, require, module) {
-var KonnectorsCollection,
+require.register("collections/folders", function(exports, require, module) {
+var FolderCollection,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
-module.exports = KonnectorsCollection = (function(superClass) {
-  extend(KonnectorsCollection, superClass);
+module.exports = FolderCollection = (function(superClass) {
+  extend(FolderCollection, superClass);
 
-  function KonnectorsCollection() {
-    return KonnectorsCollection.__super__.constructor.apply(this, arguments);
+  function FolderCollection() {
+    return FolderCollection.__super__.constructor.apply(this, arguments);
   }
 
-  KonnectorsCollection.prototype.model = require('../models/konnector');
+  FolderCollection.prototype.model = require('../models/folder');
 
-  KonnectorsCollection.prototype.url = 'konnectors/';
+  FolderCollection.prototype.url = 'folders/';
 
-  KonnectorsCollection.prototype.comparator = function(a, b) {
+  FolderCollection.prototype.comparator = function(a, b) {
+    return a.getFullPath().localeCompare(b.getFullPath());
+  };
+
+  FolderCollection.prototype.getAllPaths = function() {
+    return this.models.map(function(model) {
+      return model.getFullPath();
+    });
+  };
+
+  return FolderCollection;
+
+})(Backbone.Collection);
+
+});
+
+require.register("collections/konnectors", function(exports, require, module) {
+var KonnectorCollection,
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+module.exports = KonnectorCollection = (function(superClass) {
+  extend(KonnectorCollection, superClass);
+
+  function KonnectorCollection() {
+    return KonnectorCollection.__super__.constructor.apply(this, arguments);
+  }
+
+  KonnectorCollection.prototype.model = require('../models/konnector');
+
+  KonnectorCollection.prototype.url = 'konnectors/';
+
+  KonnectorCollection.prototype.comparator = function(a, b) {
     if (a.isConfigured() && !b.isConfigured()) {
       return -1;
     } else if (!a.isConfigured() && b.isConfigured()) {
@@ -120,27 +171,29 @@ module.exports = KonnectorsCollection = (function(superClass) {
     }
   };
 
-  return KonnectorsCollection;
+  return KonnectorCollection;
 
 })(Backbone.Collection);
 
 });
 
-;require.register("initialize", function(exports, require, module) {
-var AppView, KonnectorListener, KonnectorsCollection, Router, request;
+require.register("initialize", function(exports, require, module) {
+var AppView, FolderCollection, KonnectorCollection, KonnectorListener, Router, request;
 
 request = require('./lib/request');
 
 KonnectorListener = require('./realtime');
 
-KonnectorsCollection = require('../collections/konnectors');
+KonnectorCollection = require('../collections/konnectors');
+
+FolderCollection = require('../collections/folders');
 
 AppView = require('./views/app_view');
 
 Router = require('./router');
 
 $(function() {
-  var appView, e, initKonnectors, konnectors, locale, locales, polyglot, remoteChangeListener;
+  var appView, e, folders, initFolders, initKonnectors, konnectors, locale, locales, polyglot, remoteChangeListener;
   locale = window.locale;
   polyglot = new Polyglot();
   try {
@@ -153,25 +206,26 @@ $(function() {
   polyglot.extend(locales);
   window.t = polyglot.t.bind(polyglot);
   initKonnectors = window.initKonnectors || [];
-  konnectors = new KonnectorsCollection(initKonnectors);
+  initFolders = window.initFolders || [];
+  konnectors = new KonnectorCollection(initKonnectors);
+  folders = new FolderCollection(initFolders);
   remoteChangeListener = new KonnectorListener();
   remoteChangeListener.watch(konnectors);
+  remoteChangeListener.watch(folders);
   appView = new AppView({
-    collection: konnectors
+    collection: konnectors,
+    folders: folders
   });
   appView.render();
   window.router = new Router({
     appView: appView
   });
-  return request.get('folders', function(err, paths) {
-    appView.setFolders(paths);
-    return Backbone.history.start();
-  });
+  return Backbone.history.start();
 });
 
 });
 
-;require.register("lib/base_view", function(exports, require, module) {
+require.register("lib/base_view", function(exports, require, module) {
 var BaseView,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -218,7 +272,7 @@ module.exports = BaseView = (function(superClass) {
 
 });
 
-;require.register("lib/request", function(exports, require, module) {
+require.register("lib/request", function(exports, require, module) {
 exports.request = function(type, url, data, callback) {
   return $.ajax({
     type: type,
@@ -259,7 +313,7 @@ exports.del = function(url, callback) {
 
 });
 
-;require.register("lib/view_collection", function(exports, require, module) {
+require.register("lib/view_collection", function(exports, require, module) {
 var BaseView, ViewCollection,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -370,7 +424,7 @@ module.exports = ViewCollection = (function(superClass) {
 
 });
 
-;require.register("locales/en", function(exports, require, module) {
+require.register("locales/en", function(exports, require, module) {
 module.exports = {
   'bad credentials': 'Bad Credentials',
   'no bills retrieved': 'No bills retrieved',
@@ -409,15 +463,16 @@ module.exports = {
   'notification import error': 'an error occurred during import of data',
   'error occurred during import.': 'An error occurred during the last import.',
   'error occurred during import:': 'An error occurred during the last import:',
-  'konnector description free': "Download all your internet bills from Free.",
-  'konnector description bouygues': "Download all your phone bills from Bouygues Telecom.",
-  'konnector description bouygues box': "Download all your internet bills from Bouygues Telecom.",
-  'konnector description github': "Download all your Github Bills.",
+  'konnector description free': "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files.",
+  'konnector description free mobile': "Download all your phone bills from Free Mobile. This konnector requires the Files application to store the bill PDF files.",
+  'konnector description bouygues': "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files.",
+  'konnector description bouygues box': "Download all your internet bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files.",
+  'konnector description github': "Download all your Github Bills. This konnector requires the Files application to store the bill PDF files.",
   'konnector description github commits': "Save infos from all your Github Commits.",
   'konnector description jawbone': "Download Move and Sleep Data from Jawbone CSV file.",
   'konnector description rescuetime': "Download all your activities from Rescue Time",
   'konnector description withings': "Download all your measures from your Withings account.",
-  'konnector description twitter': "Download all your tweets published on Twitter.",
+  'konnector description twitter': "Download all your tweets published on Twitter. This konnector requires two\nidentifiers and two secret keys. They can be generated on the <a\nhref=\"https://apps.twitter.com/\">Twitter app dashboard</a>. There you will\nbe able to create an app. They will give you credentials for this app. The\ncurrent konnector will use them to connect to Twitter and fetch your data.",
   'notification prefix': "Konnector %{name}:",
   'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported",
   'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported",
@@ -425,12 +480,13 @@ module.exports = {
   'notification github': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
   'notification jawbone': "%{smart_count} new measure imported |||| %{smart_count} new measures imported",
   'notification rescuetime': "%{smart_count} new activity imported |||| %{smart_count} new activites imported",
-  'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported"
+  'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported",
+  'notification free mobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
 };
 
 });
 
-;require.register("locales/fr", function(exports, require, module) {
+require.register("locales/fr", function(exports, require, module) {
 module.exports = {
   'bad credentials': 'Mauvais identifiants',
   'no bills retrieved': 'Pas de facture trouvées',
@@ -469,15 +525,17 @@ module.exports = {
   'notification import error': "une erreur est survenue pendant l'importation des données",
   'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.',
   'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :',
-  'konnector description free': "Téléchargez toutes vos factures internet de Free.",
-  'konnector description bouygues': "Téléchargez toutes vos factures téléphones de Bouygues Telecom.",
-  'konnector description bouygues box': "Téléchargez toutes vos factures internet de Bouygues Telecom.",
-  'konnector description github': "Téléchargez toutes vos factures Github.",
+  'konnector description free': "Téléchargez toutes vos factures internet de Free. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
+  'konnector description free mobile': "Téléchargez toutes vos factures Free Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
+  'konnector description bouygues': "Téléchargez toutes vos factures téléphones de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
+  'konnector description bouygues box': "Téléchargez toutes vos factures internet de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
+  'konnector description github': "Téléchargez toutes vos factures Github. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
   'konnector description github commits': "Sauvegardez les informations de tous vos commits Github.",
   'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone.",
   'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime.",
   'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings.",
   'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter.",
+  'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert\ndeux identifiants and deux clés secrètes. Vous pouvez les générer via le\nhref=\"https://apps.twitter.com/\">tableau Twitter de gestion\nd'applications</a>. Vous pourrez y créez une application. Twitter vous\nfournira des identifiants pour cette application. Avec ces identifiants\nce connecteur pourra récupérer vos données.",
   'notification prefix': "Konnector %{name} :",
   'notification github commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés",
   'notification twitter': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés",
@@ -485,12 +543,41 @@ module.exports = {
   'notification github': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
   'notification jawbone': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées",
   'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées",
-  'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
+  'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées",
+  'notification free mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
 };
 
 });
 
-;require.register("models/konnector", function(exports, require, module) {
+require.register("models/folder", function(exports, require, module) {
+var FolderModel,
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+module.exports = FolderModel = (function(superClass) {
+  extend(FolderModel, superClass);
+
+  function FolderModel() {
+    return FolderModel.__super__.constructor.apply(this, arguments);
+  }
+
+  FolderModel.prototype.rootUrl = 'folders/';
+
+  FolderModel.prototype.url = function() {
+    return "folders/" + (this.get('id'));
+  };
+
+  FolderModel.prototype.getFullPath = function() {
+    return (this.get('path')) + "/" + (this.get('name'));
+  };
+
+  return FolderModel;
+
+})(Backbone.Model);
+
+});
+
+require.register("models/konnector", function(exports, require, module) {
 var KonnectorModel,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -503,6 +590,10 @@ module.exports = KonnectorModel = (function(superClass) {
   }
 
   KonnectorModel.prototype.rootUrl = "konnectors/";
+
+  KonnectorModel.prototype.url = function() {
+    return "konnectors/" + (this.get('id'));
+  };
 
   KonnectorModel.prototype.isConfigured = function() {
     var field, fieldValue, fieldValues, fields, noEmptyValue, numFieldValues, numFields, ref;
@@ -524,12 +615,14 @@ module.exports = KonnectorModel = (function(superClass) {
 
 });
 
-;require.register("realtime", function(exports, require, module) {
-var Konnector, KonnectorListener,
+require.register("realtime", function(exports, require, module) {
+var Folder, Konnector, KonnectorListener,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 Konnector = require('../models/konnector');
+
+Folder = require('../models/folder');
 
 module.exports = KonnectorListener = (function(superClass) {
   extend(KonnectorListener, superClass);
@@ -539,24 +632,37 @@ module.exports = KonnectorListener = (function(superClass) {
   }
 
   KonnectorListener.prototype.models = {
-    konnector: Konnector
+    konnector: Konnector,
+    folder: Folder
   };
 
-  KonnectorListener.prototype.events = ['konnector.update'];
+  KonnectorListener.prototype.events = ['konnector.update', 'folder.create', 'folder.update', 'folder.delete'];
 
   KonnectorListener.prototype.onRemoteUpdate = function(model) {
-    var formattedDate, isImporting, lastImport, slug;
-    isImporting = model.get('isImporting');
-    slug = model.get('slug');
-    lastImport = model.get('lastImport');
-    formattedDate = moment(lastImport).format(t('date format'));
-    if (isImporting) {
-      return $(".konnector-" + slug + " .last-import").html(t('importing...'));
-    } else if (lastImport != null) {
-      return $(".konnector-" + slug + " .last-import").html(formattedDate);
+    var formattedDate, isImporting, lastImport, ref, slug;
+    if ((model != null ? (ref = model.get('docType')) != null ? ref.toLowerCase() : void 0 : void 0) === 'konnector') {
+      isImporting = model.get('isImporting');
+      slug = model.get('slug');
+      lastImport = model.get('lastImport');
+      formattedDate = moment(lastImport).format(t('date format'));
+      if (isImporting) {
+        return $(".konnector-" + slug + " .last-import").html(t('importing...'));
+      } else if (lastImport != null) {
+        return $(".konnector-" + slug + " .last-import").html(formattedDate);
+      } else {
+        return $(".konnector-" + slug + " .last-import").html(t('no import performed'));
+      }
     } else {
-      return $(".konnector-" + slug + " .last-import").html(t('no import performed'));
+      return Backbone.Mediator.pub('folders:update', new Folder(model.attributes));
     }
+  };
+
+  KonnectorListener.prototype.onRemoteCreate = function(model) {
+    return Backbone.Mediator.pub('folders:create', model);
+  };
+
+  KonnectorListener.prototype.onRemoteDelete = function(model) {
+    return Backbone.Mediator.pub('folders:delete', model);
   };
 
   return KonnectorListener;
@@ -565,7 +671,7 @@ module.exports = KonnectorListener = (function(superClass) {
 
 });
 
-;require.register("router", function(exports, require, module) {
+require.register("router", function(exports, require, module) {
 var Router,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -601,8 +707,8 @@ module.exports = Router = (function(superClass) {
 
 });
 
-;require.register("views/app_view", function(exports, require, module) {
-var AppView, BaseView, KonnectorView, MenuView,
+require.register("views/app_view", function(exports, require, module) {
+var AppView, BaseView, KonnectorView, MenuView, request,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -612,12 +718,10 @@ KonnectorView = require('./konnector');
 
 MenuView = require('./menu');
 
+request = require('../lib/request');
+
 module.exports = AppView = (function(superClass) {
   extend(AppView, superClass);
-
-  function AppView() {
-    return AppView.__super__.constructor.apply(this, arguments);
-  }
 
   AppView.prototype.el = 'body';
 
@@ -628,6 +732,17 @@ module.exports = AppView = (function(superClass) {
   AppView.prototype.events = {
     'click #menu-toggler': 'toggleMenu'
   };
+
+  AppView.prototype.subscriptions = {
+    'folders:create': 'onFolderRemoteCreate',
+    'folders:update': 'onFolderRemoteUpdate',
+    'folders:delete': 'onFolderRemoteDelete'
+  };
+
+  function AppView(options) {
+    AppView.__super__.constructor.call(this, options);
+    this.folders = options.folders;
+  }
 
   AppView.prototype.afterRender = function() {
     this.container = this.$('.container');
@@ -644,10 +759,11 @@ module.exports = AppView = (function(superClass) {
   };
 
   AppView.prototype.showKonnector = function(slug) {
-    var defaultView, el, konnector;
+    var defaultView, el, konnector, paths;
     konnector = this.collection.findWhere({
       slug: slug
     });
+    paths = this.folders.getAllPaths();
     if (this.konnectorView != null) {
       this.konnectorView.destroy();
     }
@@ -659,7 +775,7 @@ module.exports = AppView = (function(superClass) {
     if (konnector != null) {
       this.konnectorView = new KonnectorView({
         model: konnector,
-        paths: this.paths
+        paths: paths
       });
       el = this.konnectorView.render().$el;
       this.$('.container').append(el);
@@ -671,10 +787,6 @@ module.exports = AppView = (function(superClass) {
     }
   };
 
-  AppView.prototype.setFolders = function(paths) {
-    return this.paths = paths;
-  };
-
   AppView.prototype.toggleMenu = function() {
     return this.$('#menu').toggleClass('active');
   };
@@ -683,13 +795,35 @@ module.exports = AppView = (function(superClass) {
     return this.$('#menu').removeClass('active');
   };
 
+  AppView.prototype.onFolderRemoteCreate = function(model) {
+    this.folders.add(model);
+    this.konnectorView.paths = this.folders.getAllPaths();
+    return this.konnectorView.render();
+  };
+
+  AppView.prototype.onFolderRemoteUpdate = function(model) {
+    if (model != null) {
+      this.folders.add(model, {
+        merge: true
+      });
+      this.konnectorView.paths = this.folders.getAllPaths();
+      return this.konnectorView.render();
+    }
+  };
+
+  AppView.prototype.onFolderRemoteDelete = function(model) {
+    this.folders.remove(model);
+    this.konnectorView.paths = this.folders.getAllPaths();
+    return this.konnectorView.render();
+  };
+
   return AppView;
 
 })(BaseView);
 
 });
 
-;require.register("views/konnector", function(exports, require, module) {
+require.register("views/konnector", function(exports, require, module) {
 var BaseView, KonnectorView,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -720,11 +854,12 @@ module.exports = KonnectorView = (function(superClass) {
   };
 
   KonnectorView.prototype.afterRender = function() {
-    var fieldHtml, formattedDate, i, importInterval, intervals, isImporting, key, lastAutoImport, lastImport, len, name, path, ref, ref1, selected, slug, val, value, values;
+    var amounts, fieldHtml, formattedDate, i, importInterval, intervals, isImporting, isLater, key, lastAutoImport, lastImport, len, name, path, ref, ref1, selected, slug, val, value, values;
     slug = this.model.get('slug');
     lastImport = this.model.get('lastImport');
     isImporting = this.model.get('isImporting');
     lastAutoImport = this.model.get('lastAutoImport');
+    amounts = this.model.get('amounts');
     this.error = this.$('.error');
     if ((this.model.get('errorMessage') == null) || isImporting) {
       this.error.hide();
@@ -786,7 +921,7 @@ module.exports = KonnectorView = (function(superClass) {
       selected = importInterval === key ? 'selected' : '';
       fieldHtml += "<option value=\"" + key + "\" " + selected + ">" + value + "</option>";
     }
-    fieldHtml += "\n</select>\n<span id=\"" + slug + "-first-import\">\n<span id=\"" + slug + "-first-import-text\">\n<a id=\"" + slug + "-first-import-link\" href=\"#\">Select a starting date</a></span>\n<span id=\"" + slug + "-first-import-date\"><span>From</span>\n<input id=\"" + slug + "-import-date\" class=\"autoimport\" maxlength=\"8\" type=\"text\"></input>\n</span></span>\n</div>\n</div>";
+    fieldHtml += "\n</select>\n<span id=\"" + slug + "-first-import\">\n<span id=\"" + slug + "-first-import-text\">\n<a id=\"" + slug + "-first-import-link\" href=\"#\">Select a starting date</a></span>\n<span id=\"" + slug + "-first-import-date\"><span>From</span>\n<input id=\"" + slug + "-import-date\" class=\"autoimport\" maxlength=\"8\" type=\"text\">\n</input>\n</span></span>\n</div>\n</div>";
     this.$('.fields').append(fieldHtml);
     this.$("#" + slug + "-first-import-date").hide();
     this.$("#" + slug + "-import-date").datepicker({
@@ -794,10 +929,12 @@ module.exports = KonnectorView = (function(superClass) {
       dateFormat: "dd-mm-yy"
     });
     if (this.$("#" + slug + "-autoimport-input").val() !== 'none' && this.$("#" + slug + "-autoimport-input").val() !== 'hour') {
-      if ((lastAutoImport != null) && moment(lastAutoImport).valueOf() > moment().valueOf()) {
+      isLater = moment(lastAutoImport).valueOf() > moment().valueOf();
+      if ((lastAutoImport != null) && isLater) {
+        val = moment(lastAutoImport).format('DD-MM-YYYY');
         this.$("#" + slug + "-first-import-date").show();
         this.$("#" + slug + "-first-import-text").hide();
-        this.$("#" + slug + "-import-date").val(moment(lastAutoImport).format('DD-MM-YYYY'));
+        this.$("#" + slug + "-import-date").val(val);
       } else {
         this.$("#" + slug + "-first-import").show();
       }
@@ -852,9 +989,7 @@ module.exports = KonnectorView = (function(superClass) {
         importInterval: importInterval
       };
       return this.model.save(data, {
-        success: (function(_this) {
-          return function(model, success) {};
-        })(this),
+        success: function(model, success) {},
         error: (function(_this) {
           return function(model, err) {
             if (err.status >= 400 && err.status !== 504) {
@@ -873,7 +1008,7 @@ module.exports = KonnectorView = (function(superClass) {
 
 });
 
-;require.register("views/menu", function(exports, require, module) {
+require.register("views/menu", function(exports, require, module) {
 var KonnectorsView, MenuItemView, ViewCollection,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -930,7 +1065,7 @@ module.exports = KonnectorsView = (function(superClass) {
 
 });
 
-;require.register("views/menu_item", function(exports, require, module) {
+require.register("views/menu_item", function(exports, require, module) {
 var BaseView, MenuItemView,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -989,7 +1124,7 @@ module.exports = MenuItemView = (function(superClass) {
 
 });
 
-;require.register("views/templates/default", function(exports, require, module) {
+require.register("views/templates/default", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1019,7 +1154,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/home", function(exports, require, module) {
+require.register("views/templates/home", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1031,7 +1166,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/konnector", function(exports, require, module) {
+require.register("views/templates/konnector", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1039,7 +1174,7 @@ with (locals || {}) {
 var interp;
 buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">');
 var __val__ = t(model.description)
-buf.push(escape(null == __val__ ? "" : __val__));
+buf.push(null == __val__ ? "" : __val__);
 buf.push('</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('save and import')) == null ? '' : interp) + '</button></div>');
 if ( model.errorMessage)
 {
@@ -1061,7 +1196,7 @@ buf.push('<div class="status">' + escape((interp = status) == null ? '' : interp
 
 buf.push('<a');
 buf.push(attrs({ 'href':("/apps/databrowser/#search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
-buf.push('>' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
+buf.push('>' + escape((interp = name) == null ? '' : interp) + '</a> &nbsp;(' + escape((interp = model.amounts[name.toLowerCase()] || 0) == null ? '' : interp) + ') &nbsp;');
     }
 
   } else {
@@ -1071,7 +1206,7 @@ buf.push('>' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
 
 buf.push('<a');
 buf.push(attrs({ 'href':("/apps/databrowser/#search/all/" + (name) + ""), 'target':("_blank") }, {"href":true,"target":true}));
-buf.push('>' + escape((interp = name) == null ? '' : interp) + '</a>&nbsp;');
+buf.push('>' + escape((interp = name) == null ? '' : interp) + '</a> &nbsp;(' + escape((interp = model.amounts[name.toLowerCase()] || 0) == null ? '' : interp) + ') &nbsp;');
     }
 
   }
@@ -1083,7 +1218,7 @@ return buf.join("");
 };
 });
 
-;require.register("views/templates/menu_item", function(exports, require, module) {
+require.register("views/templates/menu_item", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1118,5 +1253,5 @@ return buf.join("");
 };
 });
 
-;
+
 //# sourceMappingURL=app.js.map
