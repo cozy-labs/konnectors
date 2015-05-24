@@ -1,4 +1,4 @@
-module.exports = class KonnectorsCollection extends Backbone.Collection
+module.exports = class KonnectorCollection extends Backbone.Collection
     model: require '../models/konnector'
     url: 'konnectors/'
 
