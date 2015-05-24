@@ -6,25 +6,25 @@ cheerio = require 'cheerio'
 fs = require 'fs'
 async = require 'async'
 pngjs = require 'pngjs-image'
-
-
+request = require 'request'
 
 File = require '../models/file'
 fetcher = require '../lib/fetcher'
 filterExisting = require '../lib/filter_existing'
 saveDataAndFile = require '../lib/save_data_and_file'
 linkBankOperation = require '../lib/link_bank_operation'
-
 localization = require '../lib/localization_manager'
 
 log = require('printit')
     prefix: "Free Mobile"
     date: true
+
+
 #Useragent is required
-request = require 'request'
 request = request.defaults
     headers:
         "User-Agent": "Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:37.0) Gecko/20100101 Firefox/37.0"
+
 
 # Models
 
@@ -36,6 +36,7 @@ PhoneBill = americano.getModel 'PhoneBill',
 
 PhoneBill.all = (callback) ->
     PhoneBill.request 'byDate', callback
+
 
 # Konnector
 
@@ -90,7 +91,8 @@ module.exports =
                     notifContent = localization.t localizationKey, options
 
                 callback err, notifContent
-                
+
+
 #Disconnection of Free Mobile website
 logOut =  (requiredFields, billInfos, data, next) ->
     logOutUrl = "https://mobile.free.fr/moncompte/index.php?logout=user"
@@ -103,7 +105,6 @@ logOut =  (requiredFields, billInfos, data, next) ->
             log.error "Couldn't logout of Free Mobile website"
             next err
         next()
-
 
 
 # Procedure to prepare the login to Free mobile website.
@@ -131,7 +132,8 @@ prepareLogIn = (requiredFields, billInfos, data, next) ->
                 imagePath : imagePath
                 position : position
         next()
-                
+
+
 getImageAndIdentifyNumbers = (requiredFields, billInfos, data, next) ->
     #For each "position", we download the image, and identify it.
     async.map data.imageUrlAndPosition, getImageAndIdentifyNumber, (err, results) ->
@@ -142,16 +144,21 @@ getImageAndIdentifyNumbers = (requiredFields, billInfos, data, next) ->
         next()
 
 
-            
-
 logIn = (requiredFields, billInfos, data, next) ->
     homeUrl = "https://mobile.free.fr/moncompte/index.php?page=home"
     baseUrl = "https://mobile.free.fr/moncompte/"
-    #We transcode the login entered by the user into the login accepted by the website. Each number is changed into its position
+
+    # We transcode the login entered by the user into the login accepted by the
+    # website. Each number is changed into its position
     transcodedLogin = transcodeLogin requiredFields.login, data.conversionTable
-    #The login is unified (each repetition of a number in the login is deleted) to download only once the small image (like a real browser would do)
+
+    # The login is unified (each repetition of a number in the login is
+    # deleted) to download only once the small image (like a real browser would
+    # do)
     uniqueLogin = unifyLogin transcodedLogin
-    #Each small image is downloaded. The small image is the image downloaded when the user clicks on the image keyboard
+
+    # Each small image is downloaded. The small image is the image downloaded
+    # when the user clicks on the image keyboard
     async.eachSeries uniqueLogin, getSmallImage, (err) ->
         if err?
             next err
@@ -159,7 +166,7 @@ logIn = (requiredFields, billInfos, data, next) ->
         login =""
         for i in transcodedLogin
             login += i
-        
+
         form =
             login_abo: login
             pwd_abo: requiredFields.password
@@ -171,13 +178,15 @@ logIn = (requiredFields, billInfos, data, next) ->
             url: homeUrl
             headers :
                 referer : homeUrl
-        #We login to Free Mobile
+
+        # We login to Free Mobile
         request options, (err, res, body) ->
             if err? or not res.headers.location? or res.statusCode isnt 302
                 log.error "Authentification error"
                 next 'bad credentials'
             else
-                #We check that there is no connection form (the statusCode is always 302 even if the credential are wrong)
+                # We check that there is no connection form (the statusCode is
+                # always 302 even if the credential are wrong)
                 $ = cheerio.load body
                 connectionForm = $('#form_connect')
                 if connectionForm.length isnt 0
@@ -193,6 +202,8 @@ logIn = (requiredFields, billInfos, data, next) ->
                 if err?
                     next err
                 next()
+
+
 getBillPage = (requiredFields, billInfos, data, next) ->
     billUrl = "https://mobile.free.fr/moncompte/index.php?page=suiviconso"
     options =
@@ -204,6 +215,7 @@ getBillPage = (requiredFields, billInfos, data, next) ->
             next err
         data.html = body
         next()
+
 
 # Parse the fetched page to extract bill data.
 parseBillPage = (requiredFields, bills, data, next) ->
@@ -229,9 +241,11 @@ parseBillPage = (requiredFields, bills, data, next) ->
         bills.fetched.push bill
     next()
 
+
 getImageAndIdentifyNumber = (imageInfo, callback) ->
     baseUrl = "https://mobile.free.fr/moncompte/"
-    #We download the sound number imageInfo.position. It is necessary to download all the sounds, like a browser would do
+    # We download the sound number imageInfo.position. It is necessary to
+    # download all the sounds, like a browser would do
     getSound imageInfo.position, (err) ->
         if err?
             callback err, null
@@ -240,7 +254,7 @@ getImageAndIdentifyNumber = (imageInfo, callback) ->
             jar: true
             url: "#{baseUrl}#{imageInfo.imagePath}"
             encoding : null
-        #We dowload the image located at imageInfo.imagePath
+        # We dowload the image located at imageInfo.imagePath
         request options, (err, res, body) ->
             if err?
                 callback err, null
@@ -248,7 +262,8 @@ getImageAndIdentifyNumber = (imageInfo, callback) ->
                 if resultImage.getWidth() < 24 or resultImage.getHeight() < 28
                     callback 'Wrong image size', null
                 stringcheck = ""
-                #We go through PNG image, but not on all the pixels, as the numbers are only drawn in one specific area
+                # We go through PNG image, but not on all the pixels, as the
+                # numbers are only drawn in one specific area
                 for x in [15..22]
                     for y in [12..26]
                         idx = resultImage.getIndex x, y
@@ -263,7 +278,8 @@ getImageAndIdentifyNumber = (imageInfo, callback) ->
                     position : "#{imageInfo.position}"
                     numberValue : "#{getNumberValue stringcheck}"
                 callback err, image
-                
+
+
 getSound = (position, callback) ->
     baseUrl = "https://mobile.free.fr/moncompte/"
     options =
@@ -277,8 +293,9 @@ getSound = (position, callback) ->
             callback err
         callback null
 
+
 getNumberValue = (stringcheck) ->
-#symbols contains all the digits [0-9] with 0 = white pixel, 1 = red pixel
+    # symbols contains all the digits [0-9] with 0 = white pixel, 1 = red pixel
     symbols =[
         '001111111111110011111111111111111111111111111110000000000011110000000000011111111111111111011111111111111001111111111110' #0
         '001110000000000001110000000000001110000000000011111111111111111111111111111111111111111111000000000000000000000000000000' #1
@@ -293,12 +310,15 @@ getNumberValue = (stringcheck) ->
         ]
     distanceMin = stringcheck.length
     idxDistanceMin = 10
+
     for i in [0..9]
-        if stringcheck is symbols[i]
         # There is a perfect match with an element of symbols
+        if stringcheck is symbols[i]
             return i
+
+        # As there is no perfect match with an element of symbols, we look for
+        # the closest symbol
         else
-        #As there is no perfect match with an element of symbols, we look for the closest symbol
             distance = 0
             for j in [0..stringcheck.length-1]
                 if stringcheck[j] isnt symbols[i][j]
@@ -306,7 +326,9 @@ getNumberValue = (stringcheck) ->
             if distance < distanceMin
                 idxDistanceMin = i
                 distanceMin = distance
+
     return idxDistanceMin
+
 
 transcodeLogin = (login, conversionTable) ->
     transcoded = []
@@ -315,6 +337,7 @@ transcodeLogin = (login, conversionTable) ->
             if conversion.numberValue is i
                 transcoded.push conversion.position
     return transcoded
+
 
 unifyLogin = (login) ->
     unique = []
@@ -327,8 +350,9 @@ unifyLogin = (login) ->
             unique.push digit
     return unique
 
+
+# Small images are downloaded like a browser woulds do.
 getSmallImage = (digit, callback) ->
-#Small images are downloaded like a browser woulds do.
     baseUrl = "https://mobile.free.fr/moncompte/"
     options =
         method: 'GET'
@@ -340,9 +364,4 @@ getSmallImage = (digit, callback) ->
             callback err
         #Timer is necessary otherwise the connection is not possible
         setTimeout callback, 500, null
-        
-        
 
-        
-
-        

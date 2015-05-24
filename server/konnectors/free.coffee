@@ -96,10 +96,15 @@ logIn = (requiredFields, billInfos, data, next) ->
         url: loginUrl
 
     request options, (err, res, body) ->
-        console.log body
-        if err or not res.headers.location? or res.statusCode isnt 302 or res.headers.location.indexOf "error" isnt -1
+
+        isNoLocation = not res.headers.location?
+        isNot302 = res.statusCode isnt 302
+        isError = res.headers.location.indexOf "error" isnt -1
+
+        if err or isNoLocation or isNot302 or isError
             log.error "Authentification error"
             next 'bad credentials'
+
         else
             location = res.headers.location
             parameters = location.split('?')[1]
