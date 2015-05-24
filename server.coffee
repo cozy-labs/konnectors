@@ -14,7 +14,13 @@ params =
     root: __dirname
 application = module.exports = (callback) ->
     americano.start params, (app, server) ->
-        realtime = RealtimeAdapter server, ['konnector.update']
+
+        # Configure realtime listening.
+        realtime = RealtimeAdapter server, [
+            'konnector.update'
+            'folder.*'
+        ]
+
         localization.initialize ->
             initKonnectors ->
                 patchKonnectors ->

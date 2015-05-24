@@ -1,15 +1,19 @@
 americano = require 'americano-cozy'
 
+
+# Folder model is used to list the list of available folders in the user's
+# Cozy. It's required for konnectors that download files like bill PDFs.
 module.exports = Folder = americano.getModel 'Folder',
     path: String
     name: String
 
+
 Folder::getFullPath = ->
     "#{@path}/#{@name}"
 
-Folder.allPath = (callback) ->
+
+Folder.all = (callback) ->
     Folder.request "byFullPath", (err, folders) ->
         return callback err if err
-        paths = []
-        paths.push folder.getFullPath() for folder in folders
-        return callback null, paths
+        callback null, folders
+
