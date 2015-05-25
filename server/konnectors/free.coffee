@@ -99,7 +99,8 @@ logIn = (requiredFields, billInfos, data, next) ->
 
         isNoLocation = not res.headers.location?
         isNot302 = res.statusCode isnt 302
-        isError = res.headers.location.indexOf "error" isnt -1
+        isError = not res.headers.location? or
+            res.headers.location.indexOf "error" isnt -1
 
         if err or isNoLocation or isNot302 or isError
             log.error "Authentification error"
