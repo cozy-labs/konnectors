@@ -77,7 +77,7 @@ module.exports =
                 log: log
                 model: PhoneBill
                 identifier: 'free mobile'
-                dateDelta: 10
+                dateDelta: 14
                 amountDelta: 0.1
             )
             .args(requiredFields, {}, {})
