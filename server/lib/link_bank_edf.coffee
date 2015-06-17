@@ -102,7 +102,11 @@ class BankOperationLinker
             else
                 entry = entries[0]
                 log.info entry
-                operation.setAppUrl "/#apps/edf/factures/?payment=#{entry.number}", (err) =>
+                appDetails =
+                    url : "/#apps/edf/factures/?payment=#{entry.number}"
+                    linkTranslationKey: "operations.edf_details"
+                    linkPlainEnglish: "Go to EDF app"
+                operation.setAppDetails , (err) =>
                     if err
                         @log.raw err
                     else

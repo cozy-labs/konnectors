@@ -11,7 +11,7 @@ module.exports = BankOperation = americano.getModel 'bankoperation',
     raw: String
     dateImport: Date
     categoryId: String
-    appUrl: String
+    appDetails: Object
     binary: (x) -> x
 
 
@@ -41,10 +41,8 @@ BankOperation::setBinaryFromFile = (fileId, callback) ->
             callback new Error "No binary for this file #{fileId}"
 
 # Set binary of given file (represented by its id) to the current operation
-BankOperation::setAppUrl = (appUrl, callback) ->
-
-
-    @updateAttributes appUrl: appUrl, (err) =>
+BankOperation::setAppDetails = (appDetails, callback) ->
+    @updateAttributes appDetails: appDetails, (err) =>
         return callback err if err
         @appUrl = appUrl
         callback()
