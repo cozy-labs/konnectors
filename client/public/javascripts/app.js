@@ -535,7 +535,9 @@ module.exports = {
   'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime.",
   'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings.",
   'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter.",
+  'konnector description edf': "Faites un rapprochement entre vos factures et prelevements EDF et l'application Kresus.",
   'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert\ndeux identifiants and deux clés secrètes. Vous pouvez les générer via le\nhref=\"https://apps.twitter.com/\">tableau Twitter de gestion\nd'applications</a>. Vous pourrez y créez une application. Twitter vous\nfournira des identifiants pour cette application. Avec ces identifiants\nce connecteur pourra récupérer vos données.",
+  'link edf kresus': "Rapprocher maintenant",
   'notification prefix': "Konnector %{name} :",
   'notification github commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés",
   'notification twitter': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés",
@@ -1175,7 +1177,15 @@ var interp;
 buf.push('<!-- .konnector --><h2 class="name"><div id="menu-toggler"><div class="fa fa-bars"></div></div><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></h2><div class="description">');
 var __val__ = t(model.description)
 buf.push(null == __val__ ? "" : __val__);
-buf.push('</div><div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('save and import')) == null ? '' : interp) + '</button></div>');
+buf.push('</div>');
+if ( model.slug != 'edf')
+{
+buf.push('<div class="fields"></div><div class="buttons"><button id="import-button">' + escape((interp = t('save and import')) == null ? '' : interp) + '</button></div>');
+}
+else
+{
+buf.push('<div class="buttons"><button id="import-button">' + escape((interp = t('link edf kresus')) == null ? '' : interp) + '</button></div>');
+}
 if ( model.errorMessage)
 {
 buf.push('<div class="error"><span class="error">');
