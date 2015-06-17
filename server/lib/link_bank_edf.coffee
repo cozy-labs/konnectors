@@ -102,10 +102,9 @@ class BankOperationLinker
             else
                 entry = entries[0]
                 log.info entry
-                operation.setAppUrl "/edf/factures/?payment=#{entry.number}", (err) =>
+                operation.setAppUrl "/#apps/edf/factures/?payment=#{entry.number}", (err) =>
                     if err
                         @log.raw err
-
                     else
                         @log.debug """
 Binary #{operation.appUrl} linked with operation:
