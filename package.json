@@ -92,6 +92,9 @@
     },
     "CozyInstance": {
       "description": "This information is needed to localize the application in your language."
+    },
+    "PaymentSchedule": {
+      "description": "Les prélevement EDF pour faire un raprochement bancaire."
     }
   },
   "cozy-displayName": "Konnectors",
