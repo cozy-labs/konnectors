@@ -45,7 +45,6 @@ module.exports =
         phoneNumber: "text"
         password: "password"
         folderPath: "folder"
-
     models:
         PaymentSchedule: PaymentSchedule
 

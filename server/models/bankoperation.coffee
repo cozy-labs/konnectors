@@ -43,7 +43,8 @@ BankOperation::setBinaryFromFile = (fileId, callback) ->
 # Set binary of given file (represented by its id) to the current operation
 BankOperation::setAppDetails = (appDetails, callback) ->
     @updateAttributes appDetails: appDetails, (err) =>
+        console.log appDetails, err
         return callback err if err
-        @appUrl = appUrl
+        @appDetails = appDetails
         callback()
 
