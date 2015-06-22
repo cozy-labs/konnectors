@@ -153,7 +153,7 @@ logCommits = (requiredFields, entries, data, next) ->
                     data =
                         date: commit.commit.author.date
                         sha: commit.sha
-                        parent: commit.parents[0].sha
+                        parent: if commit.parents.length > 0 then commit.parents[0].sha else null
                         url: commit.url
                         author: commit.commit.author.name
                         email: commit.commit.author.email
