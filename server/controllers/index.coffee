@@ -15,8 +15,7 @@ module.exports.main = (req, res) ->
 
         {konnectors, instance, folders} = results
         locale = instance?.locale or 'en'
-
-        res.render 'index.jade', imports: """
+        res.render 'index', imports: """
             window.locale = "#{locale}";
             window.initKonnectors = #{JSON.stringify konnectors};
             window.initFolders = #{JSON.stringify folders};

@@ -1,8 +1,17 @@
 path = require 'path'
 americano = require 'americano'
+getTemplateExt = require './lib/get_template_ext'
 
 config =
     common:
+        set:
+            'view engine': getTemplateExt()
+            'views': path.resolve __dirname, '../client'
+
+        engine:
+            js: (path, locales, callback) ->
+                callback null, require(path)(locales)
+
         use: [
             americano.bodyParser()
             americano.methodOverride()
@@ -12,8 +21,6 @@ config =
             americano.static __dirname + '/../client/public',
         ]
 
-        set:
-            views: path.resolve __dirname, '../client'
 
     development: [
         americano.logger 'dev'
