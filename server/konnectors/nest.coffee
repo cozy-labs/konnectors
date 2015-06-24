@@ -1,5 +1,4 @@
 NestApi = require('nest-api')
-#nestApi = new NestApi('stephane.bernasconi@live.fr', '111999Cl')
 
 americano = require 'americano-cozy'
 localization = require '../lib/localization_manager'
