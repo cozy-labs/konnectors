@@ -176,7 +176,7 @@ logCommits = function(requiredFields, entries, data, next) {
           data = {
             date: commit.commit.author.date,
             sha: commit.sha,
-            parent: commit.parents[0].sha,
+            parent: commit.parents.length > 0 ? commit.parents[0].sha : null,
             url: commit.url,
             author: commit.commit.author.name,
             email: commit.commit.author.email,
