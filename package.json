@@ -5,8 +5,7 @@
     "node = 0.8.x"
   ],
   "description": "Store data from the web in your Cozy",
-  "license": "AGPL",
-  "repository": {
+  "license": "AGPL", "repository": {
     "type": "git",
     "url": "https://github.com/frankrousseau/konnectors.git"
   },
@@ -89,6 +88,9 @@
     },
     "Commit": {
       "description": "Commit infos imported from Github."
+    },
+    "NestTemperature": {
+      "description": "Temperatures measured by your Nest Thermostat."
     },
     "CozyInstance": {
       "description": "This information is needed to localize the application in your language."
