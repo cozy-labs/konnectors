@@ -96,10 +96,11 @@ logIn = (requiredFields, billInfos, data, next) ->
         url: loginUrl
 
     request options, (err, res, body) ->
-
+    
         isNoLocation = not res.headers.location?
         isNot302 = res.statusCode isnt 302
-        isError = res.headers.location.indexOf "error" isnt -1
+        isError = res.headers.location? and 
+            res.headers.location.indexOf("error") isnt -1
 
         if err or isNoLocation or isNot302 or isError
             log.error "Authentification error"
@@ -109,7 +110,6 @@ logIn = (requiredFields, billInfos, data, next) ->
             location = res.headers.location
             parameters = location.split('?')[1]
             url = "#{billUrl}?#{parameters}"
-
             request.get url, (err, res, body) ->
                 if err then next err
                 else

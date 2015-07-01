@@ -77,7 +77,7 @@ module.exports =
                 log: log
                 model: PhoneBill
                 identifier: 'free mobile'
-                dateDelta: 10
+                dateDelta: 14
                 amountDelta: 0.1
             )
             .args(requiredFields, {}, {})
@@ -184,14 +184,7 @@ logIn = (requiredFields, billInfos, data, next) ->
             if err? or not res.headers.location? or res.statusCode isnt 302
                 log.error "Authentification error"
                 next 'bad credentials'
-            else
-                # We check that there is no connection form (the statusCode is
-                # always 302 even if the credential are wrong)
-                $ = cheerio.load body
-                connectionForm = $('#form_connect')
-                if connectionForm.length isnt 0
-                    log.error "Authentification error"
-                    next 'bad credentials'
+                
             options =
                 method: 'GET'
                 jar: true
@@ -201,6 +194,13 @@ logIn = (requiredFields, billInfos, data, next) ->
             request options, (err, res, body) ->
                 if err?
                     next err
+		# We check that there is no connection form (the statusCode is
+                # always 302 even if the credential are wrong)
+                $ = cheerio.load body
+                connectionForm = $('#form_connect')
+                if connectionForm.length isnt 0
+                    log.error "Authentification error"
+                    next 'bad credentials'
                 next()
 
 
