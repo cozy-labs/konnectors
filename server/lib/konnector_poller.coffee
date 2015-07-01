@@ -171,6 +171,7 @@ class KonnectorPoller
     # Start timeout for konnector
     startTimeout: (konnector, interval) ->
         nextImport = @checkImport.bind(@, konnector, interval)
+        clearTimeout @timeouts[konnector.slug] if @timeouts[konnector.slug]?
         @timeouts[konnector.slug] = setTimeout nextImport, interval
 
 

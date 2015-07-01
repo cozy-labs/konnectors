@@ -80,7 +80,7 @@ module.exports =
                 callback err, notifContent
 
 
-# Procedure to login to Free website.
+# Procedure to login to Github website.
 logIn = (requiredFields, billInfos, data, next) ->
     loginUrl = "https://github.com/session"
 

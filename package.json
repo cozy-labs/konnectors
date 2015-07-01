@@ -1,6 +1,6 @@
 {
   "name": "konnectors",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "engines": [
     "node = 0.8.x"
   ],
@@ -38,7 +38,7 @@
   },
   "scripts": {
     "test": "cake tests",
-    "start": "coffee server.coffee"
+    "start": "node build/server.js"
   },
   "cozy-permissions": {
     "Konnector": {
