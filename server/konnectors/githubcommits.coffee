@@ -67,8 +67,7 @@ module.exports =
             .fetch (err, fields, commits, data) ->
                 log.info "Import finished"
                 notifContent = null
-
-                if commits.numImportedCommits > 0
+                if commits and commits.numImportedCommits > 0
                     localizationKey = 'notification github commits'
                     options = smart_count: commits.numImportedCommits
                     notifContent = localization.t localizationKey, options
@@ -153,7 +152,7 @@ logCommits = (requiredFields, entries, data, next) ->
                     data =
                         date: commit.commit.author.date
                         sha: commit.sha
-                        parent: commit.parents[0].sha
+                        parent: if commit.parents.length > 0 then commit.parents[0].sha else null
                         url: commit.url
                         author: commit.commit.author.name
                         email: commit.commit.author.email

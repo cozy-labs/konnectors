@@ -66,3 +66,30 @@ task "lint", "Run coffeelint on source files", ->
     coffeelint = spawn command, args.concat lintFiles
     coffeelint.stdout.pipe process.stdout
     coffeelint.stderr.pipe process.stderr
+
+buildJade = ->
+    jade = require 'jade'
+    filename = "./client/index.jade"
+    template = fs.readFileSync filename, 'utf8'
+    output = "var jade = require('jade/runtime');\n"
+    output += "module.exports = " + jade.compileClient template, {filename}
+    fs.writeFileSync "./build/client/index.js", output
+
+task 'build', 'Build CoffeeScript to Javascript', ->
+    logger.options.prefix = 'cake:build'
+    logger.info "Start compilation..."
+    command = "coffee -cb --output build/server server && " + \
+              "coffee -cb --output build/ server.coffee && " + \
+              "rm -rf build/client && mkdir build/client &&  mkdir build/client/app && " + \
+              "coffee -cb --output build/client/app/locales/ client/app/locales && " + \
+              "cd client/ && brunch build --production && cd .. && " + \
+              "cp -R client/public build/client/"
+
+    exec command, (err, stdout, stderr) ->
+        if err
+            logger.error "An error has occurred while compiling:\n" + err
+            process.exit 1
+        else
+            buildJade()
+            logger.info "Compilation succeeded."
+            process.exit 0

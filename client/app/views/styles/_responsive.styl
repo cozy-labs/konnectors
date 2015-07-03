@@ -36,15 +36,24 @@
         margin-left 0
         padding 0
 
-        h2 span
-            font-size 20px
-
         .description
-            font-size 13px
+            font-size 1em
 
         #default
         .konnector
             padding 0 25px
+
+        .service-icon
+            display none
+
+        h2
+            font-size 1.6rem
+
+            .fa
+                font-size 1.8rem
+
+        button
+            width 100%
 
 
 // Portrait tablet to landscape and desktop
@@ -55,3 +64,11 @@
 // Large desktop
 @media (min-width: 1200px)
     // nothing
+
+// XLarge desktop
+@media (min-width: 1600px)
+    .container
+        margin-left 20em
+
+    .menu
+        width 20em

@@ -13,6 +13,7 @@ into your Cozy.
 * B&You (Bill PDFs)
 * Free (Bill PDFs)
 * Free Mobile (Bill PDFs)
+* Nest (temperatures)
 
 # What we would like to see
 
