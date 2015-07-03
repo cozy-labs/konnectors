@@ -3,6 +3,7 @@
 h2.name
     #menu-toggler
         .fa.fa-bars
+    span.service-icon
     span #{model.name}
 
 .description!= t(model.description)
@@ -14,7 +15,7 @@ if model.errorMessage
     .error
         span.error=t('error occurred during import:') + ' '
             span.message=t(model.errorMessage)
-            
+
 .status #{status}
 .infos
     .date

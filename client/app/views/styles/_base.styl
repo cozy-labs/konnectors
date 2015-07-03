@@ -9,14 +9,6 @@ blue = #34A6FF
 orange = #fe8800
 
 @font-face
-    font-family title
-    src url('../fonts/chunkfive.otf')
-
-@font-face
-    font-family main
-    src url('../fonts/signika-light.ttf')
-
-@font-face
     font-family regular
     src url('../fonts/source-sans-pro.ttf')
     color #333
@@ -26,55 +18,54 @@ orange = #fe8800
 
 html
 body
-    height 100%
-    width 100%
+    height      100%
+    width       100%
+    font        16px "Source Sans Pro", sans-serif
+    line-height 1.4
 
 body
-    text-rendering optimizeLegibility
+    text-rendering   optimizeLegibility
     background-color #fff
-    font-family main
 
 h1
-    font-family title
-    font-weight normal
-    font-size 28px
+    font-weight   normal
+    font-size     2em
     margin-bottom 2px
-    margin-top 0px
+    margin-top    0px
 
 h2
-    font-family regular
     font-weight normal
-    margin-top 20px
+    margin-top  20px
 
-body
+    // vertically aligned items inside h2
+    display     flex
+    align-items center
+
 input
     color #444
-    font 300 16px Geneva, Verdana, "Lucida Sans", "Lucida Grande", sans-serif
-    line-height 1.2
 
 a
 a:visited
-    color #0086cc
     text-decoration none
 
     &:hover
-        color red
         text-decoration none
 
 button
-    border 0
-    border-radius 3px
-    background-color dark-grey
-    color white
-    padding 10px
-    margin-right 5px
+    padding          0.8em 1.6em
+    margin-right     5px
+    border           0
+    border-radius    3px
+    background-color blue
+    color            white
+    text-transform   uppercase
 
 button:hover
-    background-color red
+    background-color darken(blue, 20%)
 
 button:active
     background-color red - 20%
-    box-shadow 2px 2px 2px red - 40% inset
+    box-shadow       2px 2px 2px red - 40% inset
 
 h1
     a
@@ -86,12 +77,10 @@ h1
         outline 0
 
 #menu-toggler
-    display none
-    margin-left 25px
-    margin 10px 15px 10px 25px
-    margin-right 15px
-    cursor pointer
-    font-size 35px
+    display     none
+    margin      10px 15px 10px 25px
+    cursor      pointer
+    font-size   35px
     user-select none
 
 h2 #menu-toggler
