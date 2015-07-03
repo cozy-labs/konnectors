@@ -1,12 +1,13 @@
 a(href="#konnector/#{model.slug}")
     span.service-icon
-    span.name= model.name
-    - if(lastImport != null && lastImport.length > 0)
-        span.last-import= lastImport
+    div
+        span.name= model.name
+        - if(lastImport != null && lastImport.length > 0)
+            span.last-import= lastImport
 
-    - if (model.isImporting === true)
-        div.spinholder
-            img(src="images/spinner.svg")
-    - else if (model.errorMessage != null)
-        i.fa.fa-warning(title=t('error occurred during import.'))
+        - if (model.isImporting === true)
+            div.spinholder
+                img(src="images/spinner.svg")
+        - else if (model.errorMessage != null)
+            i.fa.fa-warning(title=t('error occurred during import.'))
 
