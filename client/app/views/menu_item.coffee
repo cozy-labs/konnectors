@@ -28,6 +28,8 @@ module.exports = class MenuItemView extends BaseView
         if @model.isConfigured()
             @$el.addClass 'configured'
 
+        @$el.addClass @model.get 'slug'
+
 
     select: -> @$el.addClass 'selected'
 

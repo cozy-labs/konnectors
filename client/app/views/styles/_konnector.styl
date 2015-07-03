@@ -2,27 +2,34 @@
     CONTAINER
 */
 .container
-    margin-left 20%
-    padding 10px 40px
+    margin-left     14em
+    padding         2em 4em
 
-    #default
-        margin 0
-        padding 50px
-        display inline-block
-        vertical-align middle
+    .default
+        max-width 50em
+        font-size 1.1em
+
+        // circle on top of the box
+        $header-size = 306px
+        header
+            width               $header-size
+            height              $header-size
+            margin              auto
+            background-image    url('../images/illustrations/illustrations-konnectors.svg')
+            background-position center center
+            background-repeat   no-repeat
 
     .konnector
         margin-bottom 30px
         padding-bottom 10px
-        font-family main
 
         h2
             margin 0
 
         div.description
-            font-size 20px
-            font-family main
-            margin 15px 0
+            margin    1em 0
+            max-width 50em
+            font-size 1.2em
 
         .field
             margin 15px 0
@@ -56,7 +63,6 @@
             background #f9f9f9
             width 500px
             padding 10px
-            font-family main
             font-size 15px
             outline none
 
