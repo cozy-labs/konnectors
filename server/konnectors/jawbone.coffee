@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 querystring = require 'querystring'
 request = require 'request'
 moment = require 'moment'
@@ -34,7 +34,7 @@ dataFields =
 
 # Models
 
-Steps = americano.getModel 'Steps',
+Steps = cozydb.getModel 'Steps',
     date: Date
     activeTime: Number
     activeTimeCalories: Number
@@ -49,7 +49,7 @@ Steps = americano.getModel 'Steps',
 Steps.all = (callback) ->
     Steps.request 'byDate', callback
 
-Sleep = americano.getModel 'Sleep',
+Sleep = cozydb.getModel 'Sleep',
     date: Date
     asleepTime: Number
     awakeDuration: Number

@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 requestJson = require 'request-json'
 
 moment = require 'moment'
@@ -30,7 +30,7 @@ request = request.defaults
 
 # Models
 
-PhoneBill = americano.getModel 'PhoneBill',
+PhoneBill = cozydb.getModel 'PhoneBill',
     date: Date
     vendor: String
     amount: Number

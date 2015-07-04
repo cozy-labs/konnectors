@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 querystring = require 'querystring'
 request = require 'request-json'
 moment = require 'moment'
@@ -12,7 +12,7 @@ log = require('printit')
 
 # Models
 
-RescueTimeActivity = americano.getModel 'RescueTimeActivity',
+RescueTimeActivity = cozydb.getModel 'RescueTimeActivity',
     date: Date
     duration: Number
     description: String

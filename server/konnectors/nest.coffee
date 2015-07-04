@@ -1,5 +1,5 @@
 NestApi = require 'nest-api'
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 
 localization = require '../lib/localization_manager'
 fetcher = require '../lib/fetcher'
@@ -12,7 +12,7 @@ log = require('printit')
 
 # Models
 
-Temperature = americano.getModel 'Temperature',
+Temperature = cozydb.getModel 'Temperature',
     vendor: {type: String, default: 'Nest'}
     date: Date
     currentTemperature: String

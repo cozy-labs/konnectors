@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 querystring = require 'querystring'
 requestJson = require 'request-json'
 request = require 'request'
@@ -12,7 +12,7 @@ localization = require '../lib/localization_manager'
 
 # Models
 
-TwitterTweet = americano.getModel 'TwitterTweet',
+TwitterTweet = cozydb.getModel 'TwitterTweet',
     date: Date
     id_str: String
     text: String

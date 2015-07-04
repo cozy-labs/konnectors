@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 request = require 'request'
 moment = require 'moment'
 crypto = require 'crypto'
@@ -27,7 +27,7 @@ aggregateUrl = 'https://healthmate.withings.com/index/service/v2/aggregate'
 
 # Models
 
-Weight = americano.getModel 'Weight',
+Weight = cozydb.getModel 'Weight',
     date: Date
     weight: Number
     leanWeight: Number
@@ -35,20 +35,20 @@ Weight = americano.getModel 'Weight',
     user: String
     vendor: {type: String, default: 'Withings'}
 
-HeartBeat = americano.getModel 'HeartBeat',
+HeartBeat = cozydb.getModel 'HeartBeat',
     date: Date
     value: Number
     user: String
     vendor: {type: String, default: 'Withings'}
 
-BloodPressure = americano.getModel 'BloodPressure',
+BloodPressure = cozydb.getModel 'BloodPressure',
     date: Date
     systolic: Number
     diastolic: Number
     user: String
     vendor: {type: String, default: 'Withings'}
 
-Steps = americano.getModel 'Steps',
+Steps = cozydb.getModel 'Steps',
     date: Date
     activeTime: Number
     activeTimeCalories: Number

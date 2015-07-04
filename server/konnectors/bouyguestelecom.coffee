@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 
 fs = require 'fs'
 qs = require 'querystring'
@@ -21,7 +21,7 @@ log = require('printit')
 
 # Models
 
-PhoneBill = americano.getModel 'PhoneBill',
+PhoneBill = cozydb.getModel 'PhoneBill',
     date: Date
     vendor: String
     amount: Number

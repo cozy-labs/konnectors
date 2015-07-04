@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 requestJson = require 'request-json'
 request = require 'request'
 moment = require 'moment'
@@ -20,7 +20,7 @@ log = require('printit')
 
 # Models
 
-CodeBill = americano.getModel 'CodeBill',
+CodeBill = cozydb.getModel 'CodeBill',
     date: Date
     vendor: String
     amount: Number

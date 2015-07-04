@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 requestJson = require 'request-json'
 request = require 'request'
 moment = require 'moment'
@@ -17,7 +17,7 @@ log = require('printit')
 
 # Models
 
-Commit = americano.getModel 'Commit',
+Commit = cozydb.getModel 'Commit',
     date: Date
     sha: String
     parent: String
