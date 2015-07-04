@@ -91,7 +91,7 @@
     "Commit": {
       "description": "Commit infos imported from Github."
     },
-    "NestTemperature": {
+    "Temperature": {
       "description": "Temperatures measured by your Nest Thermostat."
     },
     "CozyInstance": {
