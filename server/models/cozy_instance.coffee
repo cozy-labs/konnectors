@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+americano = require 'cozydb'
 
 # Required to get locale and domain data.
 module.exports = CozyInstance = americano.getModel 'CozyInstance',

@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+americano = require 'cozydb'
 konnectorHash = require '../lib/konnector_hash'
 
 log = require('printit')

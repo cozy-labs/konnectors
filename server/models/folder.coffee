@@ -1,4 +1,4 @@
-americano = require 'americano-cozy'
+americano = require 'cozydb'
 
 
 # Folder model is used to list the list of available folders in the user's

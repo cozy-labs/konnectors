@@ -1,5 +1,5 @@
 fs = require 'fs'
-americano = require 'americano-cozy'
+americano = require 'cozydb'
 request = require 'request'
 moment = require 'moment'
 log = require('printit')
