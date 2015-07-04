@@ -1,7 +1,7 @@
 fixtures = require 'cozy-fixtures'
 should = require 'should'
 moment = require 'moment'
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 log = require('printit')
     prefix: 'test link operation'
 
@@ -9,7 +9,7 @@ BankOperation = require '../server/models/bankoperation'
 linkBankOperation = require '../server/lib/link_bank_operation'
 
 
-PhoneBill = americano.getModel 'PhoneBill',
+PhoneBill = cozydb.getModel 'PhoneBill',
     date: Date
     vendor: String
     amount: Number
