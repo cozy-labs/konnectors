@@ -26,4 +26,3 @@ if model.errorMessage
         for name in model.modelNames
             a(href="/apps/databrowser/#search/all/#{name}", target="_blank")
                   |#{name}
-            |  &nbsp;(#{model.amounts[name.toLowerCase()] || 0}) &nbsp;

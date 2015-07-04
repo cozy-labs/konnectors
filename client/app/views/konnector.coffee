@@ -19,7 +19,6 @@ module.exports = class KonnectorView extends BaseView
         lastImport = @model.get 'lastImport'
         isImporting  = @model.get 'isImporting'
         lastAutoImport = @model.get 'lastAutoImport'
-        amounts = @model.get 'amounts'
 
         @error = @$ '.error'
         if not @model.get('errorMessage')? or isImporting
