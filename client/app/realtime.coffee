@@ -25,18 +25,20 @@ module.exports = class KonnectorListener extends CozySocketListener
     # When it's about a folder, it pushes a folder:change event to the event
     # bus.
     onRemoteUpdate: (model) ->
+
         if model?.get('docType')?.toLowerCase() is 'konnector'
             isImporting = model.get 'isImporting'
             slug = model.get 'slug'
             lastImport = model.get 'lastImport'
 
             formattedDate = moment(lastImport).format t('date format')
+            lastImportField = $(".konnector-#{slug} .last-import")
             if isImporting
-                $(".konnector-#{slug} .last-import").html t('importing...')
+                lastImportField.html t('importing...')
             else if lastImport?
-                $(".konnector-#{slug} .last-import").html formattedDate
+                lastImportField.html formattedDate
             else
-                $(".konnector-#{slug} .last-import").html t('no import performed')
+                lastImportField.html t('no import performed')
 
         else
             Backbone.Mediator.pub 'folders:update', new Folder model.attributes

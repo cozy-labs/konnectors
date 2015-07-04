@@ -149,10 +149,13 @@ logCommits = (requiredFields, entries, data, next) ->
                              "user is not author (#{commit.author.login})."
                     callback()
                 else
+                    parent = null
+                    if commit.parents.length > 0
+                        commit.parents[0].sha
                     data =
                         date: commit.commit.author.date
                         sha: commit.sha
-                        parent: if commit.parents.length > 0 then commit.parents[0].sha else null
+                        parent: parent
                         url: commit.url
                         author: commit.commit.author.name
                         email: commit.commit.author.email

@@ -20,11 +20,13 @@ log = require('printit')
     date: true
 
 
-#Useragent is required
+# Useragent is required
+
+# coffeelint: disable=max_line_length
 request = request.defaults
     headers:
         "User-Agent": "Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:37.0) Gecko/20100101 Firefox/37.0"
-
+# coffeelint: enable=max_line_length
 
 # Models
 
@@ -117,9 +119,9 @@ prepareLogIn = (requiredFields, billInfos, data, next) ->
         jar: true
         url: homeUrl
 
-    request options , (err, res, body) ->
+    request options, (err, res, body) ->
         if err?
-            log.error "Could not reach connection page of Free Mobile : #{homeUrl}"
+            log.error "Cannot connect to Free Mobile : #{homeUrl}"
             next err
         loginPageData = body
         data.imageUrlAndPosition = []
@@ -136,7 +138,8 @@ prepareLogIn = (requiredFields, billInfos, data, next) ->
 
 getImageAndIdentifyNumbers = (requiredFields, billInfos, data, next) ->
     #For each "position", we download the image, and identify it.
-    async.map data.imageUrlAndPosition, getImageAndIdentifyNumber, (err, results) ->
+    urlAndPosition = data.imageUrlAndPosition
+    async.map urlAndPosition, getImageAndIdentifyNumber, (err, results) ->
         if err?
             log.error "Coud not get or decode image"
             next err
@@ -184,7 +187,7 @@ logIn = (requiredFields, billInfos, data, next) ->
             if err? or not res.headers.location? or res.statusCode isnt 302
                 log.error "Authentification error"
                 next 'bad credentials'
-                
+
             options =
                 method: 'GET'
                 jar: true
@@ -295,6 +298,7 @@ getSound = (position, callback) ->
 
 
 getNumberValue = (stringcheck) ->
+    # coffeelint: disable=max_line_length
     # symbols contains all the digits [0-9] with 0 = white pixel, 1 = red pixel
     symbols =[
         '001111111111110011111111111111111111111111111110000000000011110000000000011111111111111111011111111111111001111111111110' #0
@@ -308,6 +312,7 @@ getNumberValue = (stringcheck) ->
         '001110001111110011111111111111111111111111111110000110000011110000110000011111111111111111011111111111111001111001111110' #8
         '001111111000110011111111100111111111111100111110000001100011110000001100011111111111111111011111111111111001111111111110' #9
         ]
+    # coffeelint: enable=max_line_length
     distanceMin = stringcheck.length
     idxDistanceMin = 10
 

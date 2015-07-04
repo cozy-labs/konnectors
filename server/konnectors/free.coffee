@@ -96,10 +96,10 @@ logIn = (requiredFields, billInfos, data, next) ->
         url: loginUrl
 
     request options, (err, res, body) ->
-    
+
         isNoLocation = not res.headers.location?
         isNot302 = res.statusCode isnt 302
-        isError = res.headers.location? and 
+        isError = res.headers.location? and \
             res.headers.location.indexOf("error") isnt -1
 
         if err or isNoLocation or isNot302 or isError
