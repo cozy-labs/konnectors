@@ -136,7 +136,7 @@ Konnector::addAmount = (callback) ->
     async.eachSeries Object.keys(@models), (modelName, next) =>
         model = @models[modelName]
         model.all (err, instances) =>
-            @amounts[modelName] = instances.length
+            @amounts[modelName] = instances.length if instances?
             next()
     , (err) ->
         callback()
