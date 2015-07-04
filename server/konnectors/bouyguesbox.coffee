@@ -59,11 +59,11 @@ module.exports =
             .use(logIn)
             .use(parsePage)
             .use(filterExisting log, InternetBill)
-            .use(saveDataAndFile log, InternetBill, 'bouyg', ['facture'])
+            .use(saveDataAndFile log, InternetBill, 'bouygues', ['facture'])
             .use(linkBankOperation
                 log: log
                 model: InternetBill
-                identifier: 'bouygues'
+                identifier: 'bouyg'
                 dateDelta: 20
                 amountDelta: 0.1
             )

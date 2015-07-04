@@ -67,10 +67,10 @@ module.exports = {
   },
   fetch: function(requiredFields, callback) {
     log.info("Import started");
-    return fetcher["new"]().use(logIn).use(parsePage).use(filterExisting(log, InternetBill)).use(saveDataAndFile(log, InternetBill, 'bouyg', ['facture'])).use(linkBankOperation({
+    return fetcher["new"]().use(logIn).use(parsePage).use(filterExisting(log, InternetBill)).use(saveDataAndFile(log, InternetBill, 'bouygues', ['facture'])).use(linkBankOperation({
       log: log,
       model: InternetBill,
-      identifier: 'bouygues',
+      identifier: 'bouyg',
       dateDelta: 20,
       amountDelta: 0.1
     })).args(requiredFields, {}, {}).fetch(function(err, fields, entries) {

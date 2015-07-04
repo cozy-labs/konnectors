@@ -32,7 +32,9 @@ BankOperation.prototype.setBinaryFromFile = function(fileId, callback) {
       if ((file != null ? (_ref = file.binary) != null ? _ref.file : void 0 : void 0) != null) {
         attributes = {
           binary: {
-            file: file.binary.file
+            file: file.binary.file,
+            fileName: file.name,
+            fileMime: file.mime
           }
         };
         return _this.updateAttributes(attributes, function(err) {
@@ -40,7 +42,9 @@ BankOperation.prototype.setBinaryFromFile = function(fileId, callback) {
             return callback(err);
           }
           _this.binary = {
-            file: file.binary.file
+            file: file.binary.file,
+            fileName: file.name,
+            fileMime: file.mime
           };
           return callback();
         });

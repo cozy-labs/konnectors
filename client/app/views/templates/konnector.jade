@@ -25,5 +25,4 @@ if model.errorMessage
         | #{t('imported data:')}&nbsp;
         for name in model.modelNames
             a(href="/apps/databrowser/#search/all/#{name}", target="_blank")
-                  |#{name}
-            |  &nbsp;(#{model.amounts[name.toLowerCase()] || 0}) &nbsp;
+                  |#{name}&nbsp;

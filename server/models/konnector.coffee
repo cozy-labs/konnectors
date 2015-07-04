@@ -1,5 +1,4 @@
 americano = require 'americano-cozy'
-async = require 'async'
 konnectorHash = require '../lib/konnector_hash'
 
 log = require('printit')
@@ -122,23 +121,7 @@ Konnector.getKonnectorsToDisplay = (callback) ->
                         konnector.appendConfigData()
                         return konnector
 
-                async.eachSeries konnectorsToDisplay, (konnector, next) ->
-                    konnector.addAmount next
-                , (err) ->
-                    callback null, konnectorsToDisplay
+                callback null, konnectorsToDisplay
             catch err
                 callback err
-
-
-Konnector::addAmount = (callback) ->
-    @amounts = {}
-
-    async.eachSeries Object.keys(@models), (modelName, next) =>
-        model = @models[modelName]
-        model.all (err, instances) =>
-            @amounts[modelName] = instances.length
-            next()
-    , (err) ->
-        callback()
-
 

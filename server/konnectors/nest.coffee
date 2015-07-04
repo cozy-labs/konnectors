@@ -12,14 +12,15 @@ log = require('printit')
 
 # Models
 
-NestTemperature = americano.getModel 'NestTemperature',
+Temperature = americano.getModel 'Temperature',
+    vendor: {type: String, default: 'Nest'}
     date: Date
     currentTemperature: String
     targetTemperature: String
 
 
-NestTemperature.all = (callback) ->
-    NestTemperature.request 'byDate', callback
+Temperature.all = (callback) ->
+    Temperature.request 'byDate', callback
 
 
 # Fetching layers
@@ -54,12 +55,12 @@ module.exports =
         email: "text"
         password: "password"
     models:
-        nestTemperature: NestTemperature
+        nestTemperature: Temperature
 
     init: (callback) ->
         log.info "Nest init"
         map = (doc) -> emit doc.date, doc
-        NestTemperature.defineRequest 'byDate', map, (err) ->
+        Temperature.defineRequest 'byDate', map, (err) ->
             callback err
 
     fetch: (requiredFields, callback) ->
@@ -68,7 +69,7 @@ module.exports =
 
         fetcher.new()
             .use(getTemperature)
-            .use(saveDataAndFile log, NestTemperature, {})
+            .use(saveDataAndFile log, Temperature, {})
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
 
