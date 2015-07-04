@@ -125,7 +125,7 @@ prepareLogIn = function(requiredFields, billInfos, data, next) {
   return request(options, function(err, res, body) {
     var $, loginPageData;
     if (err != null) {
-      log.error("Could not reach connection page of Free Mobile : " + homeUrl);
+      log.error("Cannot connect to Free Mobile : " + homeUrl);
       next(err);
     }
     loginPageData = body;
@@ -146,7 +146,9 @@ prepareLogIn = function(requiredFields, billInfos, data, next) {
 };
 
 getImageAndIdentifyNumbers = function(requiredFields, billInfos, data, next) {
-  return async.map(data.imageUrlAndPosition, getImageAndIdentifyNumber, function(err, results) {
+  var urlAndPosition;
+  urlAndPosition = data.imageUrlAndPosition;
+  return async.map(urlAndPosition, getImageAndIdentifyNumber, function(err, results) {
     if (err != null) {
       log.error("Coud not get or decode image");
       next(err);

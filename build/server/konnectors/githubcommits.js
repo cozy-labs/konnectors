@@ -162,6 +162,7 @@ logCommits = function(requiredFields, entries, data, next) {
       return callback();
     } else {
       return client.get(path, function(err, res, commit) {
+        var parent;
         log.info("Saving commit " + commit.sha + "...");
         if (err) {
           log.error(err);
@@ -173,10 +174,14 @@ logCommits = function(requiredFields, entries, data, next) {
           log.info(("Commit " + commit.sha + " not saved: ") + ("user is not author (" + commit.author.login + ")."));
           return callback();
         } else {
+          parent = null;
+          if (commit.parents.length > 0) {
+            commit.parents[0].sha;
+          }
           data = {
             date: commit.commit.author.date,
             sha: commit.sha,
-            parent: commit.parents.length > 0 ? commit.parents[0].sha : null,
+            parent: parent,
             url: commit.url,
             author: commit.commit.author.name,
             email: commit.commit.author.email,
