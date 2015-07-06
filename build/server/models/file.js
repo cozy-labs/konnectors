@@ -3,7 +3,7 @@ var File, americano, fs, log, moment, request;
 
 fs = require('fs');
 
-americano = require('americano-cozy');
+americano = require('cozydb');
 
 request = require('request');
 
