@@ -27,7 +27,7 @@ config = {
   },
   development: [americano.logger('dev')],
   production: [americano.logger('short')],
-  plugins: ['americano-cozy']
+  plugins: ['cozydb']
 };
 
 module.exports = config;
