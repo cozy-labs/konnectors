@@ -97,10 +97,13 @@ Konnector::appendConfigData = ->
 
     # normalize models' name related to the connector
     modelNames = []
+    console.log JSON.stringify konnectorData.models, null, 2
     for key, value of @models
         name = value.toString()
-        name = name.substring '[Model '.length
-        name = name.substring 0, (name.length - 1)
+        console.log name
+
+        if name.indexOf 'Constructor' isnt -1
+            name = name.substring 0, (name.length - 'Constructor'.length)
         modelNames.push name
     @modelNames = modelNames
 
