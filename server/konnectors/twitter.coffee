@@ -121,7 +121,7 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
 
                 if date > start
 
-                    twitterTweet = TwitterTweet
+                    twitterTweet =
                         date: date
                         text: tweet.text
                         id_str: tweet.id_str
@@ -130,8 +130,10 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
                         isReplyTo: tweet.in_reply_to_status_id?
                         isRetweet: tweet.retweeted_status?
 
+                    console.log twitterTweet
+
                     numItems++
-                    twitterTweet.save (err) ->
+                    TwitterTweet.create twitterTweet, (err) ->
                         if err
                             cb err
                         else
