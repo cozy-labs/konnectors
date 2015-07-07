@@ -138,7 +138,7 @@ saveTweetGroup = function(client, path, start, tweetLength, callback) {
         date = moment(tweet.created_at);
         log.debug(date);
         if (date > start) {
-          twitterTweet = TwitterTweet({
+          twitterTweet = {
             date: date,
             text: tweet.text,
             id_str: tweet.id_str,
@@ -146,9 +146,10 @@ saveTweetGroup = function(client, path, start, tweetLength, callback) {
             favoriteCount: tweet.favorite_count,
             isReplyTo: tweet.in_reply_to_status_id != null,
             isRetweet: tweet.retweeted_status != null
-          });
+          };
+          console.log(twitterTweet);
           numItems++;
-          return twitterTweet.save(function(err) {
+          return TwitterTweet.create(twitterTweet, function(err) {
             if (err) {
               return cb(err);
             } else {
