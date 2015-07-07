@@ -130,8 +130,6 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
                         isReplyTo: tweet.in_reply_to_status_id?
                         isRetweet: tweet.retweeted_status?
 
-                    console.log twitterTweet
-
                     numItems++
                     TwitterTweet.create twitterTweet, (err) ->
                         if err
