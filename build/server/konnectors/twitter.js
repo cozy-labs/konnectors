@@ -147,7 +147,6 @@ saveTweetGroup = function(client, path, start, tweetLength, callback) {
             isReplyTo: tweet.in_reply_to_status_id != null,
             isRetweet: tweet.retweeted_status != null
           };
-          console.log(twitterTweet);
           numItems++;
           return TwitterTweet.create(twitterTweet, function(err) {
             if (err) {

@@ -138,12 +138,10 @@ Konnector.prototype.appendConfigData = function() {
     this[key] = konnectorData[key];
   }
   modelNames = [];
-  console.log(JSON.stringify(konnectorData.models, null, 2));
   _ref = this.models;
   for (key in _ref) {
     value = _ref[key];
     name = value.toString();
-    console.log(name);
     if (name.indexOf('Constructor' !== -1)) {
       name = name.substring(0, name.length - 'Constructor'.length);
     }
