@@ -1,7 +1,8 @@
 async = require 'async'
+naming = require './naming'
 File = require '../models/file'
 
-module.exports = (log, model, suffix, tags) ->
+module.exports = (log, model, options, tags) ->
     (requiredFields, entries, body, next) ->
         entries.filtered = entries.fetched unless entries.filtered?
 
@@ -9,7 +10,7 @@ module.exports = (log, model, suffix, tags) ->
             entryLabel = entry.date.format 'MMYYYY'
 
             createFileAndSaveData = (entry, entryLabel) ->
-                fileName = "#{entry.date.format 'YYYYMM'}_#{suffix}.pdf"
+                fileName = naming.getEntryFileName entry, options
                 date = entry.date
                 pdfurl = entry.pdfurl
                 path = requiredFields.folderPath
@@ -21,7 +22,7 @@ module.exports = (log, model, suffix, tags) ->
                     log.info "File for #{entryLabel} not created."
                     callback()
                 else
-                    log.info "File for #{entryLabel} created."
+                    log.info "File for #{entryLabel} created: #{fileName}"
                     entry.fileId = file.id
                     entry.binaryId = file.binary.file.id
                     saveEntry entry, entryLabel
