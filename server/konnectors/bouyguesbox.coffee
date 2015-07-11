@@ -172,7 +172,6 @@ parsePage = (requiredFields, bills, data, next) ->
                 no_reference:dataArray[7].replace /[\/)'\s]/g, ''
             url = "#{baseDlUrl}?#{qs.stringify params}"
 
-            console.log url
             if params.type is 'Bbox'
                 # Build bill object.
                 bill =
