@@ -156,18 +156,20 @@ module.exports =
                 sessionid = \
                     res.headers['set-cookie'][1].split(';')[0].split('=')[1]
 
-                data =
-                    action: 'getuserslist'
-                    appliver: '20140428120105'
-                    appname: 'my2'
-                    apppfm: 'web'
-                    listmask: '5'
-                    recurse_devtype: '1'
-                    recurse_use: '1'
-                    sessionid: sessionid
+                options =
+                    strictSSL: false
+                    form:
+                        action: 'getuserslist'
+                        appliver: '20140428120105'
+                        appname: 'my2'
+                        apppfm: 'web'
+                        listmask: '5'
+                        recurse_devtype: '1'
+                        recurse_use: '1'
+                        sessionid: sessionid
 
                 # Get user id.
-                request.post accountUrl, form: data, (err, res, body) ->
+                request.post accountUrl, options, (err, res, body) ->
                     return callback err if err
 
                     body = JSON.parse body
@@ -175,22 +177,24 @@ module.exports =
                     userid = user.id
                     username = "#{user.firstname} #{user.lastname}"
 
-                    data =
-                        action: 'getmeas'
-                        appliver: '20140428120105'
-                        appname: 'my2'
-                        apppfm: 'web'
-                        category: 1
-                        limit: 2000
-                        offset: 0
-                        meastype: '12,35'
-                        sessionid: sessionid
-                        startdate: 0
-                        enddate: end
-                        userid: userid
+                    options =
+                        strictSSL: false
+                        form:
+                            action: 'getmeas'
+                            appliver: '20140428120105'
+                            appname: 'my2'
+                            apppfm: 'web'
+                            category: 1
+                            limit: 2000
+                            offset: 0
+                            meastype: '12,35'
+                            sessionid: sessionid
+                            startdate: 0
+                            enddate: end
+                            userid: userid
 
                     # Fetch withings body measures
-                    request.post measureUrl, form: data, (err, res, body) ->
+                    request.post measureUrl, options, (err, res, body) ->
                         return callback err if err
 
                         measures = JSON.parse body
@@ -204,24 +208,26 @@ module.exports =
                                 .format('YYYY-MM-DD')
 
                             # Fetch withings activity measures
-                            data =
-                                sessionid: sessionid
-                                userid: userid
-                                range: '1'
-                                meastype: '36,40'
-                                appname: 'my2'
-                                appliver: '20140428120105'
-                                apppfm: 'web'
-                                action: 'getbyuserid'
-                                startdateymd: startDate
-                                enddateymd: moment().format('YYYY-MM-DD')
+                            options =
+                                strictSSL: false
+                                form:
+                                    sessionid: sessionid
+                                    userid: userid
+                                    range: '1'
+                                    meastype: '36,40'
+                                    appname: 'my2'
+                                    appliver: '20140428120105'
+                                    apppfm: 'web'
+                                    action: 'getbyuserid'
+                                    startdateymd: startDate
+                                    enddateymd: moment().format('YYYY-MM-DD')
 
                             onMeasures = (err, res, body) ->
                                 return callback err if err
                                 measures = JSON.parse body
                                 saveActivityMeasures measures, callback
 
-                            request.post aggregateUrl, form: data, onMeasures
+                            request.post aggregateUrl, options, onMeasures
 
 
 hashMeasuresByDate = (measures) ->
