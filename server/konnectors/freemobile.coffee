@@ -101,7 +101,7 @@ logOut =  (requiredFields, billInfos, data, next) ->
     options =
         method: 'GET'
         url:  logOutUrl
-        jar: false
+        jar: true
     request options, (err, res, body) ->
         if err?
             log.error "Couldn't logout of Free Mobile website"
