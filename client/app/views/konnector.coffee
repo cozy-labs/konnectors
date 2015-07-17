@@ -74,7 +74,7 @@ module.exports = class KonnectorView extends BaseView
                 # Add a button to open quickly the selected folder in the files
                 # app.
                 fieldHtml += """
-<a href="#apps/files/folders/#{selectedPath.id}"
+<a href="/#apps/files/folders/#{selectedPath.id}"
    class="folder-link"
    target="_blank">
     open selected folder
@@ -101,7 +101,7 @@ module.exports = class KonnectorView extends BaseView
                         .parent()
                         .parent()
                         .find(".folder-link")
-                    link = "#apps/files/folders/#{id}"
+                    link = "/#apps/files/folders/#{id}"
                     folderButton.attr 'href', link
 
         # Auto Import
