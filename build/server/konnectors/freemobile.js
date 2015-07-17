@@ -103,7 +103,7 @@ logOut = function(requiredFields, billInfos, data, next) {
   options = {
     method: 'GET',
     url: logOutUrl,
-    jar: false
+    jar: true
   };
   return request(options, function(err, res, body) {
     if (err != null) {

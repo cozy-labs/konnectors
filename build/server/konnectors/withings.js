@@ -178,7 +178,7 @@ module.exports = {
       return request.post(authUrl, {
         form: data
       }, function(err, res, body) {
-        var sessionid;
+        var options, sessionid;
         if (err) {
           return callback(err);
         }
@@ -187,19 +187,20 @@ module.exports = {
           return callback('bad credentials');
         }
         sessionid = res.headers['set-cookie'][1].split(';')[0].split('=')[1];
-        data = {
-          action: 'getuserslist',
-          appliver: '20140428120105',
-          appname: 'my2',
-          apppfm: 'web',
-          listmask: '5',
-          recurse_devtype: '1',
-          recurse_use: '1',
-          sessionid: sessionid
+        options = {
+          strictSSL: false,
+          form: {
+            action: 'getuserslist',
+            appliver: '20140428120105',
+            appname: 'my2',
+            apppfm: 'web',
+            listmask: '5',
+            recurse_devtype: '1',
+            recurse_use: '1',
+            sessionid: sessionid
+          }
         };
-        return request.post(accountUrl, {
-          form: data
-        }, function(err, res, body) {
+        return request.post(accountUrl, options, function(err, res, body) {
           var user, userid, username;
           if (err) {
             return callback(err);
@@ -208,23 +209,24 @@ module.exports = {
           user = body.body.users[0];
           userid = user.id;
           username = user.firstname + " " + user.lastname;
-          data = {
-            action: 'getmeas',
-            appliver: '20140428120105',
-            appname: 'my2',
-            apppfm: 'web',
-            category: 1,
-            limit: 2000,
-            offset: 0,
-            meastype: '12,35',
-            sessionid: sessionid,
-            startdate: 0,
-            enddate: end,
-            userid: userid
+          options = {
+            strictSSL: false,
+            form: {
+              action: 'getmeas',
+              appliver: '20140428120105',
+              appname: 'my2',
+              apppfm: 'web',
+              category: 1,
+              limit: 2000,
+              offset: 0,
+              meastype: '12,35',
+              sessionid: sessionid,
+              startdate: 0,
+              enddate: end,
+              userid: userid
+            }
           };
-          return request.post(measureUrl, {
-            form: data
-          }, function(err, res, body) {
+          return request.post(measureUrl, options, function(err, res, body) {
             var measures;
             if (err) {
               return callback(err);
@@ -236,17 +238,20 @@ module.exports = {
                 return callback(err);
               }
               startDate = moment().years(2014).month(0).date(1).format('YYYY-MM-DD');
-              data = {
-                sessionid: sessionid,
-                userid: userid,
-                range: '1',
-                meastype: '36,40',
-                appname: 'my2',
-                appliver: '20140428120105',
-                apppfm: 'web',
-                action: 'getbyuserid',
-                startdateymd: startDate,
-                enddateymd: moment().format('YYYY-MM-DD')
+              options = {
+                strictSSL: false,
+                form: {
+                  sessionid: sessionid,
+                  userid: userid,
+                  range: '1',
+                  meastype: '36,40',
+                  appname: 'my2',
+                  appliver: '20140428120105',
+                  apppfm: 'web',
+                  action: 'getbyuserid',
+                  startdateymd: startDate,
+                  enddateymd: moment().format('YYYY-MM-DD')
+                }
               };
               onMeasures = function(err, res, body) {
                 if (err) {
@@ -255,9 +260,7 @@ module.exports = {
                 measures = JSON.parse(body);
                 return saveActivityMeasures(measures, callback);
               };
-              return request.post(aggregateUrl, {
-                form: data
-              }, onMeasures);
+              return request.post(aggregateUrl, options, onMeasures);
             });
           });
         });
