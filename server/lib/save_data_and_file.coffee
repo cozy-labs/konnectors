@@ -8,9 +8,9 @@ module.exports = (log, model, options, tags) ->
 
         async.eachSeries entries.filtered, (entry, callback) ->
             entryLabel = entry.date.format 'MMYYYY'
+            fileName = naming.getEntryFileName entry, options
 
             createFileAndSaveData = (entry, entryLabel) ->
-                fileName = naming.getEntryFileName entry, options
                 date = entry.date
                 pdfurl = entry.pdfurl
                 path = requiredFields.folderPath
