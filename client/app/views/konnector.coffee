@@ -48,19 +48,39 @@ module.exports = class KonnectorView extends BaseView
 <div class="field line">
 <div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
 """
+
             if val is 'folder'
+
+                # Add a widget to select given folder.
                 fieldHtml += """
-<div><select id="#{slug}-#{name}-input" class="folder"">"""
+<div><select id="#{slug}-#{name}-input" class="folder"">
+"""
+                selectedPath = path: '', id: ''
+
+                # Add an option for every folder. Value is id of the folder.
+                # Displayed label is the path of the folder.
                 for path in @paths
-                    if path is values[name]
+                    if path.path is values[name]
                         fieldHtml += """
-                        <option selected value="#{path}">#{path}</option>
-                        """
+<option selected value="#{path.id}">#{path.path}</option>
+"""
+                        selectedPath = path
                     else
                         fieldHtml += """
-                        <option value="#{path}">#{path}</option>
-                        """
-                fieldHtml += "</select></div></div>"
+<option value="#{path.id}">#{path.path}</option>
+"""
+                fieldHtml += "</select></div>"
+
+                # Add a button to open quickly the selected folder in the files
+                # app.
+                fieldHtml += """
+<a href="#apps/files/folders/#{selectedPath.id}"
+   class="folder-link"
+   target="_blank">
+    open selected folder
+</a>
+"""
+                fieldHtml += "</div>"
 
             else
                 fieldHtml += """
@@ -69,6 +89,20 @@ module.exports = class KonnectorView extends BaseView
 </div>
 """
             @$('.fields').append fieldHtml
+
+            # If the widget added is a folder selector, we add a change
+            # listener that will change the open folder button link every time
+            # the selector is changed.
+            if val is 'folder'
+                @$("##{slug}-#{name}-input").change =>
+                    id = @$("##{slug}-#{name}-input").val()
+                    folderSelector = @$("##{slug}-#{name}-input")
+                    folderButton = folderSelector
+                        .parent()
+                        .parent()
+                        .find(".folder-link")
+                    link = "#apps/files/folders/#{id}"
+                    folderButton.attr 'href', link
 
         # Auto Import
         importInterval = @model.get 'importInterval'
@@ -160,8 +194,21 @@ module.exports = class KonnectorView extends BaseView
             slug = @model.get 'slug'
             importDate = $("##{slug}-import-date").val()
             fieldValues['date'] = importDate
+
             for name, val of @model.get 'fields'
-                fieldValues[name] = $("##{slug}-#{name}-input").val()
+
+                # For folder fields, it requires to convert the value (a folder
+                # id) to a folder path.
+                if val is 'folder'
+                    id = $("##{slug}-#{name}-input").val()
+                    value = ''
+                    value = path.path for path in @paths when path.id is id
+                    fieldValues[name] = value
+
+                # For simple fields, just get the value of the field.
+                else
+                    fieldValues[name] = $("##{slug}-#{name}-input").val()
+
 
             # auto import interval and start date work separately from field
             # values

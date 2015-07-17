@@ -13,4 +13,5 @@ module.exports = class FolderCollection extends Backbone.Collection
     # Return the list of all folder paths.
     getAllPaths: ->
         @models.map (model) ->
-            model.getFullPath()
+            path: model.getFullPath()
+            id: model.get 'id'
