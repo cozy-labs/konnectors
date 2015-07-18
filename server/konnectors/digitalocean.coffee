@@ -112,9 +112,12 @@ logIn = (requiredFields, billInfos, data, next) ->
                 # Download bill information page.
                 log.info 'Fetch bill info'
                 request billOptions, (err, res, body) ->
-                    log.info 'Fetch bill info succeeded'
-                    if err then next err
+                    if err
+                        log.error 'An error occured while fetching bills'
+                        console.log err
+                        next err
                     else
+                        log.info 'Fetch bill info succeeded'
                         data.html = body
                         next()
 
@@ -124,6 +127,7 @@ parsePage = (requiredFields, bills, data, next) ->
     bills.fetched = []
     $ = cheerio.load data.html
 
+    log.info 'Parsing bill pages'
     # Anaylyze bill listing table.
     $('table.listing tr').each ->
 
@@ -148,4 +152,5 @@ parsePage = (requiredFields, bills, data, next) ->
         log.error "No bills retrieved"
         next('no bills retrieved')
     else
+        log.info "Bill parsed: #{bills.fetched.length} found"
         next()
