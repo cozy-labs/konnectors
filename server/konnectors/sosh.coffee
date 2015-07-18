@@ -47,9 +47,8 @@ module.exports =
         fetcher.new()
             .use(logIn)
             .use(parsePage)
-            .use(filterExisting log, Bill, null, 'sosh')
-            .use(saveDataAndFile(
-                log, Bill, {suffix: 'sosh',vendor: 'sosh'}, ['bill']))
+            .use(filterExisting log, Bill)
+            .use(saveDataAndFile(log, Bill, 'sosh', ['bill']))
             .use(linkBankOperation
                 log: log
                 model: Bill
@@ -141,6 +140,7 @@ parsePage = (requiredFields, bills, data, next) ->
                 .replace(',', '.')
             )
             pdfurl: thirdCell.find('a').attr 'href'
+            vendor: 'Sosh'
 
         bills.fetched.push bill if bill.date? and bill.amount?
 

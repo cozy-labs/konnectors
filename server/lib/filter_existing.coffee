@@ -4,6 +4,10 @@ module.exports = (log, model, suffix, vendor) ->
     (requiredFields, entries, body, next) ->
         entries.filtered = []
 
+        # Set vendor automatically if not given
+        if not vendor? and entries.fetched.length > 0
+            vendor = entries.fetched[0].vendor
+
         # Get current entries
         model.all (err, entryObjects) ->
             return next err if err

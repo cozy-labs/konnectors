@@ -147,6 +147,7 @@ parsePage = (requiredFields, bills, data, next) ->
                 date: moment firstCell.html()
                 amount: parseFloat thirdCell.html().replace '$', ''
                 pdfurl: pdfurlPrefix + fourthCell.find('a').attr 'href'
+                vendor: 'Digital Ocean'
 
     if bills.fetched.length is 0
         log.error "No bills retrieved"
@@ -154,3 +155,4 @@ parsePage = (requiredFields, bills, data, next) ->
     else
         log.info "Bill parsed: #{bills.fetched.length} found"
         next()
+
