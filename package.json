@@ -70,6 +70,9 @@
     "CodeBill": {
       "description": "Code bills fetched by Github Konnector."
     },
+    "Bill": {
+      "description": "Generic bill object."
+    },
     "BankOperation": {
       "description": "Bank operation to link with downloaded bills."
     },
