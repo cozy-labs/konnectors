@@ -4,13 +4,14 @@ var americano;
 americano = require('americano');
 
 module.exports = {
+  bill: {
+    byDate: americano.defaultRequests.by('date')
+  },
   konnector: {
     all: americano.defaultRequests.all
   },
   bankoperation: {
-    byDate: function(doc) {
-      return emit(doc.date, doc);
-    }
+    byDate: americano.defaultRequests.by('date')
   },
   folder: {
     byFullPath: function(doc) {
