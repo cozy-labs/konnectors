@@ -107,10 +107,12 @@ logIn = function(requiredFields, billInfos, data, next) {
         log.info('Login succeeded');
         log.info('Fetch bill info');
         return request(billOptions, function(err, res, body) {
-          log.info('Fetch bill info succeeded');
           if (err) {
+            log.error('An error occured while fetching bills');
+            console.log(err);
             return next(err);
           } else {
+            log.info('Fetch bill info succeeded');
             data.html = body;
             return next();
           }
@@ -124,6 +126,7 @@ parsePage = function(requiredFields, bills, data, next) {
   var $;
   bills.fetched = [];
   $ = cheerio.load(data.html);
+  log.info('Parsing bill pages');
   $('table.listing tr').each(function() {
     var firstCell, fourthCell, pdfurlPrefix, secondCell, thirdCell;
     secondCell = $(this).find('td').get(1);
@@ -143,6 +146,7 @@ parsePage = function(requiredFields, bills, data, next) {
     log.error("No bills retrieved");
     return next('no bills retrieved');
   } else {
+    log.info("Bill parsed: " + bills.fetched.length + " found");
     return next();
   }
 };
