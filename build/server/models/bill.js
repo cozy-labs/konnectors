@@ -15,6 +15,8 @@ module.exports = Bill = cozydb.getModel('Bill', {
   },
   amount: Number,
   plan: String,
+  pdfurl: String,
+  binaryId: String,
   fileId: String
 });
 
