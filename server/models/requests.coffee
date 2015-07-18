@@ -3,12 +3,14 @@
 americano = require 'americano'
 
 module.exports =
+    bill:
+        byDate: americano.defaultRequests.by 'date'
+
     konnector:
         all: americano.defaultRequests.all
 
     bankoperation:
-        byDate: (doc) ->
-            emit doc.date, doc
+        byDate: americano.defaultRequests.by 'date'
 
     folder:
         byFullPath: (doc) -> emit "#{doc.path}/#{doc.name}", doc

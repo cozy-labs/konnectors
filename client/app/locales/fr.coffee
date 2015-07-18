@@ -65,6 +65,7 @@ module.exports =
     fournira des identifiants pour cette application. Avec ces identifiants
     ce connecteur pourra récupérer vos données.
     """
+    'konnector description digital ocean': "Téléchargez toutes vos factures Digital Ocean. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -76,3 +77,4 @@ module.exports =
     'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées"
     'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
     'notification free mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification digital ocean': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"

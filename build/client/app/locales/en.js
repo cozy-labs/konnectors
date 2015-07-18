@@ -47,6 +47,7 @@ module.exports = {
   'konnector description rescuetime': "Download all your activities from Rescue Time",
   'konnector description withings': "Download all your measures from your Withings account.",
   'konnector description twitter': "Download all your tweets published on Twitter. This konnector requires two\nidentifiers and two secret keys. They can be generated on the <a\nhref=\"https://apps.twitter.com/\">Twitter app dashboard</a>. There you will\nbe able to create an app. They will give you credentials for this app. The\ncurrent konnector will use them to connect to Twitter and fetch your data.",
+  'konnector description digital ocean': "Download all your Digital Ocean Bills. This konnector requires the Files application to store the bill PDF files.",
   'notification prefix': "Konnector %{name}:",
   'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported",
   'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported",
@@ -55,5 +56,6 @@ module.exports = {
   'notification jawbone': "%{smart_count} new measure imported |||| %{smart_count} new measures imported",
   'notification rescuetime': "%{smart_count} new activity imported |||| %{smart_count} new activites imported",
   'notification withings': "%{smart_count} new measure imported |||| %{smart_count} new measures imported",
-  'notification free mobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+  'notification free mobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
+  'notification digital ocean': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
 };
