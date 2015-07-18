@@ -6,6 +6,8 @@ module.exports = Bill = cozydb.getModel 'Bill',
     vendor: type: String, default: 'Digital Ocean'
     amount: Number
     plan: String
+    pdfurl: String
+    binaryId: String
     fileId: String
 
 
