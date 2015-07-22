@@ -73,7 +73,7 @@ module.exports =
 
                 callback err, notifContent
 
-# Procedure to login to Free website.
+# Procedure to login to Electrabel website.
 logIn = (requiredFields, billInfos, data, next) ->
 
     loginUrl = "https://www.electrabel.be/fr/particulier/login"
@@ -138,7 +138,7 @@ parsePage = (requiredFields, bills, data, next) ->
     return next() if not data.html?
 
     $ = cheerio.load data.html
-    
+
     $('tr').each ->
         $ = cheerio.load $(this).html()
         amount = $('td[class=last]').text()
@@ -147,7 +147,7 @@ parsePage = (requiredFields, bills, data, next) ->
             amount = amount.replace ',', '.'
             amount = parseFloat amount
             billID = $('a').find('span').text()
-            
+
             pdfUrl = "https://www.electrabel.be/eservices/private/billing/\
 billviewer?invoiceId="+billID+ "&contractAccountID="+data.clientID
             date = $('td[class=first]').text()
