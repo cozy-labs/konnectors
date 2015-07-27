@@ -96,7 +96,7 @@ logIn = (requiredFields, billInfos, data, next) ->
     request logInOptions, (err, res, body) ->
         if err then next err
 
-        # Log in sosh.fr
+        # Log in orange.fr
         log.info 'Logging in'
         request signInOptions, (err, res, body) ->
             if err
