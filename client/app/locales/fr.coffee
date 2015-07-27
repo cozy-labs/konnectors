@@ -30,7 +30,7 @@ module.exports =
     'date format': 'DD/MM/YYYY [à] HH[h]mm'
 
     'home headline': """
-    Konnectors vous permet de récupérer de nombreuses données et de les intégrer votre Cozy.
+    Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.
     De vos factures de téléphone aux données de votre balance connectée en passant par vos tweets. Configurez les connecteurs qui vous intéressent :
     """
     'home config step 1': "Sélectionnez un connecteur dans le menu à gauche"
@@ -59,9 +59,9 @@ module.exports =
     'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter."
     'konnector description twitter': """
     Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert
-    deux identifiants and deux clés secrètes. Vous pouvez les générer via le
-    href="https://apps.twitter.com/">tableau Twitter de gestion
-    d'applications</a>. Vous pourrez y créez une application. Twitter vous
+    deux identifiants et deux clés secrètes. Vous pouvez les générer via le
+    <a href="https://apps.twitter.com/">tableau Twitter de gestion
+    d'applications</a>. Vous pourrez y créer une application. Twitter vous
     fournira des identifiants pour cette application. Avec ces identifiants
     ce connecteur pourra récupérer vos données.
     """
