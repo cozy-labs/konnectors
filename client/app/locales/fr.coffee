@@ -60,7 +60,7 @@ module.exports =
     'konnector description twitter': """
     Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert
     deux identifiants and deux clés secrètes. Vous pouvez les générer via le
-    href="https://apps.twitter.com/">tableau Twitter de gestion
+    <a href="https://apps.twitter.com/">tableau Twitter de gestion
     d'applications</a>. Vous pourrez y créez une application. Twitter vous
     fournira des identifiants pour cette application. Avec ces identifiants
     ce connecteur pourra récupérer vos données.
