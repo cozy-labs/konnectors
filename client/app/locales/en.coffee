@@ -65,6 +65,8 @@ module.exports =
     """
     'konnector description digital ocean': "Download all your Digital Ocean Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description sosh': "Download all your Sosh Bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description electrabel': "Download all you Electrabel Bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description orange': "Download all your Orange Bills. This konnector requires the Files application to store the bill PDF files."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
@@ -78,3 +80,4 @@ module.exports =
     'notification free mobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification digital ocean': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification sosh': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification electrabel': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
