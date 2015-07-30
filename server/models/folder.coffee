@@ -17,3 +17,17 @@ Folder.all = (callback) ->
         return callback err if err
         callback null, folders
 
+
+Folder.allPath = (callback) ->
+    Folder.all (err, folders) ->
+        folders = folders.map (folder) -> folder.getFullPath()
+        callback err, folders
+
+
+Folder.createNewFolder = (folder, callback) ->
+        Folder.create folder, (err, newFolder) ->
+            if err then callback err
+            else
+                newFolder.index ["name"], (err) ->
+                console.log err if err
+                callback null, newFolder

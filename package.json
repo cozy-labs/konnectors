@@ -15,11 +15,12 @@
     "americano": "0.3.7",
     "async": "0.9.0",
     "cheerio": "0.16.0",
+    "cozy-ical": "1.1.12",
     "cozy-notifications-helper": "1.0.2",
     "cozy-realtime-adapter": "1.0.0",
     "cozydb": "0.0.17",
     "jade": "1.9.0",
-    "moment": "2.4.0",
+    "moment": "2.10.6",
     "nest-api": "0.0.5",
     "node-polyglot": "0.4.1",
     "pngjs-image": "0.11.2",
@@ -99,6 +100,9 @@
     },
     "CozyInstance": {
       "description": "This information is needed to localize the application in your language."
+    },
+    "Event": {
+      "description": "Import event to fill the calendar."
     }
   },
   "cozy-displayName": "Konnectors",

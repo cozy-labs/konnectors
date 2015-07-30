@@ -69,6 +69,7 @@ module.exports =
     'konnector description sosh': "Téléchargez toutes vos factures Sosh. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description electrabel': "Téléchargez toutes vos factures Electrabel. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description orange': "Téléchargez toutes vos factures Orange. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -83,3 +84,7 @@ module.exports =
     'notification digital ocean': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification sosh': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification electrabel': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification isen': "%{smart_count} nouveau support de cours importé |||| %{smart_count} nouveaux supports de cours importés"
+    'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}"
+    'notification isen date format': "DD/MM [à] HH:mm"
+    'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"
