@@ -17,9 +17,11 @@ log = require('printit')
 
 # Models
 
-Bill = require '../models/bill'
-
-
+Bill = cozydb.getModel 'Bill',
+    vendor: {type: String, default: 'Internet'}
+    date: Date
+    amount: Number
+    
 # Konnector
 
 module.exports =
