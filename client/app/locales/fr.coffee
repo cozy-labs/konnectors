@@ -30,7 +30,7 @@ module.exports =
     'date format': 'DD/MM/YYYY [à] HH[h]mm'
 
     'home headline': """
-    Konnectors vous permet de récupérer de nombreuses données et de les intégrer votre Cozy.
+    Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.
     De vos factures de téléphone aux données de votre balance connectée en passant par vos tweets. Configurez les connecteurs qui vous intéressent :
     """
     'home config step 1': "Sélectionnez un connecteur dans le menu à gauche"
@@ -67,6 +67,9 @@ module.exports =
     """
     'konnector description digital ocean': "Téléchargez toutes vos factures Digital Ocean. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description sosh': "Téléchargez toutes vos factures Sosh. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description electrabel': "Téléchargez toutes vos factures Electrabel. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description orange': "Téléchargez toutes vos factures Orange. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -80,3 +83,8 @@ module.exports =
     'notification free mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification digital ocean': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification sosh': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification electrabel': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification isen': "%{smart_count} nouveau support de cours importé |||| %{smart_count} nouveaux supports de cours importés"
+    'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}"
+    'notification isen date format': "DD/MM [à] HH:mm"
+    'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"
