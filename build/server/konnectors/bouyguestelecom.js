@@ -146,7 +146,6 @@ logIn = function(requiredFields, bills, data, next) {
         }
       };
       return request(options, function(err, res, body) {
-        console.log(body);
         if (err) {
           return next(err);
         }
@@ -183,7 +182,6 @@ parsePage = function(requiredFields, bills, data, next) {
           amount: amount.replace(',', '.'),
           pdfurl: url
         };
-        console.log(bill);
         return bills.fetched.push(bill);
       }
     }
