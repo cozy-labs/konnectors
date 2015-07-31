@@ -36,7 +36,9 @@ PhoneBill = cozydb.getModel('PhoneBill', {
   date: Date,
   vendor: String,
   amount: Number,
-  fileId: String
+  fileId: String,
+  binaryId: String,
+  pdfUrl: String
 });
 
 PhoneBill.all = function(callback) {
@@ -96,7 +98,7 @@ module.exports = {
 logIn = function(requiredFields, bills, data, next) {
   var billUrl, loginOptions, loginUrl, userAgent;
   loginUrl = 'https://www.mon-compte.bouyguestelecom.fr/cas/login';
-  billUrl = 'http://www.bouyguestelecom.fr/mon-compte/suivi-conso/factures';
+  billUrl = 'http://www.bouyguestelecom.fr/mon-compte/mes-factures';
   userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + 'Gecko/20100101 Firefox/36.0';
   loginOptions = {
     uri: loginUrl,
@@ -144,6 +146,7 @@ logIn = function(requiredFields, bills, data, next) {
         }
       };
       return request(options, function(err, res, body) {
+        console.log(body);
         if (err) {
           return next(err);
         }
@@ -180,6 +183,7 @@ parsePage = function(requiredFields, bills, data, next) {
           amount: amount.replace(',', '.'),
           pdfurl: url
         };
+        console.log(bill);
         return bills.fetched.push(bill);
       }
     }
