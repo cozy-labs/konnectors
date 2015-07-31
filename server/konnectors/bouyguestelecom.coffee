@@ -136,7 +136,6 @@ logIn = (requiredFields, bills, data, next) ->
                 headers:
                     'User-Agent': userAgent
             request options, (err, res, body) ->
-                console.log body
                 return next err if err
                 data.html = body
                 next()
@@ -182,6 +181,5 @@ parsePage = (requiredFields, bills, data, next) ->
                     date: moment date, 'DD/MM/YYYY'
                     amount: amount.replace ',', '.'
                     pdfurl: url
-                console.log bill
                 bills.fetched.push bill
     next()
