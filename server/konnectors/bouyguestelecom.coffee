@@ -26,6 +26,8 @@ PhoneBill = cozydb.getModel 'PhoneBill',
     vendor: String
     amount: Number
     fileId: String
+    binaryId: String
+    pdfUrl: String
 
 PhoneBill.all = (callback) ->
     PhoneBill.request 'byDate', callback
@@ -87,7 +89,7 @@ module.exports =
 logIn = (requiredFields, bills, data, next) ->
 
     loginUrl = 'https://www.mon-compte.bouyguestelecom.fr/cas/login'
-    billUrl = 'http://www.bouyguestelecom.fr/mon-compte/suivi-conso/factures'
+    billUrl = 'http://www.bouyguestelecom.fr/mon-compte/mes-factures'
     userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + \
                 'Gecko/20100101 Firefox/36.0'
 
@@ -134,6 +136,7 @@ logIn = (requiredFields, bills, data, next) ->
                 headers:
                     'User-Agent': userAgent
             request options, (err, res, body) ->
+                console.log body
                 return next err if err
                 data.html = body
                 next()
@@ -179,5 +182,6 @@ parsePage = (requiredFields, bills, data, next) ->
                     date: moment date, 'DD/MM/YYYY'
                     amount: amount.replace ',', '.'
                     pdfurl: url
+                console.log bill
                 bills.fetched.push bill
     next()
