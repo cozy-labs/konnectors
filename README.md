@@ -1,5 +1,7 @@
 # Konnectors
 
+[![Build Status](https://travis-ci.org/cozy-labs/konnectors.svg)](https://travis-ci.org/cozy-labs/konnectors)
+
 Collection of connectors to fetch data from different websites and save them
 into your Cozy.
 
@@ -28,9 +30,6 @@ To build this application:
     cake build
 
 # Tests
-
-![Build
-Status](https://travis-ci.org/cozy-labs/konnectors.png?branch=master)
 
 To run tests type the following command into the app folder:
 
