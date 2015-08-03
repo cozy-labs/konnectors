@@ -43,7 +43,7 @@ task 'tests', "Run tests #{taskDetails}", (opts) ->
         files = walk "tests"
     env = if options['env'] then "NODE_ENV=#{options.env}" else "NODE_ENV=test"
     logger.info "Running tests with #{env}..."
-    command = "#{env} mocha " + files.join(" ") + " --reporter spec --colors "
+    command = "#{env} ./node_modules/.bin/mocha " + files.join(" ") + " --reporter spec --colors "
     command += "--globals clearImmediate,setImmediate "
     command += "--compilers coffee:coffee-script/register"
     exec command, (err, stdout, stderr) ->
