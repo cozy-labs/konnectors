@@ -75,7 +75,8 @@ logIn = (requiredFields, billInfos, data, next) ->
     logInOptions =
         method: 'GET'
         jar: true
-        url: "https://id.orange.fr/auth_user/bin/auth_user.cgi?service=sosh2&return_url=http%3A%2F%2Fclientsosh.orange.fr"
+        url: "https://id.orange.fr/auth_user/bin/auth_user.cgi" +
+             "?service=sosh2&return_url=http%3A%2F%2Fclientsosh.orange.fr"
 
     signInOptions =
         method: 'POST'

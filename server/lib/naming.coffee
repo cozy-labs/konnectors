@@ -35,9 +35,9 @@ module.exports =
             # Build date prefix.
             if entry.date?
                 if options.dateFormat?
-                     name = entry.date.format options.dateFormat
+                    name = entry.date.format options.dateFormat
                 else
-                     name = entry.date.format 'YYYYMM'
+                    name = entry.date.format 'YYYYMM'
 
             # Add vendor name.
             name += "_#{options.vendor}"
