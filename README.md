@@ -19,6 +19,14 @@ into your Cozy.
 
 * weather tracker: store your location and track temperature and pluviometry.
 
+# Build
+
+To build this application:
+
+    npm install
+    cd client && npm install && cd ..
+    cake build
+
 # Tests
 
 ![Build
