@@ -60,7 +60,7 @@ task "lint", "Run coffeelint on source files", ->
 
     lintFiles = walk '.',  ['node_modules', 'tests', 'locales']
 
-    command = "./node_modules/coffeelint/bin/coffeelint"
+    command = "./node_modules/.bin/coffeelint"
     args = ["-f", "coffeelint.json", "-r", "--color=always"]
 
     coffeelint = spawn command, args.concat lintFiles
@@ -78,10 +78,10 @@ buildJade = ->
 task 'build', 'Build CoffeeScript to Javascript', ->
     logger.options.prefix = 'cake:build'
     logger.info "Start compilation..."
-    command = "coffee -cb --output build/server server && " + \
-              "coffee -cb --output build/ server.coffee && " + \
+    command = "./node_modules/.bin/coffee -cb --output build/server server && " + \
+              "./node_modules/.bin/coffee -cb --output build/ server.coffee && " + \
               "rm -rf build/client && mkdir build/client &&  mkdir build/client/app && " + \
-              "coffee -cb --output build/client/app/locales/ client/app/locales && " + \
+              "./node_modules/.bin/coffee -cb --output build/client/app/locales/ client/app/locales && " + \
               "cd client/ && brunch build --production && cd .. && " + \
               "cp -R client/public build/client/"
 
