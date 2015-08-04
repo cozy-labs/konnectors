@@ -12,9 +12,14 @@ into your Cozy.
 * Withings (Weight, Heartbeat and Blood Presure data)
 * Twitter (published tweets)
 * Github (Bill PDFs, commits)
-* B&You (Bill PDFs)
+* Bouygues Telecom (Bill PDFs)
+* Bouygues Box (Bill PDFs)
 * Free (Bill PDFs)
 * Free Mobile (Bill PDFs)
+* Electrabel (Bill PDFs)
+* Digital Ocean (Bill PDFs)
+* Sosh (Bill PDFs)
+* Orange (Bill PDFs)
 * Nest (temperatures)
 
 # What we would like to see
