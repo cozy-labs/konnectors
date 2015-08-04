@@ -126,7 +126,6 @@ logIn = function(requiredFields, billInfos, data, next) {
               data.html = body;
               data.clientID = clientID;
               request.cookie("contractAccountID=" + clientID);
-              console.log(res.request.headers);
               return next();
             }
           });
@@ -159,7 +158,8 @@ parsePage = function(requiredFields, bills, data, next) {
         amount: amount,
         date: date,
         vendor: 'Electrabel',
-        pdfurl: pdfUrl
+        pdfurl: pdfUrl,
+        type: 'energy'
       };
       return bills.fetched.push(bill);
     }
