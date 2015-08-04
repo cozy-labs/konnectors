@@ -36,8 +36,10 @@ module.exports = function(log, model, options, tags) {
         }
       };
       saveEntry = function(entry, entryLabel) {
-        if (options.vendor) {
-          entry.vendor = options.vendor;
+        if (entry.vendor == null) {
+          if (options.vendor) {
+            entry.vendor = options.vendor;
+          }
         }
         return model.create(entry, function(err) {
           if (err) {

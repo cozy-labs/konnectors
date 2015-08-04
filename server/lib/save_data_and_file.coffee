@@ -28,7 +28,8 @@ module.exports = (log, model, options, tags) ->
                     saveEntry entry, entryLabel
 
             saveEntry = (entry, entryLabel) ->
-                entry.vendor = options.vendor if options.vendor
+                if not entry.vendor?
+                    entry.vendor = options.vendor if options.vendor
 
                 model.create entry, (err) ->
                     if err
