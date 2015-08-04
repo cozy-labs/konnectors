@@ -35,6 +35,9 @@ PhoneBill = cozydb.getModel 'PhoneBill',
     vendor: String
     amount: Number
     fileId: String
+    pdfurl: String
+    binaryId: String
+    type: String
 
 PhoneBill.all = (callback) ->
     PhoneBill.request 'byDate', callback
@@ -72,9 +75,8 @@ module.exports =
             .use(logIn)
             .use(getBillPage)
             .use(parseBillPage)
-            .use(logOut)
             .use(filterExisting log, PhoneBill)
-            .use(saveDataAndFile log, PhoneBill, 'freemobile', ['facture'])
+            .use(saveDataAndFile log, PhoneBill, {vendor: 'freemobile', others: ['phonenumber']}, ['facture'])
             .use(linkBankOperation
                 log: log
                 model: PhoneBill
@@ -82,6 +84,7 @@ module.exports =
                 dateDelta: 14
                 amountDelta: 0.1
             )
+            .use(logOut)
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
                 log.info "Import finished"
@@ -223,24 +226,31 @@ getBillPage = (requiredFields, billInfos, data, next) ->
 # Parse the fetched page to extract bill data.
 parseBillPage = (requiredFields, bills, data, next) ->
     bills.fetched = []
+    billUrl = "https://mobile.free.fr/moncompte/index.php?page=suiviconso&\
+action=getFacture&format=dl&l="
+
     return next() if not data.html?
     $ = cheerio.load data.html
     $('div[class="factLigne hide "]').each ->
-        log.info "New bill found"
         amount = $($(this).find('.montant')).text()
         amount = amount.replace '€', ''
         amount = parseFloat amount
-        pdfUrl = $(this).find('.pdf a').attr 'href'
-        pdfUrl = "https://mobile.free.fr/moncompte/#{pdfUrl}"
-        month = $(this).find('.date span').attr 'title'
-        moment.lang 'fr'
-        date = moment month, 'LL'
+        data_fact_id = $(this).attr 'data-fact_id'
+        data_fact_login = $(this).attr 'data-fact_login'
+        data_fact_date = $(this).attr 'data-fact_date'
+        data_fact_multi = $(this).attr 'data-fact_multi'
+        data_fact_ligne = $(this).attr 'data-fact_ligne'
+        pdfUrl = billUrl + data_fact_login + "&id=" + data_fact_id + "&\
+date=" + data_fact_date + "&multi=" + data_fact_multi
+        date = moment data_fact_date, 'YYYYMMDD'
         bill =
             amount: amount
             date: date
             vendor: 'Free Mobile'
-
+            type: 'phone'
+        bill.phonenumber = data_fact_ligne if data_fact_multi isnt "0"
         bill.pdfurl = pdfUrl if date.year() > 2011
+        
         bills.fetched.push bill
     next()
 

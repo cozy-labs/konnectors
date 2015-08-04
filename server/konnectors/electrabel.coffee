@@ -126,7 +126,6 @@ invoiceListFragment&contractAccountID="
                             data.html = body
                             data.clientID= clientID
                             request.cookie "contractAccountID=#{clientID}"
-                            console.log res.request.headers
                             next()
 
 
@@ -157,6 +156,7 @@ billviewer?invoiceId="+billID+ "&contractAccountID="+data.clientID
                 date: date
                 vendor: 'Electrabel'
                 pdfurl: pdfUrl
+                type: 'energy'
             #console.log bill
             bills.fetched.push bill
     next()

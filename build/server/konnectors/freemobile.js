@@ -44,7 +44,10 @@ PhoneBill = cozydb.getModel('PhoneBill', {
   date: Date,
   vendor: String,
   amount: Number,
-  fileId: String
+  fileId: String,
+  pdfurl: String,
+  binaryId: String,
+  type: String
 });
 
 PhoneBill.all = function(callback) {
@@ -75,13 +78,16 @@ module.exports = {
   },
   fetch: function(requiredFields, callback) {
     log.info("Import started");
-    return fetcher["new"]().use(prepareLogIn).use(getImageAndIdentifyNumbers).use(logIn).use(getBillPage).use(parseBillPage).use(logOut).use(filterExisting(log, PhoneBill)).use(saveDataAndFile(log, PhoneBill, 'freemobile', ['facture'])).use(linkBankOperation({
+    return fetcher["new"]().use(prepareLogIn).use(getImageAndIdentifyNumbers).use(logIn).use(getBillPage).use(parseBillPage).use(filterExisting(log, PhoneBill)).use(saveDataAndFile(log, PhoneBill, {
+      vendor: 'freemobile',
+      others: ['phonenumber']
+    }, ['facture'])).use(linkBankOperation({
       log: log,
       model: PhoneBill,
       identifier: 'free mobile',
       dateDelta: 14,
       amountDelta: 0.1
-    })).args(requiredFields, {}, {}).fetch(function(err, fields, entries) {
+    })).use(logOut).args(requiredFields, {}, {}).fetch(function(err, fields, entries) {
       var localizationKey, notifContent, options, ref;
       log.info("Import finished");
       notifContent = null;
@@ -235,28 +241,34 @@ getBillPage = function(requiredFields, billInfos, data, next) {
 };
 
 parseBillPage = function(requiredFields, bills, data, next) {
-  var $;
+  var $, billUrl;
   bills.fetched = [];
+  billUrl = "https://mobile.free.fr/moncompte/index.php?page=suiviconso&action=getFacture&format=dl&l=";
   if (data.html == null) {
     return next();
   }
   $ = cheerio.load(data.html);
   $('div[class="factLigne hide "]').each(function() {
-    var amount, bill, date, month, pdfUrl;
-    log.info("New bill found");
+    var amount, bill, data_fact_date, data_fact_id, data_fact_ligne, data_fact_login, data_fact_multi, date, pdfUrl;
     amount = $($(this).find('.montant')).text();
     amount = amount.replace('€', '');
     amount = parseFloat(amount);
-    pdfUrl = $(this).find('.pdf a').attr('href');
-    pdfUrl = "https://mobile.free.fr/moncompte/" + pdfUrl;
-    month = $(this).find('.date span').attr('title');
-    moment.lang('fr');
-    date = moment(month, 'LL');
+    data_fact_id = $(this).attr('data-fact_id');
+    data_fact_login = $(this).attr('data-fact_login');
+    data_fact_date = $(this).attr('data-fact_date');
+    data_fact_multi = $(this).attr('data-fact_multi');
+    data_fact_ligne = $(this).attr('data-fact_ligne');
+    pdfUrl = billUrl + data_fact_login + "&id=" + data_fact_id + "&date=" + data_fact_date + "&multi=" + data_fact_multi;
+    date = moment(data_fact_date, 'YYYYMMDD');
     bill = {
       amount: amount,
       date: date,
-      vendor: 'Free Mobile'
+      vendor: 'Free Mobile',
+      type: 'phone'
     };
+    if (data_fact_multi !== "0") {
+      bill.phonenumber = data_fact_ligne;
+    }
     if (date.year() > 2011) {
       bill.pdfurl = pdfUrl;
     }
