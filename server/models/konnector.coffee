@@ -97,6 +97,8 @@ Konnector::import = (callback) ->
             konnectorModule = konnectorHash[@slug]
 
             @injectEncryptedFields()
+            # Pass last import to the konnector
+            @fieldValues['lastImport'] = @lastImport
             konnectorModule.fetch @fieldValues, (importErr, notifContent) =>
                 fields = @getFields()
                 @removeEncryptedFields fields
@@ -171,4 +173,3 @@ Konnector.getKonnectorsToDisplay = (callback) ->
             catch err
                 log.error 'An error occured while filtering konnectors'
                 callback err
-

@@ -19,6 +19,13 @@ module.exports =
                 res.send 404
             else
                 konnector.injectEncryptedFields()
+
+                # Add customView field
+                konnectorModule = require "../konnectors/#{konnector.slug}"
+
+                if konnectorModule.customView?
+                    konnector.customView = konnectorModule.customView
+
                 req.konnector = konnector
                 next()
 

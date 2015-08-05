@@ -104,20 +104,23 @@ Contact::intrinsicRev = () ->
 
     asStr += "datapoints: " + stringDps.join ', '
 
-    # Get SHA-1
-    shasum = crypto.createHash('sha1')
-    shasum.update asStr
-    return shasum.digest 'base64'
+    return asStr
+    # # Get SHA-1
+    # shasum = crypto.createHash('sha1')
+    # shasum.update asStr
+    # return shasum.digest 'base64'
 
+
+Contact.extractGoogleId = (gEntry) ->
+        uri = gEntry.id?.$t
+        if uri?
+            parts = uri.split '/'
+            return parts[parts.length - 1]
 
 Contact.fromGoogleContact = (gContact, accountName)->
     return unless gContact?
 
-    extractId = (gEntry) ->
-        uri = gContact.id?.$t
-        if uri?
-            parts = uri.split '/'
-            return parts[parts.length - 1]
+
 
     contact =
         docType: 'contact'
@@ -137,7 +140,7 @@ Contact.fromGoogleContact = (gContact, accountName)->
         accounts : [
             type: 'com.google'
             name: accountName
-            id: extractId gContact
+            id: Contact.extractGoogleId gContact
             lastUpdate: gContact.updated?.$t
         ]
         #??binary        : Object
@@ -298,9 +301,23 @@ Contact::toGoogleContact = (gEntry) ->
                 addField 'gContact$event', field
 
             when 'RELATION'
-                addField 'gContact$relation', { $t: dp.value, rel: dp.type }
+                field = $t: dp.value
+                if dp.type in ['assistant', 'brother', 'child',
+                   'domestic-partner', 'father', 'friend', 'manager',
+                   'mother', 'parent', 'partner', 'referred-by', 'relative',
+                   'sister', 'spouse']
+                   field.rel = dp.type
 
-    return _extend gEntry, gContact
+                else
+                    field.label = dp.type
+
+                addField 'gContact$relation', field
+
+    if gEntry?
+        return _extend gEntry, gContact
+    else
+        return gContact
+
 
 
 Contact::getName = ->
@@ -339,6 +356,14 @@ Contact::setAccount = (account) ->
         @accounts = @accounts or []
         @accounts.push account
 
+
+Contact::deleteAccount = (account) ->
+    for current, i in @accounts
+        if current.type is account.type and current.name is account.name
+            @accounts.splice i, 1
+            return true
+
+    return false
 
 
 Contact.all = (callback)->

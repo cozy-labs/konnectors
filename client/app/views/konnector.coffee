@@ -299,6 +299,11 @@ target="_blank">
             else
                 @firstImport.hide()
 
+        if @model.has 'customView'
+            customViewElem = $ "<div class='customView'></div"
+            customViewElem.append @model.get 'customView'
+            customViewElem.insertBefore @$('.fields')
+
 
     onDeleteClicked: ->
         request.del "konnectors/#{@model.id}", (err) =>
@@ -312,6 +317,7 @@ target="_blank">
                 window.router.navigate '', trigger: true
 
 
+
     # This function is fired when a change of the model is fired on the backend
     # side and the model has an error field not empty.
     # Once executed this function displays the error
@@ -320,5 +326,3 @@ target="_blank">
 
         @model.set 'importErrorMessage', errorMessage
         @showErrors errorMessage
-
-
