@@ -21,14 +21,14 @@ Bill = cozydb.getModel 'Bill',
     vendor: {type: String, default: 'Internet'}
     date: Date
     amount: Number
-    
+
 # Konnector
 
 module.exports =
 
     name: "Numéricable"
     slug: "numericable"
-    description: 'Numéricable konnector'
+    description: 'konnector description numericable'
     vendorLink: "https://www.numericable.fr/"
 
     fields:
@@ -64,7 +64,7 @@ module.exports =
 
                 notifContent = null
                 if entries?.filtered?.length > 0
-                    localizationKey = 'notification numéricable'
+                    localizationKey = 'notification numericable'
                     options = smart_count: entries.filtered.length
                     notifContent = localization.t localizationKey, options
 
