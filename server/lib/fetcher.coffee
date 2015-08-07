@@ -1,5 +1,6 @@
 ware = require 'ware'
 
+
 class Fetcher
 
     constructor: ->
@@ -19,5 +20,7 @@ class Fetcher
 
         @ware.run.apply @ware, args
 
+
 module.exports =
     new: -> new Fetcher
+

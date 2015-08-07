@@ -2,6 +2,7 @@ path = require 'path'
 americano = require 'americano'
 getTemplateExt = require './lib/get_template_ext'
 
+
 config =
     common:
         set:
@@ -18,7 +19,7 @@ config =
             americano.errorHandler
                 dumpExceptions: true
                 showStack: true
-            americano.static __dirname + '/../client/public',
+            americano.static path.join __dirname, '..', 'client', 'public'
         ]
 
 

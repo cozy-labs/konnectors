@@ -10,6 +10,7 @@ module.exports.main = (req, res) ->
         konnectors: Konnector.getKonnectorsToDisplay
         instance: CozyInstance.first
         folders: Folder.all
+
     , (err, results) ->
         console.log err if err?
 
@@ -20,3 +21,4 @@ module.exports.main = (req, res) ->
             window.initKonnectors = #{JSON.stringify konnectors};
             window.initFolders = #{JSON.stringify folders};
         """
+
