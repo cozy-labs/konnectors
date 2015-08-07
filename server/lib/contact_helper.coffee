@@ -38,6 +38,7 @@ structuredToFlat = (t) ->
     t = t.filter (part) -> return part? and part isnt ''
     return t.join ', '
 
+
 # Convert splitted vCard address format, to flat one, but with line breaks.
 # @param value expect an array (adr value, splitted by ';').
 CH.adrArrayToString = (value) ->

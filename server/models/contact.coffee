@@ -95,7 +95,9 @@ Contact::intrinsicRev = () ->
         s = "name:#{datapoint.name}, type:#{datapoint.type}, value: "
 
         if datapoint.name is 'adr'
-            s += datapoint.value.join ';'
+            s += Helper.adrArrayToString datapoint.value
+        else if datapoint.name is 'tel'
+            s += datapoint.value?.replace /[^\d+]/g, ''
         else
             s += datapoint.value
 
@@ -120,21 +122,17 @@ Contact.extractGoogleId = (gEntry) ->
 Contact.fromGoogleContact = (gContact, accountName)->
     return unless gContact?
 
-
-
     contact =
         docType: 'contact'
         fn: gContact.gd$name?.gd$fullName?.$t
-        n: "#{gContact.gd$name?.gd$familyName?.$t or ''};#{gContact.gd$name?.gd$givenName?.$t or ''};#{gContact.gd$name?.gd$additionalName?.$t or ''};#{gContact.gd$name?.gd$namePrefix?.$t or ''};#{gContact.gd$name?.gd$nameSuffix?.$t or ''}"
 
-        org: gContact?.gd$organization?.gd$orgName?.$t
-        title: gContact?.gd$organization?.gd$orgTitle?.$t
+        org: gContact?.gd$organization?[0]?.gd$orgName?.$t
+        title: gContact?.gd$organization?[0]?.gd$orgTitle?.$t
         # department
         bday: gContact.gContact$birthday?.when
         nickname: gContact.gContact$nickname?.$t
         note: gContact.content?.$t
 
-        # url:   ?many...
         # revision      : <-- todo ?
         #tags          : ['google']
         accounts : [
@@ -144,6 +142,13 @@ Contact.fromGoogleContact = (gContact, accountName)->
             lastUpdate: gContact.updated?.$t
         ]
         #??binary        : Object
+
+    nameComponent = (field) ->
+        part = gContact.gd$name?[field]?.$t or ''
+        return part.replace /;/g, ' '
+
+
+    contact.n = "#{nameComponent('gd$familyName')};#{nameComponent('gd$givenName')};#{nameComponent('gd$additionalName')};#{nameComponent('gd$namePrefix')};#{nameComponent('gd$nameSuffix')}"
 
         #  SOCIAL.
     getTypeFragment = (component) ->
@@ -165,7 +170,7 @@ Contact.fromGoogleContact = (gContact, accountName)->
         contact.datapoints.push
             name: "tel"
             pref: phone.primary or false
-            value: phone.uri?.replace('tel:', '')
+            value: phone.uri?.replace('tel:', '').replace(/-/g, ' ')
             type: getTypeFragment phone
 
     for im in gContact.gd$im or []
@@ -177,15 +182,26 @@ Contact.fromGoogleContact = (gContact, accountName)->
     for adr in gContact.gd$structuredPostalAddress or []
         contact.datapoints.push
             name: "adr"
-            value: ["", "", adr.gd$formattedAddress?.$t, "", "", "", ""]
+            # value: ["", "", adr.gd$formattedAddress?.$t, "", "", "", ""]
+            value: ["", "", adr.gd$street?.$t or "",
+                adr.gd$city?.$t or ""
+                adr.gd$region?.$t or ""
+                adr.gd$postcode?.$t or ""
+                adr.gd$country?.$t or ""
+            ]
             type: getTypeFragment adr
 
+    websites = gContact.gContact$website?.slice() or []
+    if gContact.gContact$website?.length > 0
+        contact.url = gContact.gContact$website[0].href
+        websites = gContact.gContact$website.slice 1
 
-    for web in gContact.gContact$website or []
-        contact.datapoints.push
-            name: "url"
-            value: web.href
-            type: getTypePlain web
+        for web in websites
+    # for web in gContact.gContact$website or []
+            contact.datapoints.push
+                name: "url"
+                value: web.href
+                type: getTypePlain web
 
     for rel in gContact.gContact$relation or []
         contact.datapoints.push
@@ -224,11 +240,11 @@ Contact::toGoogleContact = (gEntry) ->
     gContact.gContact$nickname = $t: @nickname if @nickname?
     gContact.content = $t: @note if @note?
 
-    if @org? or @title
-        gContact.gd$organization =
-            rel: "http://schemas.google.com/g/2005#other"
-            gd$orgName: $t: @org
-            gd$orgTitle: $t: @title
+    if @org? or @title?
+        org = rel: "http://schemas.google.com/g/2005#other"
+        org.gd$orgName = $t: @org if @org?
+        org.gd$orgTitle = $t: @title if @title?
+        gContact.gd$organization = [ org ]
 
     setTypeFragment = (dp, field) ->
         if dp.type in ['fax', 'home', 'home_fax', 'mobile', 'other',
@@ -245,6 +261,11 @@ Contact::toGoogleContact = (gEntry) ->
             gContact[gField] = []
 
         gContact[gField].push field
+
+    if @url
+        addField 'gContact$website',
+            href: @url
+            rel: 'other'
 
     for dp in @datapoints
         name = dp.name.toUpperCase()
@@ -276,7 +297,7 @@ Contact::toGoogleContact = (gEntry) ->
 
             when 'CHAT'
                 addField 'gd$im',
-                    protocol: "http://schemas.google.com/g/2005##{dp.type?.toUpperCase()}"
+                    protocol: "http://schemas.google.com/g/2005##{dp.type}"
                     address: dp.value
                     rel: "http://schemas.google.com/g/2005#other"
 

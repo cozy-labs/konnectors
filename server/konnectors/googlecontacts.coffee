@@ -8,6 +8,9 @@ Contact = require '../models/contact'
 CompareContacts = require '../lib/compare_contacts'
 
 GoogleToken = require '../lib/google_access_token'
+im = require('imagemagick-stream')
+url = require 'url'
+
 
 #
 fs = require 'fs'
@@ -37,7 +40,7 @@ module.exports =
 
     name: "Google Contacts"
     slug: "googlecontacts"
-    description: "Synchronise google contacts with cozy through google's API."
+    description: "Synchronise google contacts with cozy through google's API. Experimental - please backup your contacts, from your cozy and your google account."
     vendorLink: "https://www.google.com/contacts/"
 
     customView: """
@@ -57,7 +60,7 @@ module.exports =
         contact: Contact
 
     init: (callback) ->
-        callback
+        callback()
 
     fetch: (requiredFields, callback) ->
 
@@ -77,15 +80,6 @@ module.exports =
             .fetch (err, fields, entries) ->
                 return callback err if err
                 log.info "Import finished"
-
-                # # TODO move this in a procedure.
-                # notifContent = null
-                # if entries?.filtered?.length > 0
-                #     localizationKey = 'notification bouygues'
-                #     options = smart_count: entries.filtered.length
-                #     notifContent = localization.t localizationKey, options
-
-                # callback null, notifContent
                 callback()
 
 
@@ -151,6 +145,8 @@ fetchGoogleChanges = (requiredFields, entries, data, callback) ->
     uri = "https://www.google.com/m8/feeds/contacts/#{requiredFields.accountName}/full/?alt=json&showdeleted=true&max-results=10000"
 
     if requiredFields.lastImport?
+        # TODO: should use a 'lastSuccessfullImport' date, to avoid ellipsis
+        # in changes.
         uri += "&updated-min=#{requiredFields.lastImport.toISOString()}"
 
     request
@@ -179,7 +175,7 @@ updateCozyContacts = (requiredFields, entries, data, callback) ->
             , requiredFields.accountName, cb
         else
             updateCozyContact gEntry, entries.cozyContacts, entries.ofAccountByIds
-            , requiredFields.accountName, cb
+            , requiredFields, cb
     , callback
 
 removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
@@ -194,20 +190,25 @@ removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
         log.info "Contact already unlinked from this account."
         callback()
 
-updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, accountName, callback) ->
+updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, callback) ->
+    accountName = requiredFields.accountName
     fromGoogle = new Contact Contact.fromGoogleContact gEntry, accountName
     accountG = fromGoogle.accounts[0]
 
     updateContact = (fromCozy, fromGoogle) ->
         CompareContacts.mergeContacts fromCozy, fromGoogle
         fromCozy.setAccount fromGoogle.accounts[0]
-        fromCozy.save callback
+        fromCozy.save (err, contact) ->
+            return callback err if err
+            addContactPictureInCozy requiredFields, contact, gEntry, callback
+
 
     # already in cozy ?
     if accountG.id of ofAccountByIds
         fromCozy = ofAccountByIds[accountG.id]
         accountC = fromCozy.getAccount ACCOUNT_TYPE, accountName
-        if accountC.lastUpdate < accountG.lastUpdate
+        if accountC.lastUpdate < accountG.lastUpdate and
+           fromGoogle.intrinsicRev() isnt fromCozy.intrinsicRev()
             log.info "Update #{fromCozy?.fn} from google"
             updateContact fromCozy, fromGoogle
 
@@ -230,7 +231,43 @@ updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, accountName, callbac
             log.info "Create #{fromGoogle?.fn} contact"
 
             fromGoogle.revision = new Date().toISOString()
-            Contact.create fromGoogle, callback
+            Contact.create fromGoogle, (err, contact) ->
+                return callback err if err
+                # TODO: reactivate this, needs upload to google to ;
+                # check for speed
+                # addContactPictureInCozy requiredFields, contact, gEntry, callback
+                callback()
+
+
+
+
+PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo"
+addContactPictureInCozy = (requiredFields, cozyContact, gContact, done) ->
+    pictureLink = gContact.link.filter (link) -> link.rel is PICTUREREL
+    pictureUrl = pictureLink[0]?.href
+
+    return done null unless pictureUrl
+
+    opts = url.parse(pictureUrl)
+    opts.headers =
+        'Authorization': 'Bearer ' + requiredFields.accessToken
+        'GData-Version': '3.0'
+    https.get opts, (stream)->
+        stream.on 'error', done
+        unless stream.statusCode is 200
+            log.warn "error fetching #{pictureUrl}", stream.statusCode
+            return done null
+        thumbStream = stream.pipe im().resize('300x300^').crop('300x300')
+        thumbStream.on 'error', done
+        thumbStream.path = 'useless'
+        type = stream.headers['content-type']
+        opts = {name: 'picture', type: type}
+        cozyContact.attachFile thumbStream, opts, (err)->
+            if err
+                log.error "picture #{err}"
+            else
+                log.debug "picture ok"
+            done err
 
 
 fetchAllGoogleContacts = (requiredFields, entries, data, callback) ->
@@ -244,6 +281,9 @@ fetchAllGoogleContacts = (requiredFields, entries, data, callback) ->
             'GData-Version': '3.0'
     , (err, res, body) ->
         return callback err if err
+        if body.error?
+            return callback new Error body.error
+
         entries.googleContacts = body.feed?.entry or []
         entries.googleContactsById = {}
         for gEntry in entries.googleContacts
@@ -295,12 +335,8 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
 
     fromGoogle = new Contact Contact.fromGoogleContact gEntry
     if fromGoogle.intrinsicRev() isnt contact.intrinsicRev()
-        log.info fromGoogle.intrinsicRev()
-        log.info contact.intrinsicRev()
-
         log.info "update #{contact?.fn} in google"
         updated = contact.toGoogleContact gEntry
-        log.info updated
         request
             method: 'PUT'
             uri: "https://www.google.com/m8/feeds/contacts/#{account.name}/full/#{account.id}/?alt=json"
@@ -313,11 +349,53 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
         , (err, res, body) ->
             return callback err if err
             if body.error?
-                log.info 'Error while uploading contact to google', body
+                log.warn 'Error while uploading contact to google'
+                log.warn body
 
-            callback()
+            callback() # continue with next contact on error.
+
+            # else # update picture.
+            #     putPicture2Google requiredFields, contact, gEntry, callback
+
     else
         callback()
+
+# TODO : doesn't work yet ...
+putPicture2Google = (requiredFields, contact, gEntry, callback) ->
+    # Check if picture ...
+    unless contact._attachments?.picture?
+        return callback()
+
+    # Get picture as bytes.
+    stream = contact.getFile 'picture', (err) ->
+
+        return callback err if err
+
+    # request
+    #     method: 'PUT'
+    #     uri: "https://www.google.com/m8/feeds/photos/media/#{requiredFields.accountName}/#{Contact.extractGoogleId(gEntry)}"
+    #     body: stream
+    #     headers:
+    #         'Authorization': 'Bearer ' + requiredFields.accessToken
+    #         'GData-Version': '3.0'
+    # , callback
+
+    options =
+        method: 'PUT'
+        host: 'www.google.com',
+        port: 443,
+        path: "/m8/feeds/photos/media/#{requiredFields.accountName}/#{Contact.extractGoogleId(gEntry)}"
+        # uri: "https://www.google.com/m8/feeds/photos/media/#{requiredFields.accountName}/#{Contact.extractGoogleId(gEntry)}"
+        headers:
+            'Authorization': 'Bearer ' + requiredFields.accessToken
+            'GData-Version': '3.0'
+
+    req = https.request options, (res) ->
+        res.on 'error', callback
+        res.on 'data', (chunk) -> callback()
+
+    stream.pipe req
+
 
 deleteInGoogle = (requiredFields, gId, callback) ->
     request
@@ -329,4 +407,4 @@ deleteInGoogle = (requiredFields, gId, callback) ->
             'GData-Version': '3.0'
             'If-Match': '*'
     , (err, res, body) ->
-        callback error
+        callback err
