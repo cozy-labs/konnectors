@@ -33,7 +33,6 @@ module.exports = {
   'home config step 3': "Vos données sont récupérées et intégrer à votre Cozy",
   'home more info': "Quelques informations supplémentaires :",
   'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique",
-  'home help step 2': "Désactivez la fonction d'auto-stop pour l'application Konnectors dans votre Cozy, sinon l'importation automatique ne fonctionnera pas.",
   'notification import error': "une erreur est survenue pendant l'importation des données",
   'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.',
   'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :',
