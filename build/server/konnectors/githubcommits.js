@@ -93,7 +93,7 @@ getEvents = function(requiredFields, commits, data, next) {
   username = requiredFields.login;
   pass = requiredFields.password;
   client.setBasicAuth(username, pass);
-  path = "users/" + username + "/events/public?page=";
+  path = "users/" + username + "/events?page=";
   data.commits = [];
   log.info("Fetch commits sha from events...");
   return async.eachSeries([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], function(page, callback) {
