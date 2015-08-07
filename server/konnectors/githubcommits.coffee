@@ -83,7 +83,7 @@ getEvents = (requiredFields, commits, data, next) ->
 
     client.setBasicAuth username, pass
 
-    path = "users/#{username}/events/public?page="
+    path = "users/#{username}/events?page="
 
     data.commits = []
     log.info "Fetch commits sha from events..."
