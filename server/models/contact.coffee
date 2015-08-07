@@ -236,7 +236,7 @@ Contact::toGoogleContact = (gEntry) ->
     name.gd$nameSuffix = $t: suffix if suffix? and suffix isnt ''
     gContact.gd$name = name
 
-    gContact.gContact$birthday = when: @bday if @birthday?
+    gContact.gContact$birthday = when: @bday if @bday?
     gContact.gContact$nickname = $t: @nickname if @nickname?
     gContact.content = $t: @note if @note?
 
