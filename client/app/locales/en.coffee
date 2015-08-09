@@ -9,6 +9,7 @@ module.exports =
     'imported data:': 'Imported data:'
     'importing...': 'importing...'
     'no import performed': 'No import performed'
+    'import already running': 'Import is already running.'
     'firstname': 'Firstname'
     'lastname': 'Lastname'
     'login': 'Login'
