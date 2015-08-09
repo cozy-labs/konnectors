@@ -5,6 +5,7 @@ FolderCollection = require '../collections/folders'
 AppView = require './views/app_view'
 Router = require './router'
 
+
 # The function called from index.html
 # Starts the application
 $ ->

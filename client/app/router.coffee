@@ -1,3 +1,4 @@
+
 module.exports = class Router extends Backbone.Router
 
     routes:
@@ -16,3 +17,4 @@ module.exports = class Router extends Backbone.Router
 
     konnector: (slug) ->
         @appView.showKonnector slug
+
