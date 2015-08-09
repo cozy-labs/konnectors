@@ -1,10 +1,10 @@
 async = require "async"
 moment = require "moment"
+fs = require 'fs'
+path = require 'path'
 log = require('printit')
     prefix: null
     date: true
-fs = require 'fs'
-path = require 'path'
 
 importer = require "./importer"
 Konnector = require '../models/konnector'
@@ -15,7 +15,8 @@ day = 24 * hour
 week = 7 * day
 month = 30 * day
 format = "DD/MM/YYYY [at] HH:mm:ss"
-periods = {hour: hour, day: day, week: week, month: month}
+periods = {hour, day, week, month}
+
 
 class KonnectorPoller
 
@@ -23,21 +24,71 @@ class KonnectorPoller
     constructor: ->
         # Timeout for prepareNextCheck (call every day)
         @timeout = null
+
         # Timeouts for all konnectors
         #    * Contains only timeout for the current day
         @timeouts = {}
+
         # Contains all nextUpdate for each konnector.
         @nextUpdates = {}
 
 
+
+    # Find next update date for given konnector and save it in nextUpdates
+    # field.
+    initializeKonnectorUpdates: (konnector) ->
+        nextUpdate = @findNextUpdate(konnector)
+        @nextUpdates[konnector.slug] = [nextUpdate, konnector]
+
+
+    # Compute next update for <konnector>
+    findNextUpdate: (konnector) ->
+        now = moment()
+        importInterval = periods[konnector.importInterval]
+        lastImport = moment konnector.lastImport
+        lastAutoImport = moment konnector.lastAutoImport
+
+        # If we missed an importation cycle
+        if (now.valueOf() - lastAutoImport.valueOf()) > importInterval
+            log.debug "#{konnector.slug} missed an importation cycle"
+
+            # We import now
+            importer konnector
+            importTime = now
+
+            slug = konnector.slug
+            time = importTime.format(format)
+            log.debug "#{slug} | Next update: #{time}"
+
+            return importTime
+
+        # If we didn't missed an import interval
+        else
+            if lastAutoImport.valueOf() > now.valueOf()
+                # possible if user gave a start date for auto import
+                # TODOS : manage start date in other field than lastAutoImport
+                nextUpdate = lastAutoImport
+            else
+                nextUpdate = lastAutoImport.add importInterval, 'ms'
+
+            slug = konnector.slug
+            time = nextUpdate.format(format)
+            log.debug "#{slug} | Next update: #{time}"
+
+            return nextUpdate
+
+
     start: (reset=false, callback=null) ->
-        # reset and callback are usefull for tests.
         log.debug "Launching Konnector Poller..."
+
         if reset
             @nextUpdates = {}
+
         if Object.keys(@nextUpdates).length is 0
+
             # First initialization
             Konnector.all (err, konnectors) =>
+
                 async.eachSeries konnectors, (konnector, next) =>
                     # If both importInterval and lastAutoImport are valid
                     if konnector.importInterval? \
@@ -49,15 +100,10 @@ class KonnectorPoller
                 , (err) =>
                     callback() if callback?
                     @manageNextChecks()
+
         else
             callback() if callback?
             @manageNextChecks()
-
-
-    # Find next update and store it in nextUpdates
-    initializeKonnectorUpdates: (konnector) ->
-        nextUpdate = @findNextUpdate(konnector)
-        @nextUpdates[konnector.slug] = [nextUpdate, konnector]
 
 
     # Prepare next check and timeout for the following
@@ -69,42 +115,6 @@ class KonnectorPoller
         @timeout = setTimeout @start.bind(@), day
 
 
-    # Compute next update for <konnector>
-    findNextUpdate: (konnector) ->
-        importInterval = periods[konnector.importInterval]
-        now = moment()
-        lastImport = moment konnector.lastImport
-        lastAutoImport = moment konnector.lastAutoImport
-
-        # If we missed an importation cycle
-        if (now.valueOf() - lastAutoImport.valueOf()) > importInterval
-            log.debug "#{konnector.slug} missed an importation cycle"
-            # We import now
-            importer konnector
-
-            # calculate the supposed last Auto-import
-            importTime = lastAutoImport.add importInterval, 'ms'
-            # calculate the time elapsed
-            while importTime.valueOf() < now.valueOf()
-                importTime = importTime.add importInterval, 'ms'
-
-            log.debug "#{konnector.slug} | Next update : " +
-            "#{importTime.format(format)}"
-            return importTime
-
-        # If we didn't missed an import interval
-        else
-            if lastAutoImport.valueOf() > now.valueOf()
-                # possible if user precises a start date for auto import
-                # TODOS : manage start date in other field than lastAutoImport
-                nextUpdate = lastAutoImport
-            else
-                nextUpdate = lastAutoImport.add importInterval, 'ms'
-            log.debug "#{konnector.slug} | Next update : " +
-            "#{nextUpdate.format(format)}"
-            return nextUpdate
-
-
     # Update timeouts and nextUpdates for this new/modified konnector
     handleTimeout: (startDate, konnector, callback=null) ->
         # If date is present in fieldValues
@@ -112,8 +122,10 @@ class KonnectorPoller
         if @timeouts[konnector.slug]?
             clearTimeout @timeouts[konnector.slug]
             delete @timeouts[konnector.slug]
+
         if konnector.importInterval isnt 'none'
             konnector.injectEncryptedFields()
+
             # Auto import present
             if startDate?
                 # We set the date of the first import
@@ -143,16 +155,17 @@ class KonnectorPoller
             callback() if callback?
 
 
-    # Add new konnector
+    # Create a new poller for given konnector and given update.
     create: (konnector, nextUpdate) ->
         # Add konnector in nextUpdates
         @nextUpdates[konnector.slug] = [nextUpdate, konnector]
+
         # Create timeout if necessary
         log.info "#{konnector.slug} : Next update #{nextUpdate.format(format)}"
         @createTimeout konnector, nextUpdate
 
 
-    # Check all konnectors and create timeout if necessary
+    # Check all konnectors and create timeout if needed.
     prepareNextCheck: ->
         for slug in Object.keys(@nextUpdates)
             [nextUpdate, konnector]  = @nextUpdates[slug]
@@ -184,3 +197,4 @@ class KonnectorPoller
 
 
 module.exports = new KonnectorPoller
+

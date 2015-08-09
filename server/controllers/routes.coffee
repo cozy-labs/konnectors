@@ -20,3 +20,4 @@ module.exports =
 
     'folders/:folderId':
         get: folders.show
+

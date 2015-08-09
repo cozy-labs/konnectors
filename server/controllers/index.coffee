@@ -4,6 +4,10 @@ Folder = require '../models/folder'
 CozyInstance = require '../models/cozy_instance'
 
 
+# Returns the html page required to load the javascript code of the single page
+# app.
+# Adds data required by the first rendering: konnector infos, available folders
+# and instance parameters.
 module.exports.main = (req, res) ->
 
     async.series

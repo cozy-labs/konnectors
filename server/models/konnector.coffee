@@ -17,12 +17,15 @@ module.exports = Konnector = americano.getModel 'Konnector',
     errorMessage: type: String, default: null
 
 
+# Retrieve all konnectors. Make sure that encrypted fields are decrypted before
+# being sent.
 Konnector.all = (callback) ->
     Konnector.request 'all', (err, konnectors) ->
         konnectors.forEach (konnector) -> konnector.injectEncryptedFields()
         callback err, konnectors
 
 
+# Unencrypt password fields and set them as normal fields.
 Konnector::injectEncryptedFields = ->
     try
         parsedPasswords = JSON.parse @password
@@ -32,10 +35,13 @@ Konnector::injectEncryptedFields = ->
         log.info "Injecting encrypted fields : JSON.parse error : #{error}"
 
 
+# Remove encrypted fields data from field list. Set password attribute with
+# encrpyted fields data to save them encrypted.
+# The data system by default encrypt the password attribute on every object.
 Konnector::removeEncryptedFields = (fields) ->
 
     if not fields?
-        log.info "Removing encrypted fields : error : fields variable undefined"
+        log.info "Removing encrypted fields: error: fields variable undefined"
 
     password = {}
     for name, type of fields
@@ -45,16 +51,22 @@ Konnector::removeEncryptedFields = (fields) ->
     @password = JSON.stringify password
 
 
+# Update field values with the one given in parameters.
 Konnector::updateFieldValues = (newValues, callback) ->
     fields = konnectorHash[@slug].fields
     @fieldValues = newValues.fieldValues
     @removeEncryptedFields fields
     @importInterval = newValues.importInterval
-    @save callback
+    data =
+        fieldValues: @fieldValues
+        importInterval: @importInterval
+    @updateAttributes data, callback
 
 
+# Run import process for given konnector..
 Konnector::import = (callback) ->
     @updateAttributes isImporting: true, (err) =>
+
         if err?
             data =
                 isImporting: false
@@ -63,10 +75,12 @@ Konnector::import = (callback) ->
 
         else
             konnectorModule = require "../konnectors/#{@slug}"
+
             @injectEncryptedFields()
             konnectorModule.fetch @fieldValues, (err, notifContent) =>
                 fields = konnectorHash[@slug].fields
                 @removeEncryptedFields fields
+
                 if err?
                     data = isImporting: false, errorMessage: err
                     @updateAttributes data, ->
@@ -81,7 +95,7 @@ Konnector::import = (callback) ->
                     @updateAttributes data, (err) -> callback err, notifContent
 
 
-# Append data from connector's configuration file, if it exists
+# Append data from module file of curent konnector.
 Konnector::appendConfigData = ->
     konnectorData = konnectorHash[@slug]
 
@@ -92,8 +106,7 @@ Konnector::appendConfigData = ->
 
     # add missing fields
     konnectorData = konnectorHash[@slug]
-    for key of konnectorData
-        @[key] = konnectorData[key]
+    @[key] = konnectorData[key] for key of konnectorData
 
     # normalize models' name related to the connector
     modelNames = []
@@ -107,6 +120,8 @@ Konnector::appendConfigData = ->
     return @
 
 
+# Build list of available konnectors. Retrieve information from database and
+# add infos from konnector module files.
 Konnector.getKonnectorsToDisplay = (callback) ->
     Konnector.all (err, konnectors) ->
         if err?
@@ -115,7 +130,6 @@ Konnector.getKonnectorsToDisplay = (callback) ->
             try
                 konnectorsToDisplay = konnectors
                     .filter (konnector) ->
-                        # if the connector has config data
                         return konnectorHash[konnector.slug]?
                     .map (konnector) ->
                         konnector.appendConfigData()

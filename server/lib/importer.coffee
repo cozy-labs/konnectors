@@ -8,6 +8,13 @@ Konnector = require '../models/konnector'
 localization = require './localization_manager'
 notification = new NotificationHelper 'konnectors'
 
+
+# Runs import operation for a given konnector. Once done, it propagates a
+# notification if needed.
+#
+# It changes the isImporting status of the konnector. It is set to false before
+# and after the import. It is set to true during the import.
+# It saves the import date by changing the last import field.
 module.exports = (konnector) ->
 
     # check if the konnector is created and if its not already importing
@@ -22,6 +29,7 @@ module.exports = (konnector) ->
                 notifContent = localization.t localizationKey, name: model.name
 
             notificationSlug = konnector.slug
+
             if notifContent?
                 prefix = localization.t 'notification prefix', name: model.name
                 notification.createOrUpdatePersistent notificationSlug,
@@ -32,6 +40,7 @@ module.exports = (konnector) ->
                         url: "konnector/#{konnector.slug}"
                 , (err) ->
                     log.error err if err?
+
             else
                 # If there was an error before, but that last import was
                 # successful AND didn't not return a notification content, the
@@ -46,3 +55,4 @@ module.exports = (konnector) ->
 
     else
         log.debug "Connector #{konnector.slug} already importing"
+

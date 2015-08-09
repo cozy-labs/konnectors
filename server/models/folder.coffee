@@ -8,10 +8,12 @@ module.exports = Folder = americano.getModel 'Folder',
     name: String
 
 
+# Get full path for given folder.
 Folder::getFullPath = ->
     "#{@path}/#{@name}"
 
 
+# Return folder list ordered by full path.
 Folder.all = (callback) ->
     Folder.request "byFullPath", (err, folders) ->
         return callback err if err

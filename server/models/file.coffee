@@ -5,6 +5,7 @@ moment = require 'moment'
 log = require('printit')
     prefix: 'file'
 
+
 # Required to save file fetched via a konnector.
 module.exports = File = americano.getModel 'File',
     path: String
@@ -19,6 +20,11 @@ module.exports = File = americano.getModel 'File',
     clearance: (x) -> x
     tags: (x) -> x
 
+
+
+# Create a new File object that will be displayed inside the file application.
+# The binary attached to the file is downloaded from a given url.
+# Given tags are associated with the newly created file.
 File.createNew = (fileName, path, date, url, tags, callback) ->
     now = moment().toISOString()
     filePath = "/tmp/#{fileName}"
@@ -68,3 +74,4 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
                     attachBinary newFile
 
     stream.pipe fs.createWriteStream filePath
+
