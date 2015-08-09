@@ -21,6 +21,7 @@ module.exports = Konnector = americano.getModel 'Konnector',
 # being sent.
 Konnector.all = (callback) ->
     Konnector.request 'all', (err, konnectors) ->
+        konnectors ?= []
         konnectors.forEach (konnector) -> konnector.injectEncryptedFields()
         callback err, konnectors
 
