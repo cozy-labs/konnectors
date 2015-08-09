@@ -5,7 +5,7 @@
     "node = 0.10.x"
   ],
   "description": "Store data from the web in your Cozy",
-  "license": "AGPL",
+  "license": "AGPL v3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/frankrousseau/konnectors.git"
