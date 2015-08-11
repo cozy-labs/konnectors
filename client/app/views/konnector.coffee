@@ -143,7 +143,9 @@ module.exports = class KonnectorView extends BaseView
     getFolderPath: (slug, name) ->
         id = $("##{slug}-#{name}-input").val()
         value = ''
-        value = (path.path for path in @paths when path.id is id)
+        path = _.findWhere(@paths, id: id)
+        value = path.path if path?
+        return value
 
 
     # Add a change listener to update the "open folder" link each time
