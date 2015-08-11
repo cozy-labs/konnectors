@@ -17,8 +17,8 @@ module.exports = File = americano.getModel 'File',
     size: Number
     binary: Object
     modificationHistory: Object
-    clearance: (x) -> x
-    tags: (x) -> x
+    clearance: [Object]
+    tags: [String]
 
 
 
