@@ -11,21 +11,25 @@ linkBankOperation = require '../lib/link_bank_operation'
 localization = require '../lib/localization_manager'
 
 log = require('printit')
-    prefix: "Numericable"
+    prefix: "numericable"
     date: true
 
-
 # Models
-
+Bill = require '../models/bill'
+###
 Bill = cozydb.getModel 'Bill',
-    vendor: {type: String, default: 'Internet'}
+    type:
+        type: String
+        default: 'Internet'
+    vendor:
+        type: String
+        default: 'Numéricable'
     date: Date
     amount: Number
+###
 
 # Konnector
-
 module.exports =
-
     name: "Numéricable"
     slug: "numericable"
     description: 'konnector description numericable'
@@ -35,6 +39,7 @@ module.exports =
         login: "text"
         password: "password"
         folderPath: "folder"
+        
     models:
         bill: Bill
 
@@ -56,7 +61,6 @@ module.exports =
                 model: Bill
                 identifier: 'numericable'
                 dateDelta: 4
-                amountDelta: 5
             )
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
@@ -71,13 +75,27 @@ module.exports =
                 callback err, notifContent
 
 
-# Layer to login to Orange website.
+# Layer to login to Numéricable website.
 logIn = (requiredFields, billInfos, data, next) ->
-
-    logInOptions =
+    appKeyOptions =
         method: 'GET'
         jar: true
+        url: "https://moncompte.numericable.fr/pages/connection/Login.aspx"
+
+    logInOptions =
+        method: 'POST'
+        jar: true
         url: "https://connexion.numericable.fr/Oauth/Oauth.php"
+        form:
+            'action': "connect"
+            'linkSSO': "/pages/connection/Login.aspx?link=HOME"
+            'appkey': ""
+            'isMobile': ""
+
+    redirectOptions =
+        method: 'POST'
+        jar: true
+        url: "https://connexion.numericable.fr" 
 
     signInOptions =
         method: 'POST'
@@ -87,49 +105,100 @@ logIn = (requiredFields, billInfos, data, next) ->
             'login': requiredFields.login
             'pwd': requiredFields.password
 
+    tokenAuthOptions =
+        method: 'POST'
+        jar: true
+        url: "https://moncompte.numericable.fr/pages/connection/Login.aspx?link=HOME"
+        qs:
+            accessToken: ""
+
     billOptions =
         method: 'GET'
         jar: true
-        url: "https://moncompte.numericable.fr/pages/billing/Invoice.aspx"
+        uri: "https://moncompte.numericable.fr/pages/billing/Invoice.aspx"
 
-
-    log.info 'Get login form'
-    # Get cookies from login page.
-    request logInOptions, (err, res, body) ->
+    log.info 'Getting appkey' 
+    request appKeyOptions, (err, res, body) ->
         if err then next err
 
-        # Log in connexion.numericable.fr
+        $ = cheerio.load body
+        logInOptions.form.appkey = $('#PostForm input[name="appkey"]').attr "value"
+
+        if !logInOptions.form.appkey then next "Could not retrieve app key"
+
         log.info 'Logging in'
-        request signInOptions, (err, res, body) ->
+        request logInOptions, (err, res, body) ->
             if err
                 log.error 'Login failed'
                 log.raw err
-            else
-                log.info 'Login succeeded'
-
-                # Download bill information page.
-                log.info 'Fetch bill info'
-                request billOptions, (err, res, body) ->
+            else 
+                log.info 'Signing in'
+                request signInOptions, (err, res, body) ->
                     if err
-                        log.error 'An error occured while fetching bills'
-                        console.log err
-                        next err
+                        log.error 'Signin failed'
+                        log.raw err
                     else
-                        log.info 'Fetch bill info succeeded'
-                        data.html = body
-                        next()
+                        redirectURL = res.headers.location
 
+                        if !redirectURL then next "Could not retrieve redirect URL"
+                        redirectOptions.url += redirectURL
+
+                        log.info "Fetching access token" 
+                        request redirectOptions, (err, res, body) -> 
+                            if err
+                                log.error 'Token fetching failed'
+                                log.raw err
+                            else
+                                $ = cheerio.load body 
+                                tokenAuthOptions.qs.accessToken = $("#accessToken").attr "value"
+                                if !tokenAuthOptions.qs.accessToken then next "Could not retrieve access token"
+
+                                log.info "Authenticating by token" 
+                                request tokenAuthOptions, (err, res, body) ->
+                                    if err
+                                        log.error 'Authentication by token failed'
+                                        console.log err
+                                        next err
+                                    else 
+                                        log.info 'Fetching bills page'
+                                        request billOptions, (err, res, body) ->
+                                            if err
+                                                log.error 'An error occured while fetching bills page'
+                                                console.log err
+                                                next err
+                                            else                                                
+                                                data.html = body
+                                                next()
 
 # Layer to parse the fetched page to extract bill data.
 parsePage = (requiredFields, bills, data, next) ->
     bills.fetched = []
     $ = cheerio.load data.html
+    baseURL = "https://moncompte.numericable.fr"
 
-    # Anaylyze bill listing table.
-    log.info 'Parsing bill pages'
+    # Analyze bill listing table.
+    log.info 'Parsing bill page' 
+
+    #First bill
+    firstBill = $("#firstFact")
+    billDate = firstBill.find("h2 span")
+    billTotal = firstBill.find('p.right')
+    billLink = firstBill.find('a.linkBtn')
+
+    bill =
+        date: moment billDate.html(), 'DD/MM/YYYY'
+        amount: parseFloat(billTotal
+            .html()
+            .replace(' €', '')
+            .replace(',', '.')
+        )
+        pdfurl: baseURL + billLink.attr "href"
+    
+    bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?
+
+    #Other bills    
     $('#facture > div').each ->
-
-        billDate = $(this).find('h2 span')
+        billDate = $(this).find('h3')
         billTotal = $(this).find('p.right')
         billLink = $(this).find('a.linkBtn')
 
@@ -141,10 +210,13 @@ parsePage = (requiredFields, bills, data, next) ->
                 .replace(' €', '')
                 .replace(',', '.')
             )
-            pdfurl: billLink.attr 'href'
-            vendor: 'Numéricable'
+            pdfurl: baseURL + billLink.attr 'href'
 
-        bills.fetched.push bill if bill.date? and bill.amount?
+        bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?
 
-    log.info "Bill retrieved: #{bills.fetched.length} found"
-    next()
+    log.info "#{bills.fetched.length} bills retrieved"
+
+    if !bills.fetched.length
+        next "No bills retrieved"
+    else
+        next() 
