@@ -9,10 +9,9 @@ File = require('../models/file');
 
 module.exports = function(log, model, options, tags) {
   return function(requiredFields, entries, body, next) {
-    if (entries.filtered == null) {
-      entries.filtered = entries.fetched;
-    }
-    return async.eachSeries(entries.filtered, function(entry, callback) {
+    var entriesToSave;
+    entriesToSave = entries.filtered || entries.fetched;
+    return async.eachSeries(entriesToSave, function(entry, callback) {
       var createFileAndSaveData, entryLabel, fileName, onCreated, saveEntry;
       entryLabel = entry.date.format('MMYYYY');
       fileName = naming.getEntryFileName(entry, options);

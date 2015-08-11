@@ -35,6 +35,9 @@ module.exports = Konnector = americano.getModel('Konnector', {
 
 Konnector.all = function(callback) {
   return Konnector.request('all', function(err, konnectors) {
+    if (konnectors == null) {
+      konnectors = [];
+    }
     konnectors.forEach(function(konnector) {
       return konnector.injectEncryptedFields();
     });
@@ -61,7 +64,7 @@ Konnector.prototype.injectEncryptedFields = function() {
 Konnector.prototype.removeEncryptedFields = function(fields) {
   var name, password, type;
   if (fields == null) {
-    log.info("Removing encrypted fields : error : fields variable undefined");
+    log.info("Removing encrypted fields: error: fields variable undefined");
   }
   password = {};
   for (name in fields) {
@@ -75,12 +78,16 @@ Konnector.prototype.removeEncryptedFields = function(fields) {
 };
 
 Konnector.prototype.updateFieldValues = function(newValues, callback) {
-  var fields;
+  var data, fields;
   fields = konnectorHash[this.slug].fields;
   this.fieldValues = newValues.fieldValues;
   this.removeEncryptedFields(fields);
   this.importInterval = newValues.importInterval;
-  return this.save(callback);
+  data = {
+    fieldValues: this.fieldValues,
+    importInterval: this.importInterval
+  };
+  return this.updateAttributes(data, callback);
 };
 
 Konnector.prototype["import"] = function(callback) {

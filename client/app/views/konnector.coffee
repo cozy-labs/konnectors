@@ -29,6 +29,7 @@ module.exports = class KonnectorView extends BaseView
             @hideErrors()
 
         for name, val of @model.get 'fields'
+            values ?= {}
             values[name] ?= ""
 
             @addFieldWidget slug, name, val, values

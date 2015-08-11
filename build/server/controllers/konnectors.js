@@ -40,7 +40,7 @@ module.exports = {
         } else {
           res.send(200);
           poller = require("../lib/konnector_poller");
-          poller.handleTimeout(date, req.konnector);
+          poller.add(date, req.konnector);
           if (date == null) {
             return req.konnector["import"](function(err) {
               if (err != null) {

@@ -16,7 +16,7 @@ Konnector = require('../models/konnector');
 
 konnectorModules = require('../lib/konnector_hash');
 
-module.exports = function(done) {
+module.exports = function(callback) {
   return Konnector.all(function(err, konnectors) {
     var konnectorHash;
     if (err) {
@@ -24,9 +24,9 @@ module.exports = function(done) {
       return callback(err);
     } else {
       konnectorHash = {};
-      return async.eachSeries(konnectors, function(konnector, callback) {
+      return async.eachSeries(konnectors, function(konnector, done) {
         konnectorHash[konnector.slug] = konnector;
-        return konnectorResetValue(konnector, callback);
+        return konnectorResetValue(konnector, done);
       }, function(err) {
         var konnectorsToCreate;
         if (err) {
@@ -34,9 +34,10 @@ module.exports = function(done) {
         }
         konnectorsToCreate = getKonnectorsToCreate(konnectorHash);
         if (konnectorsToCreate.length === 0) {
-          return done();
+          return callback();
+        } else {
+          return createKonnectors(konnectorsToCreate, callback);
         }
-        return createKonnectors(konnectorsToCreate, done);
       });
     }
   });
@@ -44,8 +45,9 @@ module.exports = function(done) {
 
 konnectorResetValue = function(konnector, callback) {
   if (konnector.isImporting === true) {
-    konnector.isImporting = false;
-    return konnector.save(function(err) {
+    return konnector.updateAttributes({
+      isImporting: false
+    }, function(err) {
       if (err) {
         log.debug(konnector.slug + " | " + err);
       } else {
@@ -70,12 +72,12 @@ getKonnectorsToCreate = function(konnectorHash) {
   return konnectorsToCreate;
 };
 
-createKonnectors = function(konnectorsToCreate, done) {
-  return async.eachSeries(konnectorsToCreate, function(konnector, callback) {
-    return initializeKonnector(konnector, callback);
+createKonnectors = function(konnectorsToCreate, callback) {
+  return async.eachSeries(konnectorsToCreate, function(konnector, done) {
+    return initializeKonnector(konnector, done);
   }, function(err) {
     log.info('All konnectors created');
-    return done();
+    return callback();
   });
 };
 

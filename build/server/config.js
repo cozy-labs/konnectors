@@ -22,7 +22,7 @@ config = {
       americano.bodyParser(), americano.methodOverride(), americano.errorHandler({
         dumpExceptions: true,
         showStack: true
-      }), americano["static"](__dirname + '/../client/public')
+      }), americano["static"](path.join(__dirname, '..', 'client', 'public'))
     ]
   },
   development: [americano.logger('dev')],
