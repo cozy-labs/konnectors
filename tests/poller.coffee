@@ -1,167 +1,193 @@
 should = require 'should'
 sinon = require 'sinon'
 moment = require 'moment'
+async = require 'async'
+
 Konnector = require '../server/models/konnector'
-poller = require '../server/lib/konnector_poller'
+poller = require '../server/lib/poller'
+konnectorHash = require '../server/lib/konnector_hash'
+helpers = require './helpers'
 
 minute = 60 * 1000
 hour = 60 * minute
 day = 24 * hour
 week = 7 * day
 month = 30 * day
+
+
 describe 'Testing konnector poller', ->
+
     before (done) ->
         @timeout 4000
         Konnector.defineRequest 'all', (doc) ->
-            return emit(doc._id, doc);
+            return emit(doc._id, doc)
         , (err) ->
             done()
+
     after (done) ->
-        Konnector.all (err, body) =>
-            for konnector in body when konnector.slug is 'free'
-                konnector.destroy()
-                done()
+        helpers.clearKonnector 'free', done
 
-    describe "Initialize of auto import", ->
 
-        describe 'When calling poller.create with 1 week auto-import..', ->
+    describe "Start polling", ->
+
+        describe 'Import every week', ->
+
             before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
+                @sandbox = sinon.sandbox.create()
+                @sandbox.useFakeTimers(new Date().valueOf())
+                @spy = @sandbox.spy poller, 'runImport'
+
             after ->
                 @sandbox.restore()
 
-            it 'When the cron function is called', (done) ->
+            it 'setup crons', (done) ->
                 @timeout 4000
-                data = new Konnector
+                konnector =
                     isImporting: false
                     importInterval: 'week'
                     lastAutoImport: moment().format()
                     slug: 'free'
-                data.save (err, res, body) =>
-                    poller.start false, () =>
+
+                konnectorHash[konnector.slug] = konnector
+
+                Konnector.create konnector, (err, konnector) =>
+                    poller.start false, =>
                         @spy.callCount.should.equal 0
                         done()
 
-            it 'Then the cron function should not have been called after 6 days', (done) ->
-                @sandbox.clock.tick 6 * day
+            it 'Import should not be runned after 3 days', (done) ->
+                @sandbox.clock.tick 3 * day
                 @spy.callCount.should.equal 0
                 done()
 
-            it 'But should be called one day later', ->
-                @sandbox.clock.tick 1 * day
+            it 'should be called after one week', ->
+                @sandbox.clock.tick 4 * day
                 @spy.callCount.should.equal 1
 
-            it 'And the cron function should have been called again after one more week', ->
+            it 'should be called again after two weeks', ->
                 @sandbox.clock.tick 1 * week
                 @spy.callCount.should.equal 2
 
-        describe 'When calling poller.create with 1 day auto-import..', ->
+
+        describe 'Import every day', ->
+
             before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
+                @sandbox = sinon.sandbox.create()
+                @sandbox.useFakeTimers(new Date().valueOf())
+                @spy = @sandbox.spy poller, 'runImport'
+
             after ->
                 @sandbox.restore()
 
-            it 'When the cron function is called', (done) ->
+            it 'Setup crons', (done) ->
                 @timeout 4000
                 Konnector.all (err, body) =>
                     for konnector in body when konnector.slug is 'free'
-                        konnector.importInterval = 'day'
-                        konnector.lastAutoImport = moment().format()
-                        konnector.save (err, res, body) =>
+                        data =
+                            importInterval: 'day'
+                            lastAutoImport: moment().format()
+                        konnector.updateAttributes data, (err) =>
                             poller.start true, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
-            it 'Then the cron function should not have been called after 23 hours', ->
-                @sandbox.clock.tick 23 * hour
+            # Doest not handle properly the timezone.
+            it 'Import should not be called after 20 hours', ->
+                @sandbox.clock.tick 20 * hour
                 @spy.callCount.should.equal 0
 
-            it 'But should be called one hour later', ->
-                @sandbox.clock.tick 1 * hour
+            it 'Import should be called after one day', ->
+                @sandbox.clock.tick 4 * hour
                 @spy.callCount.should.equal 1
 
-            it 'And the cron function should have been called again after one more day', ->
+            it 'Import should be called again after two days', ->
                 @sandbox.clock.tick 1 * day
                 @spy.callCount.should.equal 2
 
-        describe 'When calling poller.create with 1 hour auto-import..', ->
+
+        describe 'Import every hour', ->
+
             before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
+                @sandbox = sinon.sandbox.create()
+                @sandbox.useFakeTimers(new Date().valueOf())
+                @spy = @sandbox.spy poller, 'runImport'
+
             after ->
                 @sandbox.restore()
 
-            it 'When the cron function is called', (done) ->
+            it 'Setup crons', (done) ->
                 @timeout 4000
                 Konnector.all (err, body) =>
                     for konnector in body when konnector.slug is 'free'
-                        konnector.importInterval = 'hour'
-                        konnector.lastAutoImport = moment().format()
-                        konnector.save (err, res, body) =>
+                        data =
+                            importInterval: 'hour'
+                            lastAutoImport: moment().format()
+                        konnector.updateAttributes data, (err) =>
                             poller.start true, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
-
-            it 'Then the cron function should not have been called after 59 minutes', ->
-                @sandbox.clock.tick 59 * minute
+            it 'Import should not be called after 40 minutes', ->
+                @sandbox.clock.tick 40 * minute
                 @spy.callCount.should.equal 0
 
-            it 'But should be called one minute later', ->
-                @sandbox.clock.tick 1 * minute
+            it 'Import should be called after one hour', ->
+                @sandbox.clock.tick 20 * minute
                 @spy.callCount.should.equal 1
 
-            it 'And the cron function should have been called again after one more hour', ->
+            it 'Import should be called again after two hours', ->
                 @sandbox.clock.tick 1 * hour
                 @spy.callCount.should.equal 2
 
-        describe 'When calling poller.create with 1 month auto-import..', ->
+
+        describe 'Import every month', ->
+
             before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
+                @sandbox = sinon.sandbox.create()
+                @sandbox.useFakeTimers(new Date().valueOf())
+                @spy = @sandbox.spy poller, 'runImport'
+
             after ->
                 @sandbox.restore()
 
-            it 'When the cron function is called', (done) ->
+            it 'Setup crons', (done) ->
                 @timeout 4000
                 Konnector.all (err, body) =>
                     for konnector in body when konnector.slug is 'free'
-                        konnector.importInterval = 'month'
-                        konnector.lastAutoImport = moment().format()
-                        konnector.save (err, res, body) =>
+                        data =
+                            importInterval: 'month'
+                            lastAutoImport: moment().format()
+                        konnector.updateAttributes data, (err) =>
                             poller.start true, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
-            it 'Then the cron function should not have been called after 22 days', ->
-                @sandbox.clock.tick 22 * day
+            it 'Import should not be called after 12 days', ->
+                @sandbox.clock.tick 12 * day
                 @spy.callCount.should.equal 0
 
-            it 'But should be called one day later', ->
-                @sandbox.clock.tick 1 * day
-                @spy.callCount.should.equal 0
-
-            it 'And should be called one week later', ->
-                @sandbox.clock.tick 1 * week
+            it 'Import should be called after one month', ->
+                @sandbox.clock.tick 20 * day
                 @spy.callCount.should.equal 1
 
-            it 'And the cron function should have been called again after one more month', ->
+            it 'And should be called after two months', ->
                 @sandbox.clock.tick 1 * month
                 @spy.callCount.should.equal 2
 
 
-    describe "Add/Modify konnector with auto import", ->
+    describe "Start polling then add/modify a konnector", ->
 
-        describe 'When calling poller.create with 1 week auto-import..', ->
+        describe 'Import every week', ->
+
             before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
+                @sandbox = sinon.sandbox.create()
+                @sandbox.useFakeTimers(new Date().valueOf())
+                @spy = @sandbox.spy poller, 'runImport'
+
             after ->
                 @sandbox.restore()
 
-            it 'When the cron function is called', (done) ->
+            it 'Setup crons', (done) ->
                 @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
@@ -169,31 +195,35 @@ describe 'Testing konnector poller', ->
                             konnector.importInterval = 'week'
                             konnector.lastAutoImport = moment().format()
                             konnector.fieldValues = {}
-                            poller.handleTimeout null, konnector, () =>
+                            poller.add null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
-            it 'Then the cron function should not have been called after 6 days', (done) ->
-                @sandbox.clock.tick 6 * day
+            it 'Import should not be runned after 5 days', (done) ->
+                @sandbox.clock.tick 5 * day
                 @spy.callCount.should.equal 0
                 done()
 
-            it 'But should be called one day later', ->
-                @sandbox.clock.tick 1 * day
+            it 'should be called after one week', ->
+                @sandbox.clock.tick 2 * day
                 @spy.callCount.should.equal 1
 
-            it 'And the cron function should have been called again after one more week', ->
+            it 'should be called again after two weeks', ->
                 @sandbox.clock.tick 1 * week
                 @spy.callCount.should.equal 2
 
-        describe 'When calling poller.create with 1 day auto-import..', ->
+
+        describe 'Import every day', ->
+
             before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
+                @sandbox = sinon.sandbox.create()
+                @sandbox.useFakeTimers(new Date().valueOf())
+                @spy = @sandbox.spy poller, 'runImport'
+
             after ->
                 @sandbox.restore()
 
-            it 'When the cron function is called', (done) ->
+            it 'Setup crons', (done) ->
                 @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
@@ -201,30 +231,35 @@ describe 'Testing konnector poller', ->
                             konnector.importInterval = 'day'
                             konnector.lastAutoImport = moment().format()
                             konnector.fieldValues = {}
-                            poller.handleTimeout null, konnector, () =>
+                            poller.add null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
-            it 'Then the cron function should not have been called after 23 hours', ->
-                @sandbox.clock.tick 23 * hour
+            # Doest not handle properly the timezone.
+            it 'Import should not be called after 20 hours', ->
+                @sandbox.clock.tick 20 * hour
                 @spy.callCount.should.equal 0
 
-            it 'But should be called one hour later', ->
-                @sandbox.clock.tick 1 * hour
+            it 'Import should be called after one day', ->
+                @sandbox.clock.tick 4 * hour
                 @spy.callCount.should.equal 1
 
-            it 'And the cron function should have been called again after one more day', ->
+            it 'Import should be called again after two days', ->
                 @sandbox.clock.tick 1 * day
                 @spy.callCount.should.equal 2
 
-        describe 'When calling poller.create with 1 hour auto-import..', ->
+
+        describe 'Import every hour', ->
+
             before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
+                @sandbox = sinon.sandbox.create()
+                @sandbox.useFakeTimers(new Date().valueOf())
+                @spy = @sandbox.spy poller, 'runImport'
+
             after ->
                 @sandbox.restore()
 
-            it 'When the cron function is called', (done) ->
+            it 'Setup crons', (done) ->
                 @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
@@ -232,30 +267,34 @@ describe 'Testing konnector poller', ->
                             konnector.importInterval = 'hour'
                             konnector.lastAutoImport = moment().format()
                             konnector.fieldValues = {}
-                            poller.handleTimeout null, konnector, () =>
+                            poller.add null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
-            it 'Then the cron function should not have been called after 59 minutes', ->
-                @sandbox.clock.tick 59 * minute
+            it 'Import should not be called after 40 minutes', ->
+                @sandbox.clock.tick 40 * minute
                 @spy.callCount.should.equal 0
 
-            it 'But should be called one minute later', ->
-                @sandbox.clock.tick 1 * minute
+            it 'Import should be called after one hour', ->
+                @sandbox.clock.tick 20 * minute
                 @spy.callCount.should.equal 1
 
-            it 'And the cron function should have been called again after one more hour', ->
+            it 'Import should be called again after two hours', ->
                 @sandbox.clock.tick 1 * hour
                 @spy.callCount.should.equal 2
 
-        describe 'When calling poller.create with 1 month auto-import..', ->
+
+        describe 'Import every month', ->
+
             before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
+                @sandbox = sinon.sandbox.create()
+                @sandbox.useFakeTimers(new Date().valueOf())
+                @spy = @sandbox.spy poller, 'runImport'
+
             after ->
                 @sandbox.restore()
 
-            it 'When the cron function is called', (done) ->
+            it 'Setup crons', (done) ->
                 @timeout 4000
                 poller.start true, ()=>
                     Konnector.all (err, body) =>
@@ -263,103 +302,19 @@ describe 'Testing konnector poller', ->
                             konnector.importInterval = 'month'
                             konnector.lastAutoImport = moment().format()
                             konnector.fieldValues = {}
-                            poller.handleTimeout null, konnector, () =>
+                            poller.add null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
 
-            it 'Then the cron function should not have been called after 22 days', ->
-                @sandbox.clock.tick 22 * day
+            it 'Import should not be called after 12 days', ->
+                @sandbox.clock.tick 12 * day
                 @spy.callCount.should.equal 0
 
-            it 'But should be called one day later', ->
-                @sandbox.clock.tick 1 * day
-                @spy.callCount.should.equal 0
-
-            it 'And should be called one week later', ->
-                @sandbox.clock.tick 1 * week
+            it 'Import should be called after one month', ->
+                @sandbox.clock.tick 20 * day
                 @spy.callCount.should.equal 1
 
-            it 'And the cron function should have been called again after one more month', ->
+            it 'And should be called after two months', ->
                 @sandbox.clock.tick 1 * month
                 @spy.callCount.should.equal 2
 
-
-    describe "Initialize a auto import with a start date", ->
-
-        describe 'When calling poller.handleTimeout with 1 week auto-import and start in one month..', ->
-            before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
-            after ->
-                @sandbox.restore()
-
-            it 'When the cron function is called', (done) ->
-                @timeout 8000
-                Konnector.all (err, body) =>
-                    for konnector in body when konnector.slug is 'free'
-                        konnector.importInterval = 'week'
-                        konnector.lastAutoImport = moment().add month, 'ms'
-                        konnector.save (err, res, body) =>
-                            poller.start true, () =>
-                                @spy.callCount.should.equal 0
-                                done()
-
-            it 'Then the cron function should not have been called after 7 days', (done) ->
-                @sandbox.clock.tick 7 * day
-                @spy.callCount.should.equal 0
-                done()
-
-
-            it 'Then the cron function should not have been called after 14 days', (done) ->
-                @sandbox.clock.tick 14 * day
-                @spy.callCount.should.equal 0
-                done()
-
-            it 'But should be called 14 day later', ->
-                @sandbox.clock.tick 14 * day
-                @spy.callCount.should.equal 1
-
-            it 'And the cron function should have been called again after one more week', ->
-                @sandbox.clock.tick 7 * day
-                @spy.callCount.should.equal 2
-
-
-    describe "Modify a auto import with a start date", ->
-
-        describe 'When calling poller.handleTimeout with 1 week auto-import and start in one month..', ->
-            before ->
-                @sandbox = sinon.sandbox.create useFakeTimers: true
-                @spy = @sandbox.spy poller, 'checkImport'
-            after ->
-                @sandbox.restore()
-
-            it 'When the cron function is called', (done) ->
-                @timeout 8000
-                poller.start true, () =>
-                    Konnector.all (err, body) =>
-                        for konnector in body when konnector.slug is 'free'
-                            konnector.importInterval = 'week'
-                            konnector.lastAutoImport = moment().format()
-                            date = moment().add month, 'ms'
-                            poller.handleTimeout date, konnector, () =>
-                                @spy.callCount.should.equal 0
-                                done()
-
-            it 'Then the cron function should not have been called after 7 days', (done) ->
-                @sandbox.clock.tick 7 * day
-                @spy.callCount.should.equal 0
-                done()
-
-
-            it 'Then the cron function should not have been called after 14 days', (done) ->
-                @sandbox.clock.tick 14 * day
-                @spy.callCount.should.equal 0
-                done()
-
-            it 'But should be called 14 day later', ->
-                @sandbox.clock.tick 14 * day
-                @spy.callCount.should.equal 1
-
-            it 'And the cron function should have been called again after one more week', ->
-                @sandbox.clock.tick 7 * day
-                @spy.callCount.should.equal 2

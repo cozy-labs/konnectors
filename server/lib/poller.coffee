@@ -24,7 +24,7 @@ periods = {hour, day, week, month}
 # update = import date
 # check = check if an import timeout is needed and create it.
 #
-# The poller runs imports for each konenctor based on the interval length given
+# The poller runs imports for each konnector based on the interval length given
 # by the user.
 
 class KonnectorPoller
@@ -53,7 +53,6 @@ class KonnectorPoller
     findNextUpdate: (konnector) ->
         now = moment()
         importInterval = periods[konnector.importInterval]
-        lastImport = moment konnector.lastImport
         lastAutoImport = moment konnector.lastAutoImport
 
         # If we missed an importation cycle
@@ -110,6 +109,9 @@ class KonnectorPoller
     createTimeout: (konnector, nextUpdate) ->
         now = moment()
         interval = nextUpdate.diff now.clone(), 'ms'
+        console.log nextUpdate.format 'DD-MM-YYYY'
+        console.log now.format 'DD-MM-YYYY'
+        console.log interval
         if interval < day
             @startTimeout konnector, interval
 
@@ -141,10 +143,10 @@ class KonnectorPoller
 
 
     # Update import timeout and nextUpdates for this konnector that was
-    # modiffied or newly created.
+    # modified or newly created.
     add: (startDate, konnector, callback=null) ->
 
-        # if there is already a timeout for this konnector, destroy it
+        # If there is already a timeout for this konnector, destroy it.
         if @timeouts[konnector.slug]?
             clearTimeout @timeouts[konnector.slug]
             delete @timeouts[konnector.slug]
@@ -154,27 +156,30 @@ class KonnectorPoller
 
             if startDate?
 
-                # Next import will start at start date
-                data = lastAutoImport: moment(startDate, "DD-MM-YYYY")
+                # Next import will start at start date.
+                data =
+                    lastAutoImport: moment(startDate).toDate()
+                    importInterval: konnector.importInterval
                 fields = konnectorHash[konnector.slug]
                 konnector.removeEncryptedFields fields
 
                 konnector.updateAttributes data, (err, body) =>
                     log.error err if err
 
-                    @create konnector, data.lastAutoImport
+                    nextUpdate = @findNextUpdate(konnector)
+                    @nextUpdates[konnector.slug] = [nextUpdate, konnector]
+                    delete @timeouts[konnector.slug]
                     callback() if callback?
 
             else
 
-                # Next import is run now and the next import timeout is
-                # set.
+                # Next import is run now and the next import timeout is set.
                 data = lastAutoImport: new Date()
-                konnector.lastAutoImport = date.lastAutoImport
+                konnector.lastAutoImport = data.lastAutoImport
                 fields = konnectorHash[konnector.slug]
                 konnector.removeEncryptedFields fields
 
-                konnector.updateAttributes data, (err, body) ->
+                konnector.updateAttributes data, (err, body) =>
                     log.error err if err?
 
                     @create konnector, @findNextUpdate(konnector)
@@ -197,6 +202,7 @@ class KonnectorPoller
             Konnector.all (err, konnectors) =>
 
                 async.eachSeries konnectors, (konnector, next) =>
+
                     # If both importInterval and lastAutoImport are valid
                     if konnector.importInterval? \
                     and konnector.importInterval isnt 'none' \
