@@ -166,11 +166,12 @@ module.exports = class KonnectorView extends BaseView
 <div><select id="#{slug}-#{name}-input" class="folder"">
 """
             selectedPath = path: '', id: ''
+            pathName = values[name] or @paths[0].path
 
             # Add an option for every folder. Value is id of the folder.
             # Displayed label is the path of the folder.
             for path in @paths
-                if path.path is values[name]
+                if path.path is pathName
                     fieldHtml += """
 <option selected value="#{path.id}">#{path.path}</option>
 """
@@ -222,8 +223,8 @@ open selected folder
         for key, value of intervals
             selected = if importInterval is key then 'selected' else ''
             fieldHtml += """
-            <option value=\"#{key}\" #{selected}>#{value}</option>
-            """
+<option value=\"#{key}\" #{selected}>#{value}</option>
+"""
 
         fieldHtml += """
 </select>
