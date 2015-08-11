@@ -43,6 +43,7 @@ module.exports =
 
     'notification import error': "une erreur est survenue pendant l'importation des données"
 
+    "import server error": "L'import a rencontré une erreur serveur."
     'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.'
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
 
