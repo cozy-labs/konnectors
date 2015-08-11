@@ -47,7 +47,7 @@ module.exports =
                     next err
                 else
                     res.send 200
-                    poller = require "../lib/konnector_poller"
+                    poller = require "../lib/poller"
                     poller.add date, req.konnector
 
                     # Don't import data if a start date is defined

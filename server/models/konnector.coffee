@@ -53,13 +53,16 @@ Konnector::removeEncryptedFields = (fields) ->
 
 
 # Update field values with the one given in parameters.
-Konnector::updateFieldValues = (newValues, callback) ->
+Konnector::updateFieldValues = (newKonnector, callback) ->
     fields = konnectorHash[@slug].fields
-    @fieldValues = newValues.fieldValues
+
+    @fieldValues = newKonnector.fieldValues
     @removeEncryptedFields fields
-    @importInterval = newValues.importInterval
+    @importInterval = newKonnector.importInterval
+
     data =
         fieldValues: @fieldValues
+        password: @password
         importInterval: @importInterval
     @updateAttributes data, callback
 
