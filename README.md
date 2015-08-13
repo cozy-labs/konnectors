@@ -15,6 +15,7 @@ into your Cozy.
 * Electrabel (Bill PDFs)
 * Free (Bill PDFs)
 * Free Mobile (Bill PDFs)
+* Numericable (Bill PDFs)
 * Orange (Bill PDFs)
 * Sosh (Bill PDFs)
 
