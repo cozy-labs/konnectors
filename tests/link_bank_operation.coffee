@@ -55,9 +55,6 @@ describe 'Running link_operation', ->
         BankOperation.defineRequest 'byDate', map, ->
             PhoneBill.defineRequest 'byDate', map, done
 
-    before (done) ->
-                done()
-
 
     describe 'should link given bill to operation with', ->
 
@@ -211,5 +208,4 @@ describe 'Running link_operation', ->
                         should.not.exist operations[0].binary
                         should.not.exist operations[1].binary
                         done()
-
 

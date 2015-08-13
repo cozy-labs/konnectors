@@ -66,3 +66,4 @@ describe "When I fetch rescuetime data", ->
                 should.not.exist err
                 activities.length.should.equal 4
                 done()
+
