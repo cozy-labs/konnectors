@@ -11,7 +11,7 @@ module.exports = BankOperation = americano.getModel 'bankoperation',
     raw: String
     dateImport: Date
     categoryId: String
-    binary: (x) -> x
+    binary: Object
 
 
 BankOperation.all = (params, callback) ->

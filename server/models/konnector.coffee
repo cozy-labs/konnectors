@@ -67,11 +67,14 @@ Konnector::updateFieldValues = (newKonnector, callback) ->
     @updateAttributes data, callback
 
 
-# Run import process for given konnector..
+# Run import process for given konnector.
 Konnector::import = (callback) ->
     @updateAttributes isImporting: true, (err) =>
 
         if err?
+            log.error 'An error occured while modifying konnector state'
+            log.raw err
+
             data =
                 isImporting: false
                 lastImport: new Date()
@@ -112,7 +115,8 @@ Konnector::appendConfigData = ->
     konnectorData = konnectorHash[@slug]
     @[key] = konnectorData[key] for key of konnectorData
 
-    # normalize models' name related to the connector
+    # Build a string list of the model names. Models are the one linked to the
+    # konnector.
     modelNames = []
     for key, value of @models
         name = value.toString()
