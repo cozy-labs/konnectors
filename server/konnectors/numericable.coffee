@@ -186,6 +186,7 @@ parsePage = (requiredFields, bills, data, next) ->
             .replace(',', '.')
         )
         pdfurl: baseURL + billLink.attr "href"
+        type: 'internet'
         vendor: 'Numéricable'
         
     bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?
@@ -205,6 +206,7 @@ parsePage = (requiredFields, bills, data, next) ->
                 .replace(',', '.')
             )
             pdfurl: baseURL + billLink.attr 'href'
+            type: 'internet'
             vendor: 'Numéricable'
         
         bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?        
