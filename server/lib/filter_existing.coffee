@@ -39,5 +39,9 @@ module.exports = (log, model, suffix, vendor) ->
             entries.filtered = entries.fetched.filter (entry) ->
                 not entryHash[entry.date.toISOString()]?
 
+            # Keep only entries matching current vendor.
+            entries.filtered = entries.filtered.filter (entry) ->
+                entry.vendor is vendor
+
             next()
 
