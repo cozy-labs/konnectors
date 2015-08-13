@@ -23,7 +23,7 @@
     "nest-api": "0.0.5",
     "node-polyglot": "0.4.1",
     "pngjs-image": "0.11.2",
-    "printit": "0.1.5",
+    "printit": "0.1.8",
     "querystring": "0.2.0",
     "request": "2.58.0",
     "request-json": "0.4.10",
@@ -36,7 +36,8 @@
     "mocha": "2.2.5",
     "nock": "0.27.0",
     "should": "4.0.4",
-    "sinon": "1.15.4"
+    "sinon": "1.15.4",
+    "express": "4.13.3"
   },
   "scripts": {
     "build": "sh scripts/build.sh",
