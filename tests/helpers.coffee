@@ -59,3 +59,8 @@ helpers.clearKonnector = (slug, callback) ->
         , ->
             callback()
 
+helpers.getDate = (date) ->
+    date = moment(date).toDate()
+    date.setUTCHours 24, 0, 0, 0
+    return date
+
