@@ -48,17 +48,7 @@ BloodPressure = cozydb.getModel 'BloodPressure',
     user: String
     vendor: {type: String, default: 'Withings'}
 
-Steps = cozydb.getModel 'Steps',
-    date: Date
-    activeTime: Number
-    activeTimeCalories: Number
-    distance: Number
-    inactiveTime: Number
-    longestActiveTime: Number
-    longestIdleTime: Number
-    steps: Number
-    totalCalories: Number
-    vendor: {type: String, default: 'Jawbone'}
+Steps = require '../models/steps'
 
 Weight.all = (callback) ->
     Weight.request 'byDate', callback
@@ -68,9 +58,6 @@ HeartBeat.all = (callback) ->
 
 BloodPressure.all = (callback) ->
     BloodPressure.request 'byDate', callback
-
-Steps.all = (callback) ->
-    Steps.request 'byDate', callback
 
 
 # Konnector
@@ -100,7 +87,6 @@ module.exports =
             (done) -> Weight.defineRequest 'byDate', map, done
             (done) -> HeartBeat.defineRequest 'byDate', map, done
             (done) -> BloodPressure.defineRequest 'byDate', map, done
-            (done) -> Steps.defineRequest 'byDate', map, done
         ], callback
 
     # Set start and end date to fetch all data.

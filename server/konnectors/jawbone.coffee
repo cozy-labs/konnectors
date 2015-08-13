@@ -33,37 +33,10 @@ dataFields =
 
 
 # Models
+#
+Steps = require '../models/steps'
+Sleep = require '../models/sleep'
 
-Steps = cozydb.getModel 'Steps',
-    date: Date
-    activeTime: Number
-    activeTimeCalories: Number
-    distance: Number
-    inactiveTime: Number
-    longestActiveTime: Number
-    longestIdleTime: Number
-    steps: Number
-    totalCalories: Number
-    vendor: {type: String, default: 'Jawbone'}
-
-Steps.all = (callback) ->
-    Steps.request 'byDate', callback
-
-Sleep = cozydb.getModel 'Sleep',
-    date: Date
-    asleepTime: Number
-    awakeDuration: Number
-    awakeTime: Number
-    awakeningCount: Number
-    bedTime: Number
-    deepSleepDuration: Number
-    lightSleepDuration: Number
-    sleepDuration: Number
-    sleepQuality: Number
-    vendor: {type: String, default: 'Jawbone'}
-
-Sleep.all = (callback) ->
-    Sleep.request 'byDate', callback
 
 # Konnector
 
@@ -85,12 +58,6 @@ module.exports =
 
     # Define model requests.
     init: (callback) ->
-        map = (doc) -> emit doc.date, doc
-        Steps.defineRequest 'byDate', map, (err) ->
-            callback err if err
-            Sleep.defineRequest 'byDate', map, (err) ->
-                callback err
-
 
     fetch: (requiredFields, callback) ->
         params = limit: 1, descending: true
@@ -229,6 +196,7 @@ importData = (start, csvData, callback) ->
                 longestIdleTime: line[columns["longestIdleTime"]]
                 steps: line[columns["steps"]]
                 totalCalories: line[columns["totalCalories"]]
+                vendor: 'Jawbone'
             numItems++
             move.save (err) ->
                 if err then callback err
@@ -246,6 +214,7 @@ importData = (start, csvData, callback) ->
                         sleepDuration: line[columns["sleepDuration"]]
                         lightSleepDuration: line[columns["lightSleepDuration"]]
                         sleepQuality: line[columns["sleepQuality"]]
+                        vendor: 'Jawbone'
                     numItems++
                     sleep.save (err) ->
                         if err
@@ -272,3 +241,4 @@ importData = (start, csvData, callback) ->
             notifContent = localization.t localizationKey, options
 
         callback err, notifContent
+
