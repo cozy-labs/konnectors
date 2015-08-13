@@ -174,3 +174,4 @@ logCommits = (requiredFields, entries, data, next) ->
     , (err) ->
         entries.numImportedCommits = numImportedCommits
         next()
+
