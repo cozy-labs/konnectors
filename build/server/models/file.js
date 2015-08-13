@@ -10,7 +10,7 @@ request = require('request');
 moment = require('moment');
 
 log = require('printit')({
-  prefix: 'file'
+  prefix: 'konnectors'
 });
 
 module.exports = File = americano.getModel('File', {
@@ -23,13 +23,13 @@ module.exports = File = americano.getModel('File', {
   size: Number,
   binary: Object,
   modificationHistory: Object,
-  clearance: function(x) {
-    return x;
-  },
-  tags: function(x) {
-    return x;
-  }
+  clearance: [Object],
+  tags: [String]
 });
+
+File.all = function(params, callback) {
+  return File.request("all", params, callback);
+};
 
 File.createNew = function(fileName, path, date, url, tags, callback) {
   var attachBinary, data, filePath, index, now, options, stream;
@@ -46,7 +46,7 @@ File.createNew = function(fileName, path, date, url, tags, callback) {
   };
   index = function(newFile) {
     return newFile.index(["name"], function(err) {
-      if (err) {
+      if (err && Object.keys(err).length !== 0) {
         log.error(err);
       }
       return File.find(newFile.id, function(err, file) {
@@ -73,7 +73,7 @@ File.createNew = function(fileName, path, date, url, tags, callback) {
     method: 'GET',
     jar: true
   };
-  stream = request(options, function(err, res) {
+  stream = request(options, function(err, res, body) {
     var stats;
     if (res.statusCode === 200) {
       stats = fs.statSync(filePath);
@@ -86,6 +86,9 @@ File.createNew = function(fileName, path, date, url, tags, callback) {
           return attachBinary(newFile);
         }
       });
+    } else {
+      log.error(res.statusCode, res.body);
+      return callback(new Error('Cannot download file, wrong url'));
     }
   });
   return stream.pipe(fs.createWriteStream(filePath));

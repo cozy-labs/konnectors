@@ -25,6 +25,10 @@ Fetcher = (function() {
     return this.ware.run.apply(this.ware, args);
   };
 
+  Fetcher.prototype.getLayers = function() {
+    return this.ware.fns;
+  };
+
   return Fetcher;
 
 })();

@@ -130,6 +130,7 @@ parsePage = function(requiredFields, bills, data, next) {
       date: moment(firstCell.html(), 'DD/MM/YYYY'),
       amount: parseFloat(secondCell.html().replace(' €', '').replace(',', '.')),
       pdfurl: thirdCell.find('a').attr('href'),
+      type: 'phone',
       vendor: 'Orange'
     };
     if ((bill.date != null) && (bill.amount != null)) {

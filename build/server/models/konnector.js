@@ -77,14 +77,15 @@ Konnector.prototype.removeEncryptedFields = function(fields) {
   return this.password = JSON.stringify(password);
 };
 
-Konnector.prototype.updateFieldValues = function(newValues, callback) {
+Konnector.prototype.updateFieldValues = function(newKonnector, callback) {
   var data, fields;
   fields = konnectorHash[this.slug].fields;
-  this.fieldValues = newValues.fieldValues;
+  this.fieldValues = newKonnector.fieldValues;
   this.removeEncryptedFields(fields);
-  this.importInterval = newValues.importInterval;
+  this.importInterval = newKonnector.importInterval;
   data = {
     fieldValues: this.fieldValues,
+    password: this.password,
     importInterval: this.importInterval
   };
   return this.updateAttributes(data, callback);
@@ -97,6 +98,8 @@ Konnector.prototype["import"] = function(callback) {
     return function(err) {
       var data, konnectorModule;
       if (err != null) {
+        log.error('An error occured while modifying konnector state');
+        log.raw(err);
         data = {
           isImporting: false,
           lastImport: new Date()
