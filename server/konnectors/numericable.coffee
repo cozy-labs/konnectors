@@ -16,17 +16,6 @@ log = require('printit')
 
 # Models
 Bill = require '../models/bill'
-###
-Bill = cozydb.getModel 'Bill',
-    type:
-        type: String
-        default: 'Internet'
-    vendor:
-        type: String
-        default: 'Numéricable'
-    date: Date
-    amount: Number
-###
 
 # Konnector
 module.exports =
@@ -119,56 +108,60 @@ logIn = (requiredFields, billInfos, data, next) ->
 
     log.info 'Getting appkey' 
     request appKeyOptions, (err, res, body) ->
-        if err then next err
+        return next err if err
 
         $ = cheerio.load body
-        logInOptions.form.appkey = $('#PostForm input[name="appkey"]').attr "value"
-
-        if !logInOptions.form.appkey then next "Could not retrieve app key"
+        appKey = $('#PostForm input[name="appkey"]').attr "value"
+        return next "Could not retrieve app key" if not appKey
+        
+        logInOptions.form.appkey = appKey
 
         log.info 'Logging in'
         request logInOptions, (err, res, body) ->
             if err
                 log.error 'Login failed'
-                log.raw err
-            else 
-                log.info 'Signing in'
-                request signInOptions, (err, res, body) ->
+                return next err
+
+            log.info 'Signing in'
+            request signInOptions, (err, res, body) ->
+                if err
+                    log.error 'Signin failed'
+                    return next err
+                
+                redirectURL = res.headers.location
+                return next "Could not retrieve redirect URL" if not redirectURL
+                    
+                redirectOptions.url += redirectURL
+
+                log.info "Fetching access token"
+                request redirectOptions, (err, res, body) ->
                     if err
-                        log.error 'Signin failed'
-                        log.raw err
-                    else
-                        redirectURL = res.headers.location
+                        log.error 'Token fetching failed'
+                        return next err
+                    
+                    $ = cheerio.load body 
+                    accessToken = $("#accessToken").attr "value"
+                    if not accessToken
+                        return next "Could not retrieve access token"
+                        
+                    tokenAuthOptions.qs.accessToken = accessToken
 
-                        if !redirectURL then next "Could not retrieve redirect URL"
-                        redirectOptions.url += redirectURL
-
-                        log.info "Fetching access token" 
-                        request redirectOptions, (err, res, body) -> 
+                    log.info "Authenticating by token" 
+                    request tokenAuthOptions, (err, res, body) ->
+                        if err
+                            log.error 'Authentication by token failed'
+                            return next err
+                        
+                        log.info 'Fetching bills page'
+                        request billOptions, (err, res, body) ->
                             if err
-                                log.error 'Token fetching failed'
-                                log.raw err
-                            else
-                                $ = cheerio.load body 
-                                tokenAuthOptions.qs.accessToken = $("#accessToken").attr "value"
-                                if !tokenAuthOptions.qs.accessToken then next "Could not retrieve access token"
+                                log.error 'An error occured while fetching ' + \
+                                'bills page'
+                                return next err
 
-                                log.info "Authenticating by token" 
-                                request tokenAuthOptions, (err, res, body) ->
-                                    if err
-                                        log.error 'Authentication by token failed'
-                                        console.log err
-                                        next err
-                                    else 
-                                        log.info 'Fetching bills page'
-                                        request billOptions, (err, res, body) ->
-                                            if err
-                                                log.error 'An error occured while fetching bills page'
-                                                console.log err
-                                                next err
-                                            else                                                
-                                                data.html = body
-                                                next()
+                            data.html = body
+                            next()
+
 
 # Layer to parse the fetched page to extract bill data.
 parsePage = (requiredFields, bills, data, next) ->
@@ -193,30 +186,32 @@ parsePage = (requiredFields, bills, data, next) ->
             .replace(',', '.')
         )
         pdfurl: baseURL + billLink.attr "href"
-    
+        vendor: 'Numéricable'
+        
     bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?
 
     #Other bills    
-    $('#facture > div').each ->
-        billDate = $(this).find('h3')
+    $('#facture > div[id!="firstFact"]').each ->
+        billDate = $(this).find('h3').html().substr 3
         billTotal = $(this).find('p.right')
         billLink = $(this).find('a.linkBtn')
-
+        
         # Add a new bill information object.
         bill =
-            date: moment billDate.html(), 'DD/MM/YYYY'
+            date: moment billDate, 'DD/MM/YYYY'
             amount: parseFloat(billTotal
                 .html()
                 .replace(' €', '')
                 .replace(',', '.')
             )
             pdfurl: baseURL + billLink.attr 'href'
-
-        bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?
-
+            vendor: 'Numéricable'
+        
+        bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?        
+        
     log.info "#{bills.fetched.length} bills retrieved"
 
-    if !bills.fetched.length
+    if not bills.fetched.length
         next "No bills retrieved"
     else
         next() 
