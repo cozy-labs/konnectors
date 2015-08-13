@@ -140,6 +140,7 @@ parsePage = (requiredFields, bills, data, next) ->
                 .replace(',', '.')
             )
             pdfurl: thirdCell.find('a').attr 'href'
+            type: 'phone'
             vendor: 'Orange'
 
         bills.fetched.push bill if bill.date? and bill.amount?

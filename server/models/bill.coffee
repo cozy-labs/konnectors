@@ -2,9 +2,9 @@ cozydb = require 'cozydb'
 
 
 module.exports = Bill = cozydb.getModel 'Bill',
-    type: type: String, default: 'hosting'
+    type: String
     date: Date
-    vendor: type: String
+    vendor: String
     amount: Number
     plan: String
     pdfurl: String
