@@ -45,6 +45,22 @@
     "lint": "sh scripts/lint.sh",
     "start": "node build/server.js"
   },
+  "contributors": [
+    "Alexandre Kalatzis",
+    "Benjamin Bouvier",
+    "Bruno Michel",
+    "Clochix",
+    "Frank Rousseau",
+    "Godinez Pablo",
+    "Joseph Silvestre",
+    "Luc Chaffard",
+    "Matthias Dugué",
+    "Nicolas Frandeboeuf",
+    "Romain Foucault",
+    "Simon Kossi",
+    "ZeHiro",
+    "Zoé Bellot"
+  ],
   "cozy-permissions": {
     "Konnector": {
       "description": "Konnector description and required fields"
