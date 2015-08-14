@@ -1,4 +1,5 @@
 BaseView = require '../lib/base_view'
+request = require '../lib/request'
 
 
 # View used to display the configuration widget for a given konnector.
@@ -9,6 +10,7 @@ module.exports = class KonnectorView extends BaseView
 
     events:
         "click #import-button": "onImportClicked"
+        "click #delete-button": "onDeleteClicked"
 
 
     initialize: (options) ->
@@ -286,4 +288,16 @@ open selected folder
                 @firstImport.show()
             else
                 @firstImport.hide()
+
+
+    onDeleteClicked: ->
+        request.del "konnectors/#{@model.id}", (err) =>
+            if err
+                alert t 'konnector deletion error'
+            else
+                alert t 'konnector deleted'
+                @model.set 'lastAutoImport', null
+                @model.set 'fieldValues', {}
+                @model.set 'password', '{}'
+                window.router.navigate '', trigger: true
 

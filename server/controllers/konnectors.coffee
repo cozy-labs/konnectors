@@ -23,6 +23,20 @@ module.exports =
         res.send req.konnector
 
 
+    # Reset konnector fields.
+    remove: (req, res, next) ->
+
+        data =
+            lastAutoImport: null
+            fieldValues: {}
+            password: '{}'
+
+        req.konnector.updateAttributes data, (err, konnector) ->
+            return next err if err
+
+            res.status(204).send konnector
+
+
     # Start import for a given konnector. Change state of the konnector during
     # import (set importing to true until the import finished).
     # If a date is given, it adds a new poller or reset the existing one if

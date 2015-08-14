@@ -86,3 +86,9 @@ module.exports =
     'notification sosh': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification electrabel': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+
+    "konnector danger zone": "Zone dangereuse"
+    "konnector delete credentials": "Supprimer cette configuration."
+    "konnector deleted": "La configuration de ce connecteur a bien été supprimée."
+    "konnector deletion error": "Une erreur est survenue lors de la suppression de la configuration de ce connecteur."
+

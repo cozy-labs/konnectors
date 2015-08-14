@@ -85,3 +85,8 @@ module.exports =
     'notification sosh': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification electrabel': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification numericable': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    "konnector danger zone": "Danger zone"
+    "konnector delete credentials": "Delete this configuration."
+    "konnector deleted": "The konnector configuration was successfully deleted."
+    "konnector deletion error": "An error occured while deleting this konnector configuration."
+
