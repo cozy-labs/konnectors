@@ -54,8 +54,7 @@ module.exports =
     'konnector description github commits': "Sauvegardez les informations de tous vos commits Github."
     'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone."
     'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime."
-    'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."
-    'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter."
+    'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."    
     'konnector description twitter': """
     Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert
     deux identifiants et deux clés secrètes. Vous pouvez les générer via le
@@ -68,6 +67,7 @@ module.exports =
     'konnector description sosh': "Téléchargez toutes vos factures Sosh. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description electrabel': "Téléchargez toutes vos factures Electrabel. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description orange': "Téléchargez toutes vos factures Orange. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description numericable': "Téléchargez toutes vos factures Numéricable. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description virgimobile': "Téléchargez toutes vos factures Virgin Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
 
     # Konnectors' notifications
@@ -83,4 +83,5 @@ module.exports =
     'notification digital ocean': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification sosh': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification electrabel': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification virginmobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
