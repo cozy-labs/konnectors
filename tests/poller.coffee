@@ -15,7 +15,7 @@ week = 7 * day
 month = 30 * day
 
 
-describe 'Testing konnector poller', ->
+describe.skip 'Testing konnector poller', ->
 
     before (done) ->
         @timeout 4000
@@ -318,3 +318,4 @@ describe 'Testing konnector poller', ->
                 @sandbox.clock.tick 1 * month
                 @spy.callCount.should.equal 2
 
+###

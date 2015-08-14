@@ -79,7 +79,7 @@ describe 'Save Data and File layer', ->
 
             bills[0].vendor.should.equal 'test'
             bills[0].type.should.equal 'internet'
-            bills[0].date.format('YYYY-MM-DD').should.equal '2015-02-02'
+            bills[0].date.format('YYYY-MM-DD').should.equal '2015-02-01'
             bills[0].fileId.should.equal @files[0].id
             bills[0].binaryId.should.equal @files[0].binary.file.id
 

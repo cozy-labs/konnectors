@@ -29,6 +29,8 @@ module.exports = (log, model, suffix, vendor) ->
                 if vendor?
                     if entry.vendor is vendor
                         entryHash[entry.date.toISOString()] = entry
+
+
                     # else do nothing
 
                 # Simply add the entry

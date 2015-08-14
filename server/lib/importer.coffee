@@ -23,7 +23,8 @@ module.exports = (konnector) ->
         model = require "../konnectors/#{konnector.slug}"
 
         konnector.import (err, notifContent) ->
-            if err?
+
+            if err and Object.keys(err).length > 0
                 log.error err
                 localizationKey = 'notification import error'
                 notifContent = localization.t localizationKey, name: model.name

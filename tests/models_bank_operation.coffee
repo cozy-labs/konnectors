@@ -29,8 +29,6 @@ describe 'Bank Operation model', ->
     it 'grabs binary references of a file from its id', (done) ->
 
         File.all (err, files) ->
-            console.log err
-            console.log files
             file = files[0]
 
             BankOperation.all (err, operations) ->

@@ -104,7 +104,7 @@ Something went wrong while fetching rescue time data.
                         date: row[0]
                         duration: row[1]
                         people: row[2]
-                        activity: row[3]
+                        description: row[3]
                         category: row[4]
                         productivity: row[5]
                     RescueTimeActivity.create data, (err) ->
