@@ -86,8 +86,7 @@ module.exports =
                 if entries? and (entries.numSteps > 0 or entries.numSleep > 0)
                     localizationKey = 'notification jawbone'
                     options =
-                        stepsCount: entries.numSteps
-                        sleepCount: entries.numSleep
+                        smart_count: entries.numSteps + entries.numSleep
                     notifContent = localization.t localizationKey, options
                 callback err, notifContent
 
