@@ -20,3 +20,6 @@ module.exports =
 
     sleep:
         byDate: americano.defaultRequests.by 'date'
+
+    commit:
+        byDate: americano.defaultRequests.by 'date'
