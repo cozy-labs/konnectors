@@ -203,7 +203,7 @@ module.exports = class KonnectorView extends BaseView
                     id = $("##{slug}-#{name}-input").val()
                     value = ''
                     value = (path.path for path in @paths when path.id is id)
-                    fieldValues[name] = value
+                    fieldValues[name] = value[0]
 
                 # For simple fields, just get the value of the field.
                 else
