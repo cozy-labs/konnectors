@@ -44,7 +44,7 @@ module.exports =
             .use(logIn)
             .use(parsePage)
             .use(filterExisting log, Bill)
-            .use(saveDataAndFile(log, Bill, 'virginmobile', ['bill']))
+            .use(saveDataAndFile(log, Bill, 'virgin mobile', ['bill']))
             .use(linkBankOperation
                 log: log
                 model: Bill
@@ -113,7 +113,7 @@ parsePage = (requiredFields, bills, data, next) ->
                 date: moment inv.invoiceDate, 'DD/MM/YYYY'
                 amount: parseFloat(inv.amount.unite + '.' + inv.amount.centimes)
                 pdfurl: baseURL + inv.invoiceNumber
-                type: "Phone"
+                type: "phone"
 
             if bill.date? and bill.amount? and bill.pdfurl?
                 bills.fetched.push bill
