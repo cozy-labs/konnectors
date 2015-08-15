@@ -51,3 +51,14 @@ describe 'File model', ->
             stream.pipe fs.createWriteStream '/tmp/test-bill.pdf'
 
 
+    it 'Can tell if a file is present in Cozy Files', (done) ->
+
+        File.isPresent '/bills/bill.pdf', (err, isPresent) ->
+            should.not.exist err
+            isPresent.should.equal true
+
+            File.isPresent '/bills/billa.pdf', (err, isPresent) ->
+                should.not.exist err
+                isPresent.should.equal false
+                done()
+

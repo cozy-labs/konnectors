@@ -58,7 +58,7 @@ describe 'Save Data and File layer', ->
                 done()
 
     it 'Generate Cozy Files for given links (pdfurl field)', (done) ->
-        layer {}, entries, {}, =>
+        layer folderPath: 'bills', entries, {}, =>
             File.all (err, files) =>
                 should.exist files
                 files.length.should.equal 2
@@ -84,4 +84,23 @@ describe 'Save Data and File layer', ->
             bills[0].binaryId.should.equal @files[0].binary.file.id
 
             done()
+
+    it 'Download file if entry is there but file is missing', (done) ->
+        entries.filtered = []
+        @files[0].destroy ->
+            layer folderPath: 'bills', entries, {}, =>
+                File.all (err, files) =>
+                    should.exist files
+                    files.length.should.equal 2
+
+                    files[0].size.should.equal 64895
+                    files[1].size.should.equal 64895
+                    files[0].name.should.equal '201503_test.pdf'
+                    files[1].name.should.equal '201502_test.pdf'
+
+                    Bill.all (err, bills) =>
+                        bills[0].fileId.should.equal files[1].id
+                        binaryId = files[1].binary.file.id
+                        bills[0].binaryId.should.equal binaryId
+                        done()
 

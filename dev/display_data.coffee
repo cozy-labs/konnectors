@@ -1,5 +1,6 @@
 minimist = require 'minimist'
 moment = require 'moment'
+cozydb = require 'cozydb'
 Table = require 'cli-table'
 log = require('printit')
     prefix: 'Konnector dev tool'

@@ -25,6 +25,13 @@ File.all = (params, callback) ->
     File.request "all", params, callback
 
 
+# Tells if a file is already stored in the Cozy at the given path.
+File.isPresent = (fullPath, callback) ->
+    File.request "byFullPath", key: fullPath, (err, files) ->
+        callback err if err
+        callback null, files? and files.length > 0
+
+
 # Create a new File object that will be displayed inside the file application.
 # The binary attached to the file is downloaded from a given url.
 # Given tags are associated with the newly created file.
@@ -65,7 +72,7 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
         jar: true
 
     stream = request options, (err, res, body) ->
-        if res.statusCode is 200
+        if res?.statusCode is 200
             # Once done create file metadata then attach binary to file.
             stats = fs.statSync filePath
             data.size = stats["size"]
@@ -76,7 +83,8 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
                 else
                     attachBinary newFile
         else
-            log.error res.statusCode, res.body
+            if res?
+                log.error res.statusCode, res.body
             callback new Error 'Cannot download file, wrong url'
 
     stream.pipe fs.createWriteStream filePath

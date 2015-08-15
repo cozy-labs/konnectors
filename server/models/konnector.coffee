@@ -90,7 +90,7 @@ Konnector::import = (callback) ->
                 fields = konnectorHash[@slug].fields
                 @removeEncryptedFields fields
 
-                if err?
+                if err? and Object.keys(err).length > 0
                     data = isImporting: false, errorMessage: err
                     @updateAttributes data, ->
                         # raise the error from the import, not the update
