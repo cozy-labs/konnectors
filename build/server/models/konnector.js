@@ -57,32 +57,46 @@ Konnector.prototype.injectEncryptedFields = function() {
     return results;
   } catch (_error) {
     error = _error;
+    this.fieldValues.password = this.password;
+    this.password = {
+      password: this.password
+    };
     return log.info("Injecting encrypted fields : JSON.parse error : " + error);
+  }
+};
+
+Konnector.prototype.getFields = function() {
+  var ref;
+  if (konnectorHash[this.slug] != null) {
+    return (ref = konnectorHash[this.slug]) != null ? ref.fields : void 0;
+  } else {
+    return this.fields;
   }
 };
 
 Konnector.prototype.removeEncryptedFields = function(fields) {
   var name, password, type;
   if (fields == null) {
-    log.info("Removing encrypted fields: error: fields variable undefined");
+    log.warn("Fields variable undefined, use curren one instead.");
+    fields = this.getFields();
   }
   password = {};
   for (name in fields) {
     type = fields[name];
-    if (type === "password") {
-      password[name] = this.fieldValues[name];
-      delete this.fieldValues[name];
+    if (!(type === "password")) {
+      continue;
     }
+    password[name] = this.fieldValues[name];
+    delete this.fieldValues[name];
   }
   return this.password = JSON.stringify(password);
 };
 
 Konnector.prototype.updateFieldValues = function(newKonnector, callback) {
   var data, fields;
-  fields = konnectorHash[this.slug].fields;
+  fields = this.getFields();
   this.fieldValues = newKonnector.fieldValues;
   this.removeEncryptedFields(fields);
-  this.importInterval = newKonnector.importInterval;
   data = {
     fieldValues: this.fieldValues,
     password: this.password,
@@ -106,13 +120,13 @@ Konnector.prototype["import"] = function(callback) {
         };
         return _this.updateAttributes(data, callback);
       } else {
-        konnectorModule = require("../konnectors/" + _this.slug);
+        konnectorModule = konnectorHash[_this.slug];
         _this.injectEncryptedFields();
         return konnectorModule.fetch(_this.fieldValues, function(err, notifContent) {
           var fields;
-          fields = konnectorHash[_this.slug].fields;
+          fields = _this.getFields();
           _this.removeEncryptedFields(fields);
-          if (err != null) {
+          if ((err != null) && Object.keys(err).length > 0) {
             data = {
               isImporting: false,
               errorMessage: err
@@ -143,7 +157,6 @@ Konnector.prototype.appendConfigData = function() {
     msg = ("Config data cannot be appended for konnector " + this.slug + ": ") + "missing config file.";
     throw new Error(msg);
   }
-  konnectorData = konnectorHash[this.slug];
   for (key in konnectorData) {
     this[key] = konnectorData[key];
   }

@@ -16,7 +16,8 @@ module.exports = {
   },
   'konnectors/:konnectorId': {
     get: konnectors.show,
-    put: konnectors["import"]
+    put: konnectors["import"],
+    "delete": konnectors.remove
   },
   'folders': {
     get: folders.all

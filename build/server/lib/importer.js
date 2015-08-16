@@ -23,7 +23,7 @@ module.exports = function(konnector) {
     model = require("../konnectors/" + konnector.slug);
     return konnector["import"](function(err, notifContent) {
       var data, localizationKey, notificationSlug, prefix;
-      if (err != null) {
+      if (err && Object.keys(err).length > 0) {
         log.error(err);
         localizationKey = 'notification import error';
         notifContent = localization.t(localizationKey, {

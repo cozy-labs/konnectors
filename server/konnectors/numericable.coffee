@@ -28,7 +28,7 @@ module.exports =
         login: "text"
         password: "password"
         folderPath: "folder"
-        
+
     models:
         bill: Bill
 
@@ -84,7 +84,7 @@ logIn = (requiredFields, billInfos, data, next) ->
     redirectOptions =
         method: 'POST'
         jar: true
-        url: "https://connexion.numericable.fr" 
+        url: "https://connexion.numericable.fr"
 
     signInOptions =
         method: 'POST'
@@ -106,14 +106,14 @@ logIn = (requiredFields, billInfos, data, next) ->
         jar: true
         uri: "https://moncompte.numericable.fr/pages/billing/Invoice.aspx"
 
-    log.info 'Getting appkey' 
+    log.info 'Getting appkey'
     request appKeyOptions, (err, res, body) ->
         return next err if err
 
         $ = cheerio.load body
         appKey = $('#PostForm input[name="appkey"]').attr "value"
         return next "Could not retrieve app key" if not appKey
-        
+
         logInOptions.form.appkey = appKey
 
         log.info 'Logging in'
@@ -127,10 +127,10 @@ logIn = (requiredFields, billInfos, data, next) ->
                 if err
                     log.error 'Signin failed'
                     return next err
-                
+
                 redirectURL = res.headers.location
                 return next "Could not retrieve redirect URL" if not redirectURL
-                    
+
                 redirectOptions.url += redirectURL
 
                 log.info "Fetching access token"
@@ -138,20 +138,20 @@ logIn = (requiredFields, billInfos, data, next) ->
                     if err
                         log.error 'Token fetching failed'
                         return next err
-                    
-                    $ = cheerio.load body 
+
+                    $ = cheerio.load body
                     accessToken = $("#accessToken").attr "value"
                     if not accessToken
                         return next "Could not retrieve access token"
-                        
+
                     tokenAuthOptions.qs.accessToken = accessToken
 
-                    log.info "Authenticating by token" 
+                    log.info "Authenticating by token"
                     request tokenAuthOptions, (err, res, body) ->
                         if err
                             log.error 'Authentication by token failed'
                             return next err
-                        
+
                         log.info 'Fetching bills page'
                         request billOptions, (err, res, body) ->
                             if err
@@ -170,7 +170,7 @@ parsePage = (requiredFields, bills, data, next) ->
     baseURL = "https://moncompte.numericable.fr"
 
     # Analyze bill listing table.
-    log.info 'Parsing bill page' 
+    log.info 'Parsing bill page'
 
     #First bill
     firstBill = $("#firstFact")
@@ -188,15 +188,15 @@ parsePage = (requiredFields, bills, data, next) ->
         pdfurl: baseURL + billLink.attr "href"
         type: 'internet'
         vendor: 'Numéricable'
-        
+
     bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?
 
-    #Other bills    
+    #Other bills
     $('#facture > div[id!="firstFact"]').each ->
         billDate = $(this).find('h3').html().substr 3
         billTotal = $(this).find('p.right')
         billLink = $(this).find('a.linkBtn')
-        
+
         # Add a new bill information object.
         bill =
             date: moment billDate, 'DD/MM/YYYY'
@@ -208,12 +208,12 @@ parsePage = (requiredFields, bills, data, next) ->
             pdfurl: baseURL + billLink.attr 'href'
             type: 'internet'
             vendor: 'Numéricable'
-        
-        bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?        
-        
+
+        bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?
+
     log.info "#{bills.fetched.length} bills retrieved"
 
     if not bills.fetched.length
         next "No bills retrieved"
     else
-        next() 
+        next()

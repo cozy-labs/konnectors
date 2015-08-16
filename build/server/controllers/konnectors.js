@@ -20,6 +20,20 @@ module.exports = {
   show: function(req, res, next) {
     return res.send(req.konnector);
   },
+  remove: function(req, res, next) {
+    var data;
+    data = {
+      lastAutoImport: null,
+      fieldValues: {},
+      password: '{}'
+    };
+    return req.konnector.updateAttributes(data, function(err, konnector) {
+      if (err) {
+        return next(err);
+      }
+      return res.status(204).send(konnector);
+    });
+  },
   "import": function(req, res, next) {
     var date;
     if (req.konnector.isImporting) {

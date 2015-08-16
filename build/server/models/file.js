@@ -31,6 +31,17 @@ File.all = function(params, callback) {
   return File.request("all", params, callback);
 };
 
+File.isPresent = function(fullPath, callback) {
+  return File.request("byFullPath", {
+    key: fullPath
+  }, function(err, files) {
+    if (err) {
+      callback(err);
+    }
+    return callback(null, (files != null) && files.length > 0);
+  });
+};
+
 File.createNew = function(fileName, path, date, url, tags, callback) {
   var attachBinary, data, filePath, index, now, options, stream;
   now = moment().toISOString();
@@ -75,7 +86,7 @@ File.createNew = function(fileName, path, date, url, tags, callback) {
   };
   stream = request(options, function(err, res, body) {
     var stats;
-    if (res.statusCode === 200) {
+    if ((res != null ? res.statusCode : void 0) === 200) {
       stats = fs.statSync(filePath);
       data.size = stats["size"];
       return File.create(data, function(err, newFile) {
@@ -87,7 +98,9 @@ File.createNew = function(fileName, path, date, url, tags, callback) {
         }
       });
     } else {
-      log.error(res.statusCode, res.body);
+      if (res != null) {
+        log.error(res.statusCode, res.body);
+      }
       return callback(new Error('Cannot download file, wrong url'));
     }
   });

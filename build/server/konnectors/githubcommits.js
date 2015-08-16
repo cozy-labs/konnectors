@@ -24,29 +24,7 @@ log = require('printit')({
   date: true
 });
 
-Commit = cozydb.getModel('Commit', {
-  date: Date,
-  sha: String,
-  parent: String,
-  tree: String,
-  url: String,
-  author: String,
-  email: String,
-  message: String,
-  additions: Number,
-  deletions: Number,
-  files: function(x) {
-    return x;
-  },
-  vendor: {
-    type: String,
-    "default": 'Github'
-  }
-});
-
-Commit.all = function(params, callback) {
-  return Commit.request('byDate', params, callback);
-};
+Commit = require('../models/commit');
 
 module.exports = {
   name: "Github Commits",
@@ -61,13 +39,7 @@ module.exports = {
     commit: Commit
   },
   init: function(callback) {
-    var map;
-    map = function(doc) {
-      return emit(doc.date, doc);
-    };
-    return Commit.defineRequest('byDate', map, function(err) {
-      return callback(err);
-    });
+    return callback();
   },
   fetch: function(requiredFields, callback) {
     log.info("Import started");
@@ -130,9 +102,7 @@ getEvents = function(requiredFields, commits, data, next) {
 
 buildCommitDateHash = function(requiredFields, entries, data, next) {
   entries.commitHash = {};
-  return Commit.all({
-    limit: 1000
-  }, function(err, commits) {
+  return Commit.all(function(err, commits) {
     var commit, i, len;
     if (err) {
       log.error(err);
@@ -157,26 +127,30 @@ logCommits = function(requiredFields, entries, data, next) {
   return async.eachSeries(data.commits, function(commit, callback) {
     var path;
     path = commit.url.substring('https://api.github.com/'.length);
-    if (entries.commitHash[commit.sha]) {
+    if ((commit != null) && entries.commitHash[commit.sha]) {
       log.info("Commit " + commit.sha + " not saved: already exists.");
       return callback();
     } else {
       return client.get(path, function(err, res, commit) {
         var parent;
-        log.info("Saving commit " + commit.sha + "...");
         if (err) {
           log.error(err);
           return callback();
         } else if ((commit == null) || (commit.commit == null) || (commit.author == null)) {
-          log.info("Commit " + commit.sha + " not saved: no metadata.");
+          if (commit != null) {
+            log.info("Commit not saved: no metadata.");
+          } else {
+            log.info("Commit " + commit.sha + " not saved: no metadata.");
+          }
           return callback();
         } else if (commit.author.login !== username) {
           log.info(("Commit " + commit.sha + " not saved: ") + ("user is not author (" + commit.author.login + ")."));
           return callback();
         } else {
+          log.info("Saving commit " + commit.sha + "...");
           parent = null;
           if (commit.parents.length > 0) {
-            commit.parents[0].sha;
+            parent = commit.parents[0].sha;
           }
           data = {
             date: commit.commit.author.date,

@@ -53,6 +53,7 @@ module.exports = {
   'konnector description electrabel': "Téléchargez toutes vos factures Electrabel. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
   'konnector description orange': "Téléchargez toutes vos factures Orange. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
   'konnector description numericable': "Téléchargez toutes vos factures Numéricable. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
+  'konnector description virgimobile': "Téléchargez toutes vos factures Virgin Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
   'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest.",
   'notification prefix': "Konnector %{name} :",
   'notification github commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés",
@@ -66,5 +67,10 @@ module.exports = {
   'notification digital ocean': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
   'notification sosh': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
   'notification electrabel': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
-  'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+  'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
+  'notification virginmobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
+  "konnector danger zone": "Zone dangereuse",
+  "konnector delete credentials": "Supprimer cette configuration.",
+  "konnector deleted": "La configuration de ce connecteur a bien été supprimée.",
+  "konnector deletion error": "Une erreur est survenue lors de la suppression de la configuration de ce connecteur."
 };
