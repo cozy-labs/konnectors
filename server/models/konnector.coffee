@@ -30,12 +30,20 @@ Konnector.all = (callback) ->
 Konnector::injectEncryptedFields = ->
     try
         parsedPasswords = JSON.parse @password
-        for name, val of parsedPasswords
-            @fieldValues[name] = val
+        @fieldValues[name] = val for name, val of parsedPasswords
     catch error
         @fieldValues.password = @password
         @password = password: @password
         log.info "Injecting encrypted fields : JSON.parse error : #{error}"
+
+
+# Return fields registered in the konnector module. If it's not defined,
+# it uses the current fields.
+Konnector::getFields = ->
+    if konnectorHash[@slug]?
+        return konnectorHash[@slug]?.fields
+    else
+        return @fields
 
 
 # Remove encrypted fields data from field list. Set password attribute with
@@ -44,28 +52,27 @@ Konnector::injectEncryptedFields = ->
 Konnector::removeEncryptedFields = (fields) ->
 
     if not fields?
-        log.info "Removing encrypted fields: error: fields variable undefined"
+        log.warn "Fields variable undefined, use curren one instead."
+        fields = @getFields()
 
     password = {}
-    for name, type of fields
-        if type is "password"
-            password[name] = @fieldValues[name]
-            delete @fieldValues[name]
+    for name, type of fields when type is "password"
+        password[name] = @fieldValues[name]
+        delete @fieldValues[name]
     @password = JSON.stringify password
 
 
 # Update field values with the one given in parameters.
 Konnector::updateFieldValues = (newKonnector, callback) ->
-    fields = konnectorHash[@slug].fields
+    fields = @getFields()
 
     @fieldValues = newKonnector.fieldValues
     @removeEncryptedFields fields
-    @importInterval = newKonnector.importInterval
 
     data =
         fieldValues: @fieldValues
         password: @password
-        importInterval: @importInterval
+        importInterval: @importInterval # required to persist it.
     @updateAttributes data, callback
 
 
@@ -83,11 +90,11 @@ Konnector::import = (callback) ->
             @updateAttributes data, callback
 
         else
-            konnectorModule = require "../konnectors/#{@slug}"
+            konnectorModule = konnectorHash[@slug]
 
             @injectEncryptedFields()
             konnectorModule.fetch @fieldValues, (err, notifContent) =>
-                fields = konnectorHash[@slug].fields
+                fields = @getFields()
                 @removeEncryptedFields fields
 
                 if err? and Object.keys(err).length > 0
@@ -114,7 +121,6 @@ Konnector::appendConfigData = ->
         throw new Error msg
 
     # add missing fields
-    konnectorData = konnectorHash[@slug]
     @[key] = konnectorData[key] for key of konnectorData
 
     # Build a string list of the model names. Models are the one linked to the

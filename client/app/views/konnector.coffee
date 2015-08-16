@@ -39,8 +39,7 @@ module.exports = class KonnectorView extends BaseView
             # If the widget added is a folder selector, we add a change
             # listener that will change the open folder button link every time
             # the selector is changed.
-            if val is 'folder'
-                @configureFolderInput slug, name
+            @configureFolderInput slug, name if val is 'folder'
 
         @addIntervalWidget slug
 
