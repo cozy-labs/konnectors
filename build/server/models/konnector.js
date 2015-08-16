@@ -57,6 +57,9 @@ Konnector.prototype.injectEncryptedFields = function() {
     return results;
   } catch (_error) {
     error = _error;
+    if (this.fieldValues == null) {
+      this.fieldValues = {};
+    }
     this.fieldValues.password = this.password;
     this.password = {
       password: this.password

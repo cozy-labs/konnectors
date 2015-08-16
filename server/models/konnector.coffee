@@ -32,6 +32,7 @@ Konnector::injectEncryptedFields = ->
         parsedPasswords = JSON.parse @password
         @fieldValues[name] = val for name, val of parsedPasswords
     catch error
+        @fieldValues ?= {}
         @fieldValues.password = @password
         @password = password: @password
         log.info "Injecting encrypted fields : JSON.parse error : #{error}"
