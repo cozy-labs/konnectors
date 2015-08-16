@@ -73,7 +73,7 @@ Konnector::updateFieldValues = (newKonnector, callback) ->
     data =
         fieldValues: @fieldValues
         password: @password
-        importInterval: @importInterval # required to persist it.
+        importInterval: newKonnector.importInterval or @importInterval
     @updateAttributes data, callback
 
 

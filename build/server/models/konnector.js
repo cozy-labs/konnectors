@@ -103,7 +103,7 @@ Konnector.prototype.updateFieldValues = function(newKonnector, callback) {
   data = {
     fieldValues: this.fieldValues,
     password: this.password,
-    importInterval: this.importInterval
+    importInterval: newKonnector.importInterval || this.importInterval
   };
   return this.updateAttributes(data, callback);
 };
