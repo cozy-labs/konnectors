@@ -61,6 +61,7 @@ module.exports =
 
     # Define model requests.
     init: (callback) ->
+        callback()
 
     fetch: (requiredFields, callback) ->
         entries = {}

@@ -58,7 +58,9 @@ module.exports = {
     moves: Steps,
     sleeps: Sleep
   },
-  init: function(callback) {},
+  init: function(callback) {
+    return callback();
+  },
   fetch: function(requiredFields, callback) {
     var data, entries;
     entries = {};
