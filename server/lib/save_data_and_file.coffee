@@ -88,7 +88,7 @@ checkForMissingFiles = (options, callback) ->
         File.isPresent path, (err, isPresent) ->
 
             # If it's there, it does nothing.
-            if isPresent
+            if isPresent or not entry.pdfurl?
                 done()
 
             # If it's not there, it creates it.
