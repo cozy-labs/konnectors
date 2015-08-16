@@ -139,7 +139,8 @@ parsePage = function(requiredFields, bills, data, next) {
         date: moment(firstCell.html()),
         amount: parseFloat(thirdCell.html().replace('$', '')),
         pdfurl: pdfurlPrefix + fourthCell.find('a').attr('href'),
-        vendor: 'Digital Ocean'
+        vendor: 'Digital Ocean',
+        type: 'hosting'
       });
     }
   });

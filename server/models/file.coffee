@@ -3,7 +3,8 @@ americano = require 'cozydb'
 request = require 'request'
 moment = require 'moment'
 log = require('printit')
-    prefix: 'file'
+    prefix: 'konnectors'
+
 
 # Required to save file fetched via a konnector.
 module.exports = File = americano.getModel 'File',
@@ -16,9 +17,24 @@ module.exports = File = americano.getModel 'File',
     size: Number
     binary: Object
     modificationHistory: Object
-    clearance: (x) -> x
-    tags: (x) -> x
+    clearance: [Object]
+    tags: [String]
 
+
+File.all = (params, callback) ->
+    File.request "all", params, callback
+
+
+# Tells if a file is already stored in the Cozy at the given path.
+File.isPresent = (fullPath, callback) ->
+    File.request "byFullPath", key: fullPath, (err, files) ->
+        callback err if err
+        callback null, files? and files.length > 0
+
+
+# Create a new File object that will be displayed inside the file application.
+# The binary attached to the file is downloaded from a given url.
+# Given tags are associated with the newly created file.
 File.createNew = (fileName, path, date, url, tags, callback) ->
     now = moment().toISOString()
     filePath = "/tmp/#{fileName}"
@@ -35,7 +51,7 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
     # Index file to DS indexer.
     index = (newFile) ->
         newFile.index ["name"], (err) ->
-            log.error err if err
+            log.error err if err and Object.keys(err).length isnt 0
             File.find newFile.id, (err, file) ->
                 callback err, file
 
@@ -55,8 +71,8 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
         method: 'GET'
         jar: true
 
-    stream = request options, (err, res) ->
-        if res.statusCode is 200
+    stream = request options, (err, res, body) ->
+        if res?.statusCode is 200
             # Once done create file metadata then attach binary to file.
             stats = fs.statSync filePath
             data.size = stats["size"]
@@ -66,5 +82,10 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
                     callback err
                 else
                     attachBinary newFile
+        else
+            if res?
+                log.error res.statusCode, res.body
+            callback new Error 'Cannot download file, wrong url'
 
     stream.pipe fs.createWriteStream filePath
+

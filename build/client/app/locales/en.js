@@ -9,6 +9,7 @@ module.exports = {
   'imported data:': 'Imported data:',
   'importing...': 'importing...',
   'no import performed': 'No import performed',
+  'import already running': 'Import is already running.',
   'firstname': 'Firstname',
   'lastname': 'Lastname',
   'login': 'Login',
@@ -36,6 +37,7 @@ module.exports = {
   'notification import error': 'an error occurred during import of data',
   'error occurred during import.': 'An error occurred during the last import.',
   'error occurred during import:': 'An error occurred during the last import:',
+  "import server error": "Server error occured while importing.",
   'konnector description free': "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files.",
   'konnector description free mobile': "Download all your phone bills from Free Mobile. This konnector requires the Files application to store the bill PDF files.",
   'konnector description bouygues': "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files.",
@@ -50,6 +52,8 @@ module.exports = {
   'konnector description sosh': "Download all your Sosh Bills. This konnector requires the Files application to store the bill PDF files.",
   'konnector description electrabel': "Download all you Electrabel Bills. This konnector requires the Files application to store the bill PDF files.",
   'konnector description orange': "Download all your Orange Bills. This konnector requires the Files application to store the bill PDF files.",
+  'konnector description nest': "Save current temperature measured by your Nest thermostat.",
+  'konnector description numericable': "Download all your Numéricable Bills. This konnector requires the Files application to store the bill PDF files.",
   'notification prefix': "Konnector %{name}:",
   'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported",
   'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported",
@@ -61,5 +65,6 @@ module.exports = {
   'notification free mobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
   'notification digital ocean': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
   'notification sosh': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
-  'notification electrabel': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+  'notification electrabel': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
+  'notification numericable': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
 };

@@ -88,7 +88,7 @@ saveTweets = function(requiredFields, callback) {
   };
   return TwitterTweet.request('byDate', params, function(err, tweets) {
     var start;
-    if ((tweets.length != null) && tweets.length > 0) {
+    if ((tweets != null) && tweets.length > 0) {
       start = moment(tweets[0].date);
     } else {
       start = moment().subtract('years', 10);

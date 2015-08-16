@@ -3,12 +3,15 @@ KonnectorView = require './konnector'
 MenuView = require './menu'
 request = require '../lib/request'
 
+
+# Main view that handles the UI regions.
 module.exports = class AppView extends BaseView
 
     el: 'body'
     template: require './templates/home'
     defaultTemplate: require './templates/default'
-    events: 'click #menu-toggler': 'toggleMenu'
+    events:
+        'click #menu-toggler': 'toggleMenu'
 
 
     subscriptions:
@@ -29,34 +32,39 @@ module.exports = class AppView extends BaseView
         @menuView.render()
 
 
+    # Show default splash screen with explanation about what the Konnector app
+    # is.
     showDefault: ->
         @menuView.unselectAll()
         @container.html @defaultTemplate()
         @hideMenu()
 
 
+    toggleMenu: ->
+        @$('#menu').toggleClass 'active'
+
+
+    hideMenu: ->
+        @$('#menu').removeClass 'active'
+
+
+    #  Display konnector corresponding to given slug.
     showKonnector: (slug) ->
         konnector = @collection.findWhere {slug}
-        paths = @folders.getAllPaths()
 
-        # removes existing view, if necessary
-        @konnectorView.destroy() if @konnectorView?
-
-        # removes default view, if necessary
-        defaultView = @container.find '#default'
-        if defaultView.length > 0
-            @$('#menu-toggler').remove()
-            defaultView.remove()
-
+        # If the konnector exists, display its view.
         if konnector?
+            @cleanCurrentView()
+
             # renders and appends view
+            paths = @folders.getAllPaths()
             @konnectorView = new KonnectorView
                 model: konnector
                 paths: paths
             el = @konnectorView.render().$el
             @$('.container').append el
 
-            # mark as selected in the menu
+            # Mark as selected in the menu
             @menuView.unselectAll()
             @menuView.selectItem konnector.cid
 
@@ -66,12 +74,17 @@ module.exports = class AppView extends BaseView
             window.router.navigate '', true
 
 
-    toggleMenu: ->
-        @$('#menu').toggleClass 'active'
+    # Remove from DOM currently displayed konnector or splash screen.
+    cleanCurrentView: ->
 
+        # Removes current konnector view.
+        @konnectorView.destroy() if @konnectorView?
 
-    hideMenu: ->
-        @$('#menu').removeClass 'active'
+        # Removes default view.
+        defaultView = @container.find '#default'
+        if defaultView.length > 0
+            @$('#menu-toggler').remove()
+            defaultView.remove()
 
 
     # When a folder is created remotely, it updates the current konnector view

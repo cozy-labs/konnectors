@@ -1,5 +1,6 @@
 americano = require 'cozydb'
 
+
 # Required to get locale and domain data.
 module.exports = CozyInstance = americano.getModel 'CozyInstance',
     id: String
@@ -7,6 +8,7 @@ module.exports = CozyInstance = americano.getModel 'CozyInstance',
     locale : String
 
 
+# Retrieve cozy instance object.
 CozyInstance.first = (callback) ->
     CozyInstance.request 'all', (err, instances) ->
         if err then callback err
@@ -14,12 +16,14 @@ CozyInstance.first = (callback) ->
         else callback null, instances[0]
 
 
+# Extract locale parameter from instance object.
 CozyInstance.getLocale = (callback) ->
     CozyInstance.request 'all', (err, instances) ->
         console.log err if err
         callback null, instances?[0]?.locale or 'en'
 
 
+# Extract URL parameter from instance object.
 CozyInstance.getURL = (callback) ->
     CozyInstance.first (err, instance) ->
         if err then callback err
@@ -30,3 +34,4 @@ CozyInstance.getURL = (callback) ->
             callback null, "https://#{url}/"
         else
             callback new Error 'No instance domain set'
+

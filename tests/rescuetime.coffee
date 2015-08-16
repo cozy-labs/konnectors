@@ -33,7 +33,9 @@ mock = nock('https://www.rescuetime.com')
           [ "#{now}T00:00:00", 7, 1, 'npmjs.org', 'Marketing', 2 ]
         ]
 
+
 describe "When I fetch rescuetime data", ->
+
     before (done) ->
         connector.init (err) =>
             connector.models.activities.destroyAll (err) =>
@@ -66,3 +68,4 @@ describe "When I fetch rescuetime data", ->
                 should.not.exist err
                 activities.length.should.equal 4
                 done()
+

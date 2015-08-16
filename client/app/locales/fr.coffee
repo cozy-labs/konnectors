@@ -1,7 +1,7 @@
 module.exports =
 
     'bad credentials' : 'Mauvais identifiants'
-    'no bills retrieved': 'Pas de facture trouvées'
+    'no bills retrieved': 'Pas de factures trouvées'
     'key not found': 'Clé non trouvée'
     'last import:': 'Dernière importation :'
     'save and import': 'Sauvegarder et importer'
@@ -9,6 +9,7 @@ module.exports =
     'imported data:': 'Données importées :'
     'importing...': 'importation en cours...'
     'no import performed': "Pas d'importation effectuée"
+    'import already running': "L'import est déjà en cours."
     'firstname': 'Prénom'
     'lastname': 'Nom'
     'login': 'Identifiant'
@@ -44,6 +45,7 @@ module.exports =
 
     'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.'
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
+    "import server error": "L'import a rencontré une erreur serveur."
 
     # Konnectors' description
     'konnector description free': "Téléchargez toutes vos factures internet de Free. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
@@ -54,7 +56,7 @@ module.exports =
     'konnector description github commits': "Sauvegardez les informations de tous vos commits Github."
     'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone."
     'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime."
-    'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."    
+    'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."
     'konnector description twitter': """
     Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert
     deux identifiants et deux clés secrètes. Vous pouvez les générer via le
@@ -69,6 +71,7 @@ module.exports =
     'konnector description orange': "Téléchargez toutes vos factures Orange. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description numericable': "Téléchargez toutes vos factures Numéricable. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description virgimobile': "Téléchargez toutes vos factures Virgin Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -85,3 +88,9 @@ module.exports =
     'notification electrabel': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification virginmobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+
+    "konnector danger zone": "Zone dangereuse"
+    "konnector delete credentials": "Supprimer cette configuration."
+    "konnector deleted": "La configuration de ce connecteur a bien été supprimée."
+    "konnector deletion error": "Une erreur est survenue lors de la suppression de la configuration de ce connecteur."
+

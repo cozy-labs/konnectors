@@ -35,7 +35,9 @@ CodeBill = cozydb.getModel('CodeBill', {
   vendor: String,
   amount: Number,
   plan: String,
-  fileId: String
+  fileId: String,
+  pdfurl: String,
+  binaryId: String
 });
 
 CodeBill.all = function(callback) {
@@ -169,8 +171,8 @@ parsePage = function(requiredFields, bills, data, next) {
     });
   });
   if (bills.fetched.length === 0) {
-    log.error("No bills retrieved");
-    return next('no bills retrieved');
+    log.info("No bills retrieved.");
+    return next();
   } else {
     return next();
   }

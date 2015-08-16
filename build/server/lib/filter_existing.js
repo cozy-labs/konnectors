@@ -24,6 +24,9 @@ module.exports = function(log, model, suffix, vendor) {
       entries.filtered = entries.fetched.filter(function(entry) {
         return entryHash[entry.date.toISOString()] == null;
       });
+      entries.filtered = entries.filtered.filter(function(entry) {
+        return entry.vendor === vendor;
+      });
       return next();
     });
   };

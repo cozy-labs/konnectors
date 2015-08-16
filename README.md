@@ -7,20 +7,32 @@ into your Cozy.
 
 # Available connectors
 
-* RescueTime
-* Jawbone (Move and Sleep data)
-* Withings (Weight, Heartbeat and Blood Presure data)
-* Twitter (published tweets)
-* Github (Bill PDFs, commits)
+*Bills*
+
 * Bouygues Telecom (Bill PDFs)
 * Bouygues Box (Bill PDFs)
+* Digital Ocean (Bill PDFs)
+* Electrabel (Bill PDFs)
 * Free (Bill PDFs)
 * Free Mobile (Bill PDFs)
-* Electrabel (Bill PDFs)
-* Digital Ocean (Bill PDFs)
-* Sosh (Bill PDFs)
+* Numericable (Bill PDFs)
 * Orange (Bill PDFs)
+* Sosh (Bill PDFs)
+
+*Internet Of Things*
+
+* Jawbone (Move and Sleep data)
 * Nest (temperatures)
+* Withings (Weight, Heartbeat and Blood Presure data)
+
+*Social*
+
+* Github (commits)
+* Twitter (published tweets)
+
+*Productivity*
+
+* RescueTime (activities)
 
 # What we would like to see
 

@@ -67,21 +67,7 @@ BloodPressure = cozydb.getModel('BloodPressure', {
   }
 });
 
-Steps = cozydb.getModel('Steps', {
-  date: Date,
-  activeTime: Number,
-  activeTimeCalories: Number,
-  distance: Number,
-  inactiveTime: Number,
-  longestActiveTime: Number,
-  longestIdleTime: Number,
-  steps: Number,
-  totalCalories: Number,
-  vendor: {
-    type: String,
-    "default": 'Jawbone'
-  }
-});
+Steps = require('../models/steps');
 
 Weight.all = function(callback) {
   return Weight.request('byDate', callback);
@@ -93,10 +79,6 @@ HeartBeat.all = function(callback) {
 
 BloodPressure.all = function(callback) {
   return BloodPressure.request('byDate', callback);
-};
-
-Steps.all = function(callback) {
-  return Steps.request('byDate', callback);
 };
 
 module.exports = {
@@ -126,8 +108,6 @@ module.exports = {
         return HeartBeat.defineRequest('byDate', map, done);
       }, function(done) {
         return BloodPressure.defineRequest('byDate', map, done);
-      }, function(done) {
-        return Steps.defineRequest('byDate', map, done);
       }
     ], callback);
   },

@@ -17,23 +17,7 @@ log = require('printit')
 
 # Models
 
-Commit = cozydb.getModel 'Commit',
-    date: Date
-    sha: String
-    parent: String
-    tree: String
-    url: String
-    author: String
-    email: String
-    message: String
-    additions: Number
-    deletions: Number
-    files: (x) -> x
-    vendor: {type: String, default: 'Github'}
-
-Commit.all = (params, callback) ->
-    Commit.request 'byDate', params, callback
-
+Commit = require '../models/commit'
 
 # Konnector
 
@@ -52,9 +36,7 @@ module.exports =
 
     # Define model requests.
     init: (callback) ->
-        map = (doc) -> emit doc.date, doc
-        Commit.defineRequest 'byDate', map, (err) ->
-            callback err
+        callback()
 
     fetch: (requiredFields, callback) ->
         log.info "Import started"
@@ -112,7 +94,7 @@ getEvents = (requiredFields, commits, data, next) ->
 # Build hash listing all already downloaded commits.
 buildCommitDateHash = (requiredFields, entries, data, next) ->
     entries.commitHash = {}
-    Commit.all limit: 1000, (err, commits) ->
+    Commit.all (err, commits) ->
         if err
             log.error err
             next err
@@ -130,28 +112,40 @@ logCommits = (requiredFields, entries, data, next) ->
 
     numImportedCommits = 0
     client.setBasicAuth username, pass
+
     async.eachSeries data.commits, (commit, callback) ->
         path = commit.url.substring 'https://api.github.com/'.length
-        if entries.commitHash[commit.sha]
+
+        if commit? and entries.commitHash[commit.sha]
             log.info "Commit #{commit.sha} not saved: already exists."
             callback()
+
         else
             client.get path, (err, res, commit) ->
-                log.info "Saving commit #{commit.sha}..."
+
                 if err
                     log.error err
                     callback()
+
                 else if not commit? or not commit.commit? or not commit.author?
-                    log.info "Commit #{commit.sha} not saved: no metadata."
+                    if commit?
+                        log.info "Commit not saved: no metadata."
+                    else
+                        log.info "Commit #{commit.sha} not saved: no metadata."
                     callback()
+
                 else if commit.author.login isnt username
                     log.info "Commit #{commit.sha} not saved: " + \
                              "user is not author (#{commit.author.login})."
                     callback()
+
                 else
+                    log.info "Saving commit #{commit.sha}..."
                     parent = null
+
                     if commit.parents.length > 0
-                        commit.parents[0].sha
+                        parent = commit.parents[0].sha
+
                     data =
                         date: commit.commit.author.date
                         sha: commit.sha
@@ -165,6 +159,7 @@ logCommits = (requiredFields, entries, data, next) ->
                         deletions: commit.stats.deletions
                         files: commit.files
                     numImportedCommits++
+
                     Commit.create data, (err) ->
                         if err
                             log.error err
@@ -174,3 +169,4 @@ logCommits = (requiredFields, entries, data, next) ->
     , (err) ->
         entries.numImportedCommits = numImportedCommits
         next()
+

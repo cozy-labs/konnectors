@@ -39,46 +39,9 @@ dataFields = {
   s_quality: "sleepQuality"
 };
 
-Steps = cozydb.getModel('Steps', {
-  date: Date,
-  activeTime: Number,
-  activeTimeCalories: Number,
-  distance: Number,
-  inactiveTime: Number,
-  longestActiveTime: Number,
-  longestIdleTime: Number,
-  steps: Number,
-  totalCalories: Number,
-  vendor: {
-    type: String,
-    "default": 'Jawbone'
-  }
-});
+Steps = require('../models/steps');
 
-Steps.all = function(callback) {
-  return Steps.request('byDate', callback);
-};
-
-Sleep = cozydb.getModel('Sleep', {
-  date: Date,
-  asleepTime: Number,
-  awakeDuration: Number,
-  awakeTime: Number,
-  awakeningCount: Number,
-  bedTime: Number,
-  deepSleepDuration: Number,
-  lightSleepDuration: Number,
-  sleepDuration: Number,
-  sleepQuality: Number,
-  vendor: {
-    type: String,
-    "default": 'Jawbone'
-  }
-});
-
-Sleep.all = function(callback) {
-  return Sleep.request('byDate', callback);
-};
+Sleep = require('../models/sleep');
 
 module.exports = {
   name: "Jawbone",
@@ -93,20 +56,7 @@ module.exports = {
     moves: Steps,
     sleeps: Sleep
   },
-  init: function(callback) {
-    var map;
-    map = function(doc) {
-      return emit(doc.date, doc);
-    };
-    return Steps.defineRequest('byDate', map, function(err) {
-      if (err) {
-        callback(err);
-      }
-      return Sleep.defineRequest('byDate', map, function(err) {
-        return callback(err);
-      });
-    });
-  },
+  init: function(callback) {},
   fetch: function(requiredFields, callback) {
     var params;
     params = {
@@ -259,7 +209,8 @@ importData = function(start, csvData, callback) {
         longestActiveTime: line[columns["longestActiveTime"]],
         longestIdleTime: line[columns["longestIdleTime"]],
         steps: line[columns["steps"]],
-        totalCalories: line[columns["totalCalories"]]
+        totalCalories: line[columns["totalCalories"]],
+        vendor: 'Jawbone'
       });
       numItems++;
       return move.save(function(err) {
@@ -279,7 +230,8 @@ importData = function(start, csvData, callback) {
             deepSleepDuration: line[columns["deepSleepDuration"]],
             sleepDuration: line[columns["sleepDuration"]],
             lightSleepDuration: line[columns["lightSleepDuration"]],
-            sleepQuality: line[columns["sleepQuality"]]
+            sleepQuality: line[columns["sleepQuality"]],
+            vendor: 'Jawbone'
           });
           numItems++;
           return sleep.save(function(err) {

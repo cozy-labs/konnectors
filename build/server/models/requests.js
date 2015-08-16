@@ -17,5 +17,11 @@ module.exports = {
     byFullPath: function(doc) {
       return emit(doc.path + "/" + doc.name, doc);
     }
+  },
+  steps: {
+    byDate: americano.defaultRequests.by('date')
+  },
+  sleep: {
+    byDate: americano.defaultRequests.by('date')
   }
 };

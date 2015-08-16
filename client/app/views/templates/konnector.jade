@@ -26,3 +26,8 @@ if model.errorMessage
         for name in model.modelNames
             a(href="/apps/databrowser/#search/all/#{name}", target="_blank")
                   |#{name}&nbsp;
+
+.danger-zone
+    h3= t('konnector danger zone')
+    button#delete-button= t('konnector delete credentials')
+

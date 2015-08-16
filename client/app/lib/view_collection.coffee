@@ -25,15 +25,19 @@ module.exports = class ViewCollection extends BaseView
 
     collectionEl: null
 
-    # add 'empty' class to view when there is no subview
+
+    # Add 'empty' class to view when there is no subview.
     onChange: ->
         @$el.toggleClass 'empty', _.size(@views) is 0
 
-    # can be overriden if we want to place the subviews somewhere else
+
+    # Append view after all others.
+    # Can be overriden if we want to place the subviews somewhere else.
     appendView: (view) ->
         @$collectionEl.append view.el
 
-    # bind listeners to the collection
+
+    # Bind listeners to the collection.
     initialize: ->
         super
         @views = {}
@@ -44,29 +48,35 @@ module.exports = class ViewCollection extends BaseView
 
         @$collectionEl = $ @collectionEl
 
-    # if we have views before a render call, we detach them
+
+    # If we have views before a render call, we detach them.
     render: ->
         view.$el.detach() for id, view of @views
         super
 
 
-    # after render, we reattach the views
+    # After render, we reattach the views.
     afterRender: ->
         @appendView view.$el for id, view of @views
         @onReset @collection
         @onChange @views
 
-    # destroy all sub views before remove
+
+    # Destroy all sub views before remove.
     remove: ->
         @onReset []
         super
 
-    # event listener for reset
+
+    # When reset it removes all view and add an item for each model of the
+    # new collection to handle.
     onReset: (newcollection) ->
         view.remove() for id, view of @views
         newcollection.forEach @addItem
 
-    # event listeners for add
+
+    # When a model is added, a new view is created and that view pointer is
+    # stored in a hash where key is the model CID.
     addItem: (model) =>
         options = _.extend {}, {model: model}, @itemViewOptions(model)
         view = new @itemview(options)
@@ -74,12 +84,17 @@ module.exports = class ViewCollection extends BaseView
         @appendView view
         @onChange @views
 
-    # event listeners for remove
+
+    # When a model is removed, its view is removed from the DOM and from the
+    # view hash.
     removeItem: (model) =>
         @views[model.cid].remove()
         delete @views[model.cid]
 
         @onChange @views
 
+
+    # Run fetch method of linked collection.
     fetch: (options) =>
         @collection.fetch options
+

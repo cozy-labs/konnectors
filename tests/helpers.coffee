@@ -1,19 +1,25 @@
 http = require 'http'
 americano = require 'americano'
+async = require 'async'
+
 Client = require('request-json').JsonClient
+
+Konnector = require '../server/models/konnector'
+
+
 module.exports = helpers = {}
 
 helpers.prefix = '../'
 
-# server management
+# Server management
 helpers.options =
     serverHost: process.env.HOST or 'localhost'
     serverPort: process.env.PORT or 9358
 
-# default client
+# Default client
 client = new Client "http://#{helpers.options.serverHost}:#{helpers.options.serverPort}/"
 
-# set the configuration for the server
+# Set the configuration for the server
 process.env.HOST = helpers.options.serverHost
 process.env.PORT = helpers.options.serverPort
 
@@ -27,13 +33,34 @@ helpers.getClient = (url = null) ->
 
 initializeApplication = require "#{helpers.prefix}server"
 
+
 helpers.startApp = (done) ->
     initializeApplication (app, server) =>
         @app = app
         @app.server = server
         done app, server
 
+
 helpers.stopApp = (done) ->
     setTimeout =>
         @app.server.close done
     , 1000
+
+
+helpers.clearKonnector = (slug, callback) ->
+
+    Konnector.all (err, konnectors) =>
+
+        konnectors = konnectors.filter (konnector) ->
+            konnector.slug is 'free'
+
+        async.eachSeries konnectors, (konnector, next) ->
+            konnector.destroy next
+        , ->
+            callback()
+
+helpers.getDate = (date) ->
+    date = moment(date).toDate()
+    date.setUTCHours 0, 0, 0, 0
+    return date
+

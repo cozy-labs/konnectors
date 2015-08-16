@@ -9,6 +9,7 @@ module.exports =
     'imported data:': 'Imported data:'
     'importing...': 'importing...'
     'no import performed': 'No import performed'
+    'import already running': 'Import is already running.'
     'firstname': 'Firstname'
     'lastname': 'Lastname'
     'login': 'Login'
@@ -44,6 +45,7 @@ module.exports =
 
     'error occurred during import.': 'An error occurred during the last import.'
     'error occurred during import:': 'An error occurred during the last import:'
+    "import server error": "Server error occured while importing."
 
     # Konnectors' description
     'konnector description free': "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files."
@@ -66,6 +68,7 @@ module.exports =
     'konnector description sosh': "Download all your Sosh Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description electrabel': "Download all you Electrabel Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description orange': "Download all your Orange Bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description nest': "Save current temperature measured by your Nest thermostat."
     'konnector description numericable': "Download all your Numéricable Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description virginmobile': "Download all your Virgin Mobile  bills. This konnector requires the Files application to store the bill PDF files."
 
@@ -85,3 +88,9 @@ module.exports =
     'notification electrabel': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification numericable': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification virginmobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+
+    "konnector danger zone": "Danger zone"
+    "konnector delete credentials": "Delete this configuration."
+    "konnector deleted": "The konnector configuration was successfully deleted."
+    "konnector deletion error": "An error occured while deleting this konnector configuration."
+

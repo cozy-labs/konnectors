@@ -5,7 +5,7 @@ module.exports = class FolderCollection extends Backbone.Collection
     url: 'folders/'
 
 
-    # Order folders by full path (root path + folder name)
+    # Sort folders by full path (root path + folder name)
     comparator: (a, b) ->
         a.getFullPath().localeCompare b.getFullPath()
 
