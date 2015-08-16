@@ -47,7 +47,15 @@ describe 'Filter Existing Layer', ->
         ]
 
     before (done) ->
-        loadFixtures done
+        map = (doc) ->
+            emit doc.date, doc
+            return
+        Bill.defineRequest 'bydate', map, ->
+            Bill.requestDestroy 'byDate', ->
+                loadFixtures done
+
+    after (done) ->
+        Bill.requestDestroy 'byDate', done
 
     it 'removes existing entries without vendor ', (done) ->
         layer = filterExisting log, Bill

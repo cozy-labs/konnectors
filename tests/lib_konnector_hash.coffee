@@ -11,7 +11,9 @@ describe 'Konnector Hash', ->
     moduleFiles = fs.readdirSync konnectorPath
 
     it 'gives the konnector modules', ->
-        Object.keys(konnectorHash).length.should.equal moduleFiles.length
+        expectedLength = moduleFiles.length
+        expectedLength++ if konnectorHash.test?
+        Object.keys(konnectorHash).length.should.equal expectedLength
 
         for filename in moduleFiles
             key = filename.substring 0, filename.length - '.coffee'.length

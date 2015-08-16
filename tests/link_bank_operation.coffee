@@ -9,11 +9,8 @@ BankOperation = require '../server/models/bankoperation'
 linkBankOperation = require '../server/lib/link_bank_operation'
 
 
-PhoneBill = cozydb.getModel 'PhoneBill',
-    date: Date
-    vendor: String
-    amount: Number
-    fileId: String
+Bill = require '../server/models/bill'
+File = require '../server/models/file'
 
 loadFixtures = (callback) ->
     fixtures.load
@@ -30,7 +27,7 @@ loadFixtures = (callback) ->
                 callback: ->
                     fixtures.load
                         dirPath: './tests/fixtures/bills.json'
-                        doctypeTarget: 'PhoneBill'
+                        doctypeTarget: 'Bill'
                         silent: true
                         removeBeforeLoad: true
                         callback: callback
@@ -41,7 +38,7 @@ describe 'Running link_operation', ->
     operations = []
     linker = linkBankOperation
         log: log
-        model: PhoneBill
+        model: Bill
         identifier: 'vendor01'
         dateDelta: 5
         amountDelta: 5
@@ -52,9 +49,20 @@ describe 'Running link_operation', ->
         map = (doc) ->
             emit doc.date, doc
             return
-        BankOperation.defineRequest 'byDate', map, ->
-            PhoneBill.defineRequest 'byDate', map, done
+        BankOperation.defineRequest 'bydate', map, ->
+            Bill.defineRequest 'bydate', map, done
 
+    before (done) ->
+        @timeout 4000
+        BankOperation.requestDestroy 'bydate', ->
+            Bill.requestDestroy 'bydate', ->
+                File.requestDestroy 'all', done
+
+    after (done) ->
+        @timeout 4000
+        BankOperation.requestDestroy 'bydate', ->
+            Bill.requestDestroy 'bydate', ->
+                File.requestDestroy 'all', done
 
     describe 'should link given bill to operation with', ->
 
@@ -196,7 +204,7 @@ describe 'Running link_operation', ->
 
             linker = linkBankOperation
                 log: log
-                model: PhoneBill
+                model: Bill
                 identifier: 'weirdvendor'
                 dateDelta: 5
                 amountDelta: 5

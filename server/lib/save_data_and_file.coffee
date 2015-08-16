@@ -108,7 +108,7 @@ checkForMissingFiles = (options, callback) ->
                         # the file.
                         date = entry.date.toISOString()
                         model.request 'byDate', key: date, (err, entries) ->
-                            if entries.length is 0
+                            if not(entries?) or entries.length is 0
                                 done()
                             else
                                 entry = entries[0]

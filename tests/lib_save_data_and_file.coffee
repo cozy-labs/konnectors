@@ -47,14 +47,27 @@ describe 'Save Data and File layer', ->
             done()
 
     before (done) ->
-        Bill.requestDestroy 'all', (err) ->
-            File.requestDestroy 'all', (err) ->
-                done()
+
+        map = (doc) ->
+            emit doc.date, doc
+            return
+        Bill.defineRequest 'bydate', map, ->
+            map = (doc) ->
+                emit "#{doc.path}/#{doc.name}", doc
+                return
+            File.defineRequest 'byFullPath', map, ->
+                map = (doc) ->
+                    emit doc._id, doc
+                    return
+                File.defineRequest 'all', map, ->
+                    Bill.requestDestroy 'bydate', (err) ->
+                        File.requestDestroy 'byFullPath', (err) ->
+                            done()
 
     after (done) ->
         server.close()
-        Bill.requestDestroy 'all', (err) ->
-            File.requestDestroy 'all', (err) ->
+        Bill.requestDestroy 'bydate', (err) ->
+            File.requestDestroy 'byFullPath', (err) ->
                 done()
 
     it 'Generate Cozy Files for given links (pdfurl field)', (done) ->

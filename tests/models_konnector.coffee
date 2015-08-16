@@ -7,25 +7,13 @@ Konnector = require '../server/models/konnector'
 Bill = require '../server/models/bill'
 Commit = require '../server/models/commit'
 konnectorHash = require '../server/lib/konnector_hash'
+createKonnectors = require '../server/init/konnectors'
 
 
 describe 'Konnector model', ->
 
     createdFile = null
     server = null
-
-    before (done) ->
-        app = express()
-        server = app.listen 12223, (err) ->
-            done()
-
-    after (done) ->
-        server.close()
-        if konnector.id?
-            konnector.destroy done
-        else
-            done()
-
     importDone = false
 
     konnector = new Konnector
@@ -34,18 +22,39 @@ describe 'Konnector model', ->
         fieldValues: []
         importInterval: 'week'
 
-    konnectorHash['test'] =
-        name: 'Test'
-        slug: 'test'
-        fields:
-            login: 'text'
-            password: 'password'
-        fetch: (values, callback) ->
-            importDone = true
-            callback()
-        models:
-            bills: Bill
-            commits: Commit
+    before (done) ->
+        app = express()
+        server = app.listen 12223, (err) ->
+            map = (doc) ->
+                emit doc._id, doc
+                return
+            Konnector.defineRequest 'all', map, ->
+
+                createKonnectors ->
+                    konnectorHash['test'] =
+                        name: 'Test'
+                        slug: 'test'
+                        fields:
+                            login: 'text'
+                            password: 'password'
+                        fetch: (values, callback) ->
+                            importDone = true
+                            callback()
+                        models:
+                            bills: Bill
+                            commits: Commit
+                        init: ->
+
+                    done()
+
+
+    after (done) ->
+        server.close()
+        if konnector.id?
+            konnector.destroy done
+        else
+            done()
+
 
     it 'turn encrypted fields in normal fields', ->
         konnector.password = JSON.stringify password: 'testpass'
