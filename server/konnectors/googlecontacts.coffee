@@ -235,7 +235,7 @@ updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, call
                 return callback err if err
                 # TODO: reactivate this, needs upload to google to ;
                 # check for speed
-                # addContactPictureInCozy requiredFields, contact, gEntry, callback
+                addContactPictureInCozy requiredFields, contact, gEntry, callback
                 callback()
 
 
@@ -352,10 +352,10 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
                 log.warn 'Error while uploading contact to google'
                 log.warn body
 
-            callback() # continue with next contact on error.
+                callback() # continue with next contact on error.
 
-            # else # update picture.
-            #     putPicture2Google requiredFields, contact, gEntry, callback
+            else # update picture.
+                putPicture2Google requiredFields, contact, gEntry, callback
 
     else
         callback()
@@ -368,31 +368,26 @@ putPicture2Google = (requiredFields, contact, gEntry, callback) ->
 
     # Get picture as bytes.
     stream = contact.getFile 'picture', (err) ->
-
         return callback err if err
-
-    # request
-    #     method: 'PUT'
-    #     uri: "https://www.google.com/m8/feeds/photos/media/#{requiredFields.accountName}/#{Contact.extractGoogleId(gEntry)}"
-    #     body: stream
-    #     headers:
-    #         'Authorization': 'Bearer ' + requiredFields.accessToken
-    #         'GData-Version': '3.0'
-    # , callback
 
     options =
         method: 'PUT'
         host: 'www.google.com',
         port: 443,
         path: "/m8/feeds/photos/media/#{requiredFields.accountName}/#{Contact.extractGoogleId(gEntry)}"
-        # uri: "https://www.google.com/m8/feeds/photos/media/#{requiredFields.accountName}/#{Contact.extractGoogleId(gEntry)}"
         headers:
             'Authorization': 'Bearer ' + requiredFields.accessToken
             'GData-Version': '3.0'
+            'Content-Type': 'image/*'
+            'If-Match': '*'
 
     req = https.request options, (res) ->
+
         res.on 'error', callback
-        res.on 'data', (chunk) -> callback()
+        res.on 'data', (chunk) ->
+            if res.statusCode isnt 200
+                log.info "#{res.statusCode} while uploading picture: #{chunk.toString()}"
+            callback()
 
     stream.pipe req
 
