@@ -142,6 +142,7 @@ Konnector::appendConfigData = ->
 Konnector.getKonnectorsToDisplay = (callback) ->
     Konnector.all (err, konnectors) ->
         if err?
+            log.error 'An error occured while retrieving konnectors'
             callback err
         else
             try
@@ -154,5 +155,6 @@ Konnector.getKonnectorsToDisplay = (callback) ->
 
                 callback null, konnectorsToDisplay
             catch err
+                log.error 'An error occured while filtering konnectors'
                 callback err
 
