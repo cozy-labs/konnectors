@@ -58,7 +58,7 @@ module.exports =
 
 saveTweets = (requiredFields, callback) ->
     url = "https://api.twitter.com/1.1/"
-    client = requestJson.newClient url
+    client = requestJson.createClient url
     client.options =
         oauth:
             consumer_key: requiredFields["consumerKey"]
@@ -110,7 +110,7 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
             log.info 'No new tweet to import'
             callback null, 0
         else
-            log.info "#{tweets.length - tweetLength} tweet(s) to import"
+            log.info "#{tweets.length} tweet(s) fetched."
             tweets = tweets.reverse()
             tweets.pop() if path.indexOf('max_id') isnt -1
 
@@ -141,4 +141,5 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
                 else
                     cb()
             , (err) ->
+                log.info "#{numItems} tweets imported"
                 callback err, numItems
