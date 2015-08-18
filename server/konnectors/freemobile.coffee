@@ -1,5 +1,4 @@
 cozydb = require 'cozydb'
-requestJson = require 'request-json'
 
 moment = require 'moment'
 cheerio = require 'cheerio'

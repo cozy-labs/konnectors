@@ -59,7 +59,7 @@ module.exports =
 
 # Get latest events list to know wich commits were pushed.
 getEvents = (requiredFields, commits, data, next) ->
-    client = requestJson.newClient 'https://api.github.com'
+    client = requestJson.createClient 'https://api.github.com'
     username = requiredFields.login
     pass = requiredFields.password
 
@@ -106,7 +106,7 @@ buildCommitDateHash = (requiredFields, entries, data, next) ->
 
 # Retrieve and save non existing commits one by one.
 logCommits = (requiredFields, entries, data, next) ->
-    client = requestJson.newClient 'https://api.github.com'
+    client = requestJson.createClient 'https://api.github.com'
     username = requiredFields.login
     pass = requiredFields.password
 

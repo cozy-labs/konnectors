@@ -2,7 +2,6 @@ cozydb = require 'cozydb'
 
 fs = require 'fs'
 qs = require 'querystring'
-requestJson = require 'request-json'
 request = require 'request'
 moment = require 'moment'
 cheerio = require 'cheerio'
