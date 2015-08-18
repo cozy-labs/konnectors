@@ -129,7 +129,7 @@ Konnector.prototype["import"] = function(callback) {
           var fields;
           fields = _this.getFields();
           _this.removeEncryptedFields(fields);
-          if ((err != null) && Object.keys(err).length > 0) {
+          if ((err != null) && typeof err === 'object' && Object.keys(err).length > 0) {
             data = {
               isImporting: false,
               errorMessage: err
