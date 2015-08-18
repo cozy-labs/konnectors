@@ -6,6 +6,8 @@ module.exports = CozyInstance = americano.getModel 'CozyInstance',
     id: String
     domain: String
     locale : String
+    connectedOnce: Boolean
+    background: String
 
 
 # Retrieve cozy instance object.
