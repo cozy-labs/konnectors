@@ -67,7 +67,7 @@ module.exports = {
 saveTweets = function(requiredFields, callback) {
   var client, params, path, rootPath, url;
   url = "https://api.twitter.com/1.1/";
-  client = requestJson.newClient(url);
+  client = requestJson.createClient(url);
   client.options = {
     oauth: {
       consumer_key: requiredFields["consumerKey"],
@@ -127,7 +127,7 @@ saveTweetGroup = function(client, path, start, tweetLength, callback) {
       log.info('No new tweet to import');
       return callback(null, 0);
     } else {
-      log.info((tweets.length - tweetLength) + " tweet(s) to import");
+      log.info(tweets.length + " tweet(s) fetched.");
       tweets = tweets.reverse();
       if (path.indexOf('max_id') !== -1) {
         tweets.pop();
@@ -160,6 +160,7 @@ saveTweetGroup = function(client, path, start, tweetLength, callback) {
           return cb();
         }
       }, function(err) {
+        log.info(numItems + " tweets imported");
         return callback(err, numItems);
       });
     }

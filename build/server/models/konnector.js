@@ -181,6 +181,7 @@ Konnector.getKonnectorsToDisplay = function(callback) {
   return Konnector.all(function(err, konnectors) {
     var konnectorsToDisplay;
     if (err != null) {
+      log.error('An error occured while retrieving konnectors');
       return callback(err);
     } else {
       try {
@@ -193,6 +194,7 @@ Konnector.getKonnectorsToDisplay = function(callback) {
         return callback(null, konnectorsToDisplay);
       } catch (_error) {
         err = _error;
+        log.error('An error occured while filtering konnectors');
         return callback(err);
       }
     }

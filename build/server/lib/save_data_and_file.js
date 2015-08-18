@@ -99,7 +99,7 @@ checkForMissingFiles = function(options, callback) {
               key: date
             }, function(err, entries) {
               var data;
-              if (entries.length === 0) {
+              if (!(entries != null) || entries.length === 0) {
                 return done();
               } else {
                 entry = entries[0];
@@ -108,7 +108,9 @@ checkForMissingFiles = function(options, callback) {
                   binaryId: file.binary.file.id
                 };
                 return entry.updateAttributes(data, function(err) {
-                  log.info("Missing file created: " + path);
+                  var fullPath;
+                  fullPath = path + "/" + file.name;
+                  log.info("Missing file created: " + fullPath);
                   return done();
                 });
               }

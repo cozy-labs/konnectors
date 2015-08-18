@@ -61,7 +61,7 @@ module.exports = {
 
 getEvents = function(requiredFields, commits, data, next) {
   var client, pass, path, username;
-  client = requestJson.newClient('https://api.github.com');
+  client = requestJson.createClient('https://api.github.com');
   username = requiredFields.login;
   pass = requiredFields.password;
   client.setBasicAuth(username, pass);
@@ -119,7 +119,7 @@ buildCommitDateHash = function(requiredFields, entries, data, next) {
 
 logCommits = function(requiredFields, entries, data, next) {
   var client, numImportedCommits, pass, username;
-  client = requestJson.newClient('https://api.github.com');
+  client = requestJson.createClient('https://api.github.com');
   username = requiredFields.login;
   pass = requiredFields.password;
   numImportedCommits = 0;

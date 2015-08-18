@@ -6,7 +6,9 @@ americano = require('cozydb');
 module.exports = CozyInstance = americano.getModel('CozyInstance', {
   id: String,
   domain: String,
-  locale: String
+  locale: String,
+  connectedOnce: Boolean,
+  background: String
 });
 
 CozyInstance.first = function(callback) {

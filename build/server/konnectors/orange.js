@@ -48,7 +48,7 @@ module.exports = {
       log: log,
       model: Bill,
       identifier: 'orange',
-      dateDelta: 4,
+      dateDelta: 12,
       amountDelta: 5
     })).args(requiredFields, {}, {}).fetch(function(err, fields, entries) {
       var localizationKey, notifContent, options, ref;

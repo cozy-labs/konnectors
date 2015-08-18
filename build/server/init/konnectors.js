@@ -82,18 +82,27 @@ createKonnectors = function(konnectorsToCreate, callback) {
 };
 
 initializeKonnector = function(konnector, callback) {
-  return konnector.init(function(err) {
-    if (err) {
-      log.error(err);
-      return callback(err);
-    } else {
-      log.debug("creating " + konnector.slug);
-      return Konnector.create(konnector, function(err) {
-        if (err) {
-          log.error(err);
-        }
+  log.debug("creating " + konnector.slug);
+  if (konnector.init != null) {
+    return konnector.init(function(err) {
+      if (err) {
+        log.error(err);
         return callback(err);
-      });
-    }
-  });
+      } else {
+        return Konnector.create(konnector, function(err) {
+          if (err) {
+            log.error(err);
+          }
+          return callback(err);
+        });
+      }
+    });
+  } else {
+    return Konnector.create(konnector, function(err) {
+      if (err) {
+        log.error(err);
+      }
+      return callback(err);
+    });
+  }
 };

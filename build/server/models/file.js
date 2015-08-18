@@ -87,16 +87,21 @@ File.createNew = function(fileName, path, date, url, tags, callback) {
   stream = request(options, function(err, res, body) {
     var stats;
     if ((res != null ? res.statusCode : void 0) === 200) {
-      stats = fs.statSync(filePath);
-      data.size = stats["size"];
-      return File.create(data, function(err, newFile) {
-        if (err) {
-          log.error(err);
-          return callback(err);
-        } else {
-          return attachBinary(newFile);
-        }
-      });
+      try {
+        stats = fs.statSync(filePath);
+        data.size = stats["size"];
+        return File.create(data, function(err, newFile) {
+          if (err) {
+            log.error(err);
+            return callback(err);
+          } else {
+            return attachBinary(newFile);
+          }
+        });
+      } catch (_error) {
+        err = _error;
+        return callback(err);
+      }
     } else {
       if (res != null) {
         log.error(res.statusCode, res.body);

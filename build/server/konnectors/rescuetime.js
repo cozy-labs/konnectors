@@ -96,7 +96,7 @@ module.exports = {
   },
   fetchData: function(apikey, start, end, callback) {
     var client, path;
-    client = request.newClient('https://www.rescuetime.com/');
+    client = request.createClient('https://www.rescuetime.com/');
     path = 'anapi/data?';
     path += querystring.stringify({
       key: apikey,
