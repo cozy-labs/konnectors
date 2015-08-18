@@ -116,7 +116,8 @@ checkForMissingFiles = (options, callback) ->
                                     fileId: file.id
                                     binaryId: file.binary.file.id
                                 entry.updateAttributes data, (err) ->
-                                    log.info "Missing file created: #{path}"
+                                    fullPath = "#{path}/#{file.name}"
+                                    log.info "Missing file created: #{fullPath}"
 
                                     done()
     , (err) ->

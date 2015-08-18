@@ -74,14 +74,17 @@ File.createNew = (fileName, path, date, url, tags, callback) ->
     stream = request options, (err, res, body) ->
         if res?.statusCode is 200
             # Once done create file metadata then attach binary to file.
-            stats = fs.statSync filePath
-            data.size = stats["size"]
-            File.create data, (err, newFile) ->
-                if err
-                    log.error err
-                    callback err
-                else
-                    attachBinary newFile
+            try
+                stats = fs.statSync filePath
+                data.size = stats["size"]
+                File.create data, (err, newFile) ->
+                    if err
+                        log.error err
+                        callback err
+                    else
+                        attachBinary newFile
+            catch err
+                callback err
         else
             if res?
                 log.error res.statusCode, res.body
