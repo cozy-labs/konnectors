@@ -78,13 +78,18 @@ createKonnectors = (konnectorsToCreate, callback) ->
 # Then save konnector data to database.
 initializeKonnector = (konnector, callback) ->
 
-    konnector.init (err) ->
-        if err
-            log.error err
-            callback err
-        else
-            log.debug "creating #{konnector.slug}"
-            Konnector.create konnector, (err) ->
-                log.error err if err
+    log.debug "creating #{konnector.slug}"
+    if konnector.init?
+        konnector.init (err) ->
+            if err
+                log.error err
                 callback err
+            else
+                Konnector.create konnector, (err) ->
+                    log.error err if err
+                    callback err
+    else
+        Konnector.create konnector, (err) ->
+            log.error err if err
+            callback err
 
