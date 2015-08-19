@@ -68,14 +68,10 @@ module.exports =
     'konnector description sosh': "Download all your Sosh Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description electrabel': "Download all you Electrabel Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description orange': "Download all your Orange Bills. This konnector requires the Files application to store the bill PDF files."
-<<<<<<< HEAD
     'konnector description nest': "Save current temperature measured by your Nest thermostat."
     'konnector description numericable': "Download all your Numéricable Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description virginmobile': "Download all your Virgin Mobile  bills. This konnector requires the Files application to store the bill PDF files."
-
-=======
     'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar."
->>>>>>> 54aabd3004d88f202484ca6901539acad21d5e4d
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
