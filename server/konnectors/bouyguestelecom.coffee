@@ -2,7 +2,6 @@ cozydb = require 'cozydb'
 
 fs = require 'fs'
 qs = require 'querystring'
-requestJson = require 'request-json'
 request = require 'request'
 moment = require 'moment'
 cheerio = require 'cheerio'
@@ -26,6 +25,8 @@ PhoneBill = cozydb.getModel 'PhoneBill',
     vendor: String
     amount: Number
     fileId: String
+    binaryId: String
+    pdfUrl: String
 
 PhoneBill.all = (callback) ->
     PhoneBill.request 'byDate', callback
@@ -87,7 +88,7 @@ module.exports =
 logIn = (requiredFields, bills, data, next) ->
 
     loginUrl = 'https://www.mon-compte.bouyguestelecom.fr/cas/login'
-    billUrl = 'http://www.bouyguestelecom.fr/mon-compte/suivi-conso/factures'
+    billUrl = 'http://www.bouyguestelecom.fr/mon-compte/mes-factures'
     userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + \
                 'Gecko/20100101 Firefox/36.0'
 

@@ -1,5 +1,4 @@
 cozydb = require 'cozydb'
-requestJson = require 'request-json'
 request = require 'request'
 moment = require 'moment'
 cheerio = require 'cheerio'
@@ -26,6 +25,8 @@ CodeBill = cozydb.getModel 'CodeBill',
     amount: Number
     plan: String
     fileId: String
+    pdfurl: String
+    binaryId: String
 
 CodeBill.all = (callback) ->
     CodeBill.request 'byDate', callback
@@ -144,8 +145,9 @@ parsePage = (requiredFields, bills, data, next) ->
             amount: amount
             pdfurl: pdfurl
             plan: plan
+
     if bills.fetched.length is 0
-        log.error "No bills retrieved"
-        next('no bills retrieved')
+        log.info "No bills retrieved."
+        next()
     else
         next()

@@ -9,6 +9,7 @@ module.exports =
     'imported data:': 'Imported data:'
     'importing...': 'importing...'
     'no import performed': 'No import performed'
+    'import already running': 'Import is already running.'
     'firstname': 'Firstname'
     'lastname': 'Lastname'
     'login': 'Login'
@@ -39,12 +40,12 @@ module.exports =
 
     'home more info': "More information:"
     'home help step 1': "You must manually trigger the import, except if you enable the auto-import."
-    'home help step 2': "Disable the auto-stop feature for the Konnector application in your Cozy, otherwise the auto-import won't work."
 
     'notification import error': 'an error occurred during import of data'
 
     'error occurred during import.': 'An error occurred during the last import.'
     'error occurred during import:': 'An error occurred during the last import:'
+    "import server error": "Server error occured while importing."
 
     # Konnectors' description
     'konnector description free': "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files."
@@ -65,6 +66,12 @@ module.exports =
     """
     'konnector description digital ocean': "Download all your Digital Ocean Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description sosh': "Download all your Sosh Bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description electrabel': "Download all you Electrabel Bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description orange': "Download all your Orange Bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description nest': "Save current temperature measured by your Nest thermostat."
+    'konnector description numericable': "Download all your Numéricable Bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description virginmobile': "Download all your Virgin Mobile  bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
@@ -78,3 +85,16 @@ module.exports =
     'notification free mobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification digital ocean': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification sosh': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification electrabel': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification numericable': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification virginmobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+
+    "konnector danger zone": "Danger zone"
+    "konnector delete credentials": "Delete this configuration."
+    "konnector deleted": "The konnector configuration was successfully deleted."
+    "konnector deletion error": "An error occured while deleting this konnector configuration."
+
+    'notification isen': "%{smart_count} new course material imported |||| %{smart_count} new course materials imported"
+    'notification isen event changed': "Careful, the intervention %{description} will take place on %{newDate} instead of %{oldDate}"
+    'notification isen date format': "MM/DD [at] HH:mm a"
+    'notification isen event deleted': "Careful, the intervention %{description} that should have taken place on %{date} has been canceled"

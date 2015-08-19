@@ -1,5 +1,4 @@
 cozydb = require 'cozydb'
-requestJson = require 'request-json'
 request = require 'request'
 moment = require 'moment'
 cheerio = require 'cheerio'
@@ -148,6 +147,7 @@ parsePage = (requiredFields, bills, data, next) ->
                 amount: parseFloat thirdCell.html().replace '$', ''
                 pdfurl: pdfurlPrefix + fourthCell.find('a').attr 'href'
                 vendor: 'Digital Ocean'
+                type: 'hosting'
 
     if bills.fetched.length is 0
         log.error "No bills retrieved"

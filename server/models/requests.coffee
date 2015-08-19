@@ -14,3 +14,15 @@ module.exports =
 
     folder:
         byFullPath: (doc) -> emit "#{doc.path}/#{doc.name}", doc
+
+    file:
+        byFullPath: (doc) -> emit "#{doc.path}/#{doc.name}", doc
+
+    steps:
+        byDate: americano.defaultRequests.by 'date'
+
+    sleep:
+        byDate: americano.defaultRequests.by 'date'
+
+    commit:
+        byDate: americano.defaultRequests.by 'date'

@@ -1,5 +1,6 @@
 BaseView = require '../lib/base_view'
 
+
 module.exports = class MenuItemView extends BaseView
 
     tagName: 'li'
@@ -23,15 +24,17 @@ module.exports = class MenuItemView extends BaseView
 
         return _.extend {}, super(), {lastImport}
 
+
+    # Change style if the konnector was configured by the user.
     afterRender: ->
-        # change style if the konnector is used by the user
-        if @model.isConfigured()
-            @$el.addClass 'configured'
-
-        @$el.addClass @model.get 'slug'
+        @$el.addClass 'configured' if @model.isConfigured()
+        @$el.addClass @model.get 'slug' # required to manage icon.
 
 
-    select: -> @$el.addClass 'selected'
+    select: ->
+        @$el.addClass 'selected'
 
 
-    unselect: -> @$el.removeClass 'selected'
+    unselect: ->
+        @$el.removeClass 'selected'
+

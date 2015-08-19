@@ -1,4 +1,12 @@
-
+# Returns a fetcher layer that adds a new array field to the second function
+# parameter.
+# This array contains all entries that are not already stored in the
+# database. To know if an entry has no match in the database, it checks if
+# date fields are the same.
+#
+# It expects a field called "fetched" as field of the second parameter. This
+# field contains the entries to filter.
+#
 module.exports = (log, model, suffix, vendor) ->
 
     (requiredFields, entries, body, next) ->
@@ -21,6 +29,8 @@ module.exports = (log, model, suffix, vendor) ->
                 if vendor?
                     if entry.vendor is vendor
                         entryHash[entry.date.toISOString()] = entry
+
+
                     # else do nothing
 
                 # Simply add the entry
@@ -31,4 +41,9 @@ module.exports = (log, model, suffix, vendor) ->
             entries.filtered = entries.fetched.filter (entry) ->
                 not entryHash[entry.date.toISOString()]?
 
+            # Keep only entries matching current vendor.
+            entries.filtered = entries.filtered.filter (entry) ->
+                entry.vendor is vendor
+
             next()
+

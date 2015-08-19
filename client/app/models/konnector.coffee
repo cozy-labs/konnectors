@@ -3,7 +3,9 @@ module.exports = class KonnectorModel extends Backbone.Model
     url: ->
         "konnectors/#{@get 'id'}"
 
-    # returns true if the user has configured the konnector
+
+    # Returns true if the user has fully configured the konnector (it checks if
+    # every fields are filled).
     isConfigured: ->
         fieldValues = @get('fieldValues') or {}
         fields = @get 'fields'

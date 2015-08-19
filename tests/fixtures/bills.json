@@ -1,26 +1,31 @@
 [
   {
-    "docType": "PhoneBill",
+    "docType": "Bill",
     "date": "2015-03-01T00:00:00.000Z",
     "fileId": "125",
-    "amount": "20.0"
+    "amount": "20.0",
+    "vendor": "test"
   },
   {
-    "docType": "PhoneBill",
+    "docType": "Bill",
     "date": "2015-03-21T00:00:00.000Z",
     "fileId": "125",
-    "amount": "20.0"
+    "amount": "20.0",
+    "vendor": "test"
   },
   {
-    "docType": "PhoneBill",
+    "docType": "Bill",
     "date": "2015-03-04T00:00:00.000Z",
     "fileId": "125",
-    "amount": "20.0"
+    "amount": "20.0",
+    "vendor": "test"
+
   },
   {
-    "docType": "PhoneBill",
+    "docType": "Bill",
     "date": "2015-03-05T00:00:00.000Z",
     "fileId": "125",
-    "amount": "20.0"
+    "amount": "20.0",
+    "vendor": "test 2"
   }
 ]

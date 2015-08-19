@@ -8,32 +8,39 @@ log = require('printit')
 Konnector = require '../models/konnector'
 konnectorModules = require '../lib/konnector_hash'
 
-module.exports = (done) ->
+
+# Ensure that all konnector modules have a proper module created and that their
+# isImporting flag is set to false.
+module.exports = (callback) ->
     Konnector.all (err, konnectors) ->
         if err
             log.error err
             callback err
+
         else
             konnectorHash = {}
-            async.eachSeries konnectors, (konnector, callback) ->
+            async.eachSeries konnectors, (konnector, done) ->
                 konnectorHash[konnector.slug] = konnector
-                konnectorResetValue konnector, callback
+                konnectorResetValue konnector, done
 
             , (err) ->
-                if err
-                    log.error err
+                log.error err if err
+
                 konnectorsToCreate = getKonnectorsToCreate konnectorHash
 
-                return done() if konnectorsToCreate.length is 0
-                createKonnectors konnectorsToCreate, done
+                if konnectorsToCreate.length is 0
+                    callback()
+                else
+                    createKonnectors konnectorsToCreate, callback
 
+
+# Reset konnector importing flags: isImporting flage is set to false if value
+# is true. This happens when the app is crashing while importing.
 konnectorResetValue = (konnector, callback) ->
 
-    # Reset isImporting state to false if value is true
-    # This happens when the app is crashing while importing
     if konnector.isImporting is true
-        konnector.isImporting = false
-        konnector.save (err) ->
+
+        konnector.updateAttributes isImporting: false, (err) ->
             if err
                 log.debug "#{konnector.slug} | #{err}"
             else
@@ -43,6 +50,7 @@ konnectorResetValue = (konnector, callback) ->
         callback()
 
 
+# Get the list of konnectors that are not listed in database.
 getKonnectorsToCreate = (konnectorHash) ->
 
     konnectorsToCreate = []
@@ -50,28 +58,38 @@ getKonnectorsToCreate = (konnectorHash) ->
     for name, konnectorModule of konnectorModules
         unless konnectorHash[konnectorModule.slug]?
             konnectorsToCreate.push konnectorModule
+
     return konnectorsToCreate
 
-createKonnectors = (konnectorsToCreate, done) ->
 
-    async.eachSeries konnectorsToCreate, (konnector, callback) ->
+# Init and create all given konnectors
+createKonnectors = (konnectorsToCreate, callback) ->
 
-        initializeKonnector konnector, callback
+    async.eachSeries konnectorsToCreate, (konnector, done) ->
+
+        initializeKonnector konnector, done
 
     , (err) ->
         log.info 'All konnectors created'
-        done()
+        callback()
 
+
+# Run konnector initialization function (mostly used for request initializing).
+# Then save konnector data to database.
 initializeKonnector = (konnector, callback) ->
 
-    konnector.init (err) ->
-        if err
-            log.error err
-            callback err
-        else
-            log.debug "creating #{konnector.slug}"
-            Konnector.create konnector, (err) ->
-                log.error err if err
+    log.debug "creating #{konnector.slug}"
+    if konnector.init?
+        konnector.init (err) ->
+            if err
+                log.error err
                 callback err
-
+            else
+                Konnector.create konnector, (err) ->
+                    log.error err if err
+                    callback err
+    else
+        Konnector.create konnector, (err) ->
+            log.error err if err
+            callback err
 

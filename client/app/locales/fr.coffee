@@ -1,7 +1,7 @@
 module.exports =
 
     'bad credentials' : 'Mauvais identifiants'
-    'no bills retrieved': 'Pas de facture trouvées'
+    'no bills retrieved': 'Pas de factures trouvées'
     'key not found': 'Clé non trouvée'
     'last import:': 'Dernière importation :'
     'save and import': 'Sauvegarder et importer'
@@ -9,6 +9,7 @@ module.exports =
     'imported data:': 'Données importées :'
     'importing...': 'importation en cours...'
     'no import performed': "Pas d'importation effectuée"
+    'import already running': "L'import est déjà en cours."
     'firstname': 'Prénom'
     'lastname': 'Nom'
     'login': 'Identifiant'
@@ -30,7 +31,7 @@ module.exports =
     'date format': 'DD/MM/YYYY [à] HH[h]mm'
 
     'home headline': """
-    Konnectors vous permet de récupérer de nombreuses données et de les intégrer votre Cozy.
+    Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.
     De vos factures de téléphone aux données de votre balance connectée en passant par vos tweets. Configurez les connecteurs qui vous intéressent :
     """
     'home config step 1': "Sélectionnez un connecteur dans le menu à gauche"
@@ -39,12 +40,12 @@ module.exports =
 
     'home more info': "Quelques informations supplémentaires :"
     'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique"
-    'home help step 2': "Désactivez la fonction d'auto-stop pour l'application Konnectors dans votre Cozy, sinon l'importation automatique ne fonctionnera pas."
 
     'notification import error': "une erreur est survenue pendant l'importation des données"
 
     'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.'
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
+    "import server error": "L'import a rencontré une erreur serveur."
 
     # Konnectors' description
     'konnector description free': "Téléchargez toutes vos factures internet de Free. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
@@ -56,17 +57,22 @@ module.exports =
     'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone."
     'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime."
     'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings."
-    'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter."
     'konnector description twitter': """
     Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert
     deux identifiants and deux clés secrètes. Vous pouvez les générer via le
-    href="https://apps.twitter.com/">tableau Twitter de gestion
+    <a href="https://apps.twitter.com/">tableau Twitter de gestion
     d'applications</a>. Vous pourrez y créez une application. Twitter vous
     fournira des identifiants pour cette application. Avec ces identifiants
     ce connecteur pourra récupérer vos données.
     """
     'konnector description digital ocean': "Téléchargez toutes vos factures Digital Ocean. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description sosh': "Téléchargez toutes vos factures Sosh. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description electrabel': "Téléchargez toutes vos factures Electrabel. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description orange': "Téléchargez toutes vos factures Orange. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description numericable': "Téléchargez toutes vos factures Numéricable. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description virgimobile': "Téléchargez toutes vos factures Virgin Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest."
+    'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -80,3 +86,16 @@ module.exports =
     'notification free mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification digital ocean': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification sosh': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification electrabel': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification virginmobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+
+    "konnector danger zone": "Zone dangereuse"
+    "konnector delete credentials": "Supprimer cette configuration."
+    "konnector deleted": "La configuration de ce connecteur a bien été supprimée."
+    "konnector deletion error": "Une erreur est survenue lors de la suppression de la configuration de ce connecteur."
+
+    'notification isen': "%{smart_count} nouveau support de cours importé |||| %{smart_count} nouveaux supports de cours importés"
+    'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}"
+    'notification isen date format': "DD/MM [à] HH:mm"
+    'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"

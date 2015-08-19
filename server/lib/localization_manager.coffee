@@ -6,11 +6,19 @@ Instance = require '../models/cozy_instance'
 path = require 'path'
 LOCALE_PATH = path.resolve __dirname, '../../client/app/locales/'
 
+
+# Configure the Polyglot lib and returns the function that will handle
+# all the translation (for a given key, it returns the right translation).
+# All translations are stored in files. Each file is dedicated to a locale.
+# The locale is set by the user in the Cozy platform and is stored in the
+# CozyInstance object.
 class LocalizationManager
 
     polyglot: null
 
-    # should be run when app starts
+
+    # Configure and returns the polyglot object depending on the
+    # Run this function when the app starts.
     initialize: (callback) ->
         @retrieveLocale (err, locale) =>
             if err? then callback err
@@ -19,12 +27,15 @@ class LocalizationManager
                 callback null, @polyglot
 
 
+    # Get locale from instance object. Returns "en" if no locale is found.
     retrieveLocale: (callback) ->
         Instance.getLocale (err, locale) ->
             if err? or not locale then locale = 'en' # default value
             callback err, locale
 
 
+    # Returns Polyglot object configured for the given locale.
+    # Default locale is en.
     getPolyglotByLocale: (locale) ->
         try
             phrases = require "#{LOCALE_PATH}/#{locale}"
@@ -42,3 +53,4 @@ class LocalizationManager
 
 
 module.exports = new LocalizationManager()
+

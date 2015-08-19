@@ -2,6 +2,8 @@ module.exports = class KonnectorCollection extends Backbone.Collection
     model: require '../models/konnector'
     url: 'konnectors/'
 
+
+    # Sort konnectors by their configuration status, then sort them by name
     comparator: (a, b) ->
 
         # configured konnectors first
@@ -17,3 +19,4 @@ module.exports = class KonnectorCollection extends Backbone.Collection
             return -1
         else
             return 0
+

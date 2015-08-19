@@ -48,7 +48,7 @@ module.exports =
 
     name: "Nest"
     slug: "nest"
-    description: 'Get Nest temperature history'
+    description: 'konnector description nest'
     vendorLink: "https://nest.com/"
 
     fields:
