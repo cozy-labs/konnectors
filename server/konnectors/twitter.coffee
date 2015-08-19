@@ -79,7 +79,7 @@ saveTweets = (requiredFields, callback) ->
         if tweets? and tweets.length > 0
             start = moment(tweets[0].date)
         else
-            start = moment().subtract('years', 10)
+            start = moment().subtract(10, 'years')
 
         log.info "Start import since #{start.format()}"
 

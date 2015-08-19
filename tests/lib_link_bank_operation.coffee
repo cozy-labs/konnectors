@@ -72,7 +72,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/01/2015'
+                    date: moment '03/01/2015', 'MM/DD/YYYY'
                     amount: '20.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -92,7 +92,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/01/2015'
+                    date: moment '03/01/2015', 'MM/DD/YYYY'
                     amount: '16.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -112,7 +112,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/04/2015'
+                    date: moment '03/04/2015', 'MM/DD/YYYY'
                     amount: '20.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -132,7 +132,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/05/2015'
+                    date: moment '03/05/2015', 'MM/DD/YYYY'
                     amount: '16.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -155,7 +155,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/01/2015'
+                    date: moment '03/01/2015', 'MM/DD/YYYY'
                     amount: '12.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -176,7 +176,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/21/2015'
+                    date: moment '03/21/2015', 'MM/DD/YYYY'
                     amount: '20.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -196,7 +196,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/01/2015'
+                    date: moment '03/01/2015', 'MM/DD/YYYY'
                     amount: '20.0'
                     vendor: 'vendor01'
                     fileId: 125

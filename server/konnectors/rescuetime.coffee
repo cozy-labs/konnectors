@@ -70,7 +70,7 @@ module.exports =
                 else @fetchData apikey, start, end, callback
 
         else
-            start = moment().subtract('years', 10).format 'YYYY-MM-DD'
+            start = moment().subtract(10, 'years').format 'YYYY-MM-DD'
             @fetchData apikey, start, end, callback
 
 

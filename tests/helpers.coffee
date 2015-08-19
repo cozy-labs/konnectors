@@ -1,6 +1,7 @@
 http = require 'http'
 americano = require 'americano'
 async = require 'async'
+moment = require 'moment'
 
 Client = require('request-json').JsonClient
 
@@ -60,7 +61,7 @@ helpers.clearKonnector = (slug, callback) ->
             callback()
 
 helpers.getDate = (date) ->
-    date = moment(date).toDate()
+    date = moment(new Date date).toDate()
     date.setUTCHours 0, 0, 0, 0
     return date
 
