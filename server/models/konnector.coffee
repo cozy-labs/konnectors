@@ -106,6 +106,12 @@ Konnector::import = (callback) ->
                         # raise the error from the import, not the update
                         callback err, notifContent
 
+                else if err? and typeof(err) is 'string'
+                    data = isImporting: false, errorMessage: new Error err
+                    @updateAttributes data, ->
+                        # raise the error from the import, not the update
+                        callback err, notifContent
+
                 else
                     data =
                         isImporting: false

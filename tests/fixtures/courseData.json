@@ -1,0 +1,252 @@
+{
+    "year":"A3",
+    "curriculum":"CIR",
+    "course":"RESEAUX",
+    "File(s)":[
+        {
+            "dateLastModified":"2013-09-02 20:45:11",
+            "fileName":"CCNA Routing and Switching Scope and Sequence DRAFT.doc.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/d5/6c/d56ca6df9307fba298bf0a6a01fc581cc48b3f77"
+        },
+        {
+            "dateLastModified":"2013-09-06 16:52:40",
+            "fileName":"ESwitching_Lab_2_5_1.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/3a/46/3a46ed2ffdd6591331e096bf9e0abb5c3347a450"
+        },
+        {
+            "dateLastModified":"2013-09-07 08:59:08",
+            "fileName":"E3_PTAct_1_2_4.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/87/b8/87b823686d776e1525c1b585d5011cf9cd284510"
+        },
+        {
+            "dateLastModified":"2013-09-07 10:58:09",
+            "fileName":"CISCO CCNA résumé commandes config 08.07.2010.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/f7/b5/f7b5e72d7455239574d9496798ff02f0cd1fdff2"
+        },
+        {
+            "dateLastModified":"2013-09-13 10:05:18",
+            "fileName":"Ch3_VLANs-Synthese.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/6b/6e/6b6ee60f0677dd11abe132dc9711da6a5cf3de4c"
+        },
+        {
+            "dateLastModified":"2013-09-13 10:06:38",
+            "fileName":"VLANs-Poster.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/1b/a7/1ba70df217c8aba665ec9800d80215b4ddca4a68"
+        },
+        {
+            "dateLastModified":"2013-09-16 06:01:10",
+            "fileName":"_Ch4 Routing Concepts.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/1b/bd/1bbd1299af2e348c376bb92f50408de636d556aa"
+        },
+        {
+            "dateLastModified":"2013-09-16 06:01:35",
+            "fileName":"IPv6-poster.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/5a/7d/5a7deb79b79696227416df2247ba5c81206a7753"
+        },
+        {
+            "dateLastModified":"2013-09-16 06:02:23",
+            "fileName":"IPv4_Subnetting-Poster.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/43/d3/43d335d99e700b935b94f4650bdceee4f3639b56"
+        },
+        {
+            "dateLastModified":"2013-09-27 11:40:55",
+            "fileName":"Ch5-Inter-VLAN Routing.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/b3/5c/b35cd0fb17ee9a74ca6dda4641df4633614134cb"
+        },
+        {
+            "dateLastModified":"2013-10-04 15:59:43",
+            "fileName":"_CH7_Routing Dynamically.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/2f/56/2f568a9ec04e9aadc8c370f2596d61f1bff779a8"
+        },
+        {
+            "dateLastModified":"2013-10-05 08:02:26",
+            "fileName":"_CH6_Static Routing.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/60/34/6034d78486e6a451121132acf2d32f814ad34f5f"
+        },
+        {
+            "dateLastModified":"2013-10-12 08:00:13",
+            "fileName":"8.2.2.7 Packet Tracer - Configuring OSPFv2-2013-CIR3.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/2d/ba/2dba9759bc1e658020c663effeb15494740f5b07"
+        },
+        {
+            "dateLastModified":"2013-10-14 15:55:52",
+            "fileName":"_CH9_ACLs.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/ce/cb/cecb887408f83f8ea94c4dccd0487986fafe975b"
+        },
+        {
+            "dateLastModified":"2013-10-14 16:04:35",
+            "fileName":"synthèse ACL.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/08/7c/087c64de0cc6df76b4c23d2f9fc085a32feb321e"
+        },
+        {
+            "dateLastModified":"2013-11-20 08:16:12",
+            "fileName":"_CH10-DHCP.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/fe/90/fe905a603b2c534f201239a79eb32b819204759f"
+        },
+        {
+            "dateLastModified":"2013-11-20 08:18:28",
+            "fileName":"Ch11 NAT for IPv4.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/de/ea/deeaca32cc031f0613f9974af82d6c375b4774e3"
+        },
+        {
+            "dateLastModified":"2013-12-06 09:11:50",
+            "fileName":"E4_PTAct_7_2_8.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/30/7b/307baf2c0b890a4c475b6221964e81eb976fe291"
+        },
+        {
+            "dateLastModified":"2014-09-05 16:43:20",
+            "fileName":"exonet78-2014.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/a3/f2/a3f2f585e664ba9efbd1e9b90c8410a69ef558a7"
+        },
+        {
+            "dateLastModified":"2014-09-19 14:55:17",
+            "fileName":"Echanges Paquets OSPF-S.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/95/27/9527776af9275ec49d241cfc51ab80c8d072524b"
+        },
+        {
+            "dateLastModified":"2014-09-19 16:12:43",
+            "fileName":"OSPF-Poster.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/2c/5b/2c5ba7214f189bd6f1e0e67c5cf9a3b0354a72f2"
+        },
+        {
+            "dateLastModified":"2014-09-20 08:29:34",
+            "fileName":"_CH8_Single-Area OSPF.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/39/5e/395e326da457443557b0f638965bc392470c9ea0"
+        },
+        {
+            "dateLastModified":"2014-02-10 12:38:18",
+            "fileName":"case_study_NetApp_Cisco_Kilo_Lab.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/9e/ff/9eff4bc543dae7d0c6779fd60b9ac953d832af60"
+        },
+        {
+            "dateLastModified":"2014-02-10 12:40:47",
+            "fileName":"ciscoUNIFIED.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/f6/bc/f6bc71c31adaf053dc439700d043aea7ef59d60e"
+        },
+        {
+            "dateLastModified":"2014-02-10 12:42:07",
+            "fileName":"LE-32302-SB-ITAgility_FR.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/79/63/7963e876b6451c8c11d839b6803ab9f0ecd11f32"
+        },
+        {
+            "dateLastModified":"2014-02-10 18:42:23",
+            "fileName":"PPP-Poster.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/7b/28/7b286cb2697c24134abdd8cc988d52c86867b3a6"
+        },
+        {
+            "dateLastModified":"2014-02-14 11:32:49",
+            "fileName":"Ch3_Point-to-Point Connections.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/4a/d4/4ad4322d04e7f52181e8f2055771588b1941b0b9"
+        },
+        {
+            "dateLastModified":"2014-02-15 07:06:23",
+            "fileName":"Ch2_Connecting to the WAN.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/a6/93/a6930eb921004ed0b3942193b62e0350d58fffb3"
+        },
+        {
+            "dateLastModified":"2014-02-19 07:24:10",
+            "fileName":"Ch4_FRAME_RELAY.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/87/94/87949953c91bed9e361073f7c61261841969b54e"
+        },
+        {
+            "dateLastModified":"2014-02-19 07:24:58",
+            "fileName":"Exploration_Accessing_WAN_Chapter3.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/58/da/58dac0dafec08bdb52fee3cfad9f6fa9977e4f4b"
+        },
+        {
+            "dateLastModified":"2014-02-19 15:24:22",
+            "fileName":"Ch7_Securing Site-to-Site Connectivity-CIR3.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/63/ec/63ecf5d36abe367d8e571409a3a4669babf514e4"
+        },
+        {
+            "dateLastModified":"2014-02-19 15:24:42",
+            "fileName":"IPsec-Poster.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/2b/8a/2b8a156eedf757937821c5a07ff9302eb2b29f4b"
+        },
+        {
+            "dateLastModified":"2014-02-19 15:25:25",
+            "fileName":"eSEC03_IPSec_Basics.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/03/b9/03b9ce72f6a820b87e5e2d46b89730e893d42f1a"
+        },
+        {
+            "dateLastModified":"2014-02-24 09:46:31",
+            "fileName":"Understanding_IPsec_(Yusuf Bhaiji)_10Sep08.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/42/ce/42ce9a39dabd3cc567ea7fe2dfe79337ce216700"
+        },
+        {
+            "dateLastModified":"2014-02-25 15:14:57",
+            "fileName":"Ch8_Monitoring the Network.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/99/cf/99cfe999cca1d0deae41956bd627cead3551be40"
+        },
+        {
+            "dateLastModified":"2014-02-25 15:17:09",
+            "fileName":"Ch9_Troubleshooting the Network .pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/37/d0/37d032e6746ed2f40b6ff15464c45c93847878a6"
+        },
+        {
+            "dateLastModified":"2014-10-22 14:23:42",
+            "fileName":"Ch1-Hierarchical Network Design.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/63/6d/636d73906e95f8a0e37152d529a1c06a1eba1848"
+        },
+        {
+            "dateLastModified":"2014-05-13 15:42:20",
+            "fileName":"exonet-STP.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/82/df/82df1199ae4bc437c29008bfde413e815a6739bc"
+        },
+        {
+            "dateLastModified":"2014-05-13 15:44:11",
+            "fileName":"INTRO-STP-CIR3.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/44/dd/44dd152bc9de4c297a9c5c4df6126443da005529"
+        },
+        {
+            "dateLastModified":"2014-05-13 15:55:00",
+            "fileName":"_Spanning_Tree-Poster.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/50/40/5040e119bba530537cacd593338f345d189e47dd"
+        },
+        {
+            "dateLastModified":"2014-05-13 16:39:02",
+            "fileName":"SN_CH2_LAN Redundancy.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/50/a6/50a6075501819d3aa6bd0c118c0fb80ce8230f33"
+        },
+        {
+            "dateLastModified":"2014-05-14 10:11:12",
+            "fileName":"EXONET-HSRP-CIR3.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/1d/1d/1d1dc3e59c5596250b7d3581cac7c54515aa9aa2"
+        },
+        {
+            "dateLastModified":"2014-05-17 07:05:17",
+            "fileName":"First_Hop_Redundancy-Poster.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/f6/fd/f6fd7fe208b641ee66987108246f99b3408a8b2e"
+        },
+        {
+            "dateLastModified":"2014-05-19 13:15:41",
+            "fileName":"etherchannel-Bonding.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/ea/29/ea29d0687474e4c75966f3356b482418919f31fb"
+        },
+        {
+            "dateLastModified":"2014-05-19 13:21:50",
+            "fileName":"SN_CH3_Link Aggregation.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/7d/c7/7dc78b62aab3cfed07a08100059e0ad4aa47d56f"
+        },
+        {
+            "dateLastModified":"2014-05-19 14:14:02",
+            "fileName":"_CAS-SANITHERM-CIR3v1.3.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/cd/48/cd4803cd3303ae70dc78433168ccf524f4eda9b6"
+        },
+        {
+            "dateLastModified":"2014-05-23 07:56:37",
+            "fileName":"ScaN_CH4_Wireless.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/7b/37/7b37197de27139ddfced72b627aa656853c54d4d"
+        },
+        {
+            "dateLastModified":"2014-05-23 07:57:04",
+            "fileName":"IEEE_802.11_WLAN-Poster.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/a2/dd/a2dd457595763b13f0d0c29ecd0d9c99615cee11"
+        },
+        {
+            "dateLastModified":"2014-05-23 16:49:53",
+            "fileName":"TP_WIFI_RadiusEAP.pdf",
+            "url":"https://web.isen-bretagne.fr/moodle/mod/resource/filedir/35/1e/351e3284c9bb1a25de40d8aeac46fcd183bfe2c1"
+        }
+    ]
+}
