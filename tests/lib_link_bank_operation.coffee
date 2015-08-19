@@ -54,7 +54,7 @@ describe 'Running link_operation', ->
                 map = (doc) ->
                     emit doc._id, doc
                     return
-                BankOperation.defineRequest 'all', map, done
+                File.defineRequest 'all', map, done
 
     before (done) ->
         @timeout 4000
