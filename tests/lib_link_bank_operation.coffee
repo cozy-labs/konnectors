@@ -50,7 +50,11 @@ describe 'Running link_operation', ->
             emit doc.date, doc
             return
         BankOperation.defineRequest 'bydate', map, ->
-            Bill.defineRequest 'bydate', map, done
+            Bill.defineRequest 'bydate', map, ->
+                map = (doc) ->
+                    emit doc._id, doc
+                    return
+                BankOperation.defineRequest 'all', map, done
 
     before (done) ->
         @timeout 4000
