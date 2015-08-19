@@ -137,6 +137,14 @@ Konnector.prototype["import"] = function(callback) {
             return _this.updateAttributes(data, function() {
               return callback(err, notifContent);
             });
+          } else if ((err != null) && typeof err === 'string') {
+            data = {
+              isImporting: false,
+              errorMessage: new Error(err)
+            };
+            return _this.updateAttributes(data, function() {
+              return callback(err, notifContent);
+            });
           } else {
             data = {
               isImporting: false,

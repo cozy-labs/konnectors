@@ -47,7 +47,7 @@ module.exports = {
   'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone.",
   'konnector description rescuetime': "Téléchargez toutes vos activités RescueTime.",
   'konnector description withings': "Téléchargez toutes les mesures de vos appareils Withings.",
-  'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert\ndeux identifiants et deux clés secrètes. Vous pouvez les générer via le\n<a href=\"https://apps.twitter.com/\">tableau Twitter de gestion\nd'applications</a>. Vous pourrez y créer une application. Twitter vous\nfournira des identifiants pour cette application. Avec ces identifiants\nce connecteur pourra récupérer vos données.",
+  'konnector description twitter': "Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert\ndeux identifiants and deux clés secrètes. Vous pouvez les générer via le\n<a href=\"https://apps.twitter.com/\">tableau Twitter de gestion\nd'applications</a>. Vous pourrez y créez une application. Twitter vous\nfournira des identifiants pour cette application. Avec ces identifiants\nce connecteur pourra récupérer vos données.",
   'konnector description digital ocean': "Téléchargez toutes vos factures Digital Ocean. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
   'konnector description sosh': "Téléchargez toutes vos factures Sosh. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
   'konnector description electrabel': "Téléchargez toutes vos factures Electrabel. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
@@ -55,6 +55,7 @@ module.exports = {
   'konnector description numericable': "Téléchargez toutes vos factures Numéricable. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
   'konnector description virgimobile': "Téléchargez toutes vos factures Virgin Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
   'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest.",
+  'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda.",
   'notification prefix': "Konnector %{name} :",
   'notification github commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés",
   'notification twitter': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés",
@@ -72,5 +73,9 @@ module.exports = {
   "konnector danger zone": "Zone dangereuse",
   "konnector delete credentials": "Supprimer cette configuration.",
   "konnector deleted": "La configuration de ce connecteur a bien été supprimée.",
-  "konnector deletion error": "Une erreur est survenue lors de la suppression de la configuration de ce connecteur."
+  "konnector deletion error": "Une erreur est survenue lors de la suppression de la configuration de ce connecteur.",
+  'notification isen': "%{smart_count} nouveau support de cours importé |||| %{smart_count} nouveaux supports de cours importés",
+  'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}",
+  'notification isen date format': "DD/MM [à] HH:mm",
+  'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"
 };

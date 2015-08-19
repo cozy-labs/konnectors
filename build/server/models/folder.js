@@ -20,3 +20,26 @@ Folder.all = function(callback) {
     return callback(null, folders);
   });
 };
+
+Folder.allPath = function(callback) {
+  return Folder.all(function(err, folders) {
+    folders = folders.map(function(folder) {
+      return folder.getFullPath();
+    });
+    return callback(err, folders);
+  });
+};
+
+Folder.createNewFolder = function(folder, callback) {
+  return Folder.create(folder, function(err, newFolder) {
+    if (err) {
+      return callback(err);
+    } else {
+      newFolder.index(["name"], function(err) {});
+      if (err) {
+        console.log(err);
+      }
+      return callback(null, newFolder);
+    }
+  });
+};

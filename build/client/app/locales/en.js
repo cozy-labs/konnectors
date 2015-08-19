@@ -55,6 +55,7 @@ module.exports = {
   'konnector description nest': "Save current temperature measured by your Nest thermostat.",
   'konnector description numericable': "Download all your Numéricable Bills. This konnector requires the Files application to store the bill PDF files.",
   'konnector description virginmobile': "Download all your Virgin Mobile  bills. This konnector requires the Files application to store the bill PDF files.",
+  'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar.",
   'notification prefix': "Konnector %{name}:",
   'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported",
   'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported",
@@ -72,5 +73,9 @@ module.exports = {
   "konnector danger zone": "Danger zone",
   "konnector delete credentials": "Delete this configuration.",
   "konnector deleted": "The konnector configuration was successfully deleted.",
-  "konnector deletion error": "An error occured while deleting this konnector configuration."
+  "konnector deletion error": "An error occured while deleting this konnector configuration.",
+  'notification isen': "%{smart_count} new course material imported |||| %{smart_count} new course materials imported",
+  'notification isen event changed': "Careful, the intervention %{description} will take place on %{newDate} instead of %{oldDate}",
+  'notification isen date format': "MM/DD [at] HH:mm a",
+  'notification isen event deleted': "Careful, the intervention %{description} that should have taken place on %{date} has been canceled"
 };
