@@ -15,7 +15,7 @@ module.exports = class KonnectorView extends BaseView
 
     initialize: (options) ->
         super options
-        @paths = options.paths or []
+        @paths = options.paths or [ path: '/', id: '']
         @listenTo @model, 'change', @render
 
 
@@ -173,20 +173,22 @@ module.exports = class KonnectorView extends BaseView
 <div><select id="#{slug}-#{name}-input" class="folder"">
 """
             selectedPath = path: '', id: ''
-            pathName = values[name] or @paths[0].path
+            pathName = values[name]
+            pathName ?= @paths[0].path if @paths.length > 0
 
-            # Add an option for every folder. Value is id of the folder.
-            # Displayed label is the path of the folder.
-            for path in @paths
-                if path.path is pathName
-                    fieldHtml += """
-<option selected value="#{path.id}">#{path.path}</option>
-"""
-                    selectedPath = path
-                else
-                    fieldHtml += """
-<option value="#{path.id}">#{path.path}</option>
-"""
+            if @paths.length > 0
+                # Add an option for every folder. Value is id of the folder.
+                # Displayed label is the path of the folder.
+                for path in @paths
+                    if path.path is pathName
+                        fieldHtml += """
+    <option selected value="#{path.id}">#{path.path}</option>
+    """
+                        selectedPath = path
+                    else
+                        fieldHtml += """
+    <option value="#{path.id}">#{path.path}</option>
+    """
             fieldHtml += "</select></div>"
 
             # Add a button to open quickly the selected folder in the files

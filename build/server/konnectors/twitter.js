@@ -91,7 +91,7 @@ saveTweets = function(requiredFields, callback) {
     if ((tweets != null) && tweets.length > 0) {
       start = moment(tweets[0].date);
     } else {
-      start = moment().subtract('years', 10);
+      start = moment().subtract(10, 'years');
     }
     log.info("Start import since " + (start.format()));
     return saveTweetGroup(client, path, start, tweets.length, function(err, numItems) {

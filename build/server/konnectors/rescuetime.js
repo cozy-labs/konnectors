@@ -90,7 +90,7 @@ module.exports = {
         };
       })(this));
     } else {
-      start = moment().subtract('years', 10).format('YYYY-MM-DD');
+      start = moment().subtract(10, 'years').format('YYYY-MM-DD');
       return this.fetchData(apikey, start, end, callback);
     }
   },

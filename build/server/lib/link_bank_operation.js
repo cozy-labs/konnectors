@@ -28,9 +28,10 @@ BankOperationLinker = (function() {
   };
 
   BankOperationLinker.prototype.linkOperationIfExist = function(entry, callback) {
-    var endDate, endkey, startDate, startkey;
-    startDate = moment(entry.date).subtract(this.minDateDelta, 'days');
-    endDate = moment(entry.date).add(this.maxDateDelta, 'days');
+    var date, endDate, endkey, startDate, startkey;
+    date = new Date(entry.date);
+    startDate = moment(date).subtract(this.minDateDelta, 'days');
+    endDate = moment(date).add(this.maxDateDelta, 'days');
     startkey = (startDate.format("YYYY-MM-DDT00:00:00.000")) + "Z";
     endkey = (endDate.format("YYYY-MM-DDT00:00:00.000")) + "Z";
     return BankOperation.all({
@@ -80,8 +81,9 @@ BankOperationLinker = (function() {
   };
 
   BankOperationLinker.prototype.linkOperation = function(operation, entry, callback) {
-    var key;
-    key = (moment(entry.date).format("YYYY-MM-DDT00:00:00.000")) + "Z";
+    var date, key;
+    date = new Date(entry.date);
+    key = (moment(date).format("YYYY-MM-DDT00:00:00.000")) + "Z";
     return this.model.request('byDate', {
       key: key
     }, (function(_this) {
