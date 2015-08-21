@@ -60,11 +60,10 @@ module.exports = {
         if (err != null) {
           return next(err);
         } else {
-          res.send(200);
           poller = require("../lib/poller");
           poller.add(date, req.konnector);
           if (date == null) {
-            return req.konnector["import"](function(err, notifContent) {
+            req.konnector["import"](function(err, notifContent) {
               if (err != null) {
                 return log.error(err);
               } else {
@@ -72,6 +71,7 @@ module.exports = {
               }
             });
           }
+          return res.send(200);
         }
       });
     }
@@ -94,12 +94,6 @@ handleNotification = function(konnector, notifContent) {
         url: "konnector/" + konnector.slug
       }
     }, function(err) {
-      if (err != null) {
-        return log.error(err);
-      }
-    });
-  } else {
-    return notification.destroy(notificationSlug, function(err) {
       if (err != null) {
         return log.error(err);
       }
