@@ -64,7 +64,6 @@ module.exports =
                 if err?
                     next err
                 else
-                    res.send 200
                     poller = require "../lib/poller"
                     poller.add date, req.konnector
 
@@ -75,6 +74,7 @@ module.exports =
                                 log.error err
                             else
                                 handleNotification req.konnector, notifContent
+                    res.send 200
 
 
 
@@ -92,12 +92,5 @@ handleNotification = (konnector, notifContent) ->
                 app: 'konnectors'
                 url: "konnector/#{konnector.slug}"
         , (err) ->
-            log.error err if err?
-
-    else
-        # If there was an error before, but that last import was
-        # successful AND didn't not return a notification content, the
-        # error notification is simply removed.
-        notification.destroy notificationSlug, (err) ->
             log.error err if err?
 

@@ -24,7 +24,12 @@ module.exports = (konnector) ->
 
         konnector.import (err, notifContent) ->
 
-            if err and Object.keys(err).length > 0
+            if err and typeof(err) is 'object' and Object.keys(err).length > 0
+                log.error err
+                localizationKey = 'notification import error'
+                notifContent = localization.t localizationKey, name: model.name
+
+            else if err and typeof(err) is 'string'
                 log.error err
                 localizationKey = 'notification import error'
                 notifContent = localization.t localizationKey, name: model.name
