@@ -5,12 +5,14 @@ https = require 'https'
 requestJson = require 'request-json'
 
 Contact = require '../models/contact'
+
 CompareContacts = require '../lib/compare_contacts'
+ContactHelper = require '../lib/contact_helper'
+GoogleContactHelper = require '../lib/google_contact_helper'
 
 GoogleToken = require '../lib/google_access_token'
-im = require('imagemagick-stream')
-url = require 'url'
 
+url = require 'url'
 
 #
 fs = require 'fs'
@@ -62,6 +64,27 @@ module.exports =
     init: (callback) ->
         callback()
 
+# Sync status data
+# Each cozy contact hold a account field, which is a list of each external
+# account this contact is synchronized with. Each account object as
+# following fields :
+# { type: 'com.google', name: 'jean.dupont@gmail.com',  }
+# Sync strategy:
+# 1. Fetch changes from google  since last successfull sync, including deleted
+# 2. Get contacts from DataSystem, and prepare convenient data structure for
+# nexts algorythm.
+# 3. Update Contact with it:
+#    - delete flagged contact
+#    - update contact if already synced
+#    - else, find a same contact in cozy and merge them
+#    - else create a brand new cozy contact
+# 4. Fetch all google contacts
+# 5. Get contacts from DS another time
+# 6. Update contact in google:
+#       - iterate on each cozy contact linked to this google account
+#       - update them in google on changes
+#       - remove from google contact absent in cozy.
+
     fetch: (requiredFields, callback) ->
 
         log.info "Import started"
@@ -82,8 +105,8 @@ module.exports =
                 log.info "Import finished"
                 callback()
 
-
-
+# Obtain a valid access_token : with auth_code on first launch,
+# else with the refresh_token.
 updateToken = (requiredFields, entries, data, callback) ->
 
     if requiredFields.refreshToken? and requiredFields.authCode is 'connected'
@@ -103,7 +126,7 @@ updateToken = (requiredFields, entries, data, callback) ->
 
             callback()
 
-
+# Fetch account name (email address of this google account) on first launch.
 fetchAccountName = (requiredFields, entries, data, callback) ->
     if requiredFields.accountName? and
        requiredFields.accountName.indexOf('@') isnt -1
@@ -127,6 +150,7 @@ fetchAccountName = (requiredFields, entries, data, callback) ->
 
         callback()
 
+# Save konnector's fieldValues during fetch process.
 saveTokensInKonnector = (requiredFields, entries, data, callback) ->
     Konnector = require '../models/konnector'
     Konnector.all (err, konnectors) ->
@@ -140,7 +164,7 @@ saveTokensInKonnector = (requiredFields, entries, data, callback) ->
 
         konnector.save callback
 
-
+# Fetch changes in google contacts since last successfull fetch.
 fetchGoogleChanges = (requiredFields, entries, data, callback) ->
     uri = "https://www.google.com/m8/feeds/contacts/#{requiredFields.accountName}/full/?alt=json&showdeleted=true&max-results=10000"
 
@@ -167,7 +191,11 @@ fetchGoogleChanges = (requiredFields, entries, data, callback) ->
 
         callback()
 
-
+# Update contacts in cozy to apply google changes.
+#    - delete flagged contact
+#    - update contact if already synced
+#    - else, find a same contact in cozy and merge them
+#    - else create a brand new cozy contact
 updateCozyContacts = (requiredFields, entries, data, callback) ->
     async.eachSeries entries.googleChanges, (gEntry, cb) ->
         if gEntry.gd$deleted?
@@ -178,10 +206,11 @@ updateCozyContacts = (requiredFields, entries, data, callback) ->
             , requiredFields, cb
     , callback
 
-removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
 
-    # fromGoogle = Contact.fromGoogleContact gEntry, accountName
-    contact = ofAccountByIds[Contact.extractGoogleId(gEntry)]
+# Unlink cozy contact from this account. Just removes account object from
+# the contact's account field.
+removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
+    contact = ofAccountByIds[GoogleContactHelper.extractGoogleId(gEntry)]
     if contact?
         log.info "Unlink #{contact?.fn} from this account"
         contact.deleteAccount { type: ACCOUNT_TYPE, name: accountName }
@@ -190,9 +219,14 @@ removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
         log.info "Contact already unlinked from this account."
         callback()
 
+
+# Update cozy with a google contact.
+# Update the cozy contact if already synced,
+# else, find a same contact in cozy and merge them
+# else create a brand new cozy contact
 updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, callback) ->
     accountName = requiredFields.accountName
-    fromGoogle = new Contact Contact.fromGoogleContact gEntry, accountName
+    fromGoogle = new Contact GoogleContactHelper.fromGoogleContact gEntry, accountName
     accountG = fromGoogle.accounts[0]
 
     updateContact = (fromCozy, fromGoogle) ->
@@ -200,7 +234,7 @@ updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, call
         fromCozy.setAccount fromGoogle.accounts[0]
         fromCozy.save (err, contact) ->
             return callback err if err
-            addContactPictureInCozy requiredFields, contact, gEntry, callback
+            GoogleContactHelper.addContactPictureInCozy requiredFields, contact, gEntry, callback
 
 
     # already in cozy ?
@@ -235,41 +269,11 @@ updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, call
                 return callback err if err
                 # TODO: reactivate this, needs upload to google to ;
                 # check for speed
-                addContactPictureInCozy requiredFields, contact, gEntry, callback
+                GoogleContactHelper.addContactPictureInCozy requiredFields, contact, gEntry, callback
                 callback()
 
 
-
-
-PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo"
-addContactPictureInCozy = (requiredFields, cozyContact, gContact, done) ->
-    pictureLink = gContact.link.filter (link) -> link.rel is PICTUREREL
-    pictureUrl = pictureLink[0]?.href
-
-    return done null unless pictureUrl
-
-    opts = url.parse(pictureUrl)
-    opts.headers =
-        'Authorization': 'Bearer ' + requiredFields.accessToken
-        'GData-Version': '3.0'
-    https.get opts, (stream)->
-        stream.on 'error', done
-        unless stream.statusCode is 200
-            log.warn "error fetching #{pictureUrl}", stream.statusCode
-            return done null
-        thumbStream = stream.pipe im().resize('300x300^').crop('300x300')
-        thumbStream.on 'error', done
-        thumbStream.path = 'useless'
-        type = stream.headers['content-type']
-        opts = {name: 'picture', type: type}
-        cozyContact.attachFile thumbStream, opts, (err)->
-            if err
-                log.error "picture #{err}"
-            else
-                log.debug "picture ok"
-            done err
-
-
+# Fetch all contact of this google account.
 fetchAllGoogleContacts = (requiredFields, entries, data, callback) ->
     uri = "https://www.google.com/m8/feeds/contacts/#{requiredFields.accountName}/full/?alt=json&max-results=10000"
     request
@@ -287,10 +291,13 @@ fetchAllGoogleContacts = (requiredFields, entries, data, callback) ->
         entries.googleContacts = body.feed?.entry or []
         entries.googleContactsById = {}
         for gEntry in entries.googleContacts
-            entries.googleContactsById[Contact.extractGoogleId(gEntry)] = gEntry
+            id = GoogleContactHelper.extractGoogleId gEntry
+            entries.googleContactsById[id] = gEntry
 
         callback()
 
+
+# Get cozy's contact, and prepare andy data structures for nexts procedures.
 prepareCozyContacts = (requiredFields, entries, data, callback) ->
     Contact.all (err, contacts) ->
         return callback err if err
@@ -306,6 +313,8 @@ prepareCozyContacts = (requiredFields, entries, data, callback) ->
 
         callback()
 
+
+# Apply changes in cozy to google contacts
 updateGoogleContacts = (requiredFields, entries, data, callback) ->
 
     googleContactsById = entries.googleContactsById
@@ -330,13 +339,14 @@ updateGoogleContacts = (requiredFields, entries, data, callback) ->
         , callback
 
 
+
 updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
     account = contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
 
-    fromGoogle = new Contact Contact.fromGoogleContact gEntry
-    if fromGoogle.intrinsicRev() isnt contact.intrinsicRev()
+    fromGoogle = new Contact GoogleContactHelper.fromGoogleContact gEntry
+    if ContactHelper.intrinsicRev(fromGoogle) isnt ContactHelper.intrinsicRev(contact)
         log.info "update #{contact?.fn} in google"
-        updated = contact.toGoogleContact gEntry
+        updated = GoogleContactHelper.toGoogleContact contact, gEntry
         request
             method: 'PUT'
             uri: "https://www.google.com/m8/feeds/contacts/#{account.name}/full/#{account.id}/?alt=json"
@@ -355,41 +365,11 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
                 callback() # continue with next contact on error.
 
             else # update picture.
-                putPicture2Google requiredFields, contact, gEntry, callback
+                GoogleContactHelper.putPicture2Google requiredFields.accessToken,
+                account, contact, callback
 
     else
         callback()
-
-# TODO : doesn't work yet ...
-putPicture2Google = (requiredFields, contact, gEntry, callback) ->
-    # Check if picture ...
-    unless contact._attachments?.picture?
-        return callback()
-
-    # Get picture as bytes.
-    stream = contact.getFile 'picture', (err) ->
-        return callback err if err
-
-    options =
-        method: 'PUT'
-        host: 'www.google.com',
-        port: 443,
-        path: "/m8/feeds/photos/media/#{requiredFields.accountName}/#{Contact.extractGoogleId(gEntry)}"
-        headers:
-            'Authorization': 'Bearer ' + requiredFields.accessToken
-            'GData-Version': '3.0'
-            'Content-Type': 'image/*'
-            'If-Match': '*'
-
-    req = https.request options, (res) ->
-
-        res.on 'error', callback
-        res.on 'data', (chunk) ->
-            if res.statusCode isnt 200
-                log.info "#{res.statusCode} while uploading picture: #{chunk.toString()}"
-            callback()
-
-    stream.pipe req
 
 
 deleteInGoogle = (requiredFields, gId, callback) ->

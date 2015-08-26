@@ -1,3 +1,6 @@
+crypto = require 'crypto'
+
+
 CH = {}
 
 # With this Model :
@@ -64,6 +67,49 @@ CH.adrStringToArray = (s) ->
     s = s or ''
     return ['', '', s, '', '', '', '']
 
+# Construct a determinist revision string, based on data of the contact.
+# The "checksum " of a cozy contact.
+CH.intrinsicRev = (contact) ->
+    # Put fields in deterministic order and create a string.
+    fieldNames = [ 'fn', 'n', 'org', 'title',
+        # 'department', #Unused in google contacts
+        'bday', 'nickname',
+        'url',
+        'note',
+        # TODO 'tags'
+        # TODO attachments ?
+    ]
+
+    asStr = ''
+    for fieldName in fieldNames
+        if fieldName of contact and
+           contact[fieldName]? and contact[fieldName] isnt ''
+            asStr += fieldName
+            asStr += ': '
+            asStr += contact[fieldName]
+            asStr += ', '
+
+    # convert Datapoints to strings
+    stringDps = contact.datapoints.map (datapoint) ->
+        s = "name:#{datapoint.name}, type:#{datapoint.type}, value: "
+
+        if datapoint.name is 'adr'
+            s += CH.adrArrayToString datapoint.value
+        else if datapoint.name is 'tel'
+            s += datapoint.value?.replace /[^\d+]/g, ''
+        else
+            s += datapoint.value
+
+    # sort them.
+    stringDps.sort()
+
+    asStr += "datapoints: " + stringDps.join ', '
+
+    return asStr
+    # # Get SHA-1
+    # shasum = crypto.createHash('sha1')
+    # shasum.update asStr
+    # return shasum.digest 'base64'
 
 
 if module?.exports

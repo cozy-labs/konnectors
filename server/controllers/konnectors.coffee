@@ -101,4 +101,3 @@ handleNotification = (konnector, notifContent) ->
                 url: "konnector/#{konnector.slug}"
         , (err) ->
             log.error err if err?
-
