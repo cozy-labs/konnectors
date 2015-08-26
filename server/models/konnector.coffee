@@ -10,6 +10,7 @@ module.exports = Konnector = americano.getModel 'Konnector',
     slug: String
     fieldValues: Object
     password: type: String, default: '{}'
+    lastSuccess: Date
     lastImport: Date
     lastAutoImport: Date
     isImporting: type: Boolean, default: false
@@ -98,7 +99,7 @@ Konnector::import = (callback) ->
 
             @injectEncryptedFields()
             # Pass last import to the konnector
-            @fieldValues['lastImport'] = @lastImport
+            @fieldValues['lastSuccess'] = @lastFetch
             konnectorModule.fetch @fieldValues, (importErr, notifContent) =>
                 fields = @getFields()
                 @removeEncryptedFields fields
@@ -122,6 +123,7 @@ Konnector::import = (callback) ->
                 else
                     data =
                         isImporting: false
+                        lastSuccess: new Date()
                         lastImport: new Date()
                         importErrorMessage: null
                     @updateAttributes data, (importErr) ->

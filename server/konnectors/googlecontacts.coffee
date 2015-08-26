@@ -169,9 +169,7 @@ fetchGoogleChanges = (requiredFields, entries, data, callback) ->
     uri = "https://www.google.com/m8/feeds/contacts/#{requiredFields.accountName}/full/?alt=json&showdeleted=true&max-results=10000"
 
     if requiredFields.lastImport?
-        # TODO: should use a 'lastSuccessfullImport' date, to avoid ellipsis
-        # in changes.
-        uri += "&updated-min=#{requiredFields.lastImport.toISOString()}"
+        uri += "&updated-min=#{requiredFields.lastSuccess.toISOString()}"
 
     request
         method: 'GET'
