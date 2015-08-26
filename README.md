@@ -44,7 +44,7 @@ To build this application:
 
     npm install
     cd client && npm install && cd ..
-    cake build
+    sh ./scripts/build.sh
 
 # Tests
 
