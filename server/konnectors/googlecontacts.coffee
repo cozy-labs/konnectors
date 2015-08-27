@@ -46,17 +46,18 @@ module.exports =
     vendorLink: "https://www.google.com/contacts/"
 
     customView: """
-    <p>First step: connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard:</p>
+    <h6>Initialize or reset this konnector</h6>
+    <p>1. Press "connect your google account" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step.</p>
     <button id="connect-google" title="Connect your Google account" class="btn"
-       onclick="window.open('#{GoogleToken.getAuthUrl()}', 'Google OAuth', 'toolbars=0,width=700,height=600,left=200,top=200,scrollbars=1,resizable=1'); return false;"
+       onclick="window.open('#{GoogleToken.getAuthUrl()}', 'Google OAuth', 'toolbars=0,width=700,height=600,left=200,top=200,scrollbars=1,resizable=1'); var input = $('#googlecontacts-authCode-input'); input.parents('.field').toggleClass('hidden'); input.attr('type', 'text'); input.val(''); return false;"
        >Connect your Google account</button>
-    <p>Then, copy and paste the code from the popup in the auth_code field. The Account name, Access token and Refresh token will be automatically filled in.</p>
+    <p>2. Paste this string in the auth_code field. Then press save and import to start the sync. Account Name will be automatically updated.</p>
     """
     fields:
-        authCode: "text"
-        accountName: "text"
-        accessToken: "text"
-        refreshToken: "text"
+        authCode: "hidden"
+        accountName: "readonly"
+        accessToken: "hidden"
+        refreshToken: "hidden"
 
     models:
         contact: Contact

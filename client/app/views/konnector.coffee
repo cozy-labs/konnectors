@@ -171,7 +171,7 @@ module.exports = class KonnectorView extends BaseView
 
     addFieldWidget: (slug, name, val, values) ->
         fieldHtml = """
-<div class="field line">
+<div class="field line #{'hidden' if val is 'hidden'}">
 <div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
 """
 
@@ -214,7 +214,8 @@ target="_blank">
         else
             fieldHtml += """
 <div><input id="#{slug}-#{name}-input" type="#{val}"
-        value="#{values[name]}"/></div>
+
+        value="#{values[name]}" #{'readonly' if val is 'readonly'} /></div>
 </div>
 """
 
