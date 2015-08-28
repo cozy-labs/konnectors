@@ -23,7 +23,7 @@
     "moment": "2.10.6",
     "nest-api": "0.0.5",
     "node-polyglot": "0.4.1",
-    "pngjs-image": "0.11.2",
+    "pngjs-image": "0.11.6",
     "printit": "0.1.8",
     "querystring": "0.2.0",
     "request": "2.58.0",
