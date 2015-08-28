@@ -13,7 +13,6 @@ module.exports = (callback) ->
     Commit.all (err, commits) ->
         duplicatesArray = buildDuplicatedArrays commits
         async.eachSeries duplicatesArray, (duplicates, next) ->
-            log.info "ok"
             if duplicates.length in [0, 1]
                 next()
             else
@@ -27,15 +26,22 @@ module.exports = (callback) ->
 buildDuplicatedArrays = (commits) ->
 
     shaHash = {}
-    for commit in commits
-        shaHash[commit.sha] ?= []
-        shaHash[commit.sha].push commit
+    if commits?
+        for commit in commits
+            shaHash[commit.sha] ?= []
+            shaHash[commit.sha].push commit
 
-    return Object.keys(shaHash).map (key) -> shaHash[key]
+        res = Object.keys(shaHash).map (key) -> shaHash[key]
+    else
+        res = []
+    return res
 
 
 deleteDuplicates = (duplicates, callback) ->
-    duplicates.pop()
+    commit = duplicates.pop()
+    if commit? and duplicates?.length > 0
+        log.info "Delete #{duplicates.length} commits for commit #{commit.sha}"
+
     async.eachSeries duplicates, (duplicate, next) ->
         duplicate.destroy (err) ->
             if err then log.error err else count++

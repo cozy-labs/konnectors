@@ -19,7 +19,6 @@ module.exports = function(callback) {
     duplicatesArray = buildDuplicatedArrays(commits);
     return async.eachSeries(duplicatesArray, function(duplicates, next) {
       var ref;
-      log.info("ok");
       if ((ref = duplicates.length) === 0 || ref === 1) {
         return next();
       } else {
@@ -33,22 +32,31 @@ module.exports = function(callback) {
 };
 
 buildDuplicatedArrays = function(commits) {
-  var commit, i, len, name, shaHash;
+  var commit, i, len, name, res, shaHash;
   shaHash = {};
-  for (i = 0, len = commits.length; i < len; i++) {
-    commit = commits[i];
-    if (shaHash[name = commit.sha] == null) {
-      shaHash[name] = [];
+  if (commits != null) {
+    for (i = 0, len = commits.length; i < len; i++) {
+      commit = commits[i];
+      if (shaHash[name = commit.sha] == null) {
+        shaHash[name] = [];
+      }
+      shaHash[commit.sha].push(commit);
     }
-    shaHash[commit.sha].push(commit);
+    res = Object.keys(shaHash).map(function(key) {
+      return shaHash[key];
+    });
+  } else {
+    res = [];
   }
-  return Object.keys(shaHash).map(function(key) {
-    return shaHash[key];
-  });
+  return res;
 };
 
 deleteDuplicates = function(duplicates, callback) {
-  duplicates.pop();
+  var commit;
+  commit = duplicates.pop();
+  if ((commit != null) && (duplicates != null ? duplicates.length : void 0) > 0) {
+    log.info("Delete " + duplicates.length + " commits for commit " + commit.sha);
+  }
   return async.eachSeries(duplicates, function(duplicate, next) {
     return duplicate.destroy(function(err) {
       if (err) {
