@@ -137,6 +137,7 @@ prepareLogIn = function(requiredFields, billInfos, data, next) {
     loginPageData = body;
     data.imageUrlAndPosition = [];
     $ = cheerio.load(loginPageData);
+    data.token = $('input[name=token]').val();
     $('img[class="ident_chiffre_img pointer"]').each(function() {
       var imagePath, position;
       imagePath = $(this).attr('src');
@@ -181,6 +182,7 @@ logIn = function(requiredFields, billInfos, data, next) {
       login += i;
     }
     form = {
+      token: data.token,
       login_abo: login,
       pwd_abo: requiredFields.password
     };
@@ -199,16 +201,16 @@ logIn = function(requiredFields, billInfos, data, next) {
         if (err != null) {
           log.error(err);
         }
-        if (res.headers.location != null) {
+        if (res.headers.location == null) {
           log.error("No location");
         }
         if (res.statusCode !== 302) {
           log.error("No 302");
         }
-        if (requiredFields.password != null) {
+        if (requiredFields.password == null) {
           log.error("No password");
         }
-        if (requiredFields.login != null) {
+        if (requiredFields.login == null) {
           log.error("No login");
         }
         next('bad credentials');
@@ -216,7 +218,7 @@ logIn = function(requiredFields, billInfos, data, next) {
       options = {
         method: 'GET',
         jar: true,
-        url: homeUrl,
+        url: baseUrl + res.headers.location,
         headers: {
           referer: homeUrl
         }
@@ -264,7 +266,6 @@ parseBillPage = function(requiredFields, bills, data, next) {
   }
   $ = cheerio.load(data.html);
   isMultiline = $('div[class="consommation"]').length > 1;
-  console.log(isMultiline);
   $('div[class="factLigne hide "]').each(function() {
     var amount, bill, data_fact_date, data_fact_id, data_fact_ligne, data_fact_login, data_fact_multi, date, pdfUrl;
     amount = $($(this).find('.montant')).text();
@@ -429,6 +430,6 @@ getSmallImage = function(digit, callback) {
     if (err != null) {
       callback(err);
     }
-    return setTimeout(callback, 500, null);
+    return setTimeout(callback, 600, null);
   });
 };
