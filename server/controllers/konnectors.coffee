@@ -3,6 +3,8 @@ localization = require '../lib/localization_manager'
 NotificationHelper = require 'cozy-notifications-helper'
 notification = new NotificationHelper 'konnectors'
 konnectorHash = require '../lib/konnector_hash'
+log = require('printit')
+    prefix: 'konnector controller'
 
 module.exports =
 
