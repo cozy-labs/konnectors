@@ -89,9 +89,9 @@ saveTweets = function(requiredFields, callback) {
   return TwitterTweet.request('byDate', params, function(err, tweets) {
     var start;
     if ((tweets != null) && tweets.length > 0) {
-      start = moment(tweets[0].date);
+      start = moment(new Date(tweets[0].date));
     } else {
-      start = moment().subtract(10, 'years');
+      start = moment().subtract(10, 'year');
     }
     log.info("Start import since " + (start.format()));
     return saveTweetGroup(client, path, start, tweets.length, function(err, numItems) {
@@ -135,7 +135,7 @@ saveTweetGroup = function(client, path, start, tweetLength, callback) {
       numItems = 0;
       return async.eachSeries(tweets, function(tweet, cb) {
         var date, twitterTweet;
-        date = moment(tweet.created_at);
+        date = moment(new Date(tweet.created_at));
         log.debug(date);
         if (date > start) {
           twitterTweet = {
