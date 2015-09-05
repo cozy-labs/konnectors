@@ -79,7 +79,6 @@ module.exports =
                     res.send 200
 
 
-
 # Create a notification telling how many data were imported.
 handleNotification = (konnector, notifContent) ->
     notificationSlug = konnector.slug

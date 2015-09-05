@@ -81,8 +81,7 @@ getEvents = (requiredFields, commits, data, next) ->
                                 data.commits.push commit
                     callback()
                 else
-                    log.error 'bad credentials'
-                    callback('bad credentials')
+                    callback 'bad credentials'
             else
                 log.error err
                 callback()
