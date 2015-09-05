@@ -30,6 +30,10 @@ module.exports = Konnector = americano.getModel('Konnector', {
   errorMessage: {
     type: String,
     "default": null
+  },
+  importErrorMessage: {
+    type: String,
+    "default": null
   }
 });
 
@@ -125,34 +129,34 @@ Konnector.prototype["import"] = function(callback) {
       } else {
         konnectorModule = konnectorHash[_this.slug];
         _this.injectEncryptedFields();
-        return konnectorModule.fetch(_this.fieldValues, function(err, notifContent) {
+        return konnectorModule.fetch(_this.fieldValues, function(importErr, notifContent) {
           var fields;
           fields = _this.getFields();
           _this.removeEncryptedFields(fields);
-          if ((err != null) && typeof err === 'object' && Object.keys(err).length > 0) {
+          if ((importErr != null) && typeof importErr === 'object' && Object.keys(importErr).length > 0) {
             data = {
               isImporting: false,
-              errorMessage: err
+              importErrorMessage: importErr.message
             };
             return _this.updateAttributes(data, function() {
-              return callback(err, notifContent);
+              return callback(importErr, notifContent);
             });
-          } else if ((err != null) && typeof err === 'string') {
+          } else if ((importErr != null) && typeof importErr === 'string') {
             data = {
               isImporting: false,
-              errorMessage: new Error(err)
+              importErrorMessage: importErr
             };
             return _this.updateAttributes(data, function() {
-              return callback(err, notifContent);
+              return callback(importErr, notifContent);
             });
           } else {
             data = {
               isImporting: false,
               lastImport: new Date(),
-              errorMessage: null
+              importErrorMessage: null
             };
-            return _this.updateAttributes(data, function(err) {
-              return callback(err, notifContent);
+            return _this.updateAttributes(data, function(importErr) {
+              return callback(importErr, notifContent);
             });
           }
         });

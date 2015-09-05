@@ -316,27 +316,27 @@ saveBodyMeasures = function(measures, callback) {
     log.info(measuresToSave.length + " weight measures to save");
     log.info(heartBeatsToSave.length + " heartbeat measures to save");
     log.info(bloodPressuresToSave.length + " blood pressure measures to save");
-    saveAll = function(models, done) {
+    saveAll = function(modelClass, models, done) {
       return async.forEach(models, function(model, callback) {
-        return model.save(callback);
+        return modelClass.create(model, callback);
       }, function(err) {
         return done(err);
       });
     };
     log.info('Save weights...');
-    return saveAll(measuresToSave, function(err) {
+    return saveAll(Weight, measuresToSave, function(err) {
       log.info('Weights saved...');
       if (err) {
         return callback(err);
       }
       log.info('Save heartbeats...');
-      return saveAll(heartBeatsToSave, function(err) {
+      return saveAll(HeartBeat, heartBeatsToSave, function(err) {
         log.info('Heartbeats saved...');
         if (err) {
           return callback(err);
         }
         log.info('Save blood pressures...');
-        return saveAll(bloodPressuresToSave, function(err) {
+        return saveAll(BloodPressure, bloodPressuresToSave, function(err) {
           var localizationKey, notifContent, options;
           log.info('Blood pressures saved...');
           if (err) {
@@ -403,7 +403,7 @@ saveActivityMeasures = function(measures, callback) {
       }
       log.info("Found " + stepsToSave.length + " new steps measures to save!");
       saveInstance = function(model, cb) {
-        return model.save(cb);
+        return Steps.create(model, cb);
       };
       return async.forEach(stepsToSave, saveInstance, function(err) {
         var localizationKey, notifContent, options;
