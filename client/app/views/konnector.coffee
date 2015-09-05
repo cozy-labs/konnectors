@@ -27,7 +27,7 @@ module.exports = class KonnectorView extends BaseView
         @$el.addClass "konnector-#{slug}"
         @updateImportWidget()
 
-        if not @model.get('errorMessage')? or @model.get 'isImporting'
+        if not @model.get('importErrorMessage')? or @model.get 'isImporting'
             @hideErrors()
 
         for name, val of @model.get 'fields'
@@ -127,10 +127,10 @@ module.exports = class KonnectorView extends BaseView
                 success: (model, success) ->
                     # Success is handled via the realtime engine.
                 error: (model, err) =>
-                    # cozycloud.cc timeout is not considered like an error
                     if err.status >= 400 and err.status isnt 504
                         try
                             @showErrors t JSON.parse(err.responseText).message
+                    # cozycloud.cc timeout is not considered like an error
                         catch
                             @showErrors t "import server error"
 
