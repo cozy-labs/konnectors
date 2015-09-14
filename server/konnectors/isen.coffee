@@ -143,20 +143,20 @@ module.exports =
         if rawEvents.length is 0
           callback null, []
         else
-          async.reduce rawEvents, [], (memo, rawEvent, next) =>
-              # if there is an error, the event is not added to the memo
-              Event.createOrUpdate rawEvent, (err, event) =>
-                  if err?
-                      # creation errors shouldn't prevent the process to run
-                      # correctly because they are unlikely to happen,
-                      # and have a low criticity
-                      next null, memo
-                  else
-                      @checkEventsUpdateToNotify event, ->
-                          next null, memo.concat [event]
+            async.reduce rawEvents, [], (memo, rawEvent, next) =>
+                # if there is an error, the event is not added to the memo
+                Event.createOrUpdate rawEvent, (err, event) =>
+                    if err?
+                        # creation errors shouldn't prevent the process to run
+                        # correctly because they are unlikely to happen,
+                        # and have a low criticity
+                        next null, memo
+                    else
+                        @checkEventsUpdateToNotify event, ->
+                            next null, memo.concat [event]
 
-          , (err, events) ->
-              callback null, events
+            , (err, events) ->
+                callback null, events
 
 
     # Notifications should be created for events that have changed in the next
@@ -245,7 +245,9 @@ module.exports =
                         # it won't be deleted
                         now = moment()
                         inTheFuture = moment(event.start).isAfter now
-                        hasBeenCreatedByKonnector = /Aurion.*/.test event.id
+                        {caldavuri} = event
+                        hasBeenCreatedByKonnector = caldavuri? and \
+                                                   /Aurion.*/.test(caldavuri)
                         if event.id not in eventsReferenceId \
                         and event.tags[0] is DEFAULT_CALENDAR \
                         and hasBeenCreatedByKonnector \
