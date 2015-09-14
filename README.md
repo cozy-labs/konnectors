@@ -5,6 +5,8 @@
 Collection of connectors to fetch data from different websites and save them
 into your Cozy.
 
+If you want to build your own konnector, here is [a complete documentation](https://github.com/cozy-labs/konnectors/wiki)
+
 # Available connectors
 
 *Bills*
