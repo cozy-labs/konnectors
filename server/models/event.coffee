@@ -16,6 +16,7 @@ module.exports = Event = americano.getModel 'Event',
     alarms      : type: [Object]
     created     : type: String
     lastModification: type: String
+    caldavuri   : type: String
 
 require('cozy-ical').decorateEvent Event
 
@@ -26,13 +27,22 @@ Event.byCalendar = (calendarId, callback) ->
     Event.request 'byCalendar', key: calendarId, callback
 
 Event.createOrUpdate = (data, callback) ->
-    Event.request 'all', key: data.id, (err, events) ->
+    {id} = data
+    data.caldavuri = id
+    data.docType = "Event"
+    delete data._id
+    delete data._attachments
+    delete data._rev
+    delete data.binaries
+    delete data.id
+
+    Event.request 'bycaldavuri', key: id, (err, events) ->
         if err?
             log.error err
             Event.create data, callback
         else if events.length is 0
             Event.create data, callback
-        else if data.id is events[0].id
+        else if data.caldavuri is events[0].caldavuri
             log.debug 'Event already exists, updating...'
             event = events[0]
 
