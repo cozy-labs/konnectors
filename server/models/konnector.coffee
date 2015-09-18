@@ -99,7 +99,7 @@ Konnector::import = (callback) ->
 
             @injectEncryptedFields()
             # Pass last import to the konnector
-            @fieldValues['lastSuccess'] = @lastFetch
+            @fieldValues['lastSuccess'] = @lastSuccess
             konnectorModule.fetch @fieldValues, (importErr, notifContent) =>
                 fields = @getFields()
                 @removeEncryptedFields fields
@@ -147,8 +147,14 @@ Konnector::appendConfigData = ->
     modelNames = []
     for key, value of @models
         name = value.toString()
-        if name.indexOf 'Constructor' isnt -1
+
+        if name.indexOf('Constructor') isnt -1
             name = name.substring 0, (name.length - 'Constructor'.length)
+        else
+            match = name.match /function ([^(]+)/
+            if match? and match[1]?
+                name = match[1]
+
         modelNames.push name
     @modelNames = modelNames
 

@@ -23,6 +23,7 @@ moment = require 'moment'
 cheerio = require 'cheerio'
 async = require 'async'
 fetcher = require '../lib/fetcher'
+extend = require('util')._extend
 
 filterExisting = require '../lib/filter_existing'
 saveDataAndFile = require '../lib/save_data_and_file'
@@ -99,6 +100,7 @@ module.exports =
             .use(fetchAllGoogleContacts)
             .use(prepareCozyContacts)
             .use(updateGoogleContacts)
+            .use(addContactsPictureInCozy)
 
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
@@ -109,6 +111,7 @@ module.exports =
 # Obtain a valid access_token : with auth_code on first launch,
 # else with the refresh_token.
 updateToken = (requiredFields, entries, data, callback) ->
+    log.debug 'updateToken'
 
     if requiredFields.refreshToken? and requiredFields.authCode is 'connected'
         GoogleToken.refreshToken requiredFields.refreshToken, (err, tokens) ->
@@ -124,11 +127,15 @@ updateToken = (requiredFields, entries, data, callback) ->
             requiredFields.accessToken = tokens.access_token
             requiredFields.refreshToken = tokens.refresh_token
             requiredFields.authCode = 'connected'
+            requiredFields.accountName = null
+            requiredFields.lastSuccess = null # Reset
 
             callback()
 
 # Fetch account name (email address of this google account) on first launch.
 fetchAccountName = (requiredFields, entries, data, callback) ->
+    log.debug 'fetchAccountName'
+
     if requiredFields.accountName? and
        requiredFields.accountName.indexOf('@') isnt -1
         return callback()
@@ -153,6 +160,8 @@ fetchAccountName = (requiredFields, entries, data, callback) ->
 
 # Save konnector's fieldValues during fetch process.
 saveTokensInKonnector = (requiredFields, entries, data, callback) ->
+    log.debug 'saveTokensInKonnector'
+
     Konnector = require '../models/konnector'
     Konnector.all (err, konnectors) ->
         return callback err if err
@@ -167,11 +176,14 @@ saveTokensInKonnector = (requiredFields, entries, data, callback) ->
 
 # Fetch changes in google contacts since last successfull fetch.
 fetchGoogleChanges = (requiredFields, entries, data, callback) ->
+    log.debug 'fetchGoogleChanges'
+
     uri = "https://www.google.com/m8/feeds/contacts/#{requiredFields.accountName}/full/?alt=json&showdeleted=true&max-results=10000"
 
-    if requiredFields.lastImport?
+    if requiredFields.lastSuccess?
         uri += "&updated-min=#{requiredFields.lastSuccess.toISOString()}"
 
+    log.debug "fetch #{uri}"
     request
         method: 'GET'
         uri: uri
@@ -196,26 +208,32 @@ fetchGoogleChanges = (requiredFields, entries, data, callback) ->
 #    - else, find a same contact in cozy and merge them
 #    - else create a brand new cozy contact
 updateCozyContacts = (requiredFields, entries, data, callback) ->
-    async.eachSeries entries.googleChanges, (gEntry, cb) ->
+    log.debug 'updateCozyContacts'
+
+    async.mapSeries entries.googleChanges
+    , (gEntry, cb) ->
         if gEntry.gd$deleted?
             removeFromCozyContact gEntry, entries.ofAccountByIds
             , requiredFields.accountName, cb
         else
-            updateCozyContact gEntry, entries.cozyContacts, entries.ofAccountByIds
-            , requiredFields, cb
-    , callback
+            updateCozyContact gEntry, entries, requiredFields, cb
+    , (err, updated) ->
+        entries.updatedWithGContact = updated.filter (gEntry) -> gEntry?
+        callback err
 
 
 # Unlink cozy contact from this account. Just removes account object from
 # the contact's account field.
 removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
-    contact = ofAccountByIds[GoogleContactHelper.extractGoogleId(gEntry)]
+    id = GoogleContactHelper.extractGoogleId gEntry
+    contact = ofAccountByIds[id]
     if contact?
-        log.info "Unlink #{contact?.fn} from this account"
+        log.info "Unlink #{id} #{contact?.fn} from this account"
         contact.deleteAccount { type: ACCOUNT_TYPE, name: accountName }
-        contact.save callback
+        contact.save (err) ->
+            callback err
     else
-        log.info "Contact already unlinked from this account."
+        log.info "Contact #{id} already unlinked from this account."
         callback()
 
 
@@ -223,7 +241,10 @@ removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
 # Update the cozy contact if already synced,
 # else, find a same contact in cozy and merge them
 # else create a brand new cozy contact
-updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, callback) ->
+updateCozyContact = (gEntry, entries, requiredFields, callback) ->
+    cozyContacts = entries.cozyContacts
+    ofAccountByIds = entries.ofAccountByIds
+
     accountName = requiredFields.accountName
     fromGoogle = new Contact GoogleContactHelper.fromGoogleContact gEntry, accountName
     accountG = fromGoogle.accounts[0]
@@ -233,7 +254,12 @@ updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, call
         fromCozy.setAccount fromGoogle.accounts[0]
         fromCozy.save (err, contact) ->
             return callback err if err
-            GoogleContactHelper.addContactPictureInCozy requiredFields, contact, gEntry, callback
+            callback null, gEntry
+            # GoogleContactHelper.addContactPictureInCozy requiredFields, contact
+            # , gEntry, (err) ->
+            #     # Continue on error as picture is not the most important.
+            #     log.warn err.message if err
+            #     callback()
 
 
     # already in cozy ?
@@ -241,7 +267,7 @@ updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, call
         fromCozy = ofAccountByIds[accountG.id]
         accountC = fromCozy.getAccount ACCOUNT_TYPE, accountName
         if accountC.lastUpdate < accountG.lastUpdate and
-           fromGoogle.intrinsicRev() isnt fromCozy.intrinsicRev()
+           ContactHelper.intrinsicRev(fromGoogle) isnt ContactHelper.intrinsicRev(fromCozy)
             log.info "Update #{fromCozy?.fn} from google"
             updateContact fromCozy, fromGoogle
 
@@ -254,6 +280,7 @@ updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, call
         for cozyContact in cozyContacts
             if CompareContacts.isSamePerson cozyContact, fromGoogle
                 fromCozy = cozyContact
+                log.debug "#{fromCozy?.fn} is same person"
                 break
 
         if fromCozy? and not fromCozy.getAccount(ACCOUNT_TYPE, accountName)?
@@ -266,14 +293,18 @@ updateCozyContact = (gEntry,  cozyContacts, ofAccountByIds, requiredFields, call
             fromGoogle.revision = new Date().toISOString()
             Contact.create fromGoogle, (err, contact) ->
                 return callback err if err
-                # TODO: reactivate this, needs upload to google to ;
-                # check for speed
-                GoogleContactHelper.addContactPictureInCozy requiredFields, contact, gEntry, callback
-                callback()
+                callback null, gEntry
+                # GoogleContactHelper.addContactPictureInCozy requiredFields
+                # , contact, gEntry, (err) ->
+                #     # Continue on error as picture is not the most important.
+                #     log.warn err.message if err
+                #     callback()
 
 
 # Fetch all contact of this google account.
 fetchAllGoogleContacts = (requiredFields, entries, data, callback) ->
+    log.debug 'fetchAllGoogleContacts'
+
     uri = "https://www.google.com/m8/feeds/contacts/#{requiredFields.accountName}/full/?alt=json&max-results=10000"
     request
         method: 'GET'
@@ -298,6 +329,7 @@ fetchAllGoogleContacts = (requiredFields, entries, data, callback) ->
 
 # Get cozy's contact, and prepare andy data structures for nexts procedures.
 prepareCozyContacts = (requiredFields, entries, data, callback) ->
+    log.debug 'prepareCozyContacts'
     Contact.all (err, contacts) ->
         return callback err if err
         entries.cozyContacts = contacts
@@ -315,13 +347,14 @@ prepareCozyContacts = (requiredFields, entries, data, callback) ->
 
 # Apply changes in cozy to google contacts
 updateGoogleContacts = (requiredFields, entries, data, callback) ->
+    log.debug 'updateGoogleContacts'
 
-    googleContactsById = entries.googleContactsById
+    googleContactsById = extend {}, entries.googleContactsById
 
     async.eachSeries entries.ofAccount, (contact, cb) ->
         account = contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
         gEntry = googleContactsById[account.id]
-        delete googleContactsById[account.id] # Mark as shown
+        delete googleContactsById[account.id] # Mark as Zshown
 
         if account.lastUpdate < contact.revision
             updateGoogleContact requiredFields, contact, gEntry, cb
@@ -344,6 +377,9 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
 
     fromGoogle = new Contact GoogleContactHelper.fromGoogleContact gEntry
     if ContactHelper.intrinsicRev(fromGoogle) isnt ContactHelper.intrinsicRev(contact)
+        log.debug ContactHelper.intrinsicRev(contact)
+        log.debug ContactHelper.intrinsicRev(fromGoogle)
+
         log.info "update #{contact?.fn} in google"
         updated = GoogleContactHelper.toGoogleContact contact, gEntry
         request
@@ -357,6 +393,7 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
                 'If-Match': '*'
         , (err, res, body) ->
             return callback err if err
+            log.debug  body
             if body.error?
                 log.warn 'Error while uploading contact to google'
                 log.warn body
@@ -382,3 +419,15 @@ deleteInGoogle = (requiredFields, gId, callback) ->
             'If-Match': '*'
     , (err, res, body) ->
         callback err
+
+addContactsPictureInCozy = (requiredFields, entries, data, callback) ->
+    log.debug "addContactsPictureInCozy"
+    async.eachSeries entries.updatedWithGContact, (gEntry, cb) ->
+        GoogleContactHelper.addContactPictureInCozy requiredFields
+        , entries.ofAccountByIds[GoogleContactHelper.extractGoogleId(gEntry)]
+        , gEntry, (err) ->
+            # Continue on error as picture is not the most important.
+            log.warn err.message if err
+            cb()
+
+    , callback()

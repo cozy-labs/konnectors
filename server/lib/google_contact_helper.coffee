@@ -5,6 +5,9 @@ url = require 'url'
 Helper = require './contact_helper'
 module.exports = GCH = {}
 
+log = require('printit')
+    date: true
+
 GCH.extractGoogleId = (gEntry) ->
     uri = gEntry.id?.$t
     if uri?
@@ -85,16 +88,11 @@ GCH.fromGoogleContact = (gContact, accountName)->
             type: getTypeFragment adr
 
     websites = gContact.gContact$website?.slice() or []
-    # Put the first url in direct field 'url'
-    if gContact.gContact$website?.length > 0
-        contact.url = gContact.gContact$website[0].href
-        websites = gContact.gContact$website.slice 1
-        # Remaining ones go as datapoints.
-        for web in websites
-            contact.datapoints.push
-                name: "url"
-                value: web.href
-                type: getTypePlain web
+    for web in websites
+        contact.datapoints.push
+            name: "url"
+            value: web.href
+            type: getTypePlain web
 
     for rel in gContact.gContact$relation or []
         contact.datapoints.push
@@ -153,19 +151,23 @@ GCH.toGoogleContact = (contact, gEntry) ->
     addField = (gField, field) ->
         unless gContact[gField]
             gContact[gField] = []
-
         gContact[gField].push field
 
-    if contact.url
+    if contact.url and
+       # Avoid duplication of url in datapoints.
+       not contact.datapoints.any((dp) ->
+            dp.type is "url" and dp.value is contact.url)
+
         addField 'gContact$website',
             href: contact.url
             rel: 'other'
 
-    for dp in contact.datapoints
+    for dp in contact.datapoints when dp.value? and dp.value isnt ''
         name = dp.name.toUpperCase()
         switch name
             when 'TEL'
-                addField 'gd$phoneNumber', setTypeFragment dp, $t: dp.value
+                if dp.value? and dp.value isnt ''
+                    addField 'gd$phoneNumber', setTypeFragment dp, $t: dp.value
 
             when 'EMAIL'
                 field = setTypeFragment dp, address: dp.value
@@ -235,7 +237,7 @@ GCH.toGoogleContact = (contact, gEntry) ->
 
 
 PICTUREREL = "http://schemas.google.com/contacts/2008/rel#photo"
-GCH.addContactPictureInCozy = (accesToken, cozyContact, gContact, done) ->
+GCH.addContactPictureInCozy = (accessToken, cozyContact, gContact, done) ->
     pictureLink = gContact.link.filter (link) -> link.rel is PICTUREREL
     pictureUrl = pictureLink[0]?.href
 
@@ -245,11 +247,12 @@ GCH.addContactPictureInCozy = (accesToken, cozyContact, gContact, done) ->
     opts.headers =
         'Authorization': 'Bearer ' + accessToken
         'GData-Version': '3.0'
-    https.get opts, (stream)->
+    request = https.get opts, (stream)->
         stream.on 'error', done
         unless stream.statusCode is 200
-            log.warn "error fetching #{pictureUrl}", stream.statusCode
-            return done null
+            return done new Error "error fetching #{pictureUrl}\
+                            : #{stream.statusCode}"
+
         thumbStream = stream.pipe im().resize('300x300^').crop('300x300')
         thumbStream.on 'error', done
         thumbStream.path = 'useless'
@@ -262,8 +265,12 @@ GCH.addContactPictureInCozy = (accesToken, cozyContact, gContact, done) ->
                 log.debug "picture ok"
             done err
 
+    request.setTimeout 10000, () ->
+        done new Error "Reached client timeout.\
+                                        Google API may throttle requests."
 
-GCH.putPicture2Google = (accessToken, account, contact, gEntry, callback) ->
+
+GCH.putPicture2Google = (accessToken, account, contact, callback) ->
     # Check if picture ...
     unless contact._attachments?.picture?
         return callback()
