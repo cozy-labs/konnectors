@@ -2,8 +2,6 @@ cozydb = require 'cozydb'
 
 https = require 'https'
 
-requestJson = require 'request-json'
-
 Contact = require '../models/contact'
 
 CompareContacts = require '../lib/compare_contacts'
@@ -17,7 +15,6 @@ url = require 'url'
 #
 fs = require 'fs'
 qs = require 'querystring'
-# requestJson = require 'request-json'
 request = require 'request'
 moment = require 'moment'
 cheerio = require 'cheerio'
@@ -140,22 +137,10 @@ fetchAccountName = (requiredFields, entries, data, callback) ->
        requiredFields.accountName.indexOf('@') isnt -1
         return callback()
 
-    request
-        method: 'GET'
-        uri: "https://www.googleapis.com/oauth2/v2/userinfo"
-        json: true
-        headers:
-            'Authorization': 'Bearer ' + requiredFields.accessToken
-            'GData-Version': '3.0'
-    , (err, res, body) ->
+    GoogleContactHelper.fetchAccountName requiredFields.accessToken
+    , (err, accountName) ->
         return callback err if err
-        if body.error
-            log.info "Error while fetching account name : "
-            log.info body
-            return callback body
-
-        requiredFields.accountName = body.email
-
+        requiredFields.accountName = accountName
         callback()
 
 # Save konnector's fieldValues during fetch process.
@@ -216,9 +201,10 @@ updateCozyContacts = (requiredFields, entries, data, callback) ->
             removeFromCozyContact gEntry, entries.ofAccountByIds
             , requiredFields.accountName, cb
         else
-            updateCozyContact gEntry, entries, requiredFields, cb
+            GoogleContactHelper.updateCozyContact gEntry, entries
+            , requiredFields.accountName, cb
     , (err, updated) ->
-        entries.updatedWithGContact = updated.filter (gEntry) -> gEntry?
+        entries.updatedCozyContacts = updated.filter (contact) -> contact?
         callback err
 
 
@@ -420,14 +406,22 @@ deleteInGoogle = (requiredFields, gId, callback) ->
     , (err, res, body) ->
         callback err
 
+
 addContactsPictureInCozy = (requiredFields, entries, data, callback) ->
     log.debug "addContactsPictureInCozy"
-    async.eachSeries entries.updatedWithGContact, (gEntry, cb) ->
-        GoogleContactHelper.addContactPictureInCozy requiredFields
-        , entries.ofAccountByIds[GoogleContactHelper.extractGoogleId(gEntry)]
-        , gEntry, (err) ->
-            # Continue on error as picture is not the most important.
-            log.warn err.message if err
+
+    async.eachSeries entries.updatedCozyContacts, (contact, cb) ->
+        account = contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
+        if account
+            GoogleContactHelper.addContactPictureInCozy requiredFields.accessToken
+            , contact
+            , entries.googleContactsById[account.id]
+            , (err) ->
+                # Continue on error as picture is not the most important.
+                log.warn err.message if err
+                cb()
+        else
+            log.warn "Updated contact from google without account field !"
             cb()
 
     , callback()
