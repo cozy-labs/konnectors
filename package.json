@@ -18,7 +18,7 @@
     "cozy-ical": "1.1.12",
     "cozy-notifications-helper": "1.0.2",
     "cozy-realtime-adapter": "1.0.0",
-    "cozydb": "0.0.17",
+    "cozydb": "0.1.0",
     "jade": "1.9.0",
     "moment": "2.10.6",
     "nest-api": "0.0.5",
