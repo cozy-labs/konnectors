@@ -20,7 +20,7 @@ class DataPoint extends cozydb.Model
         type: String
 
 
-# An contact account in an external service (typically google contact).
+# A contact account in an external service (typically google contact).
 # An account is uniquely identified by the couple of its type and name.
 class Account extends cozydb.Model
     @schema:

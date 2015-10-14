@@ -161,7 +161,7 @@ GCH.toGoogleContact = (contact, gEntry) ->
 
     if contact.url and
        # Avoid duplication of url in datapoints.
-       not contact.datapoints.any((dp) ->
+       not contact.datapoints.some((dp) ->
             dp.type is "url" and dp.value is contact.url)
 
         addField 'gContact$website',
