@@ -49,6 +49,9 @@ module.exports = Event = americano.getModel('Event', {
   },
   lastModification: {
     type: String
+  },
+  caldavuri: {
+    type: String
   }
 });
 
@@ -65,8 +68,17 @@ Event.byCalendar = function(calendarId, callback) {
 };
 
 Event.createOrUpdate = function(data, callback) {
-  return Event.request('all', {
-    key: data.id
+  var id;
+  id = data.id;
+  data.caldavuri = id;
+  data.docType = "Event";
+  delete data._id;
+  delete data._attachments;
+  delete data._rev;
+  delete data.binaries;
+  delete data.id;
+  return Event.request('bycaldavuri', {
+    key: id
   }, function(err, events) {
     var event, oldValue;
     if (err != null) {
@@ -74,7 +86,7 @@ Event.createOrUpdate = function(data, callback) {
       return Event.create(data, callback);
     } else if (events.length === 0) {
       return Event.create(data, callback);
-    } else if (data.id === events[0].id) {
+    } else if (data.caldavuri === events[0].caldavuri) {
       log.debug('Event already exists, updating...');
       event = events[0];
       if (data.start !== event.start || data.end !== event.end || data.place !== event.place || data.description !== event.description || data.details !== event.details) {
