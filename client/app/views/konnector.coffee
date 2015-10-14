@@ -197,7 +197,7 @@ module.exports = class KonnectorView extends BaseView
 <a href="/#apps/files/folders/#{selectedPath.id}"
 class="folder-link"
 target="_blank">
-open selected folder
+#{t "open selected folder"}
 </a>
 """
             fieldHtml += "</div>"

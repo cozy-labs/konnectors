@@ -48,6 +48,7 @@ module.exports =
     'error occurred during import.': 'An error occurred during the last import.'
     'error occurred during import:': 'An error occurred during the last import:'
     "import server error": "Server error occured while importing."
+    'open selected folder': 'Open selected folder'
 
     # Konnectors' description
     'konnector description free': "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files."

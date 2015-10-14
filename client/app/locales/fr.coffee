@@ -48,6 +48,7 @@ module.exports =
     'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.'
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
     "import server error": "L'import a rencontré une erreur serveur."
+    'open selected folder': 'Ouvrir le dossier sélectionné'
 
     # Konnectors' description
     'konnector description free': "Téléchargez toutes vos factures internet de Free. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
