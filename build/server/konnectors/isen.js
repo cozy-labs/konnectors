@@ -34,7 +34,7 @@ BASE_URL = 'https://web.isen-bretagne.fr/cc/jsonFileList/';
 DEFAULT_CALENDAR = 'ISEN';
 
 module.exports = {
-  name: "ISEN",
+  name: "Isen",
   slug: "isen",
   description: 'konnector description isen',
   vendorLink: "https://www.isen.fr/",
