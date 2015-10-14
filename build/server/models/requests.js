@@ -31,5 +31,9 @@ module.exports = {
   },
   commit: {
     byDate: americano.defaultRequests.by('date')
+  },
+  event: {
+    all: americano.defaultRequests.all,
+    bycaldavuri: americano.defaultRequests.by('caldavuri')
   }
 };

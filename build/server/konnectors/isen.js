@@ -272,10 +272,11 @@ module.exports = {
             });
             removed = [];
             return async.eachSeries(events, function(event, next) {
-              var hasBeenCreatedByKonnector, inTheFuture, now, ref;
+              var caldavuri, hasBeenCreatedByKonnector, inTheFuture, now, ref;
               now = moment();
               inTheFuture = moment(event.start).isAfter(now);
-              hasBeenCreatedByKonnector = /Aurion.*/.test(event.id);
+              caldavuri = event.caldavuri;
+              hasBeenCreatedByKonnector = (caldavuri != null) && /Aurion.*/.test(caldavuri);
               if ((ref = event.id, indexOf.call(eventsReferenceId, ref) < 0) && event.tags[0] === DEFAULT_CALENDAR && hasBeenCreatedByKonnector && inTheFuture) {
                 return event.destroy(function(err) {
                   var formatter, formatterKey, localeKey, notifContent;
