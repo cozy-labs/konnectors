@@ -64,7 +64,6 @@ getEvents = function(requiredFields, commits, data, next) {
   client = requestJson.createClient('https://api.github.com');
   username = requiredFields.login;
   pass = requiredFields.password;
-  console.log(requiredFields);
   client.setBasicAuth(username, pass);
   path = "users/" + username + "/events?page=";
   data.commits = [];
