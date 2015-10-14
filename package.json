@@ -5,7 +5,7 @@
     "node = 0.10.x"
   ],
   "description": "Store data from the web in your Cozy",
-  "license": "AGPL v3.0",
+  "license": "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/frankrousseau/konnectors.git"
@@ -18,7 +18,7 @@
     "cozy-ical": "1.1.12",
     "cozy-notifications-helper": "1.0.2",
     "cozy-realtime-adapter": "1.0.0",
-    "cozydb": "0.0.17",
+    "cozydb": "0.1.1",
     "jade": "1.9.0",
     "moment": "2.10.6",
     "nest-api": "0.0.5",
