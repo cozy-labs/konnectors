@@ -31,8 +31,9 @@ class BankOperationLinker
     # For a given entry we look for an operation with same date and same
     # amount.
     linkOperationIfExist: (entry, callback) =>
-        startDate = moment(entry.date).subtract @minDateDelta, 'days'
-        endDate = moment(entry.date).add @maxDateDelta, 'days'
+        date = new Date entry.date
+        startDate = moment(date).subtract @minDateDelta, 'days'
+        endDate = moment(date).add @maxDateDelta, 'days'
         startkey = "#{startDate.format "YYYY-MM-DDT00:00:00.000"}Z"
         endkey = "#{endDate.format "YYYY-MM-DDT00:00:00.000"}Z"
 
@@ -51,7 +52,7 @@ class BankOperationLinker
         catch
             amount = 0
         for operation in operations
-        
+
             operationAmount = operation.amount
             if operationAmount < 0
                 operationAmount = operationAmount * -1
@@ -79,7 +80,8 @@ class BankOperationLinker
     # Save the binary ID and the file ID as an extra attribute of the
     # operation.
     linkOperation: (operation, entry, callback) =>
-        key = "#{moment(entry.date).format "YYYY-MM-DDT00:00:00.000"}Z"
+        date = new Date entry.date
+        key = "#{moment(date).format "YYYY-MM-DDT00:00:00.000"}Z"
 
         @model.request 'byDate', key: key, (err, entries) =>
 

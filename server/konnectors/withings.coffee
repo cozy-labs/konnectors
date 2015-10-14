@@ -270,24 +270,24 @@ saveBodyMeasures = (measures, callback) ->
         log.info(
             "#{bloodPressuresToSave.length} blood pressure measures to save")
 
-        saveAll = (models, done) ->
+        saveAll = (modelClass, models, done) ->
             async.forEach models, (model, callback) ->
-                model.save callback
+                modelClass.create model, callback
             , (err) ->
                 done err
 
         log.info 'Save weights...'
-        saveAll measuresToSave, (err) ->
+        saveAll Weight, measuresToSave, (err) ->
             log.info 'Weights saved...'
             return callback err if err
 
             log.info 'Save heartbeats...'
-            saveAll heartBeatsToSave, (err) ->
+            saveAll HeartBeat, heartBeatsToSave, (err) ->
                 log.info 'Heartbeats saved...'
                 return callback err if err
 
                 log.info 'Save blood pressures...'
-                saveAll bloodPressuresToSave, (err) ->
+                saveAll BloodPressure, bloodPressuresToSave, (err) ->
                     log.info 'Blood pressures saved...'
                     return callback err if err
 
@@ -343,7 +343,7 @@ saveActivityMeasures = (measures, callback) ->
 
             log.info "Found #{stepsToSave.length} new steps measures to save!"
             saveInstance = (model, cb) ->
-                model.save cb
+                Steps.create model, cb
 
             async.forEach stepsToSave, saveInstance, (err) ->
                 return callback err if err?

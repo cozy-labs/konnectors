@@ -130,10 +130,13 @@ logIn = (requiredFields, entries, data, next) ->
 
     log.info 'Attempt to log in'
     request.post url, options, (err, res, body) ->
+
         if err
             next err
+
         else if res.statusCode isnt 200
             next new Error "Cannot connect to Jawbone server."
+
         else
             body = JSON.parse body
             if body.error?

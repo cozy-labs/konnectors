@@ -50,7 +50,11 @@ describe 'Running link_operation', ->
             emit doc.date, doc
             return
         BankOperation.defineRequest 'bydate', map, ->
-            Bill.defineRequest 'bydate', map, done
+            Bill.defineRequest 'bydate', map, ->
+                map = (doc) ->
+                    emit doc._id, doc
+                    return
+                File.defineRequest 'all', map, done
 
     before (done) ->
         @timeout 4000
@@ -72,7 +76,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/01/2015'
+                    date: moment '03/01/2015', 'MM/DD/YYYY'
                     amount: '20.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -92,7 +96,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/01/2015'
+                    date: moment '03/01/2015', 'MM/DD/YYYY'
                     amount: '16.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -112,7 +116,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/04/2015'
+                    date: moment '03/04/2015', 'MM/DD/YYYY'
                     amount: '20.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -132,7 +136,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/05/2015'
+                    date: moment '03/05/2015', 'MM/DD/YYYY'
                     amount: '16.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -155,7 +159,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/01/2015'
+                    date: moment '03/01/2015', 'MM/DD/YYYY'
                     amount: '12.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -176,7 +180,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/21/2015'
+                    date: moment '03/21/2015', 'MM/DD/YYYY'
                     amount: '20.0'
                     vendor: 'vendor01'
                     fileId: 125
@@ -196,7 +200,7 @@ describe 'Running link_operation', ->
 
             bills =
                 fetched: [
-                    date: moment '03/01/2015'
+                    date: moment '03/01/2015', 'MM/DD/YYYY'
                     amount: '20.0'
                     vendor: 'vendor01'
                     fileId: 125

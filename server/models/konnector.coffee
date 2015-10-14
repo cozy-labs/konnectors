@@ -15,6 +15,7 @@ module.exports = Konnector = americano.getModel 'Konnector',
     isImporting: type: Boolean, default: false
     importInterval: type: String, default: 'none'
     errorMessage: type: String, default: null
+    importErrorMessage: type: String, default: null
 
 
 # Retrieve all konnectors. Make sure that encrypted fields are decrypted before
@@ -94,30 +95,32 @@ Konnector::import = (callback) ->
             konnectorModule = konnectorHash[@slug]
 
             @injectEncryptedFields()
-            konnectorModule.fetch @fieldValues, (err, notifContent) =>
+            konnectorModule.fetch @fieldValues, (importErr, notifContent) =>
                 fields = @getFields()
                 @removeEncryptedFields fields
 
-                if err? and \
-                typeof(err) is 'object' and \
-                Object.keys(err).length > 0
-                    data = isImporting: false, errorMessage: err
+                if importErr? and \
+                typeof(importErr) is 'object' and \
+                Object.keys(importErr).length > 0
+                    data =
+                        isImporting: false
+                        importErrorMessage: importErr.message
                     @updateAttributes data, ->
-                        # raise the error from the import, not the update
-                        callback err, notifContent
+                        callback importErr, notifContent
 
-                else if err? and typeof(err) is 'string'
-                    data = isImporting: false, errorMessage: new Error err
+                else if importErr? and typeof(importErr) is 'string'
+                    data =
+                        isImporting: false
+                        importErrorMessage: importErr
                     @updateAttributes data, ->
-                        # raise the error from the import, not the update
-                        callback err, notifContent
+                        callback importErr, notifContent
 
                 else
                     data =
                         isImporting: false
                         lastImport: new Date()
-                        errorMessage: null
-                    @updateAttributes data, (err) -> callback err, notifContent
+                        importErrorMessage: null
+                    @updateAttributes data, (importErr) -> callback importErr, notifContent
 
 
 # Append data from module file of curent konnector.
