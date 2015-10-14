@@ -27,6 +27,8 @@ module.exports =
     'every day': 'Tous les jours'
     'every week': 'Toutes les semaines'
     'each month': 'Tous les mois'
+    'select starting date': 'Sélectionnez une date de départ'
+    'start import from': 'À partir du'
 
     'date format': 'DD/MM/YYYY [à] HH[h]mm'
 

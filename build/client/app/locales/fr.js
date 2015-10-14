@@ -27,6 +27,8 @@ module.exports = {
   'every day': 'Tous les jours',
   'every week': 'Toutes les semaines',
   'each month': 'Tous les mois',
+  'select starting date': 'Sélectionnez une date de départ',
+  'start import from': 'À partir du',
   'date format': 'DD/MM/YYYY [à] HH[h]mm',
   'home headline': "Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.\nDe vos factures de téléphone aux données de votre balance connectée en passant par vos tweets. Configurez les connecteurs qui vous intéressent :",
   'home config step 1': "Sélectionnez un connecteur dans le menu à gauche",

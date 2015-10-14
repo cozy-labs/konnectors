@@ -27,6 +27,8 @@ module.exports = {
   'every day': 'Every day',
   'every week': 'Every week',
   'each month': 'Each month',
+  'select starting date': "Select a starting date",
+  'start import from': "From",
   'date format': 'LLL',
   'home headline': "With Konnectors you can retrieve many data and save them into your Cozy.\nFrom your phone bills to your connected scale, or your tweets. Configure the connectors you are interested in:",
   'home config step 1': "Select a connector in the menu on the left",

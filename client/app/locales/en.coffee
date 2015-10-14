@@ -27,6 +27,8 @@ module.exports =
     'every day': 'Every day'
     'every week': 'Every week'
     'each month': 'Each month'
+    'select starting date': "Select a starting date"
+    'start import from': "From"
 
     'date format': 'LLL'
 
