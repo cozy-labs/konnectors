@@ -72,7 +72,6 @@ module.exports =
 #       - remove from google contact absent in cozy.
 
     fetch: (requiredFields, callback) ->
-
         log.info "Import started"
         fetcher.new()
             .use(updateToken)
@@ -81,9 +80,9 @@ module.exports =
             .use(fetchGoogleChanges)
             .use(prepareCozyContacts)
             .use(updateCozyContacts)
-            .use(fetchAllGoogleContacts)
-            .use(prepareCozyContacts)
-            .use(updateGoogleContacts)
+            #.use(fetchAllGoogleContacts)
+            #.use(prepareCozyContacts)
+            #.use(updateGoogleContacts)
             .use(addContactsPictureInCozy)
 
             .args(requiredFields, {}, {})
@@ -207,9 +206,13 @@ removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
     if contact?
         log.debug "Unlink #{id} #{contact?.fn} from this account"
         log.info "Unlink #{id} from this account"
-        contact.deleteAccount { type: ACCOUNT_TYPE, name: accountName }
-        contact.save (err) ->
-            callback err
+        accounts = contact.accounts.filter (account) ->
+            not (account.type is ACCOUNT_TYPE and account.name is accountName)
+        tags = contact.tags.filter (tag) -> tag isnt "google"
+        contact.updateAttributes
+            tags: tags
+            accounts: accounts
+        , callback
     else
         log.info "Contact #{id} already unlinked from this account."
         callback()
@@ -338,6 +341,9 @@ deleteInGoogle = (requiredFields, gId, callback) ->
 addContactsPictureInCozy = (requiredFields, entries, data, callback) ->
     log.debug "addContactsPictureInCozy"
 
+    if entries.updatedCozyContacts.length is 0
+        return callback()
+
     async.eachSeries entries.updatedCozyContacts, (contact, cb) ->
         account = contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
         if account
@@ -352,4 +358,4 @@ addContactsPictureInCozy = (requiredFields, entries, data, callback) ->
             log.warn "Updated contact from google without account field !"
             cb()
 
-    , callback()
+    , callback

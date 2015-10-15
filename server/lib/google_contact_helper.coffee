@@ -111,6 +111,8 @@ GCH.fromGoogleContact = (gContact, accountName)->
             value: ev.gd$when?.startTime
             type: getTypePlain ev
 
+    contact.tags = ['google']
+
     return contact
 
 
@@ -340,7 +342,6 @@ GCH.fetchAccountName = (accessToken, callback) ->
 # else create a brand new cozy contact
 # Return cozy contact updated or created to the cllabck
 GCH.updateCozyContact = (gEntry, contacts, accountName, callback) ->
-
     Contact = require '../models/contact'
     ofAccountByIds = contacts.ofAccountByIds
     cozyContacts = contacts.cozyContacts
