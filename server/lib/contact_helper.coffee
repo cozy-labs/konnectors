@@ -1,7 +1,4 @@
-crypto = require 'crypto'
-
-
-CH = {}
+module.exports = CH = {}
 
 # With this Model :
 # - fn: String # vCard FullName = display name
@@ -58,14 +55,73 @@ CH.adrArrayToString = (value) ->
     flat += '\n' + countryPart if countryPart isnt ''
     return flat
 
+
 CH.adrCompleteStreet = (value) ->
     value = value or []
     return structuredToFlat value[0..2]
+
 
 # Convert String (of an address) to a [String][7]
 CH.adrStringToArray = (s) ->
     s = s or ''
     return ['', '', s, '', '', '', '']
+
+
+CH.imgUrl2DataUrl = (uri, callback) ->
+    img = new Image()
+
+    img.onload = ->
+        IMAGE_DIMENSION = 600
+        ratiodim = if img.width > img.height then 'height' else 'width'
+        ratio = IMAGE_DIMENSION / img[ratiodim]
+
+        # use canvas to resize the image
+        canvas = document.createElement 'canvas'
+        canvas.height = canvas.width = IMAGE_DIMENSION
+        ctx = canvas.getContext '2d'
+        ctx.drawImage img, 0, 0, ratio * img.width, ratio * img.height
+        dataUrl = canvas.toDataURL 'image/jpeg'
+
+        callback null, dataUrl
+
+    img.src = uri
+
+
+# Return the account with specified type and name or null.
+CH.getAccount = (contact, accountType, accountName) ->
+    return null unless contact.accounts?
+
+    account = contact.accounts.filter (account) ->
+        return account.type is accountType and account.name is accountName
+
+    if account.length > 0
+        return account[0]
+    else
+        return null
+
+
+# Add or update specified account.
+CH.setAccount = (contact, account) ->
+    current = CH.getAccount contact, account.type, account.name
+    if current?
+        for k, v of account
+            current[k] = v
+    else
+        contact.accounts = contact.accounts or []
+        contact.accounts.push account
+
+
+# Unlink this contact from the specifie account.
+CH.deleteAccount = (contact, account) ->
+    for current, i in contact.accounts
+        if current.type is account.type and current.name is account.name
+            contacts.accounts.splice i, 1
+            return true
+
+    return false
+
+CH.hasAccount = (contact, accountType, accountName) ->
+    return CH.getAccount(contact, accountType, accountName)?
 
 # Construct a determinist revision string, based on data of the contact.
 # The "checksum " of a cozy contact.
@@ -74,16 +130,15 @@ CH.intrinsicRev = (contact) ->
     fieldNames = [ 'fn', 'n', 'org', 'title',
         # 'department', #Unused in google contacts
         'bday', 'nickname',
-        'url',
         'note',
         # TODO 'tags'
-        # TODO attachments ?
+        # TODO '_attachments'
     ]
 
     asStr = ''
     for fieldName in fieldNames
         if fieldName of contact and
-           contact[fieldName]? and contact[fieldName] isnt ''
+        contact[fieldName]? and contact[fieldName] isnt ''
             asStr += fieldName
             asStr += ': '
             asStr += contact[fieldName]
@@ -100,6 +155,10 @@ CH.intrinsicRev = (contact) ->
         else
             s += datapoint.value
 
+    # Represent url field as a datapoint for easier compatibility.
+    if contact.url?
+        stringDps.push "name:url, type:other, value: #{contact.url}"
+
     # sort them.
     stringDps.sort()
 
@@ -110,9 +169,3 @@ CH.intrinsicRev = (contact) ->
     # shasum = crypto.createHash('sha1')
     # shasum.update asStr
     # return shasum.digest 'base64'
-
-
-if module?.exports
-    module.exports = CH
-else
-    window.ContactHelper = CH

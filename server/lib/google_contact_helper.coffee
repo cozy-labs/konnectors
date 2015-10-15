@@ -46,10 +46,7 @@ GCH.fromGoogleContact = (gContact, accountName)->
         part = gContact.gd$name?[field]?.$t or ''
         return part.replace /;/g, ' '
 
-
     contact.n = "#{nameComponent('gd$familyName')};#{nameComponent('gd$givenName')};#{nameComponent('gd$additionalName')};#{nameComponent('gd$namePrefix')};#{nameComponent('gd$nameSuffix')}"
-
-
 
     # Extract the type, or fall back on label, or other.
     getTypeFragment = (component) ->
@@ -68,12 +65,14 @@ GCH.fromGoogleContact = (gContact, accountName)->
             value: email.address
             type: getTypeFragment email
 
-
     for phone in gContact.gd$phoneNumber or []
+        # TODO : phone.uri is cleaner (country prefix, grouped numbers, ...),
+        # but is trickier to sync.
+        #value = phone.uri?.replace('tel:', '').replace(/-/g, ' ')
         contact.datapoints.push
             name: "tel"
             pref: phone.primary or false
-            value: phone.uri?.replace('tel:', '').replace(/-/g, ' ')
+            value: phone.$t
             type: getTypeFragment phone
 
     for iM in gContact.gd$im or []
@@ -93,7 +92,7 @@ GCH.fromGoogleContact = (gContact, accountName)->
             ]
             type: getTypeFragment adr
 
-    websites = gContact.gContact$website?.slice() or []
+    websites = gContact.gContact$website or []
     for web in websites
         contact.datapoints.push
             name: "url"
@@ -136,7 +135,8 @@ GCH.toGoogleContact = (contact, gEntry) ->
 
     gContact.gContact$birthday = when: contact.bday if contact.bday?
     gContact.gContact$nickname = $t: contact.nickname if contact.nickname?
-    gContact.content = $t: contact.note if contact.note?
+    # Force deletion with empty string if no note.
+    gContact.content = $t: contact.note or ''
 
     if contact.org? or contact.title?
         org = rel: "http://schemas.google.com/g/2005#other"
@@ -148,7 +148,6 @@ GCH.toGoogleContact = (contact, gEntry) ->
         if dp.type in ['fax', 'home', 'home_fax', 'mobile', 'other',
             'pager', 'work', 'work_fax']
             field.rel = "http://schemas.google.com/g/2005##{dp.type}"
-
         else
             field.label = dp.type
 

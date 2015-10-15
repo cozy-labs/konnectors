@@ -1,6 +1,7 @@
-cozydb = require 'cozydb'
-
-https = require 'https'
+request = require 'request'
+async = require 'async'
+fetcher = require '../lib/fetcher'
+extend = require('util')._extend
 
 Contact = require '../models/contact'
 
@@ -10,22 +11,8 @@ GoogleContactHelper = require '../lib/google_contact_helper'
 
 GoogleToken = require '../lib/google_access_token'
 
-url = require 'url'
 
-#
-fs = require 'fs'
-qs = require 'querystring'
-request = require 'request'
-moment = require 'moment'
-cheerio = require 'cheerio'
-async = require 'async'
-fetcher = require '../lib/fetcher'
-extend = require('util')._extend
-
-filterExisting = require '../lib/filter_existing'
-saveDataAndFile = require '../lib/save_data_and_file'
 localization = require '../lib/localization_manager'
-linkBankOperation = require '../lib/link_bank_operation'
 
 log = require('printit')
     prefix: "Google Contacts"
@@ -40,14 +27,14 @@ module.exports =
 
     name: "Google Contacts"
     slug: "googlecontacts"
-    description: "Synchronise google contacts with cozy through google's API. Experimental - please backup your contacts, from your cozy and your google account."
+    description: "Synchronize google contacts with cozy through google's API. Experimental - please backup your contacts from your cozy and your google account."
     vendorLink: "https://www.google.com/contacts/"
 
     customView: """
     <h6>Initialize or reset this konnector</h6>
     <p>1. Press "connect your google account" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step.</p>
     <button id="connect-google" title="Connect your Google account" class="btn"
-       onclick="window.open('#{GoogleToken.getAuthUrl()}', 'Google OAuth', 'toolbars=0,width=700,height=600,left=200,top=200,scrollbars=1,resizable=1'); var input = $('#googlecontacts-authCode-input'); input.parents('.field').toggleClass('hidden'); input.attr('type', 'text'); input.val(''); return false;"
+       onclick="window.open('#{GoogleToken.getAuthUrl()}', 'Google OAuth', 'toolbars=0,width=700,height=600,left=200,top=200,scrollbars=1,resizable=1'); var input = $('#googlecontacts-authCode-input'); input.parents('.field').toggleClass('hidden'); input.attr('type', 'text'); input.val(''); $('#googlecontacts-accountName-input').val('');return false;"
        >Connect your Google account</button>
     <p>2. Paste this string in the auth_code field. Then press save and import to start the sync. Account Name will be automatically updated.</p>
     """
@@ -105,6 +92,7 @@ module.exports =
                 log.info "Import finished"
                 callback()
 
+
 # Obtain a valid access_token : with auth_code on first launch,
 # else with the refresh_token.
 updateToken = (requiredFields, entries, data, callback) ->
@@ -129,6 +117,7 @@ updateToken = (requiredFields, entries, data, callback) ->
 
             callback()
 
+
 # Fetch account name (email address of this google account) on first launch.
 fetchAccountName = (requiredFields, entries, data, callback) ->
     log.debug 'fetchAccountName'
@@ -142,6 +131,7 @@ fetchAccountName = (requiredFields, entries, data, callback) ->
         return callback err if err
         requiredFields.accountName = accountName
         callback()
+
 
 # Save konnector's fieldValues during fetch process.
 saveTokensInKonnector = (requiredFields, entries, data, callback) ->
@@ -187,6 +177,7 @@ fetchGoogleChanges = (requiredFields, entries, data, callback) ->
 
         callback()
 
+
 # Update contacts in cozy to apply google changes.
 #    - delete flagged contact
 #    - update contact if already synced
@@ -214,77 +205,14 @@ removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
     id = GoogleContactHelper.extractGoogleId gEntry
     contact = ofAccountByIds[id]
     if contact?
-        log.info "Unlink #{id} #{contact?.fn} from this account"
+        log.debug "Unlink #{id} #{contact?.fn} from this account"
+        log.info "Unlink #{id} from this account"
         contact.deleteAccount { type: ACCOUNT_TYPE, name: accountName }
         contact.save (err) ->
             callback err
     else
         log.info "Contact #{id} already unlinked from this account."
         callback()
-
-
-# Update cozy with a google contact.
-# Update the cozy contact if already synced,
-# else, find a same contact in cozy and merge them
-# else create a brand new cozy contact
-updateCozyContact = (gEntry, entries, requiredFields, callback) ->
-    cozyContacts = entries.cozyContacts
-    ofAccountByIds = entries.ofAccountByIds
-
-    accountName = requiredFields.accountName
-    fromGoogle = new Contact GoogleContactHelper.fromGoogleContact gEntry, accountName
-    accountG = fromGoogle.accounts[0]
-
-    updateContact = (fromCozy, fromGoogle) ->
-        CompareContacts.mergeContacts fromCozy, fromGoogle
-        fromCozy.setAccount fromGoogle.accounts[0]
-        fromCozy.save (err, contact) ->
-            return callback err if err
-            callback null, gEntry
-            # GoogleContactHelper.addContactPictureInCozy requiredFields, contact
-            # , gEntry, (err) ->
-            #     # Continue on error as picture is not the most important.
-            #     log.warn err.message if err
-            #     callback()
-
-
-    # already in cozy ?
-    if accountG.id of ofAccountByIds
-        fromCozy = ofAccountByIds[accountG.id]
-        accountC = fromCozy.getAccount ACCOUNT_TYPE, accountName
-        if accountC.lastUpdate < accountG.lastUpdate and
-           ContactHelper.intrinsicRev(fromGoogle) isnt ContactHelper.intrinsicRev(fromCozy)
-            log.info "Update #{fromCozy?.fn} from google"
-            updateContact fromCozy, fromGoogle
-
-        else # Already uptodate, nothing to do.
-            callback()
-
-    else # Add to cozy.
-        # look for same, take the first one
-        fromCozy = null
-        for cozyContact in cozyContacts
-            if CompareContacts.isSamePerson cozyContact, fromGoogle
-                fromCozy = cozyContact
-                log.debug "#{fromCozy?.fn} is same person"
-                break
-
-        if fromCozy? and not fromCozy.getAccount(ACCOUNT_TYPE, accountName)?
-            log.info "Link #{fromCozy?.fn} to google account"
-            updateContact fromCozy, fromGoogle
-
-        else # create
-            log.info "Create #{fromGoogle?.fn} contact"
-
-            fromGoogle.revision = new Date().toISOString()
-            Contact.create fromGoogle, (err, contact) ->
-                return callback err if err
-                callback null, gEntry
-                # GoogleContactHelper.addContactPictureInCozy requiredFields
-                # , contact, gEntry, (err) ->
-                #     # Continue on error as picture is not the most important.
-                #     log.warn err.message if err
-                #     callback()
 
 
 # Fetch all contact of this google account.
@@ -340,7 +268,7 @@ updateGoogleContacts = (requiredFields, entries, data, callback) ->
     async.eachSeries entries.ofAccount, (contact, cb) ->
         account = contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
         gEntry = googleContactsById[account.id]
-        delete googleContactsById[account.id] # Mark as Zshown
+        delete googleContactsById[account.id] # Mark as shown
 
         if account.lastUpdate < contact.revision
             updateGoogleContact requiredFields, contact, gEntry, cb
@@ -360,13 +288,13 @@ updateGoogleContacts = (requiredFields, entries, data, callback) ->
 
 updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
     account = contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
-
     fromGoogle = new Contact GoogleContactHelper.fromGoogleContact gEntry
     if ContactHelper.intrinsicRev(fromGoogle) isnt ContactHelper.intrinsicRev(contact)
         log.debug ContactHelper.intrinsicRev(contact)
         log.debug ContactHelper.intrinsicRev(fromGoogle)
 
-        log.info "update #{contact?.fn} in google"
+        log.debug "update #{contact?.fn} in google"
+        log.info "update #{contact?._id} in google"
         updated = GoogleContactHelper.toGoogleContact contact, gEntry
         request
             method: 'PUT'

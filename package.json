@@ -126,6 +126,9 @@
     },
     "Event": {
       "description": "Import event to fill the calendar."
+    },
+    "Contacts": {
+      "description": "Synchronize contacts from Google."
     }
   },
   "cozy-displayName": "Konnectors",
