@@ -31,8 +31,6 @@ describe 'contact helper', ->
             parsed.title.should.equal "Chairman"
         it 'bday', ->
             parsed.bday.should.equal '1961-04-05'
-        it 'url', ->
-            parsed.url.should.equal 'http://profile.example.com/'
         it 'note', ->
             parsed.note.should.equal 'Blah, blah\n\nblah blah blah.\n\nblahblah\nCustom: Custom field data'
 

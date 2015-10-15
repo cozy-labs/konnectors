@@ -90,36 +90,19 @@ Contact::getName = ->
 
     return name
 
-# Return the account with specified type and name or null.
+
+# Decorate contact with Contact Helper.
 Contact::getAccount = (accountType, accountName) ->
-    return null unless @accounts?
+    return Helper.getAccount @, accountType, accountName
 
-    account = @accounts.filter (account) ->
-        return account.type is accountType and account.name is accountName
-
-    if account.length > 0
-        return account[0]
-    else
-        return null
-
-# Add or update specified account.
 Contact::setAccount = (account) ->
-    current = @getAccount account.type, account.name
-    if current?
-        for k, v of account
-            current[k] = v
-    else
-        @accounts = @accounts or []
-        @accounts.push account
+    return Helper.setAccount @, account
 
-# Unlink this contact from the specifie account.
 Contact::deleteAccount = (account) ->
-    for current, i in @accounts
-        if current.type is account.type and current.name is account.name
-            @accounts.splice i, 1
-            return true
+    return Helper.deleteAccount @, account
 
-    return false
+Contact::hasAccount = (account) ->
+    return Helper.hasAccount @, account
 
 
 Contact.all = (callback)->
