@@ -197,7 +197,7 @@ module.exports = class KonnectorView extends BaseView
 <a href="/#apps/files/folders/#{selectedPath.id}"
 class="folder-link"
 target="_blank">
-open selected folder
+#{t "open selected folder"}
 </a>
 """
             fieldHtml += "</div>"
@@ -239,8 +239,8 @@ open selected folder
 </select>
 <span id="#{slug}-first-import">
 <span id="#{slug}-first-import-text">
-<a id="#{slug}-first-import-link" href="#">Select a starting date</a></span>
-<span id="#{slug}-first-import-date"><span>From</span>
+<a id="#{slug}-first-import-link" href="#">#{t "select starting date"}</a></span>
+<span id="#{slug}-first-import-date"><span>#{t "start import from"}</span>
 <input id="#{slug}-import-date" class="autoimport" maxlength="8" type="text">
 </input>
 </span></span>

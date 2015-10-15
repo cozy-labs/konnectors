@@ -24,7 +24,7 @@ DEFAULT_CALENDAR = 'ISEN'
 
 module.exports =
 
-    name: "Isen"
+    name: "ISEN"
     slug: "isen"
     description: 'konnector description isen'
     vendorLink: "https://www.isen.fr/"
