@@ -49,7 +49,7 @@ module.exports =
                 log: log
                 model: Bill
                 identifier: 'numericable'
-                dateDelta: 4
+                dateDelta: 12
             )
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
