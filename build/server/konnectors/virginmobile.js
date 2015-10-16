@@ -48,7 +48,7 @@ module.exports = {
       log: log,
       model: Bill,
       identifier: 'virgin mobile',
-      dateDelta: 4,
+      dateDelta: 17,
       amountDelta: 5
     })).args(requiredFields, {}, {}).fetch(function(err, fields, entries) {
       var localizationKey, notifContent, options, ref;
@@ -115,7 +115,8 @@ parsePage = function(requiredFields, bills, data, next) {
         date: moment(inv.invoiceDate, 'DD/MM/YYYY'),
         amount: parseFloat(inv.amount.unite + '.' + inv.amount.centimes),
         pdfurl: baseURL + inv.invoiceNumber,
-        type: "phone"
+        type: "phone",
+        vendor: "Virgin mobile"
       };
       if ((bill.date != null) && (bill.amount != null) && (bill.pdfurl != null)) {
         bills.fetched.push(bill);
