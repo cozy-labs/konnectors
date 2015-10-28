@@ -4,6 +4,7 @@ fetcher = require '../lib/fetcher'
 extend = require('util')._extend
 
 Contact = require '../models/contact'
+Tag = require '../models/tag'
 
 CompareContacts = require '../lib/compare_contacts'
 ContactHelper = require '../lib/contact_helper'
@@ -83,7 +84,6 @@ module.exports =
             #.use(fetchAllGoogleContacts)
             #.use(prepareCozyContacts)
             #.use(updateGoogleContacts)
-            .use(addContactsPictureInCozy)
 
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
@@ -94,7 +94,7 @@ module.exports =
 
 # Obtain a valid access_token : with auth_code on first launch,
 # else with the refresh_token.
-updateToken = (requiredFields, entries, data, callback) ->
+module.exports.updateToken = updateToken = (requiredFields, entries, data, callback) ->
     log.debug 'updateToken'
 
     if requiredFields.refreshToken? and requiredFields.authCode is 'connected'
@@ -192,10 +192,14 @@ updateCozyContacts = (requiredFields, entries, data, callback) ->
             , requiredFields.accountName, cb
         else
             GoogleContactHelper.updateCozyContact gEntry, entries
-            , requiredFields.accountName, cb
+            , requiredFields.accountName, requiredFields.accessToken, cb
     , (err, updated) ->
-        entries.updatedCozyContacts = updated.filter (contact) -> contact?
-        callback err
+        return callback err if err
+        if updated.some((contact) -> contact?)
+            # Contact created or linked, with google tag, getOrCreate it
+            Tag.getOrCreate { name: 'google', color: '#4285F4'}, callback
+        else
+            callback()
 
 
 # Unlink cozy contact from this account. Just removes account object from
@@ -336,26 +340,3 @@ deleteInGoogle = (requiredFields, gId, callback) ->
             'If-Match': '*'
     , (err, res, body) ->
         callback err
-
-
-addContactsPictureInCozy = (requiredFields, entries, data, callback) ->
-    log.debug "addContactsPictureInCozy"
-
-    if entries.updatedCozyContacts.length is 0
-        return callback()
-
-    async.eachSeries entries.updatedCozyContacts, (contact, cb) ->
-        account = contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
-        if account
-            GoogleContactHelper.addContactPictureInCozy requiredFields.accessToken
-            , contact
-            , entries.googleContactsById[account.id]
-            , (err) ->
-                # Continue on error as picture is not the most important.
-                log.warn err.message if err
-                cb()
-        else
-            log.warn "Updated contact from google without account field !"
-            cb()
-
-    , callback

@@ -3,8 +3,8 @@ ContactHelper = require './contact_helper'
 
 module.exports = CC = {}
 
-# Find similar contacts methods.
 
+# Find similar contacts methods.
 CC.isSamePerson = (contact1, contact2) ->
     return contact1.fn is contact2.fn and contact1.datapoints.some (field) ->
             if field.name in ['tel', 'adr', 'email', 'chat']
@@ -41,9 +41,7 @@ CC.findSimilars = (contacts) ->
     return similars
 
 
-
 # Merge methods
-
 
 # Merge cozy contact toMerge in base.
 # Mess up toMerge contact during the process.
@@ -113,10 +111,9 @@ hasField = (field, contact, checkType = false) ->
         if field.name is baseField.name and
         (not checkType or checkType and field.type is baseField.type) and
         baseField.value?
-
             if field.name is 'tel'
-                return field.value.replace(/[-\s]/g, '') is baseField
-                    .value.replace(/[-\s]/g, '')
+                return field.value.replace(/[-\s]/g, '') is
+                  baseField.value.replace(/[-\s]/g, '')
 
             else if field.name is 'adr'
                 same = true

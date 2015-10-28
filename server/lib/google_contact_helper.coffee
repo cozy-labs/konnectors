@@ -248,8 +248,9 @@ GCH.addContactPictureInCozy = (accessToken, cozyContact, gContact, done) ->
     log.debug "addContactPictureInCozy #{GCH.extractGoogleId(gContact)}"
     pictureLink = gContact.link.filter (link) -> link.rel is PICTUREREL
     pictureUrl = pictureLink[0]?.href
+    hasPicture = pictureLink[0]?['gd$etag']?
 
-    return done null unless pictureUrl
+    return done null unless pictureUrl and hasPicture
 
     opts = url.parse(pictureUrl)
     opts.headers =
@@ -258,11 +259,11 @@ GCH.addContactPictureInCozy = (accessToken, cozyContact, gContact, done) ->
     log.debug "fetch #{GCH.extractGoogleId(gContact)} contact's picture"
 
     # timeoutID = null
-    request = https.get opts, (stream)->
+    request = https.get opts, (stream) ->
         log.debug "response for #{GCH.extractGoogleId(gContact)} picture"
 
         stream.on 'error', done
-        unless stream.statusCode is 200
+        if stream.statusCode isnt 200
             return done new Error "error fetching #{pictureUrl}\
                             : #{stream.statusCode}"
 
@@ -270,7 +271,9 @@ GCH.addContactPictureInCozy = (accessToken, cozyContact, gContact, done) ->
         thumbStream.on 'error', done
         thumbStream.path = 'useless'
         type = stream.headers['content-type']
-        opts = {name: 'picture', type: type}
+        opts =
+            name: 'picture'
+            type: type
         cozyContact.attachFile thumbStream, opts, (err)->
             if err
                 log.error "picture #{err}"
@@ -341,7 +344,7 @@ GCH.fetchAccountName = (accessToken, callback) ->
 # else, find a same contact in cozy and merge them
 # else create a brand new cozy contact
 # Return cozy contact updated or created to the cllabck
-GCH.updateCozyContact = (gEntry, contacts, accountName, callback) ->
+GCH.updateCozyContact = (gEntry, contacts, accountName, token, callback) ->
     Contact = require '../models/contact'
     ofAccountByIds = contacts.ofAccountByIds
     cozyContacts = contacts.cozyContacts
@@ -349,10 +352,20 @@ GCH.updateCozyContact = (gEntry, contacts, accountName, callback) ->
     fromGoogle = new Contact GCH.fromGoogleContact gEntry, accountName
     gId = GCH.extractGoogleId gEntry
 
+    endSavePicture = (err, updatedContact) ->
+        if err?
+            log.error "An error occured while creating or updating the " + \
+                      "contact."
+            log.raw err
+            return callback err
+
+        log.debug "updated #{fromGoogle?.fn}"
+        # Retrieve contact's picture.
+        GCH.addContactPictureInCozy token, updatedContact, gEntry, callback
+
     updateContact = (fromCozy, fromGoogle) ->
         CompareContacts.mergeContacts fromCozy, fromGoogle
-        fromCozy.setAccount fromGoogle.accounts[0]
-        fromCozy.save callback
+        fromCozy.save endSavePicture
 
     # already in cozy ?
     accountG = fromGoogle.accounts[0]
@@ -389,5 +402,4 @@ GCH.updateCozyContact = (gEntry, contacts, accountName, callback) ->
             log.debug "Create #{fromGoogle?.fn} contact"
 
             fromGoogle.revision = new Date().toISOString()
-            Contact.create fromGoogle, callback
-
+            Contact.create fromGoogle, endSavePicture
