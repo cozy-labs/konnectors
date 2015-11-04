@@ -3,6 +3,7 @@ RealtimeAdapter = require 'cozy-realtime-adapter'
 localization = require './server/lib/localization_manager'
 initKonnectors = require './server/init/konnectors'
 poller = require './server/lib/poller'
+commitPatch = require './server/init/patch_commits'
 log = require('printit')
     prefix: 'konnectors'
 
@@ -28,7 +29,8 @@ application = module.exports = (callback) ->
             initKonnectors ->
                 poller.start()
                 log.info 'Import poller started.'
-                callback(app, server) if callback?
+                commitPatch ->
+                    callback(app, server) if callback?
 
 
 if not module.parent

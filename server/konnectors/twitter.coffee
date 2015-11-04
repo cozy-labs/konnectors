@@ -77,9 +77,9 @@ saveTweets = (requiredFields, callback) ->
 
     TwitterTweet.request 'byDate', params, (err, tweets) ->
         if tweets? and tweets.length > 0
-            start = moment(tweets[0].date)
+            start = moment(new Date tweets[0].date)
         else
-            start = moment().subtract('years', 10)
+            start = moment().subtract(10, 'year')
 
         log.info "Start import since #{start.format()}"
 
@@ -116,7 +116,7 @@ saveTweetGroup = (client, path, start, tweetLength, callback) ->
 
             numItems = 0
             async.eachSeries tweets, (tweet, cb) ->
-                date = moment tweet.created_at
+                date = moment new Date tweet.created_at
                 log.debug date
 
                 if date > start

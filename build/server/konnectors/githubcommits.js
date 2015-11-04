@@ -86,7 +86,6 @@ getEvents = function(requiredFields, commits, data, next) {
           }
           return callback();
         } else {
-          log.error('bad credentials');
           return callback('bad credentials');
         }
       } else {

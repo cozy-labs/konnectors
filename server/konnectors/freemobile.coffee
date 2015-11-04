@@ -1,4 +1,5 @@
 cozydb = require 'cozydb'
+requestJson = require 'request-json'
 
 moment = require 'moment'
 cheerio = require 'cheerio'
@@ -75,10 +76,7 @@ module.exports =
             .use(getBillPage)
             .use(parseBillPage)
             .use(filterExisting log, PhoneBill)
-            .use(saveDataAndFile log, PhoneBill,
-                    vendor: 'freemobile'
-                    others: ['phonenumber']
-                , ['facture'])
+            .use(saveDataAndFile log, PhoneBill, {vendor: 'freemobile', others: ['phonenumber']}, ['facture'])
             .use(linkBankOperation
                 log: log
                 model: PhoneBill
@@ -131,6 +129,7 @@ prepareLogIn = (requiredFields, billInfos, data, next) ->
         loginPageData = body
         data.imageUrlAndPosition = []
         $ = cheerio.load loginPageData
+        data.token = $('input[name=token]').val()
         $('img[class="ident_chiffre_img pointer"]').each ->
             imagePath = $(this).attr 'src'
             position = $(this).attr 'alt'
@@ -159,7 +158,6 @@ logIn = (requiredFields, billInfos, data, next) ->
     # We transcode the login entered by the user into the login accepted by the
     # website. Each number is changed into its position
     transcodedLogin = transcodeLogin requiredFields.login, data.conversionTable
-
     # The login is unified (each repetition of a number in the login is
     # deleted) to download only once the small image (like a real browser would
     # do)
@@ -176,8 +174,10 @@ logIn = (requiredFields, billInfos, data, next) ->
             login += i
 
         form =
+            token: data.token
             login_abo: login
             pwd_abo: requiredFields.password
+            
 
         options =
             method: 'POST'
@@ -191,12 +191,17 @@ logIn = (requiredFields, billInfos, data, next) ->
         request options, (err, res, body) ->
             if err? or not res.headers.location? or res.statusCode isnt 302
                 log.error "Authentification error"
+                log.error err if err?
+                log.error "No location" if not res.headers.location?
+                log.error "No 302" if res.statusCode isnt 302
+                log.error "No password" if not requiredFields.password?
+                log.error "No login" if not requiredFields.login?
                 next 'bad credentials'
 
             options =
                 method: 'GET'
                 jar: true
-                url : homeUrl
+                url : baseUrl + res.headers.location
                 headers :
                     referer : homeUrl
             request options, (err, res, body) ->
@@ -233,6 +238,15 @@ action=getFacture&format=dl&l="
 
     return next() if not data.html?
     $ = cheerio.load data.html
+    #We check if the account has several lines
+    #If the account has one line :
+    # - Import pdfs for the line with file name = YYYYMM_freemobile.pdf
+    #If multi line :
+    # - Import pdfs (specific) for each line with file name = 
+    # YYYYMM_freemobile_NNNNNNNNNN.pdf (NN..NN is line number)
+    # - Import overall pdf with name YYYYMM_freemobile.pdf
+    
+    isMultiline = $('div[class="consommation"]').length > 1
     $('div[class="factLigne hide "]').each ->
         amount = $($(this).find('.montant')).text()
         amount = amount.replace '€', ''
@@ -240,7 +254,7 @@ action=getFacture&format=dl&l="
         data_fact_id = $(this).attr 'data-fact_id'
         data_fact_login = $(this).attr 'data-fact_login'
         data_fact_date = $(this).attr 'data-fact_date'
-        data_fact_multi = $(this).attr 'data-fact_multi'
+        data_fact_multi = parseFloat $(this).attr 'data-fact_multi'
         data_fact_ligne = $(this).attr 'data-fact_ligne'
         pdfUrl = billUrl + data_fact_login + "&id=" + data_fact_id + "&\
 date=" + data_fact_date + "&multi=" + data_fact_multi
@@ -250,9 +264,9 @@ date=" + data_fact_date + "&multi=" + data_fact_multi
             date: date
             vendor: 'Free Mobile'
             type: 'phone'
-        bill.phonenumber = data_fact_ligne if data_fact_multi isnt "0"
+        bill.phonenumber = data_fact_ligne if (isMultiline and not data_fact_multi)
         bill.pdfurl = pdfUrl if date.year() > 2011
-
+        
         bills.fetched.push bill
     next()
 
@@ -327,7 +341,6 @@ getNumberValue = (stringcheck) ->
     # coffeelint: enable=max_line_length
     distanceMin = stringcheck.length
     idxDistanceMin = 10
-
     for i in [0..9]
         # There is a perfect match with an element of symbols
         if stringcheck is symbols[i]
@@ -380,5 +393,5 @@ getSmallImage = (digit, callback) ->
         if err?
             callback err
         #Timer is necessary otherwise the connection is not possible
-        setTimeout callback, 500, null
+        setTimeout callback, 600, null
 
