@@ -8,7 +8,7 @@ basepath = '/anapi/data?key=testkey&format=json&perspective=interval&' + \
            'resolution_time=day'
 
 start = moment().subtract('years', 10).format 'YYYY-MM-DD'
-end = moment().add('days', 1).format 'YYYY-MM-DD'
+end = moment().add(1, 'days').format 'YYYY-MM-DD'
 now = moment().format 'YYYY-MM-DD'
 
 

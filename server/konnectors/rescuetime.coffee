@@ -60,7 +60,7 @@ module.exports =
     # Depending
     loadActivities: (activities, requiredFields, callback) ->
         apikey = requiredFields.apikey
-        end = moment().add('days', 1).format 'YYYY-MM-DD'
+        end = moment().add(1, 'days').format 'YYYY-MM-DD'
 
         if activities.length > 0
             start = moment(activities[0].date).format 'YYYY-MM-DD'
