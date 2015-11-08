@@ -11,10 +11,10 @@ h2.name
 .buttons
     button#import-button #{t('save and import')}
 
-if model.errorMessage
+if model.importErrorMessage
     .error
         span.error=t('error occurred during import:') + ' '
-            span.message=t(model.errorMessage)
+            span.message=t(model.importErrorMessage)
 
 .status #{status}
 .infos

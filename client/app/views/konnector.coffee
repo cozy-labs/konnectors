@@ -12,6 +12,9 @@ module.exports = class KonnectorView extends BaseView
         "click #import-button": "onImportClicked"
         "click #delete-button": "onDeleteClicked"
 
+    subscriptions:
+        "konnector:error": "onImportError"
+
 
     initialize: (options) ->
         super options
@@ -21,14 +24,19 @@ module.exports = class KonnectorView extends BaseView
 
     # Build fields
     afterRender: =>
+
         slug = @model.get 'slug'
         values = @model.get 'fieldValues' or {}
+        errorMessage = @model.get 'importErrorMessage'
 
         @$el.addClass "konnector-#{slug}"
         @updateImportWidget()
 
-        if not @model.get('importErrorMessage')? or @model.get 'isImporting'
+        if not errorMessage? or @model.get 'isImporting'
             @hideErrors()
+
+        else if errorMessage
+            @showErrors t errorMessage
 
         for name, val of @model.get 'fields'
             values ?= {}
@@ -93,7 +101,7 @@ module.exports = class KonnectorView extends BaseView
     onImportClicked: ->
 
         # Don't restart the import if an import is running.
-        unless @model.get('isImporting')
+        unless @model.get 'isImporting'
             slug = @model.get 'slug'
             importDate = $("##{slug}-import-date").val()
 
@@ -301,4 +309,15 @@ target="_blank">
                 @model.set 'fieldValues', {}
                 @model.set 'password', '{}'
                 window.router.navigate '', trigger: true
+
+
+    # This function is fired when a change of the model is fired on the backend
+    # side and the model has an error field not empty.
+    # Once executed this function displays the error
+    onImportError: (model) ->
+        errorMessage = model.get 'importErrorMessage'
+
+        @model.set 'importErrorMessage', errorMessage
+        @showErrors errorMessage
+
 

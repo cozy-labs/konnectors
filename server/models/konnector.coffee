@@ -101,7 +101,7 @@ Konnector::import = (callback) ->
 
                 if importErr? and \
                 typeof(importErr) is 'object' and \
-                Object.keys(importErr).length > 0
+                importErr.message?
                     data =
                         isImporting: false
                         importErrorMessage: importErr.message
@@ -120,7 +120,8 @@ Konnector::import = (callback) ->
                         isImporting: false
                         lastImport: new Date()
                         importErrorMessage: null
-                    @updateAttributes data, (importErr) -> callback importErr, notifContent
+                    @updateAttributes data, (importErr) ->
+                        callback importErr, notifContent
 
 
 # Append data from module file of curent konnector.

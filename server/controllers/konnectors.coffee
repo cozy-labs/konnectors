@@ -6,8 +6,8 @@ konnectorHash = require '../lib/konnector_hash'
 log = require('printit')
     prefix: 'konnector controller'
 
-module.exports =
 
+module.exports =
 
     # Get konnector data (module parameters and user parameters)
     # Handle encrypted fields.
@@ -76,7 +76,7 @@ module.exports =
                                 log.error err
                             else
                                 handleNotification req.konnector, notifContent
-                    res.send 200
+                    res.status(200).send success: true
 
 
 # Create a notification telling how many data were imported.
