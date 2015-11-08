@@ -38,8 +38,8 @@ module.exports = class KonnectorView extends BaseView
         else if errorMessage
             @showErrors t errorMessage
 
+        values ?= {}
         for name, val of @model.get 'fields'
-            values ?= {}
             values[name] ?= ""
 
             @addFieldWidget slug, name, val, values
