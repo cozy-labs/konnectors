@@ -36,7 +36,9 @@ Konnector::injectEncryptedFields = ->
         @fieldValues ?= {}
         @fieldValues.password = @password
         @password = password: @password
-        log.info "Injecting encrypted fields : JSON.parse error : #{error}"
+        log.error "Attempt to retrieve password for #{@slug} failed: #{error}"
+        log.error @password
+        log.error "It may be due to an error while unencrypting password field."
 
 
 # Return fields registered in the konnector module. If it's not defined,
