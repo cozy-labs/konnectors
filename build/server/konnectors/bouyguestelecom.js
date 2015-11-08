@@ -36,7 +36,7 @@ PhoneBill = cozydb.getModel('PhoneBill', {
   amount: Number,
   fileId: String,
   binaryId: String,
-  pdfUrl: String
+  pdfurl: String
 });
 
 PhoneBill.all = function(callback) {
@@ -96,7 +96,7 @@ module.exports = {
 logIn = function(requiredFields, bills, data, next) {
   var billUrl, loginOptions, loginUrl, userAgent;
   loginUrl = 'https://www.mon-compte.bouyguestelecom.fr/cas/login';
-  billUrl = 'http://www.bouyguestelecom.fr/mon-compte/mes-factures';
+  billUrl = "http://www.bouyguestelecom.fr/mon-compte/mes-factures/historique";
   userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + 'Gecko/20100101 Firefox/36.0';
   loginOptions = {
     uri: loginUrl,
@@ -106,6 +106,7 @@ logIn = function(requiredFields, bills, data, next) {
       'User-Agent': userAgent
     }
   };
+  log.info('Logging in on Bouygues Website...');
   return request(loginOptions, function(err, res, body) {
     var $, execution, form, lt;
     if (err) {
@@ -130,11 +131,13 @@ logIn = function(requiredFields, bills, data, next) {
         'User-Agent': userAgent
       }
     };
+    log.info('Successfully logged in.');
     return request(loginOptions, function(err, res, body) {
       var options;
       if (err) {
         return next(err);
       }
+      log.info('Download bill HTML page...');
       options = {
         method: 'GET',
         uri: billUrl,
@@ -148,6 +151,7 @@ logIn = function(requiredFields, bills, data, next) {
           return next(err);
         }
         data.html = body;
+        log.info('Bill page downloaded.');
         return next();
       });
     });
@@ -156,33 +160,26 @@ logIn = function(requiredFields, bills, data, next) {
 
 parsePage = function(requiredFields, bills, data, next) {
   var $, baseDlUrl;
-  baseDlUrl = 'https://www.bouyguestelecom.fr/mon-compte/suiviconso' + '/index/facturepdf';
+  baseDlUrl = "http://www.bouyguestelecom.fr/mon-compte/facture/download/index";
   bills.fetched = [];
   $ = cheerio.load(data.html);
-  $('.historique tr').each(function() {
-    var amount, bill, dataArray, date, params, url, urlData;
-    urlData = $(this).find('.voirMaFacture a').attr('onclick');
-    if (urlData != null) {
-      date = $(this).find('.eccogrisc:first-child').html();
-      amount = $(this).find('td:nth-child(2) span').text().substring(0, 5);
-      amount = amount.replace('€', ',');
-      dataArray = urlData.split(',');
-      params = {
-        id: dataArray[4].replace(/[\/'\s]/g, ''),
-        date: dataArray[5].replace(/[\/'\s]/g, ''),
-        type: dataArray[6].replace(/[\/'\s]/g, ''),
-        no_reference: dataArray[7].replace(/[\/)']/g, '')
-      };
-      url = baseDlUrl + "?" + (qs.stringify(params));
-      if (params.type === 'Mobile') {
-        bill = {
-          date: moment(date, 'DD/MM/YYYY'),
-          amount: amount.replace(',', '.'),
-          pdfurl: url
-        };
-        return bills.fetched.push(bill);
-      }
-    }
+  $('.download-facture').each(function() {
+    var amount, bill, date, id, params, url;
+    date = $(this).text().trim().split(' ').splice(0, 2).join(' ').trim();
+    amount = $(this).find('.small-prix').text().trim();
+    amount = amount.replace('€', ',');
+    id = $(this).attr('facture-id');
+    params = {
+      id: id
+    };
+    url = baseDlUrl + "?" + (qs.stringify(params));
+    bill = {
+      date: moment(date, 'MMMM YYYY').add(14, 'days'),
+      amount: amount.replace(',', '.'),
+      pdfurl: url
+    };
+    return bills.fetched.push(bill);
   });
+  log.info('Bill data parsed.');
   return next();
 };
