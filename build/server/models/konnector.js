@@ -61,16 +61,16 @@ Konnector.prototype.injectEncryptedFields = function() {
     return results;
   } catch (_error) {
     error = _error;
+    log.error("Attempt to retrieve password for " + this.slug + " failed: " + error);
+    log.error(this.password);
+    log.error("It may be due to an error while unencrypting password field.");
     if (this.fieldValues == null) {
       this.fieldValues = {};
     }
     this.fieldValues.password = this.password;
-    this.password = {
+    return this.password = {
       password: this.password
     };
-    log.error("Attempt to retrieve password for " + this.slug + " failed: " + error);
-    log.error(this.password);
-    return log.error("It may be due to an error while unencrypting password field.");
   }
 };
 
