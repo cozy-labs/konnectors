@@ -131,6 +131,7 @@ module.exports = class KonnectorView extends BaseView
 
             # Save field values and start importing data.
             data = {fieldValues, importInterval}
+            @model.set 'isImporting': true
             @model.save data,
                 success: (model, success) ->
                     # Success is handled via the realtime engine.
