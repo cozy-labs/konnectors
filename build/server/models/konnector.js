@@ -68,7 +68,9 @@ Konnector.prototype.injectEncryptedFields = function() {
     this.password = {
       password: this.password
     };
-    return log.info("Injecting encrypted fields : JSON.parse error : " + error);
+    log.error("Attempt to retrieve password for " + this.slug + " failed: " + error);
+    log.error(this.password);
+    return log.error("It may be due to an error while unencrypting password field.");
   }
 };
 
