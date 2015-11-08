@@ -33,12 +33,12 @@ Konnector::injectEncryptedFields = ->
         parsedPasswords = JSON.parse @password
         @fieldValues[name] = val for name, val of parsedPasswords
     catch error
-        @fieldValues ?= {}
-        @fieldValues.password = @password
-        @password = password: @password
         log.error "Attempt to retrieve password for #{@slug} failed: #{error}"
         log.error @password
         log.error "It may be due to an error while unencrypting password field."
+        @fieldValues ?= {}
+        @fieldValues.password = @password
+        @password = password: @password
 
 
 # Return fields registered in the konnector module. If it's not defined,
