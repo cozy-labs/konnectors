@@ -28,16 +28,16 @@ module.exports =
 
     name: "Google Contacts"
     slug: "googlecontacts"
-    description: "Synchronize google contacts with cozy through google's API. Experimental - please backup your contacts from your cozy and your google account."
+    description: 'konnector description googlecontacts'
     vendorLink: "https://www.google.com/contacts/"
 
     customView: """
-    <h6>Initialize or reset this konnector</h6>
-    <p>1. Press "connect your google account" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step.</p>
-    <button id="connect-google" title="Connect your Google account" class="btn"
+    <h6><%t konnector customview googlecontacts 4 %></h6>
+    <p><%t konnector customview googlecontacts 1 %></p>
+    <button id="connect-google" title="<%t konnector customview googlecontacts 2 %>" class="btn"
        onclick="window.open('#{GoogleToken.getAuthUrl()}', 'Google OAuth', 'toolbars=0,width=700,height=600,left=200,top=200,scrollbars=1,resizable=1'); var input = $('#googlecontacts-authCode-input'); input.parents('.field').toggleClass('hidden'); input.attr('type', 'text'); input.val(''); $('#googlecontacts-accountName-input').val('');return false;"
-       >Connect your Google account</button>
-    <p>2. Paste this string in the auth_code field. Then press save and import to start the sync. Account Name will be automatically updated.</p>
+       ><%t konnector customview googlecontacts 2 %></button>
+    <p><%t konnector customview googlecontacts 3 %></p>
     """
     fields:
         authCode: "hidden"

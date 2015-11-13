@@ -301,8 +301,13 @@ target="_blank">
                 @firstImport.hide()
 
         if @model.has 'customView'
+            # Apply translation on customView
+            rawCustomView = @model.get 'customView'
+            translatedCustomView = rawCustomView.replace /<%t ([^%]*)%>/g
+            , (match, key) -> return t key.trim()
+
             customViewElem = $ "<div class='customView'></div"
-            customViewElem.append @model.get 'customView'
+            customViewElem.append translatedCustomView
             customViewElem.insertBefore @$('.fields')
 
 

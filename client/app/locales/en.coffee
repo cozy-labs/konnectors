@@ -29,7 +29,8 @@ module.exports =
     'each month': 'Each month'
     'select starting date': "Select a starting date"
     'start import from': "From"
-
+    'authCode': "Auth code"
+    'accountName': "Account name"
     'date format': 'LLL'
 
     'home headline': """
@@ -75,6 +76,12 @@ module.exports =
     'konnector description numericable': "Download all your Numéricable Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description virginmobile': "Download all your Virgin Mobile  bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar."
+    'konnector description googlecontacts': "Import google contacts with cozy through google's API.."
+    'konnector customview googlecontacts 4': "Initialize or reset this konnector"
+    'konnector customview googlecontacts 1': "1. Press \"connect your google account\" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step."
+    'konnector customview googlecontacts 2': "Connect your Google account"
+    'konnector customview googlecontacts 3': "2. Paste this string in the Auth code field. Then press save and import to start the sync. Account name will be automatically updated."
+
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
