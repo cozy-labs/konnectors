@@ -14,7 +14,10 @@ log = require('printit')
 
 hexMd5 = (name) ->
     if name?
-        crypto.createHash('md5').update(name).digest('hex')
+        try
+            crypto.createHash('md5').update(name).digest('hex')
+        catch
+            ''
     else
         ''
 
