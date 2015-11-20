@@ -20,7 +20,11 @@ log = require('printit')({
 
 hexMd5 = function(name) {
   if (name != null) {
-    return crypto.createHash('md5').update(name).digest('hex');
+    try {
+      return crypto.createHash('md5').update(name).digest('hex');
+    } catch (_error) {
+      return '';
+    }
   } else {
     return '';
   }
