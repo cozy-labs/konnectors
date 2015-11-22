@@ -82,6 +82,7 @@ module.exports =
         heartbeat: HeartBeat
         bloodpressure: BloodPressure
         steps: Steps
+        sleep: Sleep
 
 
     # Define model requests.
