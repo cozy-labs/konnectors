@@ -10,6 +10,7 @@ module.exports = Konnector = americano.getModel 'Konnector',
     slug: String
     fieldValues: Object
     password: type: String, default: '{}'
+    lastSuccess: Date
     lastImport: Date
     lastAutoImport: Date
     isImporting: type: Boolean, default: false
@@ -33,10 +34,12 @@ Konnector::injectEncryptedFields = ->
         parsedPasswords = JSON.parse @password
         @fieldValues[name] = val for name, val of parsedPasswords
     catch error
+        log.error "Attempt to retrieve password for #{@slug} failed: #{error}"
+        log.error @password
+        log.error "It may be due to an error while unencrypting password field."
         @fieldValues ?= {}
         @fieldValues.password = @password
         @password = password: @password
-        log.info "Injecting encrypted fields : JSON.parse error : #{error}"
 
 
 # Return fields registered in the konnector module. If it's not defined,
@@ -95,13 +98,15 @@ Konnector::import = (callback) ->
             konnectorModule = konnectorHash[@slug]
 
             @injectEncryptedFields()
+            # Pass last import to the konnector
+            @fieldValues['lastSuccess'] = @lastSuccess
             konnectorModule.fetch @fieldValues, (importErr, notifContent) =>
                 fields = @getFields()
                 @removeEncryptedFields fields
 
                 if importErr? and \
                 typeof(importErr) is 'object' and \
-                Object.keys(importErr).length > 0
+                importErr.message?
                     data =
                         isImporting: false
                         importErrorMessage: importErr.message
@@ -118,9 +123,11 @@ Konnector::import = (callback) ->
                 else
                     data =
                         isImporting: false
+                        lastSuccess: new Date()
                         lastImport: new Date()
                         importErrorMessage: null
-                    @updateAttributes data, (importErr) -> callback importErr, notifContent
+                    @updateAttributes data, (importErr) ->
+                        callback importErr, notifContent
 
 
 # Append data from module file of curent konnector.
@@ -140,8 +147,14 @@ Konnector::appendConfigData = ->
     modelNames = []
     for key, value of @models
         name = value.toString()
-        if name.indexOf 'Constructor' isnt -1
+
+        if name.indexOf('Constructor') isnt -1
             name = name.substring 0, (name.length - 'Constructor'.length)
+        else
+            match = name.match /function ([^(]+)/
+            if match? and match[1]?
+                name = match[1]
+
         modelNames.push name
     @modelNames = modelNames
 
@@ -168,4 +181,3 @@ Konnector.getKonnectorsToDisplay = (callback) ->
             catch err
                 log.error 'An error occured while filtering konnectors'
                 callback err
-

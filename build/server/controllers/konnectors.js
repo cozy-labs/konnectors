@@ -75,7 +75,9 @@ module.exports = {
               }
             });
           }
-          return res.send(200);
+          return res.status(200).send({
+            success: true
+          });
         }
       });
     }

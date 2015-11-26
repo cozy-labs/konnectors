@@ -26,7 +26,7 @@ PhoneBill = cozydb.getModel 'PhoneBill',
     amount: Number
     fileId: String
     binaryId: String
-    pdfUrl: String
+    pdfurl: String
 
 PhoneBill.all = (callback) ->
     PhoneBill.request 'byDate', callback
@@ -88,7 +88,7 @@ module.exports =
 logIn = (requiredFields, bills, data, next) ->
 
     loginUrl = 'https://www.mon-compte.bouyguestelecom.fr/cas/login'
-    billUrl = 'http://www.bouyguestelecom.fr/mon-compte/mes-factures'
+    billUrl = "http://www.bouyguestelecom.fr/mon-compte/mes-factures/historique"
     userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + \
                 'Gecko/20100101 Firefox/36.0'
 
@@ -100,6 +100,7 @@ logIn = (requiredFields, bills, data, next) ->
         headers:
             'User-Agent': userAgent
 
+    log.info 'Logging in on Bouygues Website...'
     request loginOptions, (err, res, body) ->
         return next err if err
 
@@ -124,9 +125,11 @@ logIn = (requiredFields, bills, data, next) ->
             headers:
                 'User-Agent': userAgent
 
+        log.info 'Successfully logged in.'
         request loginOptions, (err, res, body) ->
             return next err if err
 
+            log.info 'Download bill HTML page...'
             # Third request to build the links of the bills
             options =
                 method: 'GET'
@@ -137,48 +140,47 @@ logIn = (requiredFields, bills, data, next) ->
             request options, (err, res, body) ->
                 return next err if err
                 data.html = body
+                log.info 'Bill page downloaded.'
                 next()
 
 
 # Procedure to extract bill data from the page.
 parsePage = (requiredFields, bills, data, next) ->
-    baseDlUrl = 'https://www.bouyguestelecom.fr/mon-compte/suiviconso' + \
-                '/index/facturepdf'
+    baseDlUrl = "http://www.bouyguestelecom.fr/mon-compte/facture/download/index"
     bills.fetched = []
 
     # Load page to make it browseable easily.
     $ = cheerio.load data.html
 
     # We browse the bills table by processing each line one by one.
-    $('.historique tr').each ->
+    $('.download-facture').each ->
 
-        # If we find download information, it's a row with bill information
-        urlData = $(this).find('.voirMaFacture a').attr('onclick')
-        if urlData?
 
-            # We get directly from the first field.
-            date =  $(this).find('.eccogrisc:first-child').html()
+        # Markup is not clean, we grab the date from the tag text.
+        date =  $(this).text()
+                    .trim()
+                    .split(' ')
+                    .splice(0, 2)
+                    .join(' ')
+                    .trim()
 
-            # Amount is in a weird field that contains nested spans. We only
-            # get the five first chars of the element text.
-            amount =  $(this).find('td:nth-child(2) span').text().substring 0, 5
-            amount = amount.replace '€', ','
+        # Amount is in a dirty field. We work on the tag text to extract data.
+        amount = $(this).find('.small-prix').text().trim()
+        amount = amount.replace '€', ','
 
-            # Build download url from data contained in the javascript code run
-            # when the link is clicked.
-            dataArray = urlData.split ','
-            params =
-                id: dataArray[4].replace /[\/'\s]/g, ''
-                date: dataArray[5].replace /[\/'\s]/g, ''
-                type: dataArray[6].replace /[\/'\s]/g, ''
-                no_reference:dataArray[7].replace /[\/)']/g, ''
-            url = "#{baseDlUrl}?#{qs.stringify params}"
+        # Get the facture id and build the download url from it.
+        id = $(this).attr('facture-id')
+        params =
+            id: id
+        url = "#{baseDlUrl}?#{qs.stringify params}"
 
-            if params.type is 'Mobile'
-                # Build bill object.
-                bill =
-                    date: moment date, 'DD/MM/YYYY'
-                    amount: amount.replace ',', '.'
-                    pdfurl: url
-                bills.fetched.push bill
+        # Build bill object.
+        bill =
+            date: moment(date, 'MMMM YYYY').add 14, 'days'
+            amount: amount.replace ',', '.'
+            pdfurl: url
+        bills.fetched.push bill
+
+    log.info 'Bill data parsed.'
     next()
+

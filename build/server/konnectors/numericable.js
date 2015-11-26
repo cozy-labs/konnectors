@@ -48,7 +48,7 @@ module.exports = {
       log: log,
       model: Bill,
       identifier: 'numericable',
-      dateDelta: 4
+      dateDelta: 12
     })).args(requiredFields, {}, {}).fetch(function(err, fields, entries) {
       var localizationKey, notifContent, options, ref;
       log.info("Import finished");

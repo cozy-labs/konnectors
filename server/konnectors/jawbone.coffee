@@ -92,7 +92,6 @@ module.exports =
                 callback err, notifContent
 
 
-
 # This layer marks every date where the entry already exists.
 buildExistingHashes = (requiredFields, entries, data, next) ->
     Steps.all (err, steps) ->

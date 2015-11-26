@@ -6,8 +6,8 @@ konnectorHash = require '../lib/konnector_hash'
 log = require('printit')
     prefix: 'konnector controller'
 
-module.exports =
 
+module.exports =
 
     # Get konnector data (module parameters and user parameters)
     # Handle encrypted fields.
@@ -19,6 +19,13 @@ module.exports =
                 res.send 404
             else
                 konnector.injectEncryptedFields()
+
+                # Add customView field
+                konnectorModule = require "../konnectors/#{konnector.slug}"
+
+                if konnectorModule.customView?
+                    konnector.customView = konnectorModule.customView
+
                 req.konnector = konnector
                 next()
 
@@ -76,7 +83,7 @@ module.exports =
                                 log.error err
                             else
                                 handleNotification req.konnector, notifContent
-                    res.send 200
+                    res.status(200).send success: true
 
 
 # Create a notification telling how many data were imported.
@@ -94,4 +101,3 @@ handleNotification = (konnector, notifContent) ->
                 url: "konnector/#{konnector.slug}"
         , (err) ->
             log.error err if err?
-

@@ -12,6 +12,9 @@ module.exports = class KonnectorView extends BaseView
         "click #import-button": "onImportClicked"
         "click #delete-button": "onDeleteClicked"
 
+    subscriptions:
+        "konnector:error": "onImportError"
+
 
     initialize: (options) ->
         super options
@@ -21,17 +24,22 @@ module.exports = class KonnectorView extends BaseView
 
     # Build fields
     afterRender: =>
+
         slug = @model.get 'slug'
         values = @model.get 'fieldValues' or {}
+        errorMessage = @model.get 'importErrorMessage'
 
         @$el.addClass "konnector-#{slug}"
         @updateImportWidget()
 
-        if not @model.get('importErrorMessage')? or @model.get 'isImporting'
+        if not errorMessage? or @model.get 'isImporting'
             @hideErrors()
 
+        else if errorMessage
+            @showErrors t errorMessage
+
+        values ?= {}
         for name, val of @model.get 'fields'
-            values ?= {}
             values[name] ?= ""
 
             @addFieldWidget slug, name, val, values
@@ -93,7 +101,7 @@ module.exports = class KonnectorView extends BaseView
     onImportClicked: ->
 
         # Don't restart the import if an import is running.
-        unless @model.get('isImporting')
+        unless @model.get 'isImporting'
             slug = @model.get 'slug'
             importDate = $("##{slug}-import-date").val()
 
@@ -123,6 +131,7 @@ module.exports = class KonnectorView extends BaseView
 
             # Save field values and start importing data.
             data = {fieldValues, importInterval}
+            @model.set 'isImporting': true
             @model.save data,
                 success: (model, success) ->
                     # Success is handled via the realtime engine.
@@ -161,51 +170,60 @@ module.exports = class KonnectorView extends BaseView
 
 
     addFieldWidget: (slug, name, val, values) ->
-        fieldHtml = """
-<div class="field line">
+        if val is 'label'
+            fieldHtml = """
+<div class="field line #{'hidden' if val is 'hidden'}">
+    <label for="#{slug}-#{name}-input">#{t(name)} : </label>
+    <b id="#{slug}-#{name}-input" >#{values[name]}</b>
+</div>
+"""
+        else
+            fieldHtml = """
+<div class="field line #{'hidden' if val is 'hidden'}">
 <div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
 """
 
-        if val is 'folder'
+            if val is 'folder'
 
-            # Add a widget to select given folder.
-            fieldHtml += """
+                # Add a widget to select given folder.
+                fieldHtml += """
 <div><select id="#{slug}-#{name}-input" class="folder"">
 """
-            selectedPath = path: '', id: ''
-            pathName = values[name]
-            pathName ?= @paths[0].path if @paths.length > 0
+                selectedPath = path: '', id: ''
+                pathName = values[name]
+                pathName ?= @paths[0].path if @paths.length > 0
 
-            if @paths.length > 0
-                # Add an option for every folder. Value is id of the folder.
-                # Displayed label is the path of the folder.
-                for path in @paths
-                    if path.path is pathName
-                        fieldHtml += """
+                if @paths.length > 0
+                    # Add an option for every folder. Value is id of the folder.
+                    # Displayed label is the path of the folder.
+                    for path in @paths
+                        if path.path is pathName
+                            fieldHtml += """
     <option selected value="#{path.id}">#{path.path}</option>
     """
-                        selectedPath = path
-                    else
-                        fieldHtml += """
+                            selectedPath = path
+                        else
+                            fieldHtml += """
     <option value="#{path.id}">#{path.path}</option>
     """
-            fieldHtml += "</select></div>"
+                fieldHtml += "</select></div>"
 
-            # Add a button to open quickly the selected folder in the files
-            # app.
-            fieldHtml += """
+                # Add a button to open quickly the selected folder in the files
+                # app.
+                fieldHtml += """
 <a href="/#apps/files/folders/#{selectedPath.id}"
 class="folder-link"
 target="_blank">
-open selected folder
+#{t "open selected folder"}
 </a>
 """
-            fieldHtml += "</div>"
+                fieldHtml += "</div>"
 
-        else
-            fieldHtml += """
+            else
+                fieldHtml += """
 <div><input id="#{slug}-#{name}-input" type="#{val}"
-        value="#{values[name]}"/></div>
+
+        value="#{values[name]}" #{'readonly' if val is 'readonly'} /></div>
 </div>
 """
 
@@ -239,8 +257,8 @@ open selected folder
 </select>
 <span id="#{slug}-first-import">
 <span id="#{slug}-first-import-text">
-<a id="#{slug}-first-import-link" href="#">Select a starting date</a></span>
-<span id="#{slug}-first-import-date"><span>From</span>
+<a id="#{slug}-first-import-link" href="#">#{t "select starting date"}</a></span>
+<span id="#{slug}-first-import-date"><span>#{t "start import from"}</span>
 <input id="#{slug}-import-date" class="autoimport" maxlength="8" type="text">
 </input>
 </span></span>
@@ -290,6 +308,16 @@ open selected folder
             else
                 @firstImport.hide()
 
+        if @model.has 'customView'
+            # Apply translation on customView
+            rawCustomView = @model.get 'customView'
+            translatedCustomView = rawCustomView.replace /<%t ([^%]*)%>/g
+            , (match, key) -> return t key.trim()
+
+            customViewElem = $ "<div class='customView'></div"
+            customViewElem.append translatedCustomView
+            customViewElem.insertBefore @$('.fields')
+
 
     onDeleteClicked: ->
         request.del "konnectors/#{@model.id}", (err) =>
@@ -302,3 +330,13 @@ open selected folder
                 @model.set 'password', '{}'
                 window.router.navigate '', trigger: true
 
+
+
+    # This function is fired when a change of the model is fired on the backend
+    # side and the model has an error field not empty.
+    # Once executed this function displays the error
+    onImportError: (model) ->
+        errorMessage = model.get 'importErrorMessage'
+
+        @model.set 'importErrorMessage', errorMessage
+        @showErrors errorMessage

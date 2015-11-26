@@ -49,7 +49,7 @@ module.exports =
                 log: log
                 model: Bill
                 identifier: 'virgin mobile'
-                dateDelta: 4
+                dateDelta: 17
                 amountDelta: 5
             )
             .args(requiredFields, {}, {})
@@ -114,6 +114,7 @@ parsePage = (requiredFields, bills, data, next) ->
                 amount: parseFloat(inv.amount.unite + '.' + inv.amount.centimes)
                 pdfurl: baseURL + inv.invoiceNumber
                 type: "phone"
+                vendor: "Virgin mobile"
 
             if bill.date? and bill.amount? and bill.pdfurl?
                 bills.fetched.push bill

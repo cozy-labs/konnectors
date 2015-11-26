@@ -30,6 +30,7 @@ module.exports = class KonnectorListener extends CozySocketListener
             isImporting = model.get 'isImporting'
             slug = model.get 'slug'
             lastImport = model.get 'lastImport'
+            errorMessage = model.get 'importErrorMessage'
 
             formattedDate = moment(lastImport).format t('date format')
             lastImportField = $(".konnector-#{slug} .last-import")
@@ -39,6 +40,9 @@ module.exports = class KonnectorListener extends CozySocketListener
                 lastImportField.html formattedDate
             else
                 lastImportField.html t('no import performed')
+
+            if errorMessage?
+                Backbone.Mediator.pub 'konnector:error', model
 
         else
             Backbone.Mediator.pub 'folders:update', new Folder model.attributes

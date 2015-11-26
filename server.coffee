@@ -29,8 +29,7 @@ application = module.exports = (callback) ->
             initKonnectors ->
                 poller.start()
                 log.info 'Import poller started.'
-                commitPatch ->
-                    callback(app, server) if callback?
+                callback(app, server) if callback?
 
 
 if not module.parent

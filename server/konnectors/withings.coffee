@@ -14,7 +14,10 @@ log = require('printit')
 
 hexMd5 = (name) ->
     if name?
-        crypto.createHash('md5').update(name).digest('hex')
+        try
+            crypto.createHash('md5').update(name).digest('hex')
+        catch
+            ''
     else
         ''
 
@@ -23,6 +26,7 @@ hexMd5 = (name) ->
 authUrl = 'https://auth.withings.com/fr/'
 accountUrl = 'https://healthmate.withings.com/index/service/account'
 measureUrl = 'https://healthmate.withings.com/index/service/measure'
+activityUrl = 'https://healthmate.withings.com/index/service/v2/activity'
 aggregateUrl = 'https://healthmate.withings.com/index/service/v2/aggregate'
 
 # Models
@@ -49,6 +53,7 @@ BloodPressure = cozydb.getModel 'BloodPressure',
     vendor: {type: String, default: 'Withings'}
 
 Steps = require '../models/steps'
+Sleep = require '../models/sleep'
 
 Weight.all = (callback) ->
     Weight.request 'byDate', callback
@@ -77,6 +82,7 @@ module.exports =
         heartbeat: HeartBeat
         bloodpressure: BloodPressure
         steps: Steps
+        sleep: Sleep
 
 
     # Define model requests.
@@ -99,13 +105,14 @@ module.exports =
 
         end = Math.ceil((new Date).getTime() / 1000)
         start = moment()
-        start = start.years 2008
+        start = start.year 2008
         start = start.month 0
         start = start.date 1
         start = Math.ceil(start.valueOf() / 1000)
 
-        @fetchData email, password, start, end, callback
-        log.info 'import finished'
+        @fetchData email, password, start, end, (err) ->
+            log.info 'import finished'
+            callback err
 
 
     # Fetch data from withings website and save them as Cozy objects
@@ -188,7 +195,7 @@ module.exports =
                             return callback err if err
 
                             startDate = moment()
-                                .years(2014)
+                                .year(2014)
                                 .month(0)
                                 .date(1)
                                 .format('YYYY-MM-DD')
@@ -211,15 +218,78 @@ module.exports =
                             onMeasures = (err, res, body) ->
                                 return callback err if err
                                 measures = JSON.parse body
-                                saveActivityMeasures measures, callback
+                                saveActivityMeasures measures, ->
+                                    options =
+                                        sessionid: sessionid
+                                        userid: userid
+
+                                    fetchAndSaveSleepMeasures options, callback
 
                             request.post aggregateUrl, options, onMeasures
 
 
+fetchAndSaveSleepMeasures = (options, callback) ->
+    opts =
+        strictSSL: false
+        form:
+            sessionid: options.sessionid
+            userid: options.userid
+            subcategory: 37
+            startdateymd: '2013-12-24'
+            enddateymd: moment().format 'YYYY-MM-DD'
+            appname: 'my2'
+            appliver: '36871d49'
+            apppfm: 'web'
+            action: 'getbyuserid'
+
+    log.info 'Fetching sleep data...'
+    request.post activityUrl, opts, (err, res, body) ->
+        return callback err if err
+        log.info 'Fetching sleep data done.'
+        measures = JSON.parse body
+        saveSleepMeasures measures.body.series, callback
+
+
+saveSleepMeasures = (measures, callback) ->
+    sleepsMeasures = []
+    for measure in measures
+        sleepsMeasures.push new Sleep
+            vendor: 'Withings'
+            date: moment measure.date, 'YYYY-MM-DD'
+            awakeDuration: measure.data.wakeupduration
+            lightSleepDuration: measure.data.lightsleepduration
+            deepSleepDuration: measure.data.deepsleepduration
+            awakeTime: measure.data.wakeupcount
+            sleepDuration: (
+                measure.data.lightsleepduration + \
+                measure.data.deepsleepduration
+            )
+    log.info "#{measures.length} found"
+
+    Sleep.all (err, sleeps) ->
+        return callback err if err
+
+        sleepMap = {}
+        for sleep in sleeps
+            date = moment(sleep.date).format 'YYYY-MM-DD'
+            sleepMap[date] = true
+
+        SleepsToSave = sleepsMeasures.filter (measure) ->
+            date = moment(measure.date).format 'YYYY-MM-DD'
+            return not sleepMap[date]?
+
+        log.info "Saving sleeps..."
+        async.eachSeries sleepsToSave, (sleep, next) ->
+            Sleep.create sleep, next
+        , (err) ->
+            log.info "#{sleepsToSave.length} new sleep measures saved."
+            callback()
+
+
 hashMeasuresByDate = (measures) ->
     hash = {}
-    for m in measures
-        date = moment m.date
+    for measure in measures
+        date = moment measure.date
         hash[date] = true
     hash
 
@@ -271,7 +341,7 @@ saveBodyMeasures = (measures, callback) ->
             "#{bloodPressuresToSave.length} blood pressure measures to save")
 
         saveAll = (modelClass, models, done) ->
-            async.forEach models, (model, callback) ->
+            async.eachSeries models, (model, callback) ->
                 modelClass.create model, callback
             , (err) ->
                 done err
@@ -361,4 +431,66 @@ saveActivityMeasures = (measures, callback) ->
     Steps.all (err, stepsMeasures) ->
         return callback err if err
         processData stepsMeasures
+
+
+
+# Fetch sleep data from another url (it looks it's required by the withings
+# API).
+fetchAndSaveSleepMeasures = (options, callback) ->
+    opts =
+        strictSSL: false
+        form:
+            sessionid: options.sessionid
+            userid: options.userid
+            subcategory: 37
+            startdateymd: '2013-12-24'
+            enddateymd: moment().format 'YYYY-MM-DD'
+            appname: 'my2'
+            appliver: '36871d49'
+            apppfm: 'web'
+            action: 'getbyuserid'
+
+    log.info 'Fetching sleep data...'
+    request.post activityUrl, opts, (err, res, body) ->
+        return callback err if err
+        log.info 'Fetching sleep data done.'
+        measures = JSON.parse body
+        saveSleepMeasures measures.body.series, callback
+
+
+# Save sleep measures if they are not already recorded.
+saveSleepMeasures = (measures, callback) ->
+    sleepsMeasures = []
+    for measure in measures
+        sleepsMeasures.push new Sleep
+            vendor: 'Withings'
+            date: moment measure.date, 'YYYY-MM-DD'
+            awakeDuration: measure.data.wakeupduration
+            lightSleepDuration: measure.data.lightsleepduration
+            deepSleepDuration: measure.data.deepsleepduration
+            awakeTime: measure.data.wakeupcount
+            sleepDuration: (
+                measure.data.lightsleepduration + \
+                measure.data.deepsleepduration
+            )
+    log.info "#{measures.length} found"
+
+    Sleep.all (err, sleeps) ->
+        return callback err if err
+
+        sleepMap = {}
+        for sleep in sleeps
+            date = moment(sleep.date).format 'YYYY-MM-DD'
+            sleepMap[date] = true
+
+        sleepsToSave = sleepsMeasures.filter (measure) ->
+            date = moment(measure.date).format 'YYYY-MM-DD'
+            return not sleepMap[date]?
+
+        log.info "Saving sleeps..."
+        async.eachSeries sleepsToSave, (sleep, next) ->
+            Sleep.create sleep, next
+        , (err) ->
+            log.info "#{sleepsToSave.length} new sleep measures saved."
+            callback()
 

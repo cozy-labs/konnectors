@@ -34,11 +34,9 @@ application = module.exports = function(callback) {
       return initKonnectors(function() {
         poller.start();
         log.info('Import poller started.');
-        return commitPatch(function() {
-          if (callback != null) {
-            return callback(app, server);
-          }
-        });
+        if (callback != null) {
+          return callback(app, server);
+        }
       });
     });
   });

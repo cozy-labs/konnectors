@@ -61,14 +61,16 @@ Konnector.prototype.injectEncryptedFields = function() {
     return results;
   } catch (_error) {
     error = _error;
+    log.error("Attempt to retrieve password for " + this.slug + " failed: " + error);
+    log.error(this.password);
+    log.error("It may be due to an error while unencrypting password field.");
     if (this.fieldValues == null) {
       this.fieldValues = {};
     }
     this.fieldValues.password = this.password;
-    this.password = {
+    return this.password = {
       password: this.password
     };
-    return log.info("Injecting encrypted fields : JSON.parse error : " + error);
   }
 };
 
@@ -133,7 +135,7 @@ Konnector.prototype["import"] = function(callback) {
           var fields;
           fields = _this.getFields();
           _this.removeEncryptedFields(fields);
-          if ((importErr != null) && typeof importErr === 'object' && Object.keys(importErr).length > 0) {
+          if ((importErr != null) && typeof importErr === 'object' && (importErr.message != null)) {
             data = {
               isImporting: false,
               importErrorMessage: importErr.message

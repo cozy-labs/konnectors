@@ -58,6 +58,7 @@ getKonnectorsToCreate = (konnectorHash) ->
     for name, konnectorModule of konnectorModules
         unless konnectorHash[konnectorModule.slug]?
             konnectorsToCreate.push konnectorModule
+            console.info "New konnector to init: #{name}"
 
     return konnectorsToCreate
 

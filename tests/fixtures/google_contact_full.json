@@ -1,0 +1,347 @@
+{
+  "entry": {
+    "gd$name": {
+      "gd$givenName": {
+        "$t": "AAAgoogleFirst"
+      }, 
+      "gd$fullName": {
+        "$t": "Mr AAAgoogleFirst Middleone Middletwo von AAALast Jr"
+      }, 
+      "gd$familyName": {
+        "$t": "von AAALast"
+      }, 
+      "gd$additionalName": {
+        "$t": "Middleone Middletwo"
+      }, 
+      "gd$namePrefix": {
+        "$t": "Mr"
+      }, 
+      "gd$nameSuffix": {
+        "$t": "Jr"
+      }
+    }, 
+    "gContact$website": [
+      {
+        "href": "http://profile.example.com/", 
+        "rel": "profile"
+      }, 
+      {
+        "href": "http://blog.example.com/", 
+        "rel": "blog"
+      }, 
+      {
+        "href": "http://home.example.com/", 
+        "rel": "home-page"
+      }, 
+      {
+        "href": "http://work.example.com/", 
+        "rel": "work"
+      }, 
+      {
+        "href": "http://custom.example.com/", 
+        "label": "arbitraryString"
+      }
+    ], 
+    "gContact$relation": [
+      {
+        "$t": "Spouse", 
+        "rel": "spouse"
+      }, 
+      {
+        "$t": "Child One", 
+        "rel": "child"
+      }, 
+      {
+        "$t": "Mom", 
+        "rel": "mother"
+      }, 
+      {
+        "$t": "Dad", 
+        "rel": "father"
+      }, 
+      {
+        "$t": "Step-parent", 
+        "rel": "parent"
+      }, 
+      {
+        "$t": "Big Bro", 
+        "rel": "brother"
+      }, 
+      {
+        "$t": "Lil Sis", 
+        "rel": "sister"
+      }, 
+      {
+        "$t": "Good Friend", 
+        "rel": "friend"
+      }, 
+      {
+        "$t": "Some Relative", 
+        "rel": "relative"
+      }, 
+      {
+        "$t": "Big Boss", 
+        "rel": "manager"
+      }, 
+      {
+        "$t": "Personal Assistant", 
+        "rel": "assistant"
+      }, 
+      {
+        "$t": "Referred By", 
+        "rel": "referred-by"
+      }, 
+      {
+        "$t": "Partner", 
+        "rel": "partner"
+      }, 
+      {
+        "$t": "Domestic Partner", 
+        "rel": "domestic-partner"
+      }, 
+      {
+        "$t": "Custom", 
+        "label": "Arbitrary-string"
+      }
+    ], 
+    "id": {
+      "$t": "http://www.google.com/m8/feeds/contacts/accountname%40gmail.com/base/58b0cfc38bf730e5"
+    }, 
+    "category": [
+      {
+        "term": "http://schemas.google.com/contact/2008#contact", 
+        "scheme": "http://schemas.google.com/g/2005#kind"
+      }
+    ], 
+    "gContact$birthday": {
+      "when": "1961-04-05"
+    }, 
+    "title": {
+      "$t": "Mr AAAgoogleFirst Middleone Middletwo von AAALast Jr"
+    }, 
+    "content": {
+      "$t": "Blah, blah\n\nblah blah blah.\n\nblahblah\nCustom: Custom field data"
+    }, 
+    "gd$etag": "\"SXY6cDVSLit7I2A9XRJTFk0IRwU.\"", 
+    "updated": {
+      "$t": "2015-08-26T15:13:38.818Z"
+    }, 
+    "xmlns$gd": "http://schemas.google.com/g/2005", 
+    "gContact$groupMembershipInfo": [
+      {
+        "deleted": "false", 
+        "href": "http://www.google.com/m8/feeds/groups/rogerdupondt%40gmail.com/base/6"
+      }, 
+      {
+        "deleted": "false", 
+        "href": "http://www.google.com/m8/feeds/groups/rogerdupondt%40gmail.com/base/7866a6298ce25d4b"
+      }
+    ], 
+    "gd$structuredPostalAddress": [
+      {
+        "gd$formattedAddress": {
+          "$t": "678 Plain Home Address\nAll one field 354\nBridgeport CT 06"
+        }, 
+        "gd$street": {
+          "$t": "678 Plain Home Address\nAll one field 354\nBridgeport CT 06"
+        }, 
+        "rel": "http://schemas.google.com/g/2005#home"
+      }, 
+      {
+        "rel": "http://schemas.google.com/g/2005#work", 
+        "gd$country": {
+          "$t": "USA"
+        }, 
+        "gd$formattedAddress": {
+          "$t": "80 Maple Road\r\nNorthville\nPOB 999\nDanbury, CT 06810\nUSA"
+        }, 
+        "gd$city": {
+          "$t": "Danbury"
+        }, 
+        "gd$street": {
+          "$t": "80 Maple Road\r\nNorthville"
+        }, 
+        "gd$region": {
+          "$t": "CT"
+        }, 
+        "gd$postcode": {
+          "$t": "06810"
+        }, 
+        "gd$pobox": {
+          "$t": "POB 999"
+        }
+      }, 
+      {
+        "gd$country": {
+          "$t": "USA"
+        }, 
+        "gd$formattedAddress": {
+          "$t": "678 Elm Street\nApt 354\nBridgeport, CT 06834\nUSA"
+        }, 
+        "label": "Weekends", 
+        "gd$city": {
+          "$t": "Bridgeport"
+        }, 
+        "gd$street": {
+          "$t": "678 Elm Street\nApt 354\n"
+        }, 
+        "gd$region": {
+          "$t": "CT"
+        }, 
+        "gd$postcode": {
+          "$t": "06834"
+        }
+      }
+    ], 
+    "xmlns$gContact": "http://schemas.google.com/contact/2008", 
+    "link": [
+      {
+        "href": "https://www.google.com/m8/feeds/photos/media/rogerdupondt%40gmail.com/58b0cfc38bf730e5", 
+        "type": "image/*", 
+        "rel": "http://schemas.google.com/contacts/2008/rel#photo"
+      }, 
+      {
+        "href": "https://www.google.com/m8/feeds/contacts/rogerdupondt%40gmail.com/full/58b0cfc38bf730e5", 
+        "type": "application/atom+xml", 
+        "rel": "self"
+      }, 
+      {
+        "href": "https://www.google.com/m8/feeds/contacts/rogerdupondt%40gmail.com/full/58b0cfc38bf730e5", 
+        "type": "application/atom+xml", 
+        "rel": "edit"
+      }
+    ], 
+    "gd$email": [
+      {
+        "primary": "true", 
+        "rel": "http://schemas.google.com/g/2005#home", 
+        "address": "homeEmail@example.com"
+      }, 
+      {
+        "rel": "http://schemas.google.com/g/2005#work", 
+        "address": "workEmail@example.com"
+      }, 
+      {
+        "label": "Arbitrary String", 
+        "address": "customEmail@example.com"
+      }
+    ], 
+    "app$edited": {
+      "xmlns$app": "http://www.w3.org/2007/app", 
+      "$t": "2015-08-26T15:13:38.818Z"
+    }, 
+    "gContact$event": [
+      {
+        "gd$when": {
+          "startTime": "2014-12-31"
+        }, 
+        "label": "Died"
+      }, 
+      {
+        "gd$when": {
+          "startTime": "2001-01-01"
+        }, 
+        "rel": "anniversary"
+      }
+    ], 
+    "gd$organization": [
+      {
+        "gd$orgTitle": {
+          "$t": "Chairman"
+        }, 
+        "gd$orgName": {
+          "$t": "SuperCorp"
+        }, 
+        "rel": "http://schemas.google.com/g/2005#work"
+      }
+    ], 
+    "xmlns": "http://www.w3.org/2005/Atom", 
+    "gd$im": [
+      {
+        "protocol": "http://schemas.google.com/g/2005#AIM", 
+        "rel": "http://schemas.google.com/g/2005#other", 
+        "address": "AIM"
+      }, 
+      {
+        "protocol": "http://schemas.google.com/g/2005#GOOGLE_TALK", 
+        "rel": "http://schemas.google.com/g/2005#other", 
+        "address": "gTalk"
+      }, 
+      {
+        "protocol": "http://schemas.google.com/g/2005#YAHOO", 
+        "rel": "http://schemas.google.com/g/2005#other", 
+        "address": "Yahoo"
+      }, 
+      {
+        "protocol": "http://schemas.google.com/g/2005#JABBER", 
+        "rel": "http://schemas.google.com/g/2005#other", 
+        "address": "Jabber"
+      }, 
+      {
+        "protocol": "http://schemas.google.com/g/2005#MSN", 
+        "rel": "http://schemas.google.com/g/2005#other", 
+        "address": "MSN"
+      }, 
+      {
+        "protocol": "http://schemas.google.com/g/2005#SKYPE", 
+        "rel": "http://schemas.google.com/g/2005#other", 
+        "address": "Skype"
+      }, 
+      {
+        "protocol": "http://schemas.google.com/g/2005#QQ", 
+        "rel": "http://schemas.google.com/g/2005#other", 
+        "address": "QQ"
+      }, 
+      {
+        "protocol": "http://schemas.google.com/g/2005#ICQ", 
+        "rel": "http://schemas.google.com/g/2005#other", 
+        "address": "ICQ"
+      }
+    ], 
+    "xmlns$batch": "http://schemas.google.com/gdata/batch", 
+    "gd$phoneNumber": [
+      {
+        "$t": "+1 860 355 3887", 
+        "uri": "tel:+1-860-355-3887", 
+        "rel": "http://schemas.google.com/g/2005#home"
+      }, 
+      {
+        "$t": "+1 860 350 0301", 
+        "uri": "tel:+1-860-350-0301", 
+        "rel": "http://schemas.google.com/g/2005#work"
+      }, 
+      {
+        "$t": "+1 203 207 1047", 
+        "uri": "tel:+1-203-207-1047", 
+        "rel": "http://schemas.google.com/g/2005#mobile"
+      }, 
+      {
+        "$t": "+1 212 555 1234", 
+        "uri": "tel:+1-212-555-1234", 
+        "rel": "http://schemas.google.com/g/2005#main"
+      }, 
+      {
+        "$t": "+1 212 555 2345", 
+        "uri": "tel:+1-212-555-2345", 
+        "rel": "http://schemas.google.com/g/2005#work_fax"
+      }, 
+      {
+        "$t": "+1 212 555 3456", 
+        "uri": "tel:+1-212-555-3456", 
+        "rel": "http://schemas.google.com/g/2005#home_fax"
+      }, 
+      {
+        "$t": "+1 212 555 4567", 
+        "uri": "tel:+1-212-555-4567", 
+        "label": "GRAND_CENTRAL"
+      }, 
+      {
+        "$t": "+1 212 555 0000", 
+        "uri": "tel:+1-212-555-0000", 
+        "rel": "http://schemas.google.com/g/2005#pager"
+      }
+    ]
+  }, 
+  "version": "1.0", 
+  "encoding": "UTF-8"
+}
