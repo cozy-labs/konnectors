@@ -39,6 +39,7 @@ module.exports =
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
                 return callback err if err
+
                 log.info "Import finished"
                 callback()
 
@@ -57,13 +58,13 @@ retrieveTokens = (requiredFields, entries, data, next) ->
         return next err if err
 
         if body.status? and body.status is 'error'
-            return next new Error(body.status_details)
-
-        $ = cheerio.load body
-        entries.csrfToken = $('#loginCsrfParam-login').val()
-        entries.accountName = requiredFields.login
-        log.info 'Tokens retrieved'
-        next()
+            next new Error(body.status_details)
+        else
+            $ = cheerio.load body
+            entries.csrfToken = $('#loginCsrfParam-login').val()
+            entries.accountName = requiredFields.login
+            log.info 'Tokens retrieved'
+            next()
 
 
 # Make the login request with the user inputs (login/password) and the csrf
@@ -105,11 +106,13 @@ retrieveListContact = (requiredFields, entries, data, next) ->
         return next err if err
         if body.status? and body.status is 'error'
             return next new Error(body.status_details)
+
         entries.listContacts = body.contacts
         if not entries.listContacts?
-            return next new Error("Error retrieving contacts from request")
-        log.info 'List contact OK'
-        next()
+            next new Error("Error retrieving contacts from request")
+        else
+            log.info 'List contact OK'
+            next()
 
 
 # Retrieve a list of all Cozy contacts, find all the contacts linked to the
@@ -119,9 +122,11 @@ prepareCozyContacts = (requiredFields, entries, data, next) ->
 
     Contact.all (err, contacts) ->
         return next err if err
-        entries.cozyContacts = contacts
+
+        entries.cozyContactsByFn = {}
         entries.ofAccountByIds = {}
         for contact in contacts
+            entries.cozyContactsByFn[contact.fn] = contact
             account = contact.getAccount ACCOUNT_TYPE, entries.accountName
             if account?
                 entries.ofAccountByIds[account.id] = contact
@@ -151,9 +156,9 @@ retrieveContacts = (requiredFields, entries, data, next) ->
 
         request.get opts, (err, res, body) ->
             return done err if err
-
             if body.status? and body.status is 'error'
                 return done new Error(body.status_details)
+
             datapoints = []
 
             # Fill datapoints
@@ -321,11 +326,11 @@ saveContact  = (linkContact, entries) ->
         else # Already uptodate, nothing to do.
             log.info "LinkedIn contact #{cozyContact.fn} already synced and uptodate"
             log.debug "LContact #{linkContact.n}already synced and uptodate"
+
     else
-        for cozyContact in entries.cozyContacts
-            if CompareContacts.isSamePerson cozyContact, linkContact
-                log.info "Link #{cozyContact.fn} to linkedin account"
-                updateContact cozyContact, linkContact
-                return
+        if entries.cozyContactsByFn[linkContact.fb]?
+            log.info "Link #{cozyContact.fn} to linkedin account"
+            updateContact cozyContact, linkContact
+            return
         log.info "Create #{linkContact.fn} contact"
         Contact.create linkContact, endSavePicture
