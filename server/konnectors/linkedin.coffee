@@ -143,9 +143,9 @@ retrieveContacts = (requiredFields, entries, data, next) ->
     processRetrievingContactData = (contactId, done) ->
         contacts = """https://www.linkedin.com/contacts/api/contacts/\
         #{contactId}/?fields=name,first_name,last_name,\
-        #emails_extended,phone_numbers,sites,addresses,\
-        #company,title,location,profiles,twitter,\
-        #display_sources&_=1444864592009"""
+        emails_extended,phone_numbers,sites,addresses,\
+        company,title,geo_location,profiles,twitter,tag,\
+        secure_profile_image_url"""
 
         opts =
             url: contacts
@@ -171,13 +171,14 @@ retrieveContacts = (requiredFields, entries, data, next) ->
             finalContact = new Contact
                 n: "#{data.last_name};#{data.first_name}"
                 fn: data.name
-                title: contact.title || undefined
+                title: data.title || undefined
                 org: data.company?.name || undefined
                 title: data.title || undefined
                 tags: ['linkedin']
                 datapoints: datapoints || undefined
 
-            finalContact.imageUrl = contact.secure_profile_image_url || undefined
+            console.log data
+            finalContact.imageUrl = data.secure_profile_image_url || undefined
             ContactHelper.setAccount finalContact,
                 type: ACCOUNT_TYPE
                 name: entries.accountName
@@ -213,7 +214,7 @@ retrieveContacts = (requiredFields, entries, data, next) ->
 getPhoneNumber = (data) ->
     listPhones = []
 
-    data.phone_numbers.forEach (number) ->
+    data.phone_numbers?.forEach (number) ->
         listPhones.push
             name: 'tel'
             type: number.type.toLowerCase()
@@ -224,7 +225,7 @@ getPhoneNumber = (data) ->
 getEmails = (data) ->
     listEmails = []
 
-    data.emails_extended.forEach (email) ->
+    data.emails_extended?.forEach (email) ->
         listEmails.push
             name: 'email'
             value: email.email
@@ -236,17 +237,17 @@ getEmails = (data) ->
 getUrls = (data) ->
     listUrls = []
 
-    data.sites.forEach (site) ->
+    data.sites?.forEach (site) ->
         listUrls.push
             name: 'url'
             value: site.url
             type: site.name
-    data.profiles.forEach (profile) ->
+    data.profiles?.forEach (profile) ->
         listUrls.push
             name: 'url'
             value: profile.url
             type: 'linkedin'
-    data.twitter.forEach (twitter) ->
+    data.twitte?r.forEach (twitter) ->
         listUrls.push
             name: 'url'
             value: twitter.url
@@ -264,7 +265,7 @@ getAddresses = (data) ->
         #region = segmentAddress[1] || ''
         #locality = segmentAddress[2] || ''
 
-    data.addresses.forEach (address) =>
+    data.addresses?.forEach (address) =>
         addressArray = ContactHelper.adrStringToArray address.raw
         addressArray[6] = country
 
@@ -296,8 +297,6 @@ saveContact  = (linkContact, entries) ->
 
         if urlImage?
             opts = url.parse(urlImage)
-            opts.headers =
-                'User-Agent': agent
             https.get opts, (stream) ->
                 stream.on 'error', (err) -> log.error err
 
