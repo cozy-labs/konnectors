@@ -177,7 +177,6 @@ retrieveContacts = (requiredFields, entries, data, next) ->
                 tags: ['linkedin']
                 datapoints: datapoints || undefined
 
-            console.log data
             finalContact.imageUrl = data.secure_profile_image_url || undefined
             ContactHelper.setAccount finalContact,
                 type: ACCOUNT_TYPE
@@ -247,7 +246,7 @@ getUrls = (data) ->
             name: 'url'
             value: profile.url
             type: 'linkedin'
-    data.twitte?r.forEach (twitter) ->
+    data.twitter?.forEach (twitter) ->
         listUrls.push
             name: 'url'
             value: twitter.url
@@ -255,6 +254,10 @@ getUrls = (data) ->
 
     listUrls
 
+# Currently there isn't an address parser so all the address is set in the
+# locality fields. The Linkedin API allow us to define some fields precisely but
+# that can lead to a duplicat so only the country is specify in the right fields
+# and we should wait an address parser before use them
 getAddresses = (data) ->
     listAddresses = []
 
