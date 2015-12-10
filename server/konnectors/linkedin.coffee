@@ -1,25 +1,21 @@
 
-# Vendor
 request = require 'request'
 https = require 'https'
 url = require 'url'
 async = require 'async'
 cheerio = require 'cheerio'
+libPhone = require 'libphonenumber'
+fetcher = require '../lib/fetcher'
+Contact = require '../models/contact'
+Tag = require '../models/tag'
+ContactHelper = require '../lib/contact_helper'
+CompareContacts = require '../lib/compare_contacts'
 log = require('printit')
     prefix: "Linkedin"
     date: true
 
 ACCOUNT_TYPE = 'com.linkedin'
 
-# GLOBAL
-agent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:41.0) Gecko/20100101 Firefox/41.0'
-
-# Module
-fetcher = require '../lib/fetcher'
-Contact = require '../models/contact'
-Tag = require '../models/tag'
-ContactHelper = require '../lib/contact_helper'
-CompareContacts = require '../lib/compare_contacts'
 
 
 module.exports =
@@ -49,13 +45,17 @@ module.exports =
                 callback()
 
 
+# Load landing page to retrieve the csrf token needed in login request.
+# More info on csrf -> https://en.wikipedia.org/wiki/Cross-site_request_forgery
+#
+# The sourceAlias input is also needed in login request, his goal is unknown
+#
+# The html parsing is done with cheerio, a "jquery like" server side
 retrieveTokens = (requiredFields, entries, data, next) ->
     log.info 'Retrieve Tokens'
     opts =
         url: 'https://linkedin.com'
         jar: true
-        headers:
-            'User-Agent': agent
 
     request.get opts, (err, res, body) ->
         return next err if err
@@ -72,6 +72,8 @@ retrieveTokens = (requiredFields, entries, data, next) ->
 
 
 
+# Make the login request with the user inputs (login/password) and the csrf
+# token retrieved above.
 logIn = (requiredFields, entries, data, next) ->
     log.info 'Attempt login'
     opts =
@@ -84,8 +86,6 @@ logIn = (requiredFields, entries, data, next) ->
             loginCsrfParam: entries.csrfToken
             sourceAlias: entries.sourceAlias
             submit: "Sign+in"
-            headers:
-                'User-Agent': agent
 
     request.post opts, (err, res, body) ->
         return next err if err
@@ -106,8 +106,6 @@ retrieveListContact = (requiredFields, entries, data, next) ->
         url: contacts
         jar: true
         json: true
-        headers:
-            'User-Agent': agent
 
     request.get opts, (err, res, body) ->
         return next err if err
@@ -146,8 +144,6 @@ retrieveContacts = (requiredFields, entries, data, next) ->
             url: contacts
             jar: true
             json: true
-            headers:
-                'User-Agent': agent
 
         request.get opts, (err, res, body) ->
             return next err if err
