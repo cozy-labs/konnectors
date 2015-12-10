@@ -4,7 +4,6 @@ https = require 'https'
 url = require 'url'
 async = require 'async'
 cheerio = require 'cheerio'
-libPhone = require 'libphonenumber'
 fetcher = require '../lib/fetcher'
 Contact = require '../models/contact'
 Tag = require '../models/tag'
@@ -15,7 +14,6 @@ log = require('printit')
     date: true
 
 ACCOUNT_TYPE = 'com.linkedin'
-
 
 
 module.exports =
@@ -66,7 +64,6 @@ retrieveTokens = (requiredFields, entries, data, next) ->
         entries.accountName = requiredFields.login
         log.info 'Tokens retrieved'
         next()
-
 
 
 # Make the login request with the user inputs (login/password) and the csrf
@@ -166,7 +163,6 @@ retrieveContacts = (requiredFields, entries, data, next) ->
             datapoints = datapoints.concat getUrls(data)
             datapoints = datapoints.concat getAddresses(data)
 
-
             # Contact data composition
             finalContact = new Contact
                 n: "#{data.last_name};#{data.first_name}"
@@ -205,9 +201,6 @@ retrieveContacts = (requiredFields, entries, data, next) ->
             queue.push contact.id, (err, finalContact) ->
                 log.error err if err
                 saveContact finalContact, entries
-
-
-
 
 
 getPhoneNumber = (data) ->
@@ -254,6 +247,7 @@ getUrls = (data) ->
 
     listUrls
 
+
 # Currently there isn't an address parser so all the address is set in the
 # locality fields. The Linkedin API allow us to define some fields precisely but
 # that can lead to a duplicat so only the country is specify in the right fields
@@ -278,8 +272,6 @@ getAddresses = (data) ->
             type: 'main'
 
     listAddresses
-
-
 
 
 # Save and/or merge the imported contacts with the existing
@@ -337,4 +329,3 @@ saveContact  = (linkContact, entries) ->
                 return
         log.info "Create #{linkContact.fn} contact"
         Contact.create linkContact, endSavePicture
-
