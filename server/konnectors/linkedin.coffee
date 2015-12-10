@@ -48,8 +48,6 @@ module.exports =
 # Load landing page to retrieve the csrf token needed in login request.
 # More info on csrf -> https://en.wikipedia.org/wiki/Cross-site_request_forgery
 #
-# The sourceAlias input is also needed in login request, his goal is unknown
-#
 # The html parsing is done with cheerio, a "jquery like" server side
 retrieveTokens = (requiredFields, entries, data, next) ->
     log.info 'Retrieve Tokens'
@@ -60,12 +58,11 @@ retrieveTokens = (requiredFields, entries, data, next) ->
     request.get opts, (err, res, body) ->
         return next err if err
 
-        if body.status? and body.status == 'error'
-            next new Error(body.status_details)
+        if body.status? and body.status is 'error'
+            return next new Error(body.status_details)
 
         $ = cheerio.load body
         entries.csrfToken = $('#loginCsrfParam-login').val()
-        entries.sourceAlias = $('#sourceAlias-login').val()
         entries.accountName = requiredFields.login
         log.info 'Tokens retrieved'
         next()
@@ -82,26 +79,26 @@ logIn = (requiredFields, entries, data, next) ->
         form:
             session_key: requiredFields.login
             session_password: requiredFields.password
-            isJsEnabled: "false"
             loginCsrfParam: entries.csrfToken
-            sourceAlias: entries.sourceAlias
             submit: "Sign+in"
 
     request.post opts, (err, res, body) ->
         return next err if err
 
-        if body == ""
+        if body is ""
             log.info 'Login success'
             next()
         else
             log.error 'Bad login / password'
-            next(new Error("Bad login/Password"))
+            next new Error("Bad login/Password")
 
 
+# Retrieve a list of all contacts id available in the count. The id will be
+# use to retrieve his personnal data.
 retrieveListContact = (requiredFields, entries, data, next) ->
     log.info 'Retrieve list contact'
 
-    contacts = "https://www.linkedin.com/contacts/api/contacts/full/?start=0&count=10000&fields=name"
+    contacts = "https://www.linkedin.com/contacts/api/contacts/?start=0&count=10000&fields=id"
     opts =
         url: contacts
         jar: true
@@ -109,36 +106,46 @@ retrieveListContact = (requiredFields, entries, data, next) ->
 
     request.get opts, (err, res, body) ->
         return next err if err
-        if body.status? and body.status == 'error'
-            next new Error(body.status_details)
+        if body.status? and body.status is 'error'
+            return next new Error(body.status_details)
         entries.listContacts = body.contacts
         if not entries.listContacts?
-            next new Error("Error retrieving contacts from request")
+            return next new Error("Error retrieving contacts from request")
         log.info 'List contact OK'
         next()
 
 
-# Same as Google Konnector function
+# Retrieve a list of all Cozy contacts, find all the contacts linked to the
+# current Linkedin account an put them in a list by id
 prepareCozyContacts = (requiredFields, entries, data, next) ->
     log.info 'Prepare Cozy contacts'
 
     Contact.all (err, contacts) ->
         return next err if err
         entries.cozyContacts = contacts
-        entries.ofAccount = []
         entries.ofAccountByIds = {}
         for contact in contacts
             account = contact.getAccount ACCOUNT_TYPE, entries.accountName
             if account?
                 entries.ofAccountByIds[account.id] = contact
-                entries.ofAccount.push contact
         next()
 
 
+# Create or retrieve a specific to Linkedin, then
+#
+# make a request for each contact retrieved in the previous request
+# (retrieveListContact) with all data needed.
+#
+# In order to reduce the waiting betwen each request an async queue
+# is create. It process the 10 first contacts. (see Async lib)
 retrieveContacts = (requiredFields, entries, data, next) ->
 
-    processRetrievingContactData = (contact, next) ->
-        contacts = "https://www.linkedin.com/contacts/api/contacts/#{contact.id}/?fields=name,first_name,last_name,emails_extended,phone_numbers,sites,addresses,company,title,location,profiles,twitter,display_sources&_=1444864592009"
+    processRetrievingContactData = (contactId, done) ->
+        contacts = """https://www.linkedin.com/contacts/api/contacts/\
+        #{contactId}/?fields=name,first_name,last_name,\
+        #emails_extended,phone_numbers,sites,addresses,\
+        #company,title,location,profiles,twitter,\
+        #display_sources&_=1444864592009"""
 
         opts =
             url: contacts
@@ -146,12 +153,13 @@ retrieveContacts = (requiredFields, entries, data, next) ->
             json: true
 
         request.get opts, (err, res, body) ->
-            return next err if err
+            return done err if err
 
-            if body.status? and body.status == 'error'
-                next new Error(body.status_details)
+            if body.status? and body.status is 'error'
+                return done new Error(body.status_details)
             datapoints = []
 
+            # Fill datapoints
             data = body.contact_data
             datapoints = datapoints.concat getPhoneNumber(data)
             datapoints = datapoints.concat getEmails(data)
@@ -159,6 +167,7 @@ retrieveContacts = (requiredFields, entries, data, next) ->
             datapoints = datapoints.concat getAddresses(data)
 
 
+            # Contact data composition
             finalContact = new Contact
                 n: "#{data.last_name};#{data.first_name}"
                 fn: data.name
@@ -174,11 +183,13 @@ retrieveContacts = (requiredFields, entries, data, next) ->
                 name: entries.accountName
                 id: data.id
 
-            next null, finalContact
+            done null, finalContact
 
 
+    # Create the queue
     queue = async.queue processRetrievingContactData, 10
 
+    # Is executed once all data have been proceed
     queue.drain = ->
         log.info 'All data retrieved'
         next()
@@ -188,8 +199,10 @@ retrieveContacts = (requiredFields, entries, data, next) ->
             entries.tag = null
         else
             entries.tag = tag
+
+        # Add all contact Id to the queue
         entries.listContacts.forEach (contact) ->
-            queue.push contact, (err, finalContact) ->
+            queue.push contact.id, (err, finalContact) ->
                 log.error err if err
                 saveContact finalContact, entries
 
@@ -216,7 +229,7 @@ getEmails = (data) ->
             name: 'email'
             value: email.email
             type: 'internet'
-            pref: email.primary == true ? true : undefined
+            pref: email.primary is true ? true : undefined
     listEmails
 
 
@@ -262,6 +275,10 @@ getAddresses = (data) ->
 
     listAddresses
 
+
+
+
+# Save and/or merge the imported contacts with the existing
 saveContact  = (linkContact, entries) ->
     linkAccount = ContactHelper.getAccount linkContact, ACCOUNT_TYPE, entries.accountName
 
@@ -277,25 +294,23 @@ saveContact  = (linkContact, entries) ->
             done err
 
 
-        if not urlImage?
-            return
-        opts = url.parse(urlImage)
-        opts.headers =
-            'User-Agent': agent
-        https.get opts, (stream) ->
-            stream.on 'error', (err) -> log.error err
+        if urlImage?
+            opts = url.parse(urlImage)
+            opts.headers =
+                'User-Agent': agent
+            https.get opts, (stream) ->
+                stream.on 'error', (err) -> log.error err
 
-            updatedContact.attachFile stream, {name: 'picture'}, (err)->
-                if err
-                    log.error "picture #{err}"
-                else
-                    log.debug "picture ok"
+                updatedContact.attachFile stream, {name: 'picture'}, (err)->
+                    if err
+                        log.error "picture #{err}"
+                    else
+                        log.debug "picture ok"
 
 
     updateContact = (fromCozy, fromLinkedin) ->
         CompareContacts.mergeContacts fromCozy, fromLinkedin
         fromCozy.save endSavePicture
-
 
 
     if not linkAccount?
@@ -313,7 +328,6 @@ saveContact  = (linkContact, entries) ->
             log.info "LinkedIn contact #{cozyContact.fn} already synced and uptodate"
             log.debug "LContact #{linkContact.n}already synced and uptodate"
     else
-
         for cozyContact in entries.cozyContacts
             if CompareContacts.isSamePerson cozyContact, linkContact
                 log.info "Link #{cozyContact.fn} to linkedin account"
