@@ -328,9 +328,9 @@ saveContact  = (linkContact, entries) ->
             log.debug "LContact #{linkContact.n}already synced and uptodate"
 
     else
-        if entries.cozyContactsByFn[linkContact.fb]?
+        if entries.cozyContactsByFn[linkContact.fn]?
             log.info "Link #{cozyContact.fn} to linkedin account"
             updateContact cozyContact, linkContact
-            return
-        log.info "Create #{linkContact.fn} contact"
-        Contact.create linkContact, endSavePicture
+        else
+            log.info "Create #{linkContact.fn} contact"
+            Contact.create linkContact, endSavePicture
