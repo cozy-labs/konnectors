@@ -1,17 +1,17 @@
-
 request = require 'request'
 https = require 'https'
 url = require 'url'
 async = require 'async'
 cheerio = require 'cheerio'
+log = require('printit')
+    prefix: "Linkedin"
+    date: true
+
 fetcher = require '../lib/fetcher'
 Contact = require '../models/contact'
 Tag = require '../models/tag'
 ContactHelper = require '../lib/contact_helper'
 CompareContacts = require '../lib/compare_contacts'
-log = require('printit')
-    prefix: "Linkedin"
-    date: true
 
 ACCOUNT_TYPE = 'com.linkedin'
 
@@ -33,9 +33,9 @@ module.exports =
         fetcher.new()
             .use(retrieveTokens)
             .use(logIn)
-            .use(retrieveListContact)
+            .use(retrieveContactList)
             .use(prepareCozyContacts)
-            .use(retrieveContacts)
+            .use(saveContacts)
             .args(requiredFields, {}, {})
             .fetch (err, fields, entries) ->
                 return callback err if err
@@ -47,13 +47,15 @@ module.exports =
 # Load landing page to retrieve the csrf token needed in login request.
 # More info on csrf -> https://en.wikipedia.org/wiki/Cross-site_request_forgery
 #
-# The html parsing is done with cheerio, a "jquery like" server side
+# The html parsing is done with cheerio, a "jquery like" that can be run on
+# the server side.
 retrieveTokens = (requiredFields, entries, data, next) ->
     log.info 'Retrieve Tokens'
     opts =
         url: 'https://linkedin.com'
         jar: true
 
+    log.info 'Retrieving CSRF Token...'
     request.get opts, (err, res, body) ->
         return next err if err
 
@@ -63,14 +65,13 @@ retrieveTokens = (requiredFields, entries, data, next) ->
             $ = cheerio.load body
             entries.csrfToken = $('#loginCsrfParam-login').val()
             entries.accountName = requiredFields.login
-            log.info 'Tokens retrieved'
+            log.info 'CSRF Token retrieved successfully'
             next()
 
 
-# Make the login request with the user inputs (login/password) and the csrf
-# token retrieved above.
+# Make the login request with the user inputs (login/password) and the CSRF
+# token retrieved in the previous step.
 logIn = (requiredFields, entries, data, next) ->
-    log.info 'Attempt login'
     opts =
         url: 'https://www.linkedin.com/uas/login-submit'
         jar: true
@@ -80,46 +81,57 @@ logIn = (requiredFields, entries, data, next) ->
             loginCsrfParam: entries.csrfToken
             submit: "Sign+in"
 
+    log.info 'Signing in...'
     request.post opts, (err, res, body) ->
         return next err if err
 
         if body is ""
-            log.info 'Login success'
+            log.info 'Login succeeded!'
             next()
         else
-            log.error 'Bad login / password'
-            next new Error("Bad login/Password")
+            log.error 'Wrong login or password.'
+            next new Error("Wrong login or password.")
 
 
-# Retrieve a list of all contacts id available in the count. The id will be
-# use to retrieve his personnal data.
-retrieveListContact = (requiredFields, entries, data, next) ->
+# Retrieve a list of all Linkedin ID contacts available. The linkedin ID will
+# be used to retrieve additional data about the contact.
+retrieveContactList = (requiredFields, entries, data, next) ->
     log.info 'Retrieve list contact'
 
-    contacts = "https://www.linkedin.com/contacts/api/contacts/?start=0&count=10000&fields=id"
+    contactsUrl = "https://www.linkedin.com/contacts/api/contacts/"
+    contactsUrl += "?start=0&count=10000&fields=id"
     opts =
-        url: contacts
+        url: contactsUrl
         jar: true
         json: true
 
+    log.info 'Retrieve contact list...'
     request.get opts, (err, res, body) ->
         return next err if err
+
         if body.status? and body.status is 'error'
-            return next new Error(body.status_details)
-
-        entries.listContacts = body.contacts
-        if not entries.listContacts?
-            next new Error("Error retrieving contacts from request")
+            next new Error body.status_details
         else
-            log.info 'List contact OK'
-            next()
+            entries.listContacts = body.contacts
+            if not entries.listContacts?
+                next new Error "Error retrieving contacts from request"
+            else
+                log.info 'Contact list retrieved.'
+                next()
 
 
-# Retrieve a list of all Cozy contacts, find all the contacts linked to the
-# current Linkedin account an put them in a list by id
+# Load all Cozy contacts, then perform several operations:
+#
+# * Keep only contacts linked to the current LinkedinAccount
+# * Order them in a map where the LinkedIn account ID is the key
+# * Order them in a map where the contact full name is the key.
+#
+# That way we will be able to check if the contact should be updated (because
+# it already exists) or if it should be created.
+#
 prepareCozyContacts = (requiredFields, entries, data, next) ->
-    log.info 'Prepare Cozy contacts'
 
+    log.info 'Load Cozy contacts...'
     Contact.all (err, contacts) ->
         return next err if err
 
@@ -128,19 +140,19 @@ prepareCozyContacts = (requiredFields, entries, data, next) ->
         for contact in contacts
             entries.cozyContactsByFn[contact.fn] = contact
             account = contact.getAccount ACCOUNT_TYPE, entries.accountName
-            if account?
-                entries.ofAccountByIds[account.id] = contact
+            entries.ofAccountByIds[account.id] = contact if account?
+
+        log.info 'Cozy contacts contacts loaded.'
         next()
 
 
 # Create or retrieve a specific to Linkedin, then
-#
 # make a request for each contact retrieved in the previous request
 # (retrieveListContact) with all data needed.
 #
 # In order to reduce the waiting betwen each request an async queue
 # is create. It process the 10 first contacts. (see Async lib)
-retrieveContacts = (requiredFields, entries, data, next) ->
+saveContacts = (requiredFields, entries, data, next) ->
 
     processRetrievingContactData = (contactId, done) ->
         contacts = """https://www.linkedin.com/contacts/api/contacts/\
@@ -208,6 +220,7 @@ retrieveContacts = (requiredFields, entries, data, next) ->
                 saveContact finalContact, entries
 
 
+# Extract numbers from given linkedin data structure.
 getPhoneNumber = (data) ->
     listPhones = []
 
@@ -219,6 +232,7 @@ getPhoneNumber = (data) ->
     listPhones
 
 
+# Extract emails from given linkedin data structure.
 getEmails = (data) ->
     listEmails = []
 
@@ -231,6 +245,7 @@ getEmails = (data) ->
     listEmails
 
 
+# Extract urls from given linkedin data structure.
 getUrls = (data) ->
     listUrls = []
 
@@ -239,11 +254,13 @@ getUrls = (data) ->
             name: 'url'
             value: site.url
             type: site.name
+
     data.profiles?.forEach (profile) ->
         listUrls.push
             name: 'url'
             value: profile.url
             type: 'linkedin'
+
     data.twitter?.forEach (twitter) ->
         listUrls.push
             name: 'url'
@@ -253,9 +270,9 @@ getUrls = (data) ->
     listUrls
 
 
-# Currently there isn't an address parser so all the address is set in the
+# Currently there isn't an address parser so all the addresses are set in the
 # locality fields. The Linkedin API allow us to define some fields precisely but
-# that can lead to a duplicat so only the country is specify in the right fields
+# that can lead to a duplicate so only the country is specify in the right fields
 # and we should wait an address parser before use them
 getAddresses = (data) ->
     listAddresses = []
@@ -328,9 +345,12 @@ saveContact  = (linkContact, entries) ->
             log.debug "LContact #{linkContact.n}already synced and uptodate"
 
     else
-        if entries.cozyContactsByFn[linkContact.fn]?
-            log.info "Link #{cozyContact.fn} to linkedin account"
-            updateContact cozyContact, linkContact
-        else
-            log.info "Create #{linkContact.fn} contact"
-            Contact.create linkContact, endSavePicture
+        if linkContact?
+            if entries.cozyContactsByFn[linkContact.fn]?
+                if cozyContact?
+                    log.info "Link #{cozyContact.fn} to linkedin account"
+                    updateContact cozyContact, linkContact
+            else
+                log.info "Create #{linkContact.fn} contact"
+                Contact.create linkContact, endSavePicture
+
