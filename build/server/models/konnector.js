@@ -17,6 +17,7 @@ module.exports = Konnector = americano.getModel('Konnector', {
     type: String,
     "default": '{}'
   },
+  lastSuccess: Date,
   lastImport: Date,
   lastAutoImport: Date,
   isImporting: {
@@ -131,6 +132,7 @@ Konnector.prototype["import"] = function(callback) {
       } else {
         konnectorModule = konnectorHash[_this.slug];
         _this.injectEncryptedFields();
+        _this.fieldValues['lastSuccess'] = _this.lastSuccess;
         return konnectorModule.fetch(_this.fieldValues, function(importErr, notifContent) {
           var fields;
           fields = _this.getFields();
@@ -154,6 +156,7 @@ Konnector.prototype["import"] = function(callback) {
           } else {
             data = {
               isImporting: false,
+              lastSuccess: new Date(),
               lastImport: new Date(),
               importErrorMessage: null
             };
@@ -168,7 +171,7 @@ Konnector.prototype["import"] = function(callback) {
 };
 
 Konnector.prototype.appendConfigData = function() {
-  var key, konnectorData, modelNames, msg, name, ref, value;
+  var key, konnectorData, match, modelNames, msg, name, ref, value;
   konnectorData = konnectorHash[this.slug];
   if (konnectorData == null) {
     msg = ("Config data cannot be appended for konnector " + this.slug + ": ") + "missing config file.";
@@ -182,8 +185,13 @@ Konnector.prototype.appendConfigData = function() {
   for (key in ref) {
     value = ref[key];
     name = value.toString();
-    if (name.indexOf('Constructor' !== -1)) {
+    if (name.indexOf('Constructor') !== -1) {
       name = name.substring(0, name.length - 'Constructor'.length);
+    } else {
+      match = name.match(/function ([^(]+)/);
+      if ((match != null) && (match[1] != null)) {
+        name = match[1];
+      }
     }
     modelNames.push(name);
   }
