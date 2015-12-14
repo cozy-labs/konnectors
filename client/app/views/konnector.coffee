@@ -170,51 +170,60 @@ module.exports = class KonnectorView extends BaseView
 
 
     addFieldWidget: (slug, name, val, values) ->
-        fieldHtml = """
-<div class="field line">
+        if val is 'label'
+            fieldHtml = """
+<div class="field line #{'hidden' if val is 'hidden'}">
+    <label for="#{slug}-#{name}-input">#{t(name)} : </label>
+    <b id="#{slug}-#{name}-input" >#{values[name]}</b>
+</div>
+"""
+        else
+            fieldHtml = """
+<div class="field line #{'hidden' if val is 'hidden'}">
 <div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
 """
 
-        if val is 'folder'
+            if val is 'folder'
 
-            # Add a widget to select given folder.
-            fieldHtml += """
+                # Add a widget to select given folder.
+                fieldHtml += """
 <div><select id="#{slug}-#{name}-input" class="folder"">
 """
-            selectedPath = path: '', id: ''
-            pathName = values[name]
-            pathName ?= @paths[0].path if @paths.length > 0
+                selectedPath = path: '', id: ''
+                pathName = values[name]
+                pathName ?= @paths[0].path if @paths.length > 0
 
-            if @paths.length > 0
-                # Add an option for every folder. Value is id of the folder.
-                # Displayed label is the path of the folder.
-                for path in @paths
-                    if path.path is pathName
-                        fieldHtml += """
+                if @paths.length > 0
+                    # Add an option for every folder. Value is id of the folder.
+                    # Displayed label is the path of the folder.
+                    for path in @paths
+                        if path.path is pathName
+                            fieldHtml += """
     <option selected value="#{path.id}">#{path.path}</option>
     """
-                        selectedPath = path
-                    else
-                        fieldHtml += """
+                            selectedPath = path
+                        else
+                            fieldHtml += """
     <option value="#{path.id}">#{path.path}</option>
     """
-            fieldHtml += "</select></div>"
+                fieldHtml += "</select></div>"
 
-            # Add a button to open quickly the selected folder in the files
-            # app.
-            fieldHtml += """
+                # Add a button to open quickly the selected folder in the files
+                # app.
+                fieldHtml += """
 <a href="/#apps/files/folders/#{selectedPath.id}"
 class="folder-link"
 target="_blank">
 #{t "open selected folder"}
 </a>
 """
-            fieldHtml += "</div>"
+                fieldHtml += "</div>"
 
-        else
-            fieldHtml += """
+            else
+                fieldHtml += """
 <div><input id="#{slug}-#{name}-input" type="#{val}"
-        value="#{values[name]}"/></div>
+
+        value="#{values[name]}" #{'readonly' if val is 'readonly'} /></div>
 </div>
 """
 
@@ -299,6 +308,16 @@ target="_blank">
             else
                 @firstImport.hide()
 
+        if @model.has 'customView'
+            # Apply translation on customView
+            rawCustomView = @model.get 'customView'
+            translatedCustomView = rawCustomView.replace /<%t ([^%]*)%>/g
+            , (match, key) -> return t key.trim()
+
+            customViewElem = $ "<div class='customView'></div"
+            customViewElem.append translatedCustomView
+            customViewElem.insertBefore @$('.fields')
+
 
     onDeleteClicked: ->
         request.del "konnectors/#{@model.id}", (err) =>
@@ -312,6 +331,7 @@ target="_blank">
                 window.router.navigate '', trigger: true
 
 
+
     # This function is fired when a change of the model is fired on the backend
     # side and the model has an error field not empty.
     # Once executed this function displays the error
@@ -320,5 +340,3 @@ target="_blank">
 
         @model.set 'importErrorMessage', errorMessage
         @showErrors errorMessage
-
-

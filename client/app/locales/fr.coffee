@@ -29,8 +29,10 @@ module.exports =
     'each month': 'Tous les mois'
     'select starting date': 'Sélectionnez une date de départ'
     'start import from': 'À partir du'
-
+    'authCode': "Auth code"
+    'accountName': "Nom du compte"
     'date format': 'DD/MM/YYYY [à] HH[h]mm'
+
 
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.
@@ -76,6 +78,11 @@ module.exports =
     'konnector description virginmobile': "Téléchargez toutes vos factures Virgin Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest."
     'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
+    'konnector description googlecontacts': "Importer ses contacts google via les API Google."
+    'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
+    'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
+    'konnector customview googlecontacts 2': "Connecter votre compte Google"
+    'konnector customview googlecontacts 3': "2. Copiez cette chaîne de caractères dans le champs Auth code. Puis cliquez sur le bouton \"Sauvegarder et importer\" pour lancer l'importation.  Le nom du compte sera mis à jour automatiquement."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"

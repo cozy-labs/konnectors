@@ -74,7 +74,7 @@ module.exports = {
   loadActivities: function(activities, requiredFields, callback) {
     var apikey, end, params, start;
     apikey = requiredFields.apikey;
-    end = moment().add('days', 1).format('YYYY-MM-DD');
+    end = moment().add(1, 'days').format('YYYY-MM-DD');
     if (activities.length > 0) {
       start = moment(activities[0].date).format('YYYY-MM-DD');
       params = {

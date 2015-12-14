@@ -10,6 +10,7 @@ module.exports = Konnector = americano.getModel 'Konnector',
     slug: String
     fieldValues: Object
     password: type: String, default: '{}'
+    lastSuccess: Date
     lastImport: Date
     lastAutoImport: Date
     isImporting: type: Boolean, default: false
@@ -97,6 +98,8 @@ Konnector::import = (callback) ->
             konnectorModule = konnectorHash[@slug]
 
             @injectEncryptedFields()
+            # Pass last import to the konnector
+            @fieldValues['lastSuccess'] = @lastSuccess
             konnectorModule.fetch @fieldValues, (importErr, notifContent) =>
                 fields = @getFields()
                 @removeEncryptedFields fields
@@ -120,6 +123,7 @@ Konnector::import = (callback) ->
                 else
                     data =
                         isImporting: false
+                        lastSuccess: new Date()
                         lastImport: new Date()
                         importErrorMessage: null
                     @updateAttributes data, (importErr) ->
@@ -143,8 +147,14 @@ Konnector::appendConfigData = ->
     modelNames = []
     for key, value of @models
         name = value.toString()
-        if name.indexOf 'Constructor' isnt -1
+
+        if name.indexOf('Constructor') isnt -1
             name = name.substring 0, (name.length - 'Constructor'.length)
+        else
+            match = name.match /function ([^(]+)/
+            if match? and match[1]?
+                name = match[1]
+
         modelNames.push name
     @modelNames = modelNames
 
@@ -171,4 +181,3 @@ Konnector.getKonnectorsToDisplay = (callback) ->
             catch err
                 log.error 'An error occured while filtering konnectors'
                 callback err
-

@@ -30,3 +30,6 @@ module.exports =
     event:
         all: americano.defaultRequests.all
         bycaldavuri: americano.defaultRequests.by 'caldavuri'
+
+    tag:
+        byName: (doc) -> emit doc.name, doc
