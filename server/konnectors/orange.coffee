@@ -105,17 +105,22 @@ logIn = (requiredFields, billInfos, data, next) ->
             else
                 log.info 'Login succeeded'
 
-                # Download bill information page.
-                log.info 'Fetch bill info'
-                request billOptions, (err, res, body) ->
-                    if err
-                        log.error 'An error occured while fetching bills'
-                        console.log err
-                        next err
-                    else
-                        log.info 'Fetch bill info succeeded'
-                        data.html = body
-                        next()
+                response = JSON.parse body
+                if response.credential != undefined || response.password != undefined
+                    error = if response.credential? then response.credential else response.password
+                    next new Error(error)
+                else
+                    # Download bill information page.
+                    log.info 'Fetch bill info'
+                    request billOptions, (err, res, body) ->
+                        if err
+                            log.error 'An error occured while fetching bills'
+                            console.log err
+                            next err
+                        else
+                            log.info 'Fetch bill info succeeded'
+                            data.html = body
+                            next()
 
 
 # Layer to parse the fetched page to extract bill data.
