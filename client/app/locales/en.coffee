@@ -85,6 +85,8 @@ module.exports =
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
+    'notification linkedin created': "%{smart_count} new contact created |||| %{smart_count} new contacts created"
+    'notification linkedin updated': "%{smart_count} contact updated|||| %{smart_count} contacts updated"
     'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported"
     'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported"
     'notification free': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
