@@ -18,12 +18,17 @@ log = require('printit')({
 module.exports = {
   getKonnector: function(req, res, next) {
     return Konnector.find(req.params.konnectorId, function(err, konnector) {
+      var konnectorModule;
       if (err) {
         return next(err);
       } else if (konnector == null) {
         return res.send(404);
       } else {
         konnector.injectEncryptedFields();
+        konnectorModule = require("../konnectors/" + konnector.slug);
+        if (konnectorModule.customView != null) {
+          konnector.customView = konnectorModule.customView;
+        }
         req.konnector = konnector;
         return next();
       }

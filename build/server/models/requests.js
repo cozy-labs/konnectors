@@ -35,5 +35,10 @@ module.exports = {
   event: {
     all: americano.defaultRequests.all,
     bycaldavuri: americano.defaultRequests.by('caldavuri')
+  },
+  tag: {
+    byName: function(doc) {
+      return emit(doc.name, doc);
+    }
   }
 };
