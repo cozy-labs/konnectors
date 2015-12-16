@@ -87,7 +87,7 @@ linkedin =
             #region = segmentAddress[1] or ''
             #locality = segmentAddress[2] or ''
 
-        data.addresses?.forEach (address) =>
+        data.addresses?.forEach (address) ->
             addressArray = ContactHelper.adrStringToArray address.raw
             addressArray[6] = country
 
