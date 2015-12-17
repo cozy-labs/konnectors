@@ -34,9 +34,16 @@ module.exports =
     customView: """
     <h6><%t konnector customview googlecontacts 4 %></h6>
     <p><%t konnector customview googlecontacts 1 %></p>
-    <button id="connect-google" title="<%t konnector customview googlecontacts 2 %>" class="btn"
-       onclick="window.open('#{GoogleToken.getAuthUrl()}', 'Google OAuth', 'toolbars=0,width=700,height=600,left=200,top=200,scrollbars=1,resizable=1'); var input = $('#googlecontacts-authCode-input'); input.parents('.field').toggleClass('hidden'); input.attr('type', 'text'); input.val(''); $('#googlecontacts-accountName-input').text('--');return false;"
-       ><%t konnector customview googlecontacts 2 %></button>
+    <button id="connect-google" \
+    title="<%t konnector customview googlecontacts 2 %>" class="btn"
+    onclick="window.open('#{GoogleToken.getAuthUrl()}', 'Google OAuth',\
+    'toolbars=0,width=700,height=600,left=200,\
+    top=200,scrollbars=1,resizable=1');\
+    var input = $('#googlecontacts-authCode-input');\
+    input.parents('.field').toggleClass('hidden');\
+    input.attr('type', 'text'); input.val('');\
+    $('#googlecontacts-accountName-input').text('--');return false;"
+    ><%t konnector customview googlecontacts 2 %></button>
     <p><%t konnector customview googlecontacts 3 %></p>
     """
     fields:
@@ -94,7 +101,8 @@ module.exports =
 
 # Obtain a valid access_token : with auth_code on first launch,
 # else with the refresh_token.
-module.exports.updateToken = updateToken = (requiredFields, entries, data, callback) ->
+module.exports.updateToken = updateToken =\
+(requiredFields, entries, data, callback) ->
     log.debug 'updateToken'
 
     if requiredFields.refreshToken? and requiredFields.authCode is 'connected'
@@ -105,7 +113,8 @@ module.exports.updateToken = updateToken = (requiredFields, entries, data, callb
             callback()
 
     else
-        GoogleToken.generateRequestToken requiredFields.authCode, (err, tokens) ->
+        GoogleToken.generateRequestToken requiredFields.authCode,
+        (err, tokens) ->
             return callback err if err
 
             requiredFields.accessToken = tokens.access_token
@@ -122,7 +131,7 @@ fetchAccountName = (requiredFields, entries, data, callback) ->
     log.debug 'fetchAccountName'
 
     if requiredFields.accountName? and
-       requiredFields.accountName.indexOf('@') isnt -1
+    requiredFields.accountName.indexOf('@') isnt -1
         return callback()
 
     GoogleContactHelper.fetchAccountName requiredFields.accessToken
@@ -152,7 +161,9 @@ saveTokensInKonnector = (requiredFields, entries, data, callback) ->
 fetchGoogleChanges = (requiredFields, entries, data, callback) ->
     log.debug 'fetchGoogleChanges'
 
-    uri = "https://www.google.com/m8/feeds/contacts/#{requiredFields.accountName}/full/?alt=json&showdeleted=true&max-results=10000"
+    uri = "https://www.google.com/m8/feeds/contacts/"+
+    "#{requiredFields.accountName}/full/" +
+    "?alt=json&showdeleted=true&max-results=10000"
 
     if requiredFields.lastSuccess?
         uri += "&updated-min=#{requiredFields.lastSuccess.toISOString()}"
@@ -226,7 +237,9 @@ removeFromCozyContact = (gEntry, ofAccountByIds, accountName, callback) ->
 fetchAllGoogleContacts = (requiredFields, entries, data, callback) ->
     log.debug 'fetchAllGoogleContacts'
 
-    uri = "https://www.google.com/m8/feeds/contacts/#{requiredFields.accountName}/full/?alt=json&max-results=10000"
+    uri = "https://www.google.com/m8/feeds/contacts/" +
+    "#{requiredFields.accountName}/full/" +
+    "?alt=json&max-results=10000"
     request
         method: 'GET'
         uri: uri
@@ -258,7 +271,8 @@ prepareCozyContacts = (requiredFields, entries, data, callback) ->
         entries.ofAccount = []
         entries.ofAccountByIds = {}
         for contact in contacts
-            account = contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
+            account = contact.getAccount ACCOUNT_TYPE,
+            requiredFields.accountName
             if account?
                 entries.ofAccountByIds[account.id] = contact
                 entries.ofAccount.push contact
@@ -296,7 +310,8 @@ updateGoogleContacts = (requiredFields, entries, data, callback) ->
 updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
     account = contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
     fromGoogle = new Contact GoogleContactHelper.fromGoogleContact gEntry
-    if ContactHelper.intrinsicRev(fromGoogle) isnt ContactHelper.intrinsicRev(contact)
+    if ContactHelper.intrinsicRev(fromGoogle) isnt
+    ContactHelper.intrinsicRev(contact)
         log.debug ContactHelper.intrinsicRev(contact)
         log.debug ContactHelper.intrinsicRev(fromGoogle)
 
@@ -305,7 +320,8 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
         updated = GoogleContactHelper.toGoogleContact contact, gEntry
         request
             method: 'PUT'
-            uri: "https://www.google.com/m8/feeds/contacts/#{account.name}/full/#{account.id}/?alt=json"
+            uri: "https://www.google.com/m8/feeds/contacts/#{account.name}" +
+            "/full/#{account.id}/?alt=json"
             json: true
             body: entry: updated
             headers:
@@ -322,8 +338,8 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
                 callback() # continue with next contact on error.
 
             else # update picture.
-                GoogleContactHelper.putPicture2Google requiredFields.accessToken,
-                account, contact, callback
+                GoogleContactHelper.putPicture2Google requiredFields\
+                    .accessToken, account, contact, callback
 
     else
         callback()
@@ -332,7 +348,8 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
 deleteInGoogle = (requiredFields, gId, callback) ->
     request
         method: 'DELETE'
-        uri: "https://www.google.com/m8/feeds/contacts/#{requiredFields.accountName}/full/#{gId}/"
+        uri: "https://www.google.com/m8/feeds/contacts/" +
+        "#{requiredFields.accountName}/full/#{gId}/"
         json: true
         headers:
             'Authorization': 'Bearer ' + requiredFields.accessToken

@@ -97,7 +97,8 @@ logIn = (requiredFields, billInfos, data, next) ->
     tokenAuthOptions =
         method: 'POST'
         jar: true
-        url: "https://moncompte.numericable.fr/pages/connection/Login.aspx?link=HOME"
+        url: "https://moncompte.numericable.fr" +
+        "/pages/connection/Login.aspx?link=HOME"
         qs:
             accessToken: ""
 

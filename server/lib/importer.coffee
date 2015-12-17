@@ -26,8 +26,8 @@ module.exports = (konnector) ->
 
             # err can be an object or a string
             if err? and
-               ((typeof(err) is 'object' and Object.keys(err).length > 0) or
-               typeof(err) is String)
+            ((typeof(err) is 'object' and Object.keys(err).length > 0) or
+            typeof(err) is String)
                 log.error err
                 localizationKey = 'notification import error'
                 notifContent = localization.t localizationKey, name: model.name

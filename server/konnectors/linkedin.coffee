@@ -7,6 +7,7 @@ log = require('printit')
     prefix: "Linkedin"
     date: true
 
+localization = require '../lib/localization_manager'
 fetcher = require '../lib/fetcher'
 Contact = require '../models/contact'
 Tag = require '../models/tag'
@@ -86,7 +87,7 @@ linkedin =
             #region = segmentAddress[1] or ''
             #locality = segmentAddress[2] or ''
 
-        data.addresses?.forEach (address) =>
+        data.addresses?.forEach (address) ->
             addressArray = ContactHelper.adrStringToArray address.raw
             addressArray[6] = country
 
@@ -123,8 +124,25 @@ module.exports =
             .fetch (err, fields, entries) ->
                 return callback err if err
 
-                log.info "Import finished"
-                callback()
+                # Create the notification
+                stats = entries.contactStats
+                log.info """Import finished :
+                #{stats.created} contacts created
+                #{stats.updated} contacts updated"""
+                if stats.created > 0
+                    localizationKey = 'notification linkedin created'
+                    options = smart_count: stats.created
+                    notifContent = localization.t localizationKey, options
+                if stats.updated > 0
+                    localizationKey = 'notification linkedin updated'
+                    options = smart_count: stats.updated
+                    if notifContent?
+                        notifContent += '\n'
+                        notifContent += localization.t localizationKey, options
+                    else
+                        notifContent = localization.t localizationKey, options
+
+                callback null, notifContent
 
 
 # Load landing page to retrieve the csrf token needed in login request.
@@ -232,6 +250,10 @@ prepareCozyContacts = (requiredFields, entries, data, next) ->
 # retrieved in previous step. Then it saves or updates the contact in the
 # database.
 saveContacts = (requiredFields, entries, data, next) ->
+    # Initialise the counters
+    entries.contactStats =
+        created: 0
+        updated: 0
 
     Tag.getOrCreate {name: 'linkedin', color: '#1B86BC'}, (err, tag) ->
         return next err if err
@@ -305,15 +327,20 @@ saveContact  = (newContact, entries, callback) ->
 
     # Case where the contact already exists and where it was imported from
     # Linkedin.
-    if entries.cozyContactsByAccountIds[newContact.id]?
+    if entries.cozyContactsByAccountIds[linkAccount.id]?
         cozyContact = entries.cozyContactsByAccountIds[linkAccount.id]
         cozyAccount = cozyContact.getAccount ACCOUNT_TYPE, entries.accountName
         newRev = ContactHelper.intrinsicRev newContact
         previousRev = ContactHelper.intrinsicRev cozyContact
 
         if newRev isnt previousRev
+            console.log '#################################################'
+            console.log 'newRev:\n', newRev
+            console.log 'previo:\n', previousRev
+            console.log '#################################################'
             log.info "Update #{cozyContact.fn} with LinkedIn data."
-            updateContact cozyContact, newContact, imageUrl, callback
+            updateContact cozyContact, newContact, imageUrl,
+            entries.contactStats, callback
 
         # Already up to date, nothing to do.
         else
@@ -324,21 +351,28 @@ saveContact  = (newContact, entries, callback) ->
     else if entries.cozyContactsByFn[newContact.fn]?
         cozyContact = entries.cozyContactsByFn[newContact.fn]
         log.info "Link #{cozyContact.fn} to linkedin account and update data."
-        updateContact cozyContact, newContact, imageUrl, callback
+        updateContact cozyContact, newContact, imageUrl,
+        entries.contactStats, callback
 
     # Case where the contact is not listed in the database.
     else
         log.info "Create new contact for #{newContact.fn}."
         Contact.create newContact, (err, newContact) ->
             return callback err if err
+            entries.contactStats.created++
             savePicture newContact, imageUrl, callback
 
 
 # Update contact with information coming from Linkedin, picture included.
-updateContact = (fromCozy, fromLinkedin, imageUrl, callback) ->
+updateContact = (fromCozy, fromLinkedin, imageUrl, contactStats, callback) ->
     CompareContacts.mergeContacts fromCozy, fromLinkedin
-    fromCozy.save (err) ->
+    newRev = ContactHelper.intrinsicRev fromCozy
+    console.log 'after-:\n', newRev
+    fromCozy.save (err, saved) ->
         return callback err if err
+        newRev = ContactHelper.intrinsicRev saved
+        console.log 'after-:\n', newRev
+        contactStats.updated++
         savePicture fromCozy, imageUrl, callback
 
 
