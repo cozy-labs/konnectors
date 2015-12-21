@@ -52,6 +52,7 @@ module.exports =
     'open selected folder': 'Open selected folder'
 
     # Konnectors' description
+    'konnector description linkedin': "Import Linkedin contacts with cozy."
     'konnector description free': "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files."
     'konnector description free mobile': "Download all your phone bills from Free Mobile. This konnector requires the Files application to store the bill PDF files."
     'konnector description bouygues': "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
@@ -86,6 +87,8 @@ module.exports =
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
     'notification github commits': "%{smart_count} new commit imported |||| %{smart_count} new commits imported"
+    'notification linkedin created': "%{smart_count} new contact created |||| %{smart_count} new contacts created"
+    'notification linkedin updated': "%{smart_count} contact updated|||| %{smart_count} contacts updated"
     'notification twitter': "%{smart_count} new tweet imported |||| %{smart_count} new tweets imported"
     'notification free': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification github': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
