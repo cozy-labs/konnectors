@@ -83,7 +83,7 @@ BankOperationLinker = (function() {
   BankOperationLinker.prototype.linkOperation = function(operation, entry, callback) {
     var date, key;
     date = new Date(entry.date);
-    key = "" + (moment(date));
+    key = "" + (moment(date).toISOString());
     return this.model.request('byDate', {
       key: key
     }, (function(_this) {
