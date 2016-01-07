@@ -33,16 +33,16 @@
     "imagemagick-stream": "2.0.0"
   },
   "devDependencies": {
+    "cli-table": "^0.3.1",
     "coffee-script": "1.9.3",
     "coffeelint": "^1.9.4",
     "cozy-fixtures": "1.1.3",
+    "express": "4.13.3",
+    "minimist": "^1.1.3",
     "mocha": "2.2.5",
     "nock": "0.27.0",
     "should": "4.0.4",
-    "sinon": "1.15.4",
-    "express": "4.13.3",
-    "minimist": "^1.1.3",
-    "cli-table": "^0.3.1"
+    "sinon": "1.15.4"
   },
   "scripts": {
     "build": "sh scripts/build.sh",
