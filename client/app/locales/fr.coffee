@@ -78,7 +78,8 @@ module.exports =
     'konnector description virginmobile': "Téléchargez toutes vos factures Virgin Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest."
     'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
-    'konnector description googlecontacts': "Importer ses contacts google via les API Google."
+    'konnector description googlecontacts': "Importez vos contacts Google dans votre Cozy via l'API de Google."
+    'konnector description linkedin': "Importez vos contacts Linkeding dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
@@ -109,3 +110,4 @@ module.exports =
     'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}"
     'notification isen date format': "DD/MM [à] HH:mm"
     'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"
+
