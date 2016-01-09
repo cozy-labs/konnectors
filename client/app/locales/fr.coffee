@@ -46,6 +46,8 @@ module.exports =
     'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique"
 
     'notification import error': "une erreur est survenue pendant l'importation des données"
+    'notification linkedin created': "%{smart_count} nouveau contact créé|||| %{smart_count} nouveaux contacts créés"
+    'notification linkedin updated': "%{smart_count} contact mis a jour|||| %{smart_count} contacts mis a jour"
 
     'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.'
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
@@ -53,6 +55,7 @@ module.exports =
     'open selected folder': 'Ouvrir le dossier sélectionné'
 
     # Konnectors' description
+    'konnector description linkedin': "Importer ses contacts Linkedin."
     'konnector description free': "Téléchargez toutes vos factures internet de Free. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description free mobile': "Téléchargez toutes vos factures Free Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description bouygues': "Téléchargez toutes vos factures téléphones de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
