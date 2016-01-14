@@ -146,7 +146,8 @@ logIn = (requiredFields, bills, data, next) ->
 
 # Procedure to extract bill data from the page.
 parsePage = (requiredFields, bills, data, next) ->
-    baseDlUrl = "http://www.bouyguestelecom.fr/mon-compte/facture/download/index"
+    baseDlUrl = "http://www.bouyguestelecom.fr"
+    baseDlUrl += "/mon-compte/facture/download/index"
     bills.fetched = []
 
     # Load page to make it browseable easily.

@@ -66,30 +66,33 @@ module.exports =
 
 # Layer to login to Numéricable website.
 logIn = (requiredFields, billInfos, data, next) ->
+    connection = "https://connexion.numericable.fr"
+    compte = "https://moncompte.numericable.fr"
+
     appKeyOptions =
         method: 'GET'
         jar: true
-        url: "https://moncompte.numericable.fr/pages/connection/Login.aspx"
+        url: "#{compte}/pages/connection/Login.aspx"
 
     logInOptions =
         method: 'POST'
         jar: true
-        url: "https://connexion.numericable.fr/Oauth/Oauth.php"
+        url: "/Oauth/Oauth.php"
         form:
             'action': "connect"
-            'linkSSO': "/pages/connection/Login.aspx?link=HOME"
+            'linkSSO': "#{connection}/pages/connection/Login.aspx?link=HOME"
             'appkey': ""
             'isMobile': ""
 
     redirectOptions =
         method: 'POST'
         jar: true
-        url: "https://connexion.numericable.fr"
+        url: connection
 
     signInOptions =
         method: 'POST'
         jar: true
-        url: "https://connexion.numericable.fr/Oauth/login/"
+        url: "#{connection}/Oauth/login/"
         form:
             'login': requiredFields.login
             'pwd': requiredFields.password
@@ -97,14 +100,14 @@ logIn = (requiredFields, billInfos, data, next) ->
     tokenAuthOptions =
         method: 'POST'
         jar: true
-        url: "https://moncompte.numericable.fr/pages/connection/Login.aspx?link=HOME"
+        url: "#{compte}/pages/connection/Login.aspx?link=HOME"
         qs:
             accessToken: ""
 
     billOptions =
         method: 'GET'
         jar: true
-        uri: "https://moncompte.numericable.fr/pages/billing/Invoice.aspx"
+        uri: "#{compte}/pages/billing/Invoice.aspx"
 
     log.info 'Getting appkey'
     request appKeyOptions, (err, res, body) ->

@@ -76,7 +76,8 @@ module.exports =
             .use(getBillPage)
             .use(parseBillPage)
             .use(filterExisting log, PhoneBill)
-            .use(saveDataAndFile log, PhoneBill, {vendor: 'freemobile', others: ['phonenumber']}, ['facture'])
+            .use(saveDataAndFile log, PhoneBill,
+            {vendor: 'freemobile', others: ['phonenumber']}, ['facture'])
             .use(linkBankOperation
                 log: log
                 model: PhoneBill
@@ -177,7 +178,7 @@ logIn = (requiredFields, billInfos, data, next) ->
             token: data.token
             login_abo: login
             pwd_abo: requiredFields.password
-            
+
 
         options =
             method: 'POST'
@@ -242,10 +243,10 @@ action=getFacture&format=dl&l="
     #If the account has one line :
     # - Import pdfs for the line with file name = YYYYMM_freemobile.pdf
     #If multi line :
-    # - Import pdfs (specific) for each line with file name = 
+    # - Import pdfs (specific) for each line with file name =
     # YYYYMM_freemobile_NNNNNNNNNN.pdf (NN..NN is line number)
     # - Import overall pdf with name YYYYMM_freemobile.pdf
-    
+
     isMultiline = $('div[class="consommation"]').length > 1
     $('div[class="factLigne hide "]').each ->
         amount = $($(this).find('.montant')).text()
@@ -264,9 +265,10 @@ date=" + data_fact_date + "&multi=" + data_fact_multi
             date: date
             vendor: 'Free Mobile'
             type: 'phone'
-        bill.phonenumber = data_fact_ligne if (isMultiline and not data_fact_multi)
+        if isMultiline and not data_fact_multi
+            bill.phonenumber = data_fact_ligne
         bill.pdfurl = pdfUrl if date.year() > 2011
-        
+
         bills.fetched.push bill
     next()
 
