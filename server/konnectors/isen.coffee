@@ -494,7 +494,7 @@ module.exports =
 
     createFile: (fileName, path, date, url, tags, callback) ->
         @numItems++
-        File.createNew fileName, path, date, url, tags, (err) ->
+        File.createNew fileName, path, url, tags, (err) ->
             if err?
                 callback err
             else

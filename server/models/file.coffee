@@ -42,7 +42,7 @@ File.isPresent = (fullPath, callback) ->
 # Create a new File object that will be displayed inside the file application.
 # The binary attached to the file is downloaded from a given url.
 # Given tags are associated with the newly created file.
-File.createNew = (fileName, path, date, url, tags, callback) ->
+File.createNew = (fileName, path, url, tags, callback) ->
     now = moment().toISOString()
     filePath = "/tmp/#{fileName}"
 
