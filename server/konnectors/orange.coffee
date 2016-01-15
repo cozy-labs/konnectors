@@ -106,8 +106,7 @@ logIn = (requiredFields, billInfos, data, next) ->
                 log.info 'Login succeeded'
 
                 response = JSON.parse body
-                if response.credential isnt undefined or
-                response.password isnt undefined
+                if response.credential? and response.password?
                     error = if response.credential? then response.credential
                     else response.password
                     next new Error(error)

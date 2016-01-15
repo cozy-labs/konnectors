@@ -34,7 +34,7 @@ describe 'File model', ->
         url = 'http://localhost:12223/bill.pdf'
         tags = ["bill"]
 
-        File.createNew fileName, path, date, url, tags, (err, file) ->
+        File.createNew fileName, path, url, tags, (err, file) ->
             should.exist file
             createdFile = file
             file.name.should.equal fileName

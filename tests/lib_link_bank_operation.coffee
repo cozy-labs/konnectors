@@ -72,7 +72,7 @@ describe 'Running link_operation', ->
 
         it 'same amount and same date', (done) ->
 
-            @timeout 3000
+            @timeout 3500
 
             bills =
                 fetched: [
@@ -92,7 +92,7 @@ describe 'Running link_operation', ->
 
         it 'amount inside amount delta and same date', (done) ->
 
-            @timeout 3000
+            @timeout 3500
 
             bills =
                 fetched: [
@@ -112,7 +112,7 @@ describe 'Running link_operation', ->
 
         it 'same amount and date in date delta', (done) ->
 
-            @timeout 3000
+            @timeout 3500
 
             bills =
                 fetched: [
