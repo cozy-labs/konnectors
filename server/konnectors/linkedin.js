@@ -13,6 +13,9 @@ const ContactHelper = require('../lib/contact_helper');
 const CompareContacts = require('../lib/compare_contacts');
 const linkedin = require('../lib/linkedin_helper');
 
+const fetcher = require('../lib/fetcher');
+const async = require('async');
+
 const ACCOUNT_TYPE = 'com.linkedin';
 
 
@@ -32,19 +35,16 @@ module.exports = {
 
   fetch: (requiredFields, callback) => {
     log.info('Import started');
-
-    Promise.resolve(requiredFields)
-    .then(retrieveTokens)
-    .then(logIn)
-    .then(retrieveContactList)
-    .then(prepareCozyContacts)
-    .then(getOrCreateTag)
-    .then(retrieveAndSaveContacts)
-    .then(createNotificationContent)
-    .then((notifContent) => {
-      callback(null, notifContent);
-    }, (reason) => {
-      callback(reason);
+    fetcher.new()
+    .use(retrieveTokens)
+    .use(logIn)
+    .use(retrieveContactList)
+    .use(prepareCozyContacts)
+    .use(getOrCreateTag)
+    .use(retrieveAndSaveContacts)
+    .use(createNotificationContent)
+    .args(requiredFields, {}, {})
+    .fetch((err, fields, entries) => {
     });
   }
 };
@@ -57,42 +57,32 @@ module.exports = {
 * The html parsing is done with cheerio, a "jquery like" that can be run on
 * the server side.
 */
-function retrieveTokens(requiredFields) {
-  return new Promise((resolve, reject) => {
-    const data = {
-      requiredFields,
-      entries: {}
-    };
+function retrieveTokens(requiredFields, entries, data, next) {
+  const opts = {
+    url: 'https://linkedin.com',
+    jar: true
+  };
 
-    const opts = {
-      url: 'https://linkedin.com',
-      jar: true
-    };
+  log.info('Retrieving CSRF Token...');
 
-    log.info('Retrieving CSRF Token...');
+  request.get(opts, (err, res, body) => {
+    if (err) {
+      return next(err);
+    }
 
-    request.get(opts, (err, res, body) => {
-      if (err) {
-        reject(new Error(err));
-      }
+    if (body.status && body.status === 'error') {
+      return next(body.status_details);
+    }
+    else {
+      const $ = cheerio.load(body);
 
-      if (body.status && body.status === 'error') {
-        reject(new Error(body.status_details));
-      }
-      else {
-        const $ = cheerio.load(body);
+      entries.csrfToken = $('#loginCsrfParam-login').val();
+      entries.accountName = requiredFields.login;
 
-        data.entries.csrfToken = $('#loginCsrfParam-login').val();
-        data.entries.accountName = data.requiredFields.login;
+      log.info('CSRF Token retrieved successfully.');
 
-        log.info('CSRF Token retrieved successfully.');
-
-        resolve(data);
-      }
-    });
-  })
-  .catch((error) => {
-    return Promise.reject(error);
+      next();
+    }
   });
 }
 
@@ -100,37 +90,32 @@ function retrieveTokens(requiredFields) {
 * Make the login request with the user inputs (login/password) and the CSRF
 * token retrieved in the previous step.
 */
-function logIn(data) {
-  return new Promise((resolve, reject) => {
-    const opts = {
-      url: 'https://www.linkedin.com/uas/login-submit',
-      jar: true,
-      form: {
-        session_key: data.requiredFields.login,
-        session_password: data.requiredFields.password,
-        loginCsrfParam: data.entries.csrfToken,
-        submit: 'Sign+in'
-      }
-    };
+function logIn(requiredFields, entries, data, next) {
+  const opts = {
+    url: 'https://www.linkedin.com/uas/login-submit',
+    jar: true,
+    form: {
+      session_key: requiredFields.login,
+      session_password: requiredFields.password,
+      loginCsrfParam: entries.csrfToken,
+      submit: 'Sign+in'
+    }
+  };
 
-    log.info('Signing in...');
-    request.post(opts, (err, res, body) => {
-      if (err) {
-        reject(new Error(err));
-      }
+  log.info('Signing in...');
+  request.post(opts, (err, res, body) => {
+    if (err) {
+      return next(err);
+    }
 
-      if (body === '') {
-        log.info('Login succeeded!');
-      }
-      else {
-        reject(new Error('Wrong login or password.'));
-      }
+    if (body === '') {
+      log.info('Login succeeded!');
+    }
+    else {
+      return next(new Error('Wrong login or password.'));
+    }
 
-      resolve(data);
-    });
-  })
-  .catch((error) => {
-    return Promise.reject(error);
+    next();
   });
 }
 
@@ -139,42 +124,38 @@ function logIn(data) {
 * Retrieve a list of all Linkedin ID contacts available. The linkedin ID will
 * be used to retrieve additional data about the contact.
 */
-function retrieveContactList(data) {
-  return new Promise((resolve, reject) => {
-    let contactsUrl = 'https://www.linkedin.com/contacts/api/contacts/';
-    contactsUrl += '?start=0&count=10000&fields=id';
+function retrieveContactList(requiredFields, entries, data, next) {
+  let contactsUrl = 'https://www.linkedin.com/contacts/api/contacts/';
+  contactsUrl += '?start=0&count=10000&fields=id';
 
-    const opts = {
-      url: contactsUrl,
-      jar: true,
-      json: true
-    };
+  const opts = {
+    url: contactsUrl,
+    jar: true,
+    json: true
+  };
 
-    log.info('Retrieving contact list...');
+  log.info('Retrieving contact list...');
 
-    request.get(opts, (err, res, body) => {
-      if (err) {
-        reject(new Error(err));
-      }
+  console.log("url: ", contactsUrl)
+  request.get(opts, (err, res, body) => {
+    if (err) {
+      return next(err);
+    }
 
-      if (body.status && body.status === 'error') {
-        reject(new Error(body.status_details));
+    if (body.status && body.status === 'error') {
+      return next(new Error(body.status_details));
+    }
+    else {
+      entries.listContacts = body.contacts;
+
+      if (entries.listContacts) {
+        log.info('Contact list retrieved.');
       }
       else {
-        data.entries.listContacts = body.contacts;
-
-        if (data.entries.listContacts) {
-          log.info('Contact list retrieved.');
-        }
-        else {
-          reject(new Error('Error retrieving contacts from request'));
-        }
+        return next(new Error('Error retrieving contacts from request'));
       }
-      resolve(data);
-    });
-  })
-  .catch((error) => {
-    return Promise.reject(error);
+    }
+    next();
   });
 }
 
@@ -189,38 +170,35 @@ function retrieveContactList(data) {
 * That way we will be able to check if the contact should be updated (because
 * it already exists) or if it should be created.
 */
-function prepareCozyContacts(data) {
-  return new Promise((resolve, reject) => {
-    log.info('Load Cozy contacts...');
+function prepareCozyContacts(requiredFields, entries, data, next) {
+  log.info('Load Cozy contacts...');
 
-    Contact.all((err, contacts) => {
-      if (err) {
-        reject(new Error(err));
+  Contact.all((err, contacts) => {
+    if (err) {
+      return next(err);
+    }
+
+    entries.cozyContactsByFn = {};
+    entries.cozyContactsByAccountIds = {};
+
+    for (const contact of contacts) {
+      entries.cozyContactsByFn[contact.fn] = contact;
+      const account = contact.getAccount(ACCOUNT_TYPE, entries.accountName);
+
+      if (account) {
+        entries.cozyContactsByAccountIds[account.id] = contact;
       }
+    }
 
-      data.entries.cozyContactsByFn = {};
-      data.entries.cozyContactsByAccountIds = {};
-      for (const contact of contacts) {
-        data.entries.cozyContactsByFn[contact.fn] = contact;
-        const account = contact.getAccount(ACCOUNT_TYPE, data.entries.accountName);
-        if (account) {
-          data.entries.cozyContactsByAccountIds[account.id] = contact;
-        }
-      }
+    // Initialise the counters
+    entries.contactStats = {
+      created: 0,
+      updated: 0
+    };
 
-      // Initialise the counters
-      data.entries.contactStats = {
-        created: 0,
-        updated: 0
-      };
+    log.info('Cozy contacts loaded.');
 
-      log.info('Cozy contacts loaded.');
-
-      resolve(data);
-    });
-  })
-  .catch((error) => {
-    return Promise.reject(error);
+    next();
   });
 }
 
@@ -228,22 +206,17 @@ function prepareCozyContacts(data) {
 /**
  * Try to get the matching Contact tag to the account. If it not exit, create it
  */
-function getOrCreateTag(data) {
-  return new Promise((resolve, reject) => {
+function getOrCreateTag(requiredFields, entries, data, next) {
     log.info('Get or create count tag');
     Tag.getOrCreate({name: 'linkedin', color: '#1B86BC'}, (err, tag) => {
       if (err) {
-        reject(new Error(err));
+        return next(err);
       }
 
-      data.entries.tag = tag;
+      entries.tag = tag;
 
-      resolve(data);
+      next();
     });
-  })
-  .catch((error) => {
-    return Promise.reject(error);
-  });
 }
 
 
@@ -256,24 +229,14 @@ function getOrCreateTag(data) {
  * The saving process could also be asynchronous but it seem more easy to debug
  * with a step by step structur.
  */
-function retrieveAndSaveContacts(data) {
+function retrieveAndSaveContacts(requiredFields, entries, data, next) {
   log.info('Retrieve contacts data');
 
-  // Launch add contacts retrieving
-  return Promise.all(data.entries.listContacts.map((contact) => {
-    const contactData = {
-      entries: data.entries,
-      contact
-    };
+  const contacts = entries.listContacts;
 
-    return retrieveContactData(contactData);
-  }))
-  // Process responses synchronously
-  .then((contactsArray) => {
-    return saveContacts(contactsArray, data);
-  })
-  .catch((error) => {
-    return Promise.reject(error);
+  async.eachSeries(contacts, retrieveContactData, (err) => {
+    log.info('All linkedin contacts have been processed');
+    next();
   });
 }
 
@@ -282,67 +245,61 @@ function retrieveAndSaveContacts(data) {
  * Retrieve a contact with his id and process the data retrieved to create a
  * Contact model
  */
-function retrieveContactData(data) {
-  return new Promise((resolve, reject) => {
+function retrieveContactData(contact, next) {
 
-    const contactUrl = 'https://www.linkedin.com/contacts/api/contacts/' +
-      `${data.contact.id}/?fields=name,first_name,last_name,` +
-      'emails_extended,phone_numbers,sites,addresses,' +
-      'company,title,geo_location,profiles,twitter,tag,' +
-      ' secure_profile_image_url';
+  const contactUrl = 'https://www.linkedin.com/contacts/api/contacts/' +
+    `${data.contact.id}/?fields=name,first_name,last_name,` +
+    'emails_extended,phone_numbers,sites,addresses,' +
+    'company,title,geo_location,profiles,twitter,tag,' +
+    ' secure_profile_image_url';
 
-    const opts = {
-      url: contactUrl,
-      jar: true,
-      json: true
-    };
+  const opts = {
+    url: contactUrl,
+    jar: true,
+    json: true
+  };
 
-    request.get(opts, (err, res, body) => {
-      if (err) {
-        reject(new Error(err));
-      }
+  request.get(opts, (err, res, body) => {
+    if (err) {
+      return next(err);
+    }
 
-      if (body.status && body.status === 'error') {
-        reject(new Error(body.status_details));
-      }
+    if (body.status && body.status === 'error') {
+      return next(body.status_details);
+    }
 
 
-      let datapoints = [];
+    let datapoints = [];
 
-      // Fill datapoints
-      const bodyData = body.contact_data;
+    // Fill datapoints
+    const bodyData = body.contact_data;
 
-      datapoints = datapoints.concat(linkedin.getPhoneNumber(bodyData));
-      datapoints = datapoints.concat(linkedin.getEmails(bodyData));
-      datapoints = datapoints.concat(linkedin.getUrls(bodyData));
-      datapoints = datapoints.concat(linkedin.getAddresses(bodyData));
+    datapoints = datapoints.concat(linkedin.getPhoneNumber(bodyData));
+    datapoints = datapoints.concat(linkedin.getEmails(bodyData));
+    datapoints = datapoints.concat(linkedin.getUrls(bodyData));
+    datapoints = datapoints.concat(linkedin.getAddresses(bodyData));
 
-      // Contact data composition
-      const newFormatedContact = new Contact({
-        n: `${bodyData.last_name};${bodyData.first_name}`,
-        fn: bodyData.name,
-        org: bodyData.company ? bodyData.company.name : null,
-        title: bodyData.title,
-        tags: ['linkedin'],
-        datapoints
-      });
-
-      // TODO ensure it could not be set via the constructor.
-      newFormatedContact.imageUrl = bodyData.secure_profile_image_url;
-
-      // Set information source for the given contact. It adds a flag
-      // to say that the contact comes from Linkedin.
-      ContactHelper.setAccount(newFormatedContact, {
-        type: ACCOUNT_TYPE,
-        name: data.entries.accountName,
-        id: bodyData.id
-      });
-
-      resolve(newFormatedContact);
+    // Contact data composition
+    const newFormatedContact = new Contact({
+      n: `${bodyData.last_name};${bodyData.first_name}`,
+      fn: bodyData.name,
+      org: bodyData.company ? bodyData.company.name : null,
+      title: bodyData.title,
+      tags: ['linkedin'],
+      datapoints,
+      imageUrl: bodyData.secure_profile_image_url
     });
-  })
-  .catch((error) => {
-    return Promise.reject(error);
+
+
+    // Set information source for the given contact. It adds a flag
+    // to say that the contact comes from Linkedin.
+    ContactHelper.setAccount(newFormatedContact, {
+      type: ACCOUNT_TYPE,
+      name: data.entries.accountName,
+      id: bodyData.id
+    });
+
+    saveContacts(newFormatedContact, entries, next);
   });
 }
 
@@ -352,96 +309,72 @@ function retrieveContactData(data) {
 * doesn't already exist, it is created. If the contact exists, it's updated
 * with the Linkedin data.
 */
-function saveContacts(arrayContacts, data) {
-  return new Promise((resolve, reject) => {
-    arrayContacts.forEach((contact) => {
-      const linkAccount = ContactHelper.getAccount(
-        contact, ACCOUNT_TYPE, data.entries.accountName
-      );
-      const imageUrl = contact.imageUrl;
+function saveContacts(contact, entries, next) {
+  const linkAccount = ContactHelper.getAccount(
+    contact, ACCOUNT_TYPE, entries.accountName
+  );
+  const imageUrl = contact.imageUrl;
 
-      delete contact.imageUrl;
+  delete contact.imageUrl;
 
-      // Case where the contact already exists and where it was imported from
-      // Linkedin.
-      if (data.entries.cozyContactsByAccountIds[linkAccount.id]) {
-        const cozyContact = data.entries.cozyContactsByAccountIds[linkAccount.id];
-        const newRev = ContactHelper.intrinsicRev(contact);
-        const previousRev = ContactHelper.intrinsicRev(cozyContact);
+  // Case where the contact already exists and where it was imported from
+  // Linkedin.
+  if (entries.cozyContactsByAccountIds[linkAccount.id]) {
+    const cozyContact = entries.cozyContactsByAccountIds[linkAccount.id];
+    const newRev = ContactHelper.intrinsicRev(contact);
+    const previousRev = ContactHelper.intrinsicRev(cozyContact);
 
-        // Already up to date, nothing to do.
-        if (newRev === previousRev) {
-          log.info(`LinkedIn contact ${cozyContact.fn} is up to date.`);
-        }
-        else {
-          log.info(`Update ${cozyContact.fn} with LinkedIn data.`);
+    // Already up to date, nothing to do.
+    if (newRev === previousRev) {
+      log.info(`LinkedIn contact ${cozyContact.fn} is up to date.`);
+      next();
+    }
+    else {
+      log.info(`Update ${cozyContact.fn} with LinkedIn data.`);
 
-          updateContact({
-            fromCozy: cozyContact,
-            formLinkedin: contact,
-            imageUrl
-          });
-        }
+      updateContact(cozyContact, contact, imageUrl, contactStats, next);
+    }
+  }
+  // Case where the contact already exists but was not imported from Linkedin.
+  else if (entries.cozyContactsByFn[contact.fn]) {
+    const cozyContact = entries.cozyContactsByFn[contact.fn];
+
+    log.info(`Link ${cozyContact.fn} to linkedin account and update data.`);
+
+    updateContact(cozyContact, contact, imageUrl, contactStats, next);
+  }
+  // Case where the contact is not listed in the database.
+  else {
+    log.info(`Create new contact for ${contact.fn}.`);
+    Contact.create(contact, (err, createdContact) => {
+      if (err) {
+        return next(err);
       }
-      // Case where the contact already exists but was not imported from Linkedin.
-      else if (data.entries.cozyContactsByFn[contact.fn]) {
-        const cozyContact = data.entries.cozyContactsByFn[contact.fn];
 
-        log.info(`Link ${cozyContact.fn} to linkedin account and update data.`);
-
-        updateContact({
-          fromCozy: cozyContact,
-          formLinkedin: contact,
-          imageUrl
-        });
-      }
-      // Case where the contact is not listed in the database.
-      else {
-        log.info(`Create new contact for ${contact.fn}.`);
-        Contact.create(contact, (err, createdContact) => {
-          if (err) {
-            reject(new Error(err));
-          }
-
-          data.entries.contactStats.created += 1;
-          savePicture({
-            fromCozy: createdContact,
-            imageUrl,
-            stats: data.entries.contactStats
-          });
-        });
-      }
+      entries.contactStats.created += 1;
+      savePicture(createdContact, imageUrl, next);
     });
-    resolve(data.entries.contactStats);
-  })
-  .catch((error) => {
-    return Promise.reject(error);
-  });
+  }
 }
 
 
 /**
 * Update contact with information coming from Linkedin, picture included.
 */
-function updateContact(data) {
-  return new Promise((resolve, reject) => {
-    CompareContacts.mergeContacts(data.fromCozy, data.fromLinkedin);
+function updateContact(fromCozy, fromLinkedin, imageUrl, contactStats, next) {
+  CompareContacts.mergeContacts(fromCozy, fromLinkedin);
 
-    let newRev = ContactHelper.intrinsicRev(data.fromCozy);
+  let newRev = ContactHelper.intrinsicRev(fromCozy);
 
-    log.info('after-:\n', data.newRev);
-    data.fromCozy.save((err, saved) => {
-      if (err) {
-        reject(err);
-      }
-      newRev = ContactHelper.intrinsicRev(saved);
-      log.info('after-:\n', newRev);
-      data.stats.updated += 1;
-      savePicture(data);
-    });
-  })
-  .catch((error) => {
-    return Promise.reject(error);
+  log.info('after-:\n', newRev);
+  fromCozy.save((err, saved) => {
+    if (err) {
+      reject(err);
+    }
+    newRev = ContactHelper.intrinsicRev(saved);
+    log.info('after-:\n', newRev);
+    contactStats.updated += 1;
+    savePicture(frimCozy, imageUrl, next);
   });
 }
 
@@ -449,28 +382,26 @@ function updateContact(data) {
 /**
 * Change contact picture with the one coming from Linkedin.
 */
-function savePicture(data) {
-  return new Promise((resolve, reject) => {
-    if (data.imageUrl) {
-      const opts = url.parse(data.imageUrl);
+function savePicture(cozyContact, imageUrl, next) {
+  if (imageUrl) {
+    const opts = url.parse(imageUrl);
 
-      https.get(opts, (stream) => {
-        stream.on('error', (err) => {
-          log.error(err);
-        });
-
-        data.fromCozy.attachFile(stream, {name: 'picture'}, (err) => {
-          if (err) {
-            reject(err);
-          }
-          log.info(`Picture successfully saved for ${data.fromCozy.fn}.`);
-          resolve();
-        });
+    https.get(opts, (stream) => {
+      stream.on('error', (err) => {
+        log.error(err);
       });
-    } else {
-      resolve();
-    }
-  });
+
+      fromCozy.attachFile(stream, {name: 'picture'}, (err) => {
+        if (err) {
+          return next(err);
+        }
+        log.info(`Picture successfully saved for ${fromCozy.fn}.`);
+        next();
+      });
+    });
+  } else {
+    next();
+  }
 }
 
 

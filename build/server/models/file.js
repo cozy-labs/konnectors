@@ -52,7 +52,7 @@ File.isPresent = function(fullPath, callback) {
   });
 };
 
-File.createNew = function(fileName, path, date, url, tags, callback) {
+File.createNew = function(fileName, path, url, tags, callback) {
   var attachBinary, data, filePath, index, now, options, stream;
   now = moment().toISOString();
   filePath = "/tmp/" + fileName;
