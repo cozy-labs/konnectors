@@ -138,10 +138,10 @@ module.exports = class KonnectorView extends BaseView
                 error: (model, err) =>
                     if err.status >= 400 and err.status isnt 504
                         try
-                            @showErrors t JSON.parse(err.responseText).message
-                    # cozycloud.cc timeout is not considered like an error
-                        catch
-                            @showErrors t "import server error"
+                            @showErrors(t(JSON.parse(err.responseText).message))
+                        # cozycloud.cc timeout is not considered like an error
+                        catch error
+                            @showErrors t("import server error")
 
 
         else

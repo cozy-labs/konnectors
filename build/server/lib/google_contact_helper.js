@@ -57,7 +57,11 @@ GCH.fromGoogleContact = function(gContact, accountName) {
     part = ((ref12 = gContact.gd$name) != null ? (ref13 = ref12[field]) != null ? ref13.$t : void 0 : void 0) || '';
     return part.replace(/;/g, ' ');
   };
-  contact.n = (nameComponent('gd$familyName')) + ";" + (nameComponent('gd$givenName')) + ";" + (nameComponent('gd$additionalName')) + ";" + (nameComponent('gd$namePrefix')) + ";" + (nameComponent('gd$nameSuffix'));
+  contact.n = (nameComponent('gd$familyName')) + ";";
+  contact.n += (nameComponent('gd$givenName')) + ";";
+  contact.n += (nameComponent('gd$additionalName')) + ";";
+  contact.n += (nameComponent('gd$namePrefix')) + ";";
+  contact.n += "" + (nameComponent('gd$nameSuffix'));
   getTypeFragment = function(component) {
     var ref12;
     return ((ref12 = component.rel) != null ? ref12.split('#')[1] : void 0) || component.label || 'other';
@@ -413,8 +417,11 @@ GCH.putPicture2Google = function(accessToken, account, contact, callback) {
   req = https.request(options, function(res) {
     res.on('error', callback);
     return res.on('data', function(chunk) {
+      var msg;
       if (res.statusCode !== 200) {
-        log.info(res.statusCode + " while uploading picture: " + (chunk.toString()));
+        msg = res.statusCode + " while uploading picture: ";
+        msg += chunk.toString();
+        log.info(msg);
       }
       return callback();
     });

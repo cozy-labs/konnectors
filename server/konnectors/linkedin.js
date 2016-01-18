@@ -13,6 +13,9 @@ const ContactHelper = require('../lib/contact_helper');
 const CompareContacts = require('../lib/compare_contacts');
 const linkedin = require('../lib/linkedin_helper');
 
+const fetcher = require('../lib/fetcher');
+const async = require('async');
+
 const ACCOUNT_TYPE = 'com.linkedin';
 
 
@@ -42,6 +45,12 @@ module.exports = {
     .use(createNotificationContent)
     .args(requiredFields, {}, {})
     .fetch((err, fields, entries) => {
+      if (err) {
+        callback(err);
+      }
+      else {
+        callback(null, entries.notifContent);
+      }
     });
   }
 };
@@ -228,74 +237,75 @@ function getOrCreateTag(requiredFields, entries, data, next) {
 function retrieveAndSaveContacts(requiredFields, entries, data, next) {
   log.info('Retrieve contacts data');
 
+  /**
+  * Retrieve a contact with his id and process the data retrieved to create a
+  * Contact model
+  */
+  const retrieveContactData = (contact, next) => {
+
+    const contactUrl = 'https://www.linkedin.com/contacts/api/contacts/' +
+      `${contact.id}/?fields=name,first_name,last_name,` +
+      'emails_extended,phone_numbers,sites,addresses,' +
+      'company,title,geo_location,profiles,twitter,tag,' +
+      ' secure_profile_image_url';
+
+    const opts = {
+      url: contactUrl,
+      jar: true,
+      json: true
+    };
+
+    request.get(opts, (err, res, body) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (body.status && body.status === 'error') {
+        return next(body.status_details);
+      }
+
+
+      let datapoints = [];
+
+      // Fill datapoints
+      const bodyData = body.contact_data;
+
+      datapoints = datapoints.concat(linkedin.getPhoneNumber(bodyData));
+      datapoints = datapoints.concat(linkedin.getEmails(bodyData));
+      datapoints = datapoints.concat(linkedin.getUrls(bodyData));
+      datapoints = datapoints.concat(linkedin.getAddresses(bodyData));
+
+      // Contact data composition
+      const newFormatedContact = new Contact({
+        n: `${bodyData.last_name};${bodyData.first_name}`,
+        fn: bodyData.name,
+        org: bodyData.company ? bodyData.company.name : null,
+        title: bodyData.title,
+        tags: ['linkedin'],
+        datapoints,
+      });
+
+      newFormatedContact.imageUrl = bodyData.secure_profile_image_url;
+
+
+      // Set information source for the given contact. It adds a flag
+      // to say that the contact comes from Linkedin.
+      ContactHelper.setAccount(newFormatedContact, {
+        type: ACCOUNT_TYPE,
+        name: entries.accountName,
+        id: bodyData.id
+      });
+
+      saveContacts(newFormatedContact, entries, next);
+    });
+  }
+
+
   const contacts = entries.listContacts;
 
   async.eachSeries(contacts, retrieveContactData, (err) => {
     log.info('All linkedin contacts have been processed');
     next();
-  });
-}
-
-
-/**
- * Retrieve a contact with his id and process the data retrieved to create a
- * Contact model
- */
-function retrieveContactData(contact, next) {
-
-  const contactUrl = 'https://www.linkedin.com/contacts/api/contacts/' +
-    `${data.contact.id}/?fields=name,first_name,last_name,` +
-    'emails_extended,phone_numbers,sites,addresses,' +
-    'company,title,geo_location,profiles,twitter,tag,' +
-    ' secure_profile_image_url';
-
-  const opts = {
-    url: contactUrl,
-    jar: true,
-    json: true
-  };
-
-  request.get(opts, (err, res, body) => {
-    if (err) {
-      return next(err);
-    }
-
-    if (body.status && body.status === 'error') {
-      return next(body.status_details);
-    }
-
-
-    let datapoints = [];
-
-    // Fill datapoints
-    const bodyData = body.contact_data;
-
-    datapoints = datapoints.concat(linkedin.getPhoneNumber(bodyData));
-    datapoints = datapoints.concat(linkedin.getEmails(bodyData));
-    datapoints = datapoints.concat(linkedin.getUrls(bodyData));
-    datapoints = datapoints.concat(linkedin.getAddresses(bodyData));
-
-    // Contact data composition
-    const newFormatedContact = new Contact({
-      n: `${bodyData.last_name};${bodyData.first_name}`,
-      fn: bodyData.name,
-      org: bodyData.company ? bodyData.company.name : null,
-      title: bodyData.title,
-      tags: ['linkedin'],
-      datapoints,
-      imageUrl: bodyData.secure_profile_image_url
-    });
-
-
-    // Set information source for the given contact. It adds a flag
-    // to say that the contact comes from Linkedin.
-    ContactHelper.setAccount(newFormatedContact, {
-      type: ACCOUNT_TYPE,
-      name: data.entries.accountName,
-      id: bodyData.id
-    });
-
-    saveContacts(newFormatedContact, entries, next);
   });
 }
 
@@ -328,7 +338,7 @@ function saveContacts(contact, entries, next) {
     else {
       log.info(`Update ${cozyContact.fn} with LinkedIn data.`);
 
-      updateContact(cozyContact, contact, imageUrl, contactStats, next);
+      updateContact(cozyContact, contact, imageUrl, entries.contactStats, next);
     }
   }
   // Case where the contact already exists but was not imported from Linkedin.
@@ -337,7 +347,7 @@ function saveContacts(contact, entries, next) {
 
     log.info(`Link ${cozyContact.fn} to linkedin account and update data.`);
 
-    updateContact(cozyContact, contact, imageUrl, contactStats, next);
+    updateContact(cozyContact, contact, imageUrl, entries.contactStats, next);
   }
   // Case where the contact is not listed in the database.
   else {
@@ -362,15 +372,15 @@ function updateContact(fromCozy, fromLinkedin, imageUrl, contactStats, next) {
 
   let newRev = ContactHelper.intrinsicRev(fromCozy);
 
-  log.info('after-:\n', newRev);
+  log.debug('after-:\n', newRev);
   fromCozy.save((err, saved) => {
     if (err) {
       reject(err);
     }
     newRev = ContactHelper.intrinsicRev(saved);
-    log.info('after-:\n', newRev);
+    log.debug('after-:\n', newRev);
     contactStats.updated += 1;
-    savePicture(frimCozy, imageUrl, next);
+    savePicture(fromCozy, imageUrl, next);
   });
 }
 
@@ -378,7 +388,7 @@ function updateContact(fromCozy, fromLinkedin, imageUrl, contactStats, next) {
 /**
 * Change contact picture with the one coming from Linkedin.
 */
-function savePicture(cozyContact, imageUrl, next) {
+function savePicture(fromCozy, imageUrl, next) {
   if (imageUrl) {
     const opts = url.parse(imageUrl);
 
@@ -404,10 +414,10 @@ function savePicture(cozyContact, imageUrl, next) {
 /**
  * Create the notification content bases on a given set of statistics
  */
-function createNotificationContent(stats) {
+function createNotificationContent(requiredFields, entries, data, next) {
   let localizationkey;
   let options;
-  let notifContent;
+  const stats = entries.contactStats;
 
   // create the notification
   log.info(`import finished :
@@ -419,7 +429,7 @@ function createNotificationContent(stats) {
     options = {
       smart_count: stats.created
     };
-    notifContent = localization.t(localizationkey, options);
+    entries.notifContent = localization.t(localizationkey, options);
   }
 
   if (stats.updated > 0) {
@@ -427,13 +437,13 @@ function createNotificationContent(stats) {
     options = {
       smart_count: stats.updated
     };
-    if (notifContent) {
-      notifContent += '\n';
-      notifContent += localization.t(localizationkey, options);
+    if (entries.notifContent) {
+      entries.notifContent += '\n';
+      entries.notifContent += localization.t(localizationkey, options);
     }
     else {
-      notifContent = localization.t(localizationkey, options);
+      entries.notifContent = localization.t(localizationkey, options);
     }
   }
-  return notifContent;
+  return entries.notifContent;
 }

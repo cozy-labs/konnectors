@@ -66,19 +66,21 @@ module.exports = {
 };
 
 logIn = function(requiredFields, billInfos, data, next) {
-  var appKeyOptions, billOptions, logInOptions, redirectOptions, signInOptions, tokenAuthOptions;
+  var appKeyOptions, billOptions, compte, connection, logInOptions, redirectOptions, signInOptions, tokenAuthOptions;
+  connection = "https://connexion.numericable.fr";
+  compte = "https://moncompte.numericable.fr";
   appKeyOptions = {
     method: 'GET',
     jar: true,
-    url: "https://moncompte.numericable.fr/pages/connection/Login.aspx"
+    url: compte + "/pages/connection/Login.aspx"
   };
   logInOptions = {
     method: 'POST',
     jar: true,
-    url: "https://connexion.numericable.fr/Oauth/Oauth.php",
+    url: "/Oauth/Oauth.php",
     form: {
       'action': "connect",
-      'linkSSO': "/pages/connection/Login.aspx?link=HOME",
+      'linkSSO': connection + "/pages/connection/Login.aspx?link=HOME",
       'appkey': "",
       'isMobile': ""
     }
@@ -86,12 +88,12 @@ logIn = function(requiredFields, billInfos, data, next) {
   redirectOptions = {
     method: 'POST',
     jar: true,
-    url: "https://connexion.numericable.fr"
+    url: connection
   };
   signInOptions = {
     method: 'POST',
     jar: true,
-    url: "https://connexion.numericable.fr/Oauth/login/",
+    url: connection + "/Oauth/login/",
     form: {
       'login': requiredFields.login,
       'pwd': requiredFields.password
@@ -100,7 +102,7 @@ logIn = function(requiredFields, billInfos, data, next) {
   tokenAuthOptions = {
     method: 'POST',
     jar: true,
-    url: "https://moncompte.numericable.fr/pages/connection/Login.aspx?link=HOME",
+    url: compte + "/pages/connection/Login.aspx?link=HOME",
     qs: {
       accessToken: ""
     }
@@ -108,7 +110,7 @@ logIn = function(requiredFields, billInfos, data, next) {
   billOptions = {
     method: 'GET',
     jar: true,
-    uri: "https://moncompte.numericable.fr/pages/billing/Invoice.aspx"
+    uri: compte + "/pages/billing/Invoice.aspx"
   };
   log.info('Getting appkey');
   return request(appKeyOptions, function(err, res, body) {

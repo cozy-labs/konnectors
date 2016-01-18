@@ -537,7 +537,7 @@ module.exports = {
   },
   createFile: function(fileName, path, date, url, tags, callback) {
     this.numItems++;
-    return File.createNew(fileName, path, date, url, tags, function(err) {
+    return File.createNew(fileName, path, url, tags, function(err) {
       if (err != null) {
         return callback(err);
       } else {
