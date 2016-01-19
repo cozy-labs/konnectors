@@ -17,7 +17,7 @@ params =
 
 
 application = module.exports = (callback) ->
-    americano.start params, (app, server) ->
+    americano.start params, (err, app, server) ->
 
         # Configure realtime listening.
         realtime = RealtimeAdapter server, [
