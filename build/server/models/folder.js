@@ -34,12 +34,11 @@ Folder.createNewFolder = function(folder, callback) {
   return Folder.create(folder, function(err, newFolder) {
     if (err) {
       return callback(err);
-    } else {
-      newFolder.index(["name"], function(err) {});
-      if (err) {
-        console.log(err);
-      }
-      return callback(null, newFolder);
     }
+    newFolder.index(["name"], function(err) {});
+    if (err) {
+      console.log(err);
+    }
+    return callback(null, newFolder);
   });
 };
