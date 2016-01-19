@@ -445,5 +445,5 @@ function createNotificationContent(requiredFields, entries, data, next) {
       entries.notifContent = localization.t(localizationkey, options);
     }
   }
-  return entries.notifContent;
+  next();
 }
