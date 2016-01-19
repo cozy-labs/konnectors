@@ -273,19 +273,21 @@ GCH.addContactPictureInCozy = (accessToken, cozyContact, gContact, done) ->
             return done new Error "error fetching #{pictureUrl}\
                             : #{stream.statusCode}"
 
+        buffers = []
         thumbStream = stream.pipe im().resize('300x300^').crop('300x300')
         thumbStream.on 'error', done
-        thumbStream.path = 'useless'
-        type = stream.headers['content-type']
-        opts =
-            name: 'picture'
-            type: type
-        cozyContact.attachFile thumbStream, opts, (err)->
-            if err
-                log.error "picture #{err}"
-            else
-                log.debug "picture ok"
-            done err
+        thumbStream.on 'data', (data) -> buffers.push(data)
+        thumbStream.on 'end', ->
+            type = stream.headers['content-type']
+            opts =
+                name: 'picture'
+                type: type
+            cozyContact.attachFile Buffer.concat(buffers), opts, (err)->
+                if err
+                    log.error "picture #{err}"
+                else
+                    log.debug "picture ok"
+                done err
 
 
 GCH.putPicture2Google = (accessToken, account, contact, callback) ->
