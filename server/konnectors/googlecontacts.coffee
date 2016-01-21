@@ -103,8 +103,8 @@ module.exports =
 
 # Obtain a valid access_token : with auth_code on first launch,
 # else with the refresh_token.
-module.exports.updateToken = updateToken = (
-    (requiredFields, entries, data, callback) ->
+module.exports.updateToken = updateToken = (requiredFields,
+entries, data, callback) ->
 
     log.debug 'updateToken'
 
@@ -128,7 +128,6 @@ module.exports.updateToken = updateToken = (
 
                 callback()
         )
-)
 
 
 # Fetch account name (email address of this google account) on first launch.
