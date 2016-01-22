@@ -46,7 +46,7 @@ To build this application:
 
     npm install
     cd client && npm install && cd ..
-    sh ./scripts/build.sh
+    npm run build
 
 # Tests
 
