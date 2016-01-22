@@ -45,8 +45,7 @@ If you want to build your own konnector, here is [a complete documentation](http
 To build this application:
 
     npm install
-    cd client && npm install && cd ..
-    sh ./scripts/build.sh
+    npm run build
 
 # Tests
 
