@@ -35,7 +35,7 @@ module.exports = {
   slug: "googlecontacts",
   description: 'konnector description googlecontacts',
   vendorLink: "https://www.google.com/contacts/",
-  customView: "<h6><%t konnector customview googlecontacts 4 %></h6>\n<p><%t konnector customview googlecontacts 1 %></p>\n<button id=\"connect-google\" title=\"<%t konnector customview googlecontacts 2 %>\" class=\"btn\"\n   onclick=\"window.open('" + (GoogleToken.getAuthUrl()) + "', 'Google OAuth', 'toolbars=0,width=700,height=600,left=200,top=200,scrollbars=1,resizable=1'); var input = $('#googlecontacts-authCode-input'); input.parents('.field').toggleClass('hidden'); input.attr('type', 'text'); input.val(''); $('#googlecontacts-accountName-input').text('--');return false;\"\n   ><%t konnector customview googlecontacts 2 %></button>\n<p><%t konnector customview googlecontacts 3 %></p>",
+  customView: "<h6><%t konnector customview googlecontacts 4 %></h6>\n<p><%t konnector customview googlecontacts 1 %></p>\n<button id=\"connect-google\"\ntitle=\"<%t konnector customview googlecontacts 2 %>\" class=\"btn\"\n   onclick=\"window.open('" + (GoogleToken.getAuthUrl()) + "',\n   'Google OAuth',\n   'toolbars=0,\n   width=700,height=600,left=200,top=200,scrollbars=1,resizable=1');\n   var input = $('#googlecontacts-authCode-input');\n   input.parents('.field').toggleClass('hidden');\n   input.attr('type', 'text');\n   input.val('');\n   $('#googlecontacts-accountName-input').text('--');\n   return false;\"\n   ><%t konnector customview googlecontacts 2 %></button>\n<p><%t konnector customview googlecontacts 3 %></p>",
   fields: {
     authCode: "hidden",
     accountName: "label",
@@ -122,7 +122,9 @@ saveTokensInKonnector = function(requiredFields, entries, data, callback) {
 fetchGoogleChanges = function(requiredFields, entries, data, callback) {
   var uri;
   log.debug('fetchGoogleChanges');
-  uri = "https://www.google.com/m8/feeds/contacts/" + requiredFields.accountName + "/full/?alt=json&showdeleted=true&max-results=10000";
+  uri = "https://www.google.com";
+  uri += "/m8/feeds/contacts/" + requiredFields.accountName + "/full/";
+  uri += "?alt=json&showdeleted=true&max-results=10000";
   if (requiredFields.lastSuccess != null) {
     uri += "&updated-min=" + (requiredFields.lastSuccess.toISOString());
   }
@@ -201,7 +203,9 @@ removeFromCozyContact = function(gEntry, ofAccountByIds, accountName, callback) 
 fetchAllGoogleContacts = function(requiredFields, entries, data, callback) {
   var uri;
   log.debug('fetchAllGoogleContacts');
-  uri = "https://www.google.com/m8/feeds/contacts/" + requiredFields.accountName + "/full/?alt=json&max-results=10000";
+  uri = "https://www.google.com";
+  uri += "/m8/feeds/contacts/" + requiredFields.accountName + "/full/";
+  uri += "?alt=json&max-results=10000";
   return request({
     method: 'GET',
     uri: uri,
@@ -280,7 +284,7 @@ updateGoogleContacts = function(requiredFields, entries, data, callback) {
 };
 
 updateGoogleContact = function(requiredFields, contact, gEntry, callback) {
-  var account, fromGoogle, updated;
+  var account, fromGoogle, updated, uri;
   account = contact.getAccount(ACCOUNT_TYPE, requiredFields.accountName);
   fromGoogle = new Contact(GoogleContactHelper.fromGoogleContact(gEntry));
   if (ContactHelper.intrinsicRev(fromGoogle) !== ContactHelper.intrinsicRev(contact)) {
@@ -289,9 +293,12 @@ updateGoogleContact = function(requiredFields, contact, gEntry, callback) {
     log.debug("update " + (contact != null ? contact.fn : void 0) + " in google");
     log.info("update " + (contact != null ? contact._id : void 0) + " in google");
     updated = GoogleContactHelper.toGoogleContact(contact, gEntry);
+    uri = "https://www.google.com";
+    uri += "/m8/feeds/contacts/" + account.name + "/full/" + account.id + "/";
+    uri += "?alt=json";
     return request({
       method: 'PUT',
-      uri: "https://www.google.com/m8/feeds/contacts/" + account.name + "/full/" + account.id + "/?alt=json",
+      uri: uri,
       json: true,
       body: {
         entry: updated
@@ -320,9 +327,12 @@ updateGoogleContact = function(requiredFields, contact, gEntry, callback) {
 };
 
 deleteInGoogle = function(requiredFields, gId, callback) {
+  var uri;
+  uri = "https://www.google.com";
+  uri += "/m8/feeds/contacts/" + requiredFields.accountName + "/full/" + gId + "/";
   return request({
     method: 'DELETE',
-    uri: "https://www.google.com/m8/feeds/contacts/" + requiredFields.accountName + "/full/" + gId + "/",
+    uri: uri,
     json: true,
     headers: {
       'Authorization': 'Bearer ' + requiredFields.accessToken,

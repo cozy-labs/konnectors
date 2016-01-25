@@ -46,7 +46,11 @@ GCH.fromGoogleContact = (gContact, accountName)->
         part = gContact.gd$name?[field]?.$t or ''
         return part.replace /;/g, ' '
 
-    contact.n = "#{nameComponent('gd$familyName')};#{nameComponent('gd$givenName')};#{nameComponent('gd$additionalName')};#{nameComponent('gd$namePrefix')};#{nameComponent('gd$nameSuffix')}"
+    contact.n = "#{nameComponent('gd$familyName')};"
+    contact.n += "#{nameComponent('gd$givenName')};"
+    contact.n += "#{nameComponent('gd$additionalName')};"
+    contact.n += "#{nameComponent('gd$namePrefix')};"
+    contact.n += "#{nameComponent('gd$nameSuffix')}"
 
     # Extract the type, or fall back on label, or other.
     getTypeFragment = (component) ->
@@ -130,7 +134,9 @@ GCH.toGoogleContact = (contact, gEntry) ->
     name.gd$fullName = $t: contact.fn
     name.gd$familyName = $t: lastName if lastName? and lastName isnt ''
     name.gd$givenName = $t: firstName if firstName? and firstName isnt ''
-    name.gd$additionalName = $t: middleName if middleName? and middleName isnt ''
+    name.gd$additionalName = (
+        $t: middleName if middleName? and middleName isnt ''
+    )
     name.gd$namePrefix = $t: prefix if prefix? and prefix isnt ''
     name.gd$nameSuffix = $t: suffix if suffix? and suffix isnt ''
     gContact.gd$name = name
@@ -148,7 +154,7 @@ GCH.toGoogleContact = (contact, gEntry) ->
 
     setTypeFragment = (dp, field) ->
         if dp.type in ['fax', 'home', 'home_fax', 'mobile', 'other',
-            'pager', 'work', 'work_fax']
+        'pager', 'work', 'work_fax']
             field.rel = "http://schemas.google.com/g/2005##{dp.type}"
         else
             field.label = dp.type
@@ -162,8 +168,8 @@ GCH.toGoogleContact = (contact, gEntry) ->
 
     if contact.url and
        # Avoid duplication of url in datapoints.
-       not contact.datapoints.some((dp) ->
-            dp.type is "url" and dp.value is contact.url)
+    not contact.datapoints.some((dp) ->
+        dp.type is "url" and dp.value is contact.url)
 
         addField 'gContact$website',
             href: contact.url
@@ -185,7 +191,9 @@ GCH.toGoogleContact = (contact, gEntry) ->
             when 'ADR'
                 if dp.value instanceof Array
                     field = setTypeFragment dp, {}
-                    field.gd$formattedAddress = ContactHelper.adrArrayToString dp.value
+                    field.gd$formattedAddress = (
+                        ContactHelper.adrArrayToString dp.value
+                    )
 
                     street = ContactHelper.adrCompleteStreet dp.value
                     if street isnt ''
@@ -206,14 +214,14 @@ GCH.toGoogleContact = (contact, gEntry) ->
 
 
              when 'SOCIAL', 'URL'
-                field = href: dp.value
-                if dp.type in ['home-page', 'blog', 'profile', 'home',
-                    'work', 'other', 'ftp']
-                    field.rel = dp.type
-                else
-                    field.label = dp.type
+                 field = href: dp.value
+                 if dp.type in ['home-page', 'blog', 'profile', 'home',
+                 'work', 'other', 'ftp']
+                     field.rel = dp.type
+                 else
+                     field.label = dp.type
 
-                addField 'gContact$website', field
+                 addField 'gContact$website', field
 
             when 'ABOUT'
                 field = gd$when: startTime: dp.value
@@ -227,10 +235,10 @@ GCH.toGoogleContact = (contact, gEntry) ->
             when 'RELATION'
                 field = $t: dp.value
                 if dp.type in ['assistant', 'brother', 'child',
-                   'domestic-partner', 'father', 'friend', 'manager',
-                   'mother', 'parent', 'partner', 'referred-by', 'relative',
-                   'sister', 'spouse']
-                   field.rel = dp.type
+                'domestic-partner', 'father', 'friend', 'manager',
+                'mother', 'parent', 'partner', 'referred-by', 'relative',
+                'sister', 'spouse']
+                    field.rel = dp.type
 
                 else
                     field.label = dp.type
@@ -308,7 +316,9 @@ GCH.putPicture2Google = (accessToken, account, contact, callback) ->
         res.on 'error', callback
         res.on 'data', (chunk) ->
             if res.statusCode isnt 200
-                log.info "#{res.statusCode} while uploading picture: #{chunk.toString()}"
+                msg = "#{res.statusCode} while uploading picture:"
+                msg += chunk.toString()
+                log.info msg
             callback()
 
     stream.pipe req
@@ -373,7 +383,8 @@ GCH.updateCozyContact = (gEntry, contacts, accountName, token, callback) ->
         fromCozy = ofAccountByIds[accountG.id]
         accountC = fromCozy.getAccount GCH.ACCOUNT_TYPE, accountName
         if accountC.lastUpdate < accountG.lastUpdate and
-           ContactHelper.intrinsicRev(fromGoogle) isnt ContactHelper.intrinsicRev(fromCozy)
+        ContactHelper.intrinsicRev(fromGoogle) isnt
+        ContactHelper.intrinsicRev(fromCozy)
             log.info "Update #{gId} from google"
             log.debug "Update #{fromCozy?.fn} from google"
             updateContact fromCozy, fromGoogle

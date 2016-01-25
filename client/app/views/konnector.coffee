@@ -139,8 +139,8 @@ module.exports = class KonnectorView extends BaseView
                     if err.status >= 400 and err.status isnt 504
                         try
                             @showErrors t JSON.parse(err.responseText).message
-                    # cozycloud.cc timeout is not considered like an error
-                        catch
+                        # cozycloud.cc timeout is not considered like an error
+                        catch error
                             @showErrors t "import server error"
 
 
@@ -257,7 +257,8 @@ target="_blank">
 </select>
 <span id="#{slug}-first-import">
 <span id="#{slug}-first-import-text">
-<a id="#{slug}-first-import-link" href="#">#{t "select starting date"}</a></span>
+<a id="#{slug}-first-import-link" href="#">#{t "select starting date"}</a>
+</span>
 <span id="#{slug}-first-import-date"><span>#{t "start import from"}</span>
 <input id="#{slug}-import-date" class="autoimport" maxlength="8" type="text">
 </input>

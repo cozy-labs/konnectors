@@ -81,7 +81,7 @@ class BankOperationLinker
     # operation.
     linkOperation: (operation, entry, callback) =>
         date = new Date entry.date
-        key = "#{moment(date).toISOString()}"
+        key = "#{moment(date).format("YYYY-MM-DDT00:00:00.000")}Z"
 
         @model.request 'byDate', key: key, (err, entries) =>
 
