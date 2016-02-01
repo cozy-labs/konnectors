@@ -22,7 +22,7 @@ echo "Build locales..."
 echo "Locales built."
 
 echo "Build client..."
-cd client/ && brunch build --production && cd ..
+cd client/ && ./node_modules/.bin/brunch build --production && cd ..
 cp -R client/public build/client/
 echo "Client built."
 
