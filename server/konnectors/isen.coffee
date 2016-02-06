@@ -266,27 +266,16 @@ module.exports =
                                         'notification isen date format'
                                     )
                                     formatter = localization.t formatterKey
+                                    start = event.start
                                     options =
                                         description: event.description
-<<<<<<< HEAD
-                                        date: (
-                                            moment(event.start).format formatter
-=======
-                                        date: moment(event.start).format(
-                                            formatter
->>>>>>> 993177725b1b4fecef017fec275326647763640e
-                                        )
+                                        date: moment(start).format formatter
 
-                                    localeKey = (
+                                    localeKey = \
                                         'notification isen event deleted'
-                                    )
-<<<<<<< HEAD
-                                    notifContent = (
-                                        localization.t localeKey, options
-=======
+
                                     notifContent = localization.t(
                                         localeKey, options
->>>>>>> 993177725b1b4fecef017fec275326647763640e
                                     )
 
                                     @notification.createTemporary

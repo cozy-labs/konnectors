@@ -167,12 +167,7 @@ GCH.toGoogleContact = (contact, gEntry) ->
         gContact[gField].push field
 
    # Avoid duplication of url in datapoints.
-    if contact.url and
-<<<<<<< HEAD
-=======
-       # Avoid duplication of url in datapoints.
->>>>>>> 993177725b1b4fecef017fec275326647763640e
-    not contact.datapoints.some((dp) ->
+    if contact.url and not contact.datapoints.some((dp) ->
         dp.type is "url" and dp.value is contact.url)
 
         addField 'gContact$website',
@@ -322,11 +317,7 @@ GCH.putPicture2Google = (accessToken, account, contact, callback) ->
         res.on 'error', callback
         res.on 'data', (chunk) ->
             if res.statusCode isnt 200
-<<<<<<< HEAD
                 msg = "#{res.statusCode} while uploading picture: "
-=======
-                msg = "#{res.statusCode} while uploading picture:"
->>>>>>> 993177725b1b4fecef017fec275326647763640e
                 msg += chunk.toString()
                 log.info msg
             callback()
@@ -358,6 +349,7 @@ GCH.fetchAccountName = (accessToken, callback) ->
             return callback body
 
         callback null, body.email
+
 
 # Update cozy with a google contact.
 # Update the cozy contact if already synced,
@@ -404,8 +396,7 @@ GCH.updateCozyContact = (gEntry, contacts, accountName, token, callback) ->
             log.debug "GContact #{fromCozy?.fn} already synced and uptodate"
             callback()
 
-    else # Add to cozy.
-        # look for same, take the first one
+    else
         fromCozy = null
         for cozyContact in cozyContacts
             if CompareContacts.isSamePerson cozyContact, fromGoogle
@@ -418,9 +409,10 @@ GCH.updateCozyContact = (gEntry, contacts, accountName, token, callback) ->
             log.debug "Link #{fromCozy?.fn} to google account"
             updateContact fromCozy, fromGoogle
 
-        else # create
+        else
             log.info "Create #{gId} contact"
             log.debug "Create #{fromGoogle?.fn} contact"
 
             fromGoogle.revision = new Date().toISOString()
             Contact.create fromGoogle, endSavePicture
+

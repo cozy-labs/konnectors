@@ -1,5 +1,6 @@
 {
   "extends": "airbnb",
+  "strict": "global",
   "plugins": [
     "react"
   ],

@@ -66,31 +66,17 @@ module.exports =
 
 # Layer to login to Numéricable website.
 logIn = (requiredFields, billInfos, data, next) ->
-<<<<<<< HEAD
-    connection = "https://connexion.numericable.fr"
-    compte = "https://moncompte.numericable.fr"
-
-    appKeyOptions =
-        method: 'GET'
-        jar: true
-        url: "#{compte}/pages/connection/Login.aspx"
-=======
     monCompteUrl = "https://moncompte.numericable.fr"
     connexionUrl = "https://connexion.numericable.fr"
     appKeyOptions =
         method: 'GET'
         jar: true
         url: "#{monCompteUrl}/pages/connection/Login.aspx"
->>>>>>> 993177725b1b4fecef017fec275326647763640e
 
     logInOptions =
         method: 'POST'
         jar: true
-<<<<<<< HEAD
-        url: "/Oauth/Oauth.php"
-=======
         url: "#{connexionUrl}/Oauth/Oauth.php"
->>>>>>> 993177725b1b4fecef017fec275326647763640e
         form:
             'action': "connect"
             'linkSSO': "#{connection}/pages/connection/Login.aspx?link=HOME"
@@ -100,20 +86,12 @@ logIn = (requiredFields, billInfos, data, next) ->
     redirectOptions =
         method: 'POST'
         jar: true
-<<<<<<< HEAD
-        url: connection
-=======
         url: connexionUrl
->>>>>>> 993177725b1b4fecef017fec275326647763640e
 
     signInOptions =
         method: 'POST'
         jar: true
-<<<<<<< HEAD
-        url: "#{connection}/Oauth/login/"
-=======
         url: "#{connexionUrl}/Oauth/login/"
->>>>>>> 993177725b1b4fecef017fec275326647763640e
         form:
             'login': requiredFields.login
             'pwd': requiredFields.password
@@ -121,22 +99,14 @@ logIn = (requiredFields, billInfos, data, next) ->
     tokenAuthOptions =
         method: 'POST'
         jar: true
-<<<<<<< HEAD
-        url: "#{compte}/pages/connection/Login.aspx?link=HOME"
-=======
         url: "#{monCompteUrl}/pages/connection/Login.aspx?link=HOME"
->>>>>>> 993177725b1b4fecef017fec275326647763640e
         qs:
             accessToken: ""
 
     billOptions =
         method: 'GET'
         jar: true
-<<<<<<< HEAD
-        uri: "#{compte}/pages/billing/Invoice.aspx"
-=======
         uri: "#{monCompteUrl}/pages/billing/Invoice.aspx"
->>>>>>> 993177725b1b4fecef017fec275326647763640e
 
     log.info 'Getting appkey'
     request appKeyOptions, (err, res, body) ->
