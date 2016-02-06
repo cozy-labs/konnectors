@@ -160,7 +160,8 @@ logIn = function(requiredFields, bills, data, next) {
 
 parsePage = function(requiredFields, bills, data, next) {
   var $, baseDlUrl;
-  baseDlUrl = "http://www.bouyguestelecom.fr/mon-compte/facture/download/index";
+  baseDlUrl = "http://www.bouyguestelecom.fr";
+  baseDlUrl += "/mon-compte/facture/download/index";
   bills.fetched = [];
   $ = cheerio.load(data.html);
   $('.download-facture').each(function() {

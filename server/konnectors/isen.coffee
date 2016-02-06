@@ -116,8 +116,8 @@ module.exports =
         parser = new ical.ICalParser()
         if mainData is ''
             callback null, [],
-            start: moment.unix(0).toISOString()
-            end: moment.unix(0).toISOString()
+              start: moment.unix(0).toISOString()
+              end: moment.unix(0).toISOString()
         else
             parser.parseString mainData, (err, calendar) ->
                 if err?
@@ -268,15 +268,25 @@ module.exports =
                                     formatter = localization.t formatterKey
                                     options =
                                         description: event.description
+<<<<<<< HEAD
                                         date: (
                                             moment(event.start).format formatter
+=======
+                                        date: moment(event.start).format(
+                                            formatter
+>>>>>>> 993177725b1b4fecef017fec275326647763640e
                                         )
 
                                     localeKey = (
                                         'notification isen event deleted'
                                     )
+<<<<<<< HEAD
                                     notifContent = (
                                         localization.t localeKey, options
+=======
+                                    notifContent = localization.t(
+                                        localeKey, options
+>>>>>>> 993177725b1b4fecef017fec275326647763640e
                                     )
 
                                     @notification.createTemporary
@@ -535,3 +545,4 @@ module.exports =
                     else
                         next()
                 , callback
+

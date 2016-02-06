@@ -34,17 +34,18 @@ module.exports =
     customView: """
     <h6><%t konnector customview googlecontacts 4 %></h6>
     <p><%t konnector customview googlecontacts 1 %></p>
-    <button id="connect-google"\
-    title="<%t konnector customview googlecontacts 2 %>"\
-    class="btn"
-    onclick="window.open('#{GoogleToken.getAuthUrl()}', 'Google OAuth',\
-    'toolbars=0,width=700,height=600,\
-    left=200,top=200,scrollbars=1,resizable=1');\
-    var input = $('#googlecontacts-authCode-input');\
-    input.parents('.field').toggleClass('hidden');\
-    input.attr('type', 'text');\
-    input.val('');\
-    $('#googlecontacts-accountName-input').text('--');return false;"
+    <button id="connect-google"
+    title="<%t konnector customview googlecontacts 2 %>" class="btn"
+       onclick="window.open('#{GoogleToken.getAuthUrl()}',
+       'Google OAuth',
+       'toolbars=0,
+       width=700,height=600,left=200,top=200,scrollbars=1,resizable=1');
+       var input = $('#googlecontacts-authCode-input');
+       input.parents('.field').toggleClass('hidden');
+       input.attr('type', 'text');
+       input.val('');
+       $('#googlecontacts-accountName-input').text('--');
+       return false;"
        ><%t konnector customview googlecontacts 2 %></button>
     <p><%t konnector customview googlecontacts 3 %></p>
     """
@@ -103,9 +104,8 @@ module.exports =
 
 # Obtain a valid access_token : with auth_code on first launch,
 # else with the refresh_token.
-module.exports.updateToken = updateToken = (requiredFields,
-entries, data, callback) ->
-
+module.exports.updateToken = updateToken = (requiredFields, entries, data,
+callback) ->
     log.debug 'updateToken'
 
     if requiredFields.refreshToken? and requiredFields.authCode is 'connected'
@@ -166,8 +166,8 @@ fetchGoogleChanges = (requiredFields, entries, data, callback) ->
     log.debug 'fetchGoogleChanges'
 
     uri = "https://www.google.com"
-    uri += "/m8/feeds/contacts/#{requiredFields.accountName}/full/?"
-    uri += "alt=json&showdeleted=true&max-results=10000"
+    uri += "/m8/feeds/contacts/#{requiredFields.accountName}/full/"
+    uri += "?alt=json&showdeleted=true&max-results=10000"
 
     if requiredFields.lastSuccess?
         uri += "&updated-min=#{requiredFields.lastSuccess.toISOString()}"
@@ -275,8 +275,8 @@ prepareCozyContacts = (requiredFields, entries, data, callback) ->
         entries.ofAccount = []
         entries.ofAccountByIds = {}
         for contact in contacts
-            account = (
-                contact.getAccount ACCOUNT_TYPE, requiredFields.accountName
+            account = contact.getAccount(
+                ACCOUNT_TYPE, requiredFields.accountName
             )
             if account?
                 entries.ofAccountByIds[account.id] = contact
@@ -348,8 +348,7 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
 
             else # update picture.
                 GoogleContactHelper.putPicture2Google(
-                    requiredFields.accessToken,
-                    account, contact, callback
+                    requiredFields.accessToken, account, contact, callback
                 )
 
     else
@@ -368,5 +367,7 @@ deleteInGoogle = (requiredFields, gId, callback) ->
             'Authorization': 'Bearer ' + requiredFields.accessToken
             'GData-Version': '3.0'
             'If-Match': '*'
+
     , (err, res, body) ->
         callback err
+

@@ -134,7 +134,9 @@ GCH.toGoogleContact = (contact, gEntry) ->
     name.gd$fullName = $t: contact.fn
     name.gd$familyName = $t: lastName if lastName? and lastName isnt ''
     name.gd$givenName = $t: firstName if firstName? and firstName isnt ''
-    name.gd$additionalName = $t: middleName if middleName? and middleName isnt''
+    name.gd$additionalName =
+        $t: middleName if middleName? and middleName isnt ''
+
     name.gd$namePrefix = $t: prefix if prefix? and prefix isnt ''
     name.gd$nameSuffix = $t: suffix if suffix? and suffix isnt ''
     gContact.gd$name = name
@@ -166,6 +168,10 @@ GCH.toGoogleContact = (contact, gEntry) ->
 
    # Avoid duplication of url in datapoints.
     if contact.url and
+<<<<<<< HEAD
+=======
+       # Avoid duplication of url in datapoints.
+>>>>>>> 993177725b1b4fecef017fec275326647763640e
     not contact.datapoints.some((dp) ->
         dp.type is "url" and dp.value is contact.url)
 
@@ -316,7 +322,11 @@ GCH.putPicture2Google = (accessToken, account, contact, callback) ->
         res.on 'error', callback
         res.on 'data', (chunk) ->
             if res.statusCode isnt 200
+<<<<<<< HEAD
                 msg = "#{res.statusCode} while uploading picture: "
+=======
+                msg = "#{res.statusCode} while uploading picture:"
+>>>>>>> 993177725b1b4fecef017fec275326647763640e
                 msg += chunk.toString()
                 log.info msg
             callback()

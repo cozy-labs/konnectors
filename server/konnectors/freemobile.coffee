@@ -76,8 +76,10 @@ module.exports =
             .use(getBillPage)
             .use(parseBillPage)
             .use(filterExisting log, PhoneBill)
-            .use(saveDataAndFile log, PhoneBill,
-            {vendor: 'freemobile', others: ['phonenumber']}, ['facture'])
+            .use(saveDataAndFile log, PhoneBill, {
+                vendor: 'freemobile',
+                others: ['phonenumber']
+            }, ['facture'])
             .use(linkBankOperation
                 log: log
                 model: PhoneBill
@@ -265,7 +267,11 @@ date=" + data_fact_date + "&multi=" + data_fact_multi
             date: date
             vendor: 'Free Mobile'
             type: 'phone'
+<<<<<<< HEAD
         if isMultiline and not data_fact_multi
+=======
+        if (isMultiline and not data_fact_multi)
+>>>>>>> 993177725b1b4fecef017fec275326647763640e
             bill.phonenumber = data_fact_ligne
         bill.pdfurl = pdfUrl if date.year() > 2011
 
