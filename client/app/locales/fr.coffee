@@ -82,7 +82,7 @@ module.exports =
     'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest."
     'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
     'konnector description googlecontacts': "Importez vos contacts Google dans votre Cozy via l'API de Google."
-    'konnector description linkedin': "Importez vos contacts Linkeding dans votre Cozy."
+    'konnector description linkedin': "Importez vos contacts LinkedIn dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
