@@ -88,7 +88,7 @@ module.exports =
 logIn = (requiredFields, bills, data, next) ->
 
     loginUrl = 'https://www.mon-compte.bouyguestelecom.fr/cas/login'
-    billUrl = "http://www.bouyguestelecom.fr/mon-compte/mes-factures/historique"
+    billUrl = "https://www.bouyguestelecom.fr/parcours/mes-factures/historique"
     userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + \
                 'Gecko/20100101 Firefox/36.0'
 
@@ -146,8 +146,12 @@ logIn = (requiredFields, bills, data, next) ->
 
 # Procedure to extract bill data from the page.
 parsePage = (requiredFields, bills, data, next) ->
-    baseDlUrl = "http://www.bouyguestelecom.fr/mon-compte/facture/download/index"
+    baseDlUrl = "https://www.bouyguestelecom.fr"
+    baseDlUrl += "/parcours/facture/download/index"
     bills.fetched = []
+
+    # Set moment locale for the date parsing
+    moment.locale('fr')
 
     # Load page to make it browseable easily.
     $ = cheerio.load data.html

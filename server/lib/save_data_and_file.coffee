@@ -1,5 +1,6 @@
 async = require 'async'
 naming = require './naming'
+moment = require 'moment'
 File = require '../models/file'
 
 
@@ -23,9 +24,10 @@ module.exports = (log, model, options, tags) ->
             fileName = naming.getEntryFileName entry, options
 
             createFileAndSaveData = (entry, entryLabel) ->
-                date = entry.date
+                # Legacy code: Date is not used in File Model
+
                 pdfurl = entry.pdfurl
-                File.createNew fileName, path, date, pdfurl, tags, onCreated
+                File.createNew fileName, path, pdfurl, tags, onCreated
 
             onCreated = (err, file) ->
                 if err
@@ -93,11 +95,10 @@ checkForMissingFiles = (options, callback) ->
 
             # If it's not there, it creates it.
             else
-                date = entry.date
                 url = entry.pdfurl
                 path = folderPath
 
-                File.createNew fileName, path, date, url, tags, (err, file) ->
+                File.createNew fileName, path, url, tags, (err, file) ->
 
                     if err
                         log.error 'An error occured while creating file'
@@ -106,7 +107,10 @@ checkForMissingFiles = (options, callback) ->
 
                         # Then update links it from the current model to
                         # the file.
-                        date = entry.date.toISOString()
+                        #date = entry.date.toISOString()
+                        date = moment(entry.date).format('YYYY-MM-DD')
+                        date += "T00:00:00.000Z"
+
                         model.request 'byDate', key: date, (err, entries) ->
                             if not(entries?) or entries.length is 0
                                 done()

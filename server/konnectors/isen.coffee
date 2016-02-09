@@ -115,33 +115,33 @@ module.exports =
         log.debug 'Parsing file...'
         parser = new ical.ICalParser()
         if mainData is ''
-          callback null, [],
-            start: moment.unix(0).toISOString()
-            end: moment.unix(0).toISOString()
+            callback null, [],
+              start: moment.unix(0).toISOString()
+              end: moment.unix(0).toISOString()
         else
-          parser.parseString mainData, (err, calendar) ->
-              if err?
-                  log.error err
-                  callback err
-              else
-                  # extract boundaries of the events range
-                  # needed later to detect events to be removed
-                  calendarName = calendar.model.name
-                  parts = calendarName.split '/'
-                  firstEvent = calendar.subComponents[1].model
-                  boundaries =
-                      start: moment.unix(parts[2] / 1000).toISOString()
-                      end: moment.unix(parts[3] / 1000).toISOString()
-                  # extract events themselves from the calendar data
-                  events = Event.extractEvents calendar, DEFAULT_CALENDAR
-                  callback null, events, boundaries
+            parser.parseString mainData, (err, calendar) ->
+                if err?
+                    log.error err
+                    callback err
+                else
+                    # extract boundaries of the events range
+                    # needed later to detect events to be removed
+                    calendarName = calendar.model.name
+                    parts = calendarName.split '/'
+                    firstEvent = calendar.subComponents[1].model
+                    boundaries =
+                        start: moment.unix(parts[2] / 1000).toISOString()
+                        end: moment.unix(parts[3] / 1000).toISOString()
+                    # extract events themselves from the calendar data
+                    events = Event.extractEvents calendar, DEFAULT_CALENDAR
+                    callback null, events, boundaries
 
 
     # create all the events, if they don't already exist
     processEvents: (rawEvents, callback) ->
         log.debug 'Processing events, creating new ones...'
         if rawEvents.length is 0
-          callback null, []
+            callback null, []
         else
             async.reduce rawEvents, [], (memo, rawEvent, next) =>
                 # if there is an error, the event is not added to the memo
@@ -238,11 +238,11 @@ module.exports =
                     eventsReferenceId = eventsReference.map (event) -> event.id
                     removed = []
                     async.eachSeries events, (event, next) =>
-                        # removes the event of ISEN's calendar if they are suposed
-                        # to be in the interval and they are not anymore, and they
-                        # should have happened in the future.
-                        # Also if an event has not been created by the konnector,
-                        # it won't be deleted
+                        # removes the event of ISEN's calendar if they are
+                        # suposed to be in the interval and they are not
+                        # anymore, and they should have happened in the future.
+                        # Also if an event has not been created by the
+                        # konnector, it won't be deleted
                         now = moment()
                         inTheFuture = moment(event.start).isAfter now
                         {caldavuri} = event
@@ -257,19 +257,26 @@ module.exports =
                                 log.error err if err?
                                 removed.push event.id
 
-                                # Then create the notification to inform the user
-                                # the event has been removed only if the removed
-                                # event should have taken place in the next two
-                                # business days.
+                                # Then create the notification to inform the
+                                # user the event has been removed only if the
+                                # removed event should have taken place in the
+                                # next two business days.
                                 if @isInNearFuture(event.start)
-                                    formatterKey = 'notification isen date format'
+                                    formatterKey = (
+                                        'notification isen date format'
+                                    )
                                     formatter = localization.t formatterKey
+                                    start = event.start
                                     options =
                                         description: event.description
-                                        date: moment(event.start).format formatter
+                                        date: moment(start).format formatter
 
-                                    localeKey = 'notification isen event deleted'
-                                    notifContent = localization.t localeKey, options
+                                    localeKey = \
+                                        'notification isen event deleted'
+
+                                    notifContent = localization.t(
+                                        localeKey, options
+                                    )
 
                                     @notification.createTemporary
                                         app: 'konnectors'
@@ -279,8 +286,8 @@ module.exports =
                                             url: ''
                                     , (err) ->
                                         log.error err if err?
-                                        # errors are not passed to avoid breaking the
-                                        # loop
+                                        # errors are not passed to avoid
+                                        # breaking the loop
                                         next()
                                 else
                                     next()
@@ -327,33 +334,33 @@ module.exports =
 
     processUrls: (list, callback) ->
         if list.length is 0
-          callback null
+            callback null
         else
-          # fetch and process JSON data from every course
-          async.eachSeries list, (url, done) =>
+            # fetch and process JSON data from every course
+            async.eachSeries list, (url, done) =>
 
-              async.waterfall [
-                  # retrieve JSON
-                  (next) => @fetchJson url, next
+                async.waterfall [
+                    # retrieve JSON
+                    (next) => @fetchJson url, next
 
-                  # process it
-                  (courseData, next) =>
-                      async.series [
-                          (next) => @checkKeys courseData, next
-                          (next) => @processFolder courseData, next
-                          (next) => @parseCourse courseData, next
-                          (next) => @checkFilesToDelete courseData, next
-                      ], next
-              ], (err) ->
-                  log.error err if err?
-                  # error should not break the loop so it can process
-                  # all the courses
-                  done()
+                    # process it
+                    (courseData, next) =>
+                        async.series [
+                            (next) => @checkKeys courseData, next
+                            (next) => @processFolder courseData, next
+                            (next) => @parseCourse courseData, next
+                            (next) => @checkFilesToDelete courseData, next
+                        ], next
+                ], (err) ->
+                    log.error err if err?
+                    # error should not break the loop so it can process
+                    # all the courses
+                    done()
 
-          , (err) ->
-              # error are logged in the process and not raised to the loop
-              # but it's safer to pass it, if there is one at some point
-              callback err
+            , (err) ->
+                # error are logged in the process and not raised to the loop
+                # but it's safer to pass it, if there is one at some point
+                callback err
 
 
     fetchJson: (url, callback) ->
@@ -494,7 +501,7 @@ module.exports =
 
     createFile: (fileName, path, date, url, tags, callback) ->
         @numItems++
-        File.createNew fileName, path, date, url, tags, (err) ->
+        File.createNew fileName, path, url, tags, (err) ->
             if err?
                 callback err
             else
@@ -527,3 +534,4 @@ module.exports =
                     else
                         next()
                 , callback
+

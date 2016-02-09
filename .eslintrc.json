@@ -1,0 +1,12 @@
+{
+  "extends": "airbnb",
+  "strict": "global",
+  "plugins": [
+    "react"
+  ],
+
+  "rules": {
+    "no-param-reassign": [0, {"props": false}]
+  }
+}
+

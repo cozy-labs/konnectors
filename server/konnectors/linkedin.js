@@ -18,6 +18,7 @@ const async = require('async');
 
 const ACCOUNT_TYPE = 'com.linkedin';
 
+
 /**
 * Load landing page to retrieve the csrf token needed in login request.
 * More info on csrf -> https://en.wikipedia.org/wiki/Cross-site_request_forgery
@@ -28,7 +29,7 @@ const ACCOUNT_TYPE = 'com.linkedin';
 function retrieveTokens(requiredFields, entries, data, next) {
   const opts = {
     url: 'https://linkedin.com',
-    jar: true
+    jar: true,
   };
 
   log.info('Retrieving CSRF Token...');
@@ -65,8 +66,8 @@ function logIn(requiredFields, entries, data, next) {
       session_key: requiredFields.login,
       session_password: requiredFields.password,
       loginCsrfParam: entries.csrfToken,
-      submit: 'Sign+in'
-    }
+      submit: 'Sign+in',
+    },
   };
 
   log.info('Signing in...');
@@ -85,6 +86,7 @@ function logIn(requiredFields, entries, data, next) {
   });
 }
 
+
 /**
 * Retrieve a list of all Linkedin ID contacts available. The linkedin ID will
 * be used to retrieve additional data about the contact.
@@ -96,7 +98,7 @@ function retrieveContactList(requiredFields, entries, data, next) {
   const opts = {
     url: contactsUrl,
     jar: true,
-    json: true
+    json: true,
   };
 
   log.info('Retrieving contact list...');
@@ -120,6 +122,7 @@ function retrieveContactList(requiredFields, entries, data, next) {
     next();
   });
 }
+
 
 /**
 * Load all Cozy contacts, then perform several operations:
@@ -154,7 +157,7 @@ function prepareCozyContacts(requiredFields, entries, data, next) {
     // Initialise the counters
     entries.contactStats = {
       created: 0,
-      updated: 0
+      updated: 0,
     };
 
     log.info('Cozy contacts loaded.');
@@ -162,6 +165,7 @@ function prepareCozyContacts(requiredFields, entries, data, next) {
     next();
   });
 }
+
 
 /**
  * Try to get the matching Contact tag to the account. If it not exit, create it
@@ -179,6 +183,7 @@ function getOrCreateTag(requiredFields, entries, data, next) {
   });
 }
 
+
 /**
 * Change contact picture with the one coming from Linkedin.
 */
@@ -186,16 +191,16 @@ function savePicture(fromCozy, imageUrl, next) {
   if (imageUrl) {
     const opts = url.parse(imageUrl);
 
-    https.get(opts, stream => {
-      stream.on('error', err => {
+    https.get(opts, (stream) => {
+      stream.on('error', (err) => {
         log.error(err);
       });
 
-      fromCozy.attachFile(stream, { name: 'picture' }, err => {
+      fromCozy.attachFile(stream, { name: 'picture' }, (err) => {
         if (err) {
           return next(err);
         }
-        log.info(`Picture successfully saved for ${ fromCozy.fn }.`);
+        log.info(`Picture successfully saved for ${fromCozy.fn}.`);
         next();
       });
     });
@@ -203,6 +208,7 @@ function savePicture(fromCozy, imageUrl, next) {
     next();
   }
 }
+
 
 /**
 * Update contact with information coming from Linkedin, picture included.
@@ -224,13 +230,16 @@ function updateContact(fromCozy, fromLinkedin, imageUrl, contactStats, next) {
   });
 }
 
+
 /**
 * Take an array of contact and save theme in the Data System. If the contact
 * doesn't already exist, it is created. If the contact exists, it's updated
 * with the Linkedin data.
 */
 function saveContacts(contact, entries, next) {
-  const linkAccount = ContactHelper.getAccount(contact, ACCOUNT_TYPE, entries.accountName);
+  const linkAccount = ContactHelper.getAccount(
+    contact, ACCOUNT_TYPE, entries.accountName
+  );
   const imageUrl = contact.imageUrl;
 
   delete contact.imageUrl;
@@ -244,10 +253,10 @@ function saveContacts(contact, entries, next) {
 
     // Already up to date, nothing to do.
     if (newRev === previousRev) {
-      log.info(`LinkedIn contact ${ cozyContact.fn } is up to date.`);
+      log.info(`LinkedIn contact ${cozyContact.fn} is up to date.`);
       next();
     } else {
-      log.info(`Update ${ cozyContact.fn } with LinkedIn data.`);
+      log.info(`Update ${cozyContact.fn} with LinkedIn data.`);
 
       updateContact(cozyContact, contact, imageUrl, entries.contactStats, next);
     }
@@ -255,12 +264,12 @@ function saveContacts(contact, entries, next) {
     // Case where the contact already exists but was not imported from Linkedin.
     const cozyContact = entries.cozyContactsByFn[contact.fn];
 
-    log.info(`Link ${ cozyContact.fn } to linkedin account and update data.`);
+    log.info(`Link ${cozyContact.fn} to linkedin account and update data.`);
 
     updateContact(cozyContact, contact, imageUrl, entries.contactStats, next);
   } else {
     // Case where the contact is not listed in the database.
-    log.info(`Create new contact for ${ contact.fn }.`);
+    log.info(`Create new contact for ${contact.fn}.`);
     Contact.create(contact, (err, createdContact) => {
       if (err) {
         return next(err);
@@ -271,6 +280,7 @@ function saveContacts(contact, entries, next) {
     });
   }
 }
+
 
 /**
  * Manage synchronisation between two actions:
@@ -289,12 +299,16 @@ function retrieveAndSaveContacts(requiredFields, entries, data, done) {
   * Contact model
   */
   const retrieveContactData = (contact, next) => {
-    const contactUrl = 'https://www.linkedin.com/contacts/api/contacts/' + `${ contact.id }/?fields=name,first_name,last_name,` + 'emails_extended,phone_numbers,sites,addresses,' + 'company,title,geo_location,profiles,twitter,tag,' + ' secure_profile_image_url';
+    const contactUrl = 'https://www.linkedin.com/contacts/api/contacts/' +
+      `${contact.id}/?fields=name,first_name,last_name,` +
+      'emails_extended,phone_numbers,sites,addresses,' +
+      'company,title,geo_location,profiles,twitter,tag,' +
+      ' secure_profile_image_url';
 
     const opts = {
       url: contactUrl,
       jar: true,
-      json: true
+      json: true,
     };
 
     request.get(opts, (err, res, body) => {
@@ -305,6 +319,7 @@ function retrieveAndSaveContacts(requiredFields, entries, data, done) {
       if (body.status && body.status === 'error') {
         return next(body.status_details);
       }
+
 
       let datapoints = [];
 
@@ -318,31 +333,33 @@ function retrieveAndSaveContacts(requiredFields, entries, data, done) {
 
       // Contact data composition
       const newFormatedContact = new Contact({
-        n: `${ bodyData.last_name };${ bodyData.first_name }`,
+        n: `${bodyData.last_name};${bodyData.first_name}`,
         fn: bodyData.name,
         org: bodyData.company ? bodyData.company.name : null,
         title: bodyData.title,
         tags: ['linkedin'],
-        datapoints
+        datapoints,
       });
 
       newFormatedContact.imageUrl = bodyData.secure_profile_image_url;
+
 
       // Set information source for the given contact. It adds a flag
       // to say that the contact comes from Linkedin.
       ContactHelper.setAccount(newFormatedContact, {
         type: ACCOUNT_TYPE,
         name: entries.accountName,
-        id: bodyData.id
+        id: bodyData.id,
       });
 
       saveContacts(newFormatedContact, entries, next);
     });
   };
 
+
   const contacts = entries.listContacts;
 
-  async.eachSeries(contacts, retrieveContactData, err => {
+  async.eachSeries(contacts, retrieveContactData, (err) => {
     if (err) {
       log.error(err);
     } else {
@@ -352,6 +369,7 @@ function retrieveAndSaveContacts(requiredFields, entries, data, done) {
     done();
   });
 }
+
 
 /**
  * Create the notification content bases on a given set of statistics
@@ -363,13 +381,13 @@ function createNotificationContent(requiredFields, entries, data, next) {
 
   // create the notification
   log.info(`import finished :
-    ${ stats.created } contacts created
-  ${ stats.updated } contacts updated`);
+    ${stats.created} contacts created
+  ${stats.updated} contacts updated`);
 
   if (stats.created > 0) {
     localizationkey = 'notification linkedin created';
     options = {
-      smart_count: stats.created
+      smart_count: stats.created,
     };
     entries.notifContent = localization.t(localizationkey, options);
   }
@@ -377,7 +395,7 @@ function createNotificationContent(requiredFields, entries, data, next) {
   if (stats.updated > 0) {
     localizationkey = 'notification linkedin updated';
     options = {
-      smart_count: stats.updated
+      smart_count: stats.updated,
     };
     if (entries.notifContent) {
       entries.notifContent += '\n';
@@ -389,6 +407,7 @@ function createNotificationContent(requiredFields, entries, data, next) {
   next();
 }
 
+
 module.exports = {
   name: 'Linkedin',
   slug: 'linkedin',
@@ -396,21 +415,30 @@ module.exports = {
 
   fields: {
     login: 'text',
-    password: 'password'
+    password: 'password',
   },
 
   models: {
-    contact: Contact
+    contact: Contact,
   },
 
   fetch: (requiredFields, callback) => {
     log.info('Import started');
-    fetcher.new().use(retrieveTokens).use(logIn).use(retrieveContactList).use(prepareCozyContacts).use(getOrCreateTag).use(retrieveAndSaveContacts).use(createNotificationContent).args(requiredFields, {}, {}).fetch((err, fields, entries) => {
+    fetcher.new()
+    .use(retrieveTokens)
+    .use(logIn)
+    .use(retrieveContactList)
+    .use(prepareCozyContacts)
+    .use(getOrCreateTag)
+    .use(retrieveAndSaveContacts)
+    .use(createNotificationContent)
+    .args(requiredFields, {}, {})
+    .fetch((err, fields, entries) => {
       if (err) {
         callback(err);
       } else {
         callback(null, entries.notifContent);
       }
     });
-  }
+  },
 };
