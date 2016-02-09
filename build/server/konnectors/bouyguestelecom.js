@@ -96,7 +96,7 @@ module.exports = {
 logIn = function(requiredFields, bills, data, next) {
   var billUrl, loginOptions, loginUrl, userAgent;
   loginUrl = 'https://www.mon-compte.bouyguestelecom.fr/cas/login';
-  billUrl = "http://www.bouyguestelecom.fr/mon-compte/mes-factures/historique";
+  billUrl = "https://www.bouyguestelecom.fr/parcours/mes-factures/historique";
   userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + 'Gecko/20100101 Firefox/36.0';
   loginOptions = {
     uri: loginUrl,
@@ -160,9 +160,10 @@ logIn = function(requiredFields, bills, data, next) {
 
 parsePage = function(requiredFields, bills, data, next) {
   var $, baseDlUrl;
-  baseDlUrl = "http://www.bouyguestelecom.fr";
-  baseDlUrl += "/mon-compte/facture/download/index";
+  baseDlUrl = "https://www.bouyguestelecom.fr";
+  baseDlUrl += "/parcours/facture/download/index";
   bills.fetched = [];
+  moment.locale('fr');
   $ = cheerio.load(data.html);
   $('.download-facture').each(function() {
     var amount, bill, date, id, params, url;
