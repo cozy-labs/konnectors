@@ -83,22 +83,17 @@ logIn = function(requiredFields, billInfos, data, next) {
   return request(signInOptions, function(err, res, body) {
     if (err) {
       log.error("Signin failed");
-      return next(err);
+      return next('bad credentials');
     }
     client.headers["Cookie"] = res.headers["set-cookie"];
     log.info('Fetching bills list');
     return client.get("api/getFacturesData", function(err, res, body) {
-      if (err) {
+      if (err || !body.success) {
         log.error('An error occured while fetching bills list');
-        return next(err);
+        return next("no bills retrieved");
       }
-      if (body.success) {
-        data.content = body.data;
-        return next();
-      } else {
-        log.error("Bills list fetch failed");
-        return next("Could not fetch bills list");
-      }
+      data.content = body.data;
+      return next();
     });
   });
 };
