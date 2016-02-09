@@ -87,6 +87,7 @@ module.exports = class KonnectorView extends BaseView
 
     # Show error widget and fill it with given message.
     showErrors: (msg) ->
+        msg = msg.replace /<[^>]*>/ig, ''
         @$('.error .message').html msg
         @$('.error').show()
 
