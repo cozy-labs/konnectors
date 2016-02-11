@@ -55,7 +55,10 @@ module.exports =
             .fetch (err, fields, entries) ->
                 log.info "Import finished"
 
-                notifContent = null
+                notifContent = ""
+                if err
+                    notifContent = "notification import error"
+
                 if entries?.filtered?.length > 0
                     localizationKey = 'notification numericable'
                     options = smart_count: entries.filtered.length
@@ -66,32 +69,32 @@ module.exports =
 
 # Layer to login to Numéricable website.
 logIn = (requiredFields, billInfos, data, next) ->
-    monCompteUrl = "https://moncompte.numericable.fr"
-    connexionUrl = "https://connexion.numericable.fr"
+    accountUrl = "https://moncompte.numericable.fr"
+    connectionUrl = "https://connexion.numericable.fr"
     appKeyOptions =
         method: 'GET'
         jar: true
-        url: "#{monCompteUrl}/pages/connection/Login.aspx"
+        url: "#{accountUrl}/pages/connection/Login.aspx"
 
     logInOptions =
         method: 'POST'
         jar: true
-        url: "#{connexionUrl}/Oauth/Oauth.php"
+        url: "#{connectionUrl}/Oauth/Oauth.php"
         form:
             'action': "connect"
-            'linkSSO': "#{connection}/pages/connection/Login.aspx?link=HOME"
+            'linkSSO': "#{connectionUrl}/pages/connection/Login.aspx?link=HOME"
             'appkey': ""
             'isMobile': ""
 
     redirectOptions =
         method: 'POST'
         jar: true
-        url: connexionUrl
+        url: connectionUrl
 
     signInOptions =
         method: 'POST'
         jar: true
-        url: "#{connexionUrl}/Oauth/login/"
+        url: "#{connectionUrl}/Oauth/login/"
         form:
             'login': requiredFields.login
             'pwd': requiredFields.password
@@ -99,22 +102,26 @@ logIn = (requiredFields, billInfos, data, next) ->
     tokenAuthOptions =
         method: 'POST'
         jar: true
-        url: "#{monCompteUrl}/pages/connection/Login.aspx?link=HOME"
+        url: "#{accountUrl}/pages/connection/Login.aspx?link=HOME"
         qs:
             accessToken: ""
 
     billOptions =
         method: 'GET'
         jar: true
-        uri: "#{monCompteUrl}/pages/billing/Invoice.aspx"
+        uri: "#{accountUrl}/pages/billing/Invoice.aspx"
 
     log.info 'Getting appkey'
     request appKeyOptions, (err, res, body) ->
-        return next err if err
+        appKey = ""
 
-        $ = cheerio.load body
-        appKey = $('#PostForm input[name="appkey"]').attr "value"
-        return next "Could not retrieve app key" if not appKey
+        if not err
+            $ = cheerio.load body
+            appKey = $('#PostForm input[name="appkey"]').attr "value"
+
+        if not appKey
+            log.info "Numericable: could not retrieve app key"
+            return next "key not found"
 
         logInOptions.form.appkey = appKey
 
@@ -122,29 +129,31 @@ logIn = (requiredFields, billInfos, data, next) ->
         request logInOptions, (err, res, body) ->
             if err
                 log.error 'Login failed'
-                return next err
+                return next "error occurred during import."
 
             log.info 'Signing in'
             request signInOptions, (err, res, body) ->
                 if err
                     log.error 'Signin failed'
-                    return next err
+                    return next "bad credentials"
 
-                redirectURL = res.headers.location
-                return next "Could not retrieve redirect URL" if not redirectURL
+                redirectUrl = res.headers.location
+                if not redirectUrl
+                    return next "Could not retrieve redirect URL"
 
-                redirectOptions.url += redirectURL
+                redirectOptions.url += redirectUrl
 
                 log.info "Fetching access token"
                 request redirectOptions, (err, res, body) ->
-                    if err
-                        log.error 'Token fetching failed'
-                        return next err
+                    accessToken = ""
 
-                    $ = cheerio.load body
-                    accessToken = $("#accessToken").attr "value"
+                    if not err
+                        $ = cheerio.load body
+                        accessToken = $("#accessToken").attr "value"
+
                     if not accessToken
-                        return next "Could not retrieve access token"
+                        log.error 'Token fetching failed'
+                        return next "error occurred during import."
 
                     tokenAuthOptions.qs.accessToken = accessToken
 
@@ -152,14 +161,14 @@ logIn = (requiredFields, billInfos, data, next) ->
                     request tokenAuthOptions, (err, res, body) ->
                         if err
                             log.error 'Authentication by token failed'
-                            return next err
+                            return next "error occurred during import."
 
                         log.info 'Fetching bills page'
                         request billOptions, (err, res, body) ->
                             if err
                                 log.error 'An error occured while fetching ' + \
                                 'bills page'
-                                return next err
+                                return next "no bills retrieved"
 
                             data.html = body
                             next()
@@ -213,9 +222,9 @@ parsePage = (requiredFields, bills, data, next) ->
 
         bills.fetched.push bill if bill.date? and bill.amount? and bill.pdfurl?
 
-    log.info "#{bills.fetched.length} bills retrieved"
+    log.info "#{bills.fetched.length} bill(s) retrieved"
 
     if not bills.fetched.length
-        next "No bills retrieved"
+        next "no bills retrieved"
     else
         next()
