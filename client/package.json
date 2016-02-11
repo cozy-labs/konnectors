@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "auto-reload-brunch": "> 1.0 < 1.5",
-    "brunch": "2.1.3",
+    "brunch": "^1.8.5",
     "clean-css-brunch": "> 1.0 < 1.5",
     "coffee-script-brunch": "> 1.0 < 1.5",
     "css-brunch": "> 1.0 < 1.5",
