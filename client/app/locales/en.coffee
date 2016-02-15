@@ -76,6 +76,7 @@ module.exports =
     'konnector description nest': "Save current temperature measured by your Nest thermostat."
     'konnector description numericable': "Download all your Numéricable Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description virginmobile': "Download all your Virgin Mobile  bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description online_net': "Download all your Online.net bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar."
     'konnector description googlecontacts': "Import your google contacts into your Cozy through google's API."
     'konnector customview googlecontacts 4': "Initialize or reset this konnector"
@@ -101,6 +102,7 @@ module.exports =
     'notification electrabel': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification numericable': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification virginmobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification online_net': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
 
     "konnector danger zone": "Danger zone"
     "konnector delete credentials": "Delete this configuration."
