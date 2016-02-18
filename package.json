@@ -51,7 +51,6 @@
     "build": "sh scripts/build.sh",
     "test": "sh scripts/tests.sh",
     "lint": "sh scripts/lint.sh",
-    "postinstall": "cd client && npm install && cd ..",
     "start": "node build/server.js"
   },
   "contributors": [
