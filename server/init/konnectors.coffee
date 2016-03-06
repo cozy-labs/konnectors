@@ -34,7 +34,7 @@ module.exports = (callback) ->
                     createKonnectors konnectorsToCreate, callback
 
 
-# Reset konnector importing flags: isImporting flage is set to false if value
+# Reset konnector importing flags: isImporting flag is set to false if value
 # is true. This happens when the app is crashing while importing.
 konnectorResetValue = (konnector, callback) ->
 
@@ -58,7 +58,7 @@ getKonnectorsToCreate = (konnectorHash) ->
     for name, konnectorModule of konnectorModules
         unless konnectorHash[konnectorModule.slug]?
             konnectorsToCreate.push konnectorModule
-            console.info "New konnector to init: #{name}"
+            log.info "New konnector to init: #{name}"
 
     return konnectorsToCreate
 
