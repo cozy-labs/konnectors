@@ -75,19 +75,24 @@ module.exports =
 
     fetchIcs: (requiredFields, callback) ->
 
-        baseMainUrl = 'https://web.isen-bretagne.fr/cc/PublishVCalendar'
-        [firstPart, secondPart] = requiredFields.email.split '@'
-        [firstname, lastname] = firstPart.split '.'
-
-        options =
-            method: 'GET'
-            jar: true
+        # return error if email is not supplied or wrongly formated
+        try
+            [firstPart, secondPart] = requiredFields.email.split '@'
+            [firstname, lastname] = firstPart.split '.'
+        catch error
+            firstname = ''
+            lastname  = ''
 
         if firstname isnt '' and lastname isnt ''
+            baseMainUrl = 'https://web.isen-bretagne.fr/cc/PublishVCalendar'
             fetchUrl = "#{baseMainUrl}/#{firstname}.#{lastname}.ics"
             log.debug "Fetching #{fetchUrl}"
-            options.uri = fetchUrl
-            options.timeout = 7000
+
+            options =
+                method: 'GET'
+                jar: true
+                uri: fetchUrl
+                timeout: 7000
             request options, (err, res, body) ->
 
                 if err?
