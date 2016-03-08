@@ -17,7 +17,7 @@ const Event = require('../models/event');
  * whire are labelized with given tag. Then it creates a yearly recurrent event
  * for each birthday.
  */
-var connector = module.exports = baseKonnector.createNew({
+let connector = module.exports = baseKonnector.createNew({
   name: 'Birthdays',
 
   fields: {
@@ -57,7 +57,7 @@ function extractBirthdays(requiredFields, entries, data, next) {
   entries.birthdays = [];
   data.contacts.forEach((contact) => {
     if (contact.bday !== undefined) {
-      var date = moment(contact.bday, 'YYYY-MM-DD');
+      let date = moment(contact.bday, 'YYYY-MM-DD');
       if (date.isValid()) {
         entries.birthdays.push({
           date: date,
@@ -75,9 +75,9 @@ function saveEvents(requiredFields, entries, data, next) {
   entries.nbCreations = 0;
 
   async.eachSeries(entries.birthdays, (birthday, done) => {
-    var localizationKey = 'konnector birthdays birthday';
-    var birthdayLabel = localization.t(localizationKey);
-    var data = {
+    let localizationKey = 'konnector birthdays birthday';
+    let birthdayLabel = localization.t(localizationKey);
+    let data = {
       description: `${birthdayLabel} ${birthday.contactName}`,
       start: birthday.date.format('YYYY-MM-DD'),
       end: birthday.date.add(1, 'days').format('YYYY-MM-DD'),
@@ -101,8 +101,8 @@ function saveEvents(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.nbCreations > 0) {
-    var localizationKey = 'notification birthdays creation';
-    var options = {
+    let localizationKey = 'notification birthdays creation';
+    let options = {
       nbCreations: entries.nbCreations,
     };
     entries.notifContent = localization.t(localizationKey, options);
