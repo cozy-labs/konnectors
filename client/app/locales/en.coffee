@@ -105,9 +105,9 @@ module.exports =
     'notification numericable': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification virginmobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification online_net': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
-    'notification ical_feed creation': "%{nbCreations} new event imported |||| %{nbCreations} new events imported"
-    'notification ical_feed update': "%{nbUpdates} new event updated |||| %{nbCreations} new events updated"
-    'notification birthdays creation': "%{nbCreations} new birthday created |||| %{nbCreations} new birthdays created"
+    'notification ical_feed creation': "%{smart_count} new event imported |||| %{smart_count} new events imported"
+    'notification ical_feed update': "%{smart_count} new event updated |||| %{smart_count} new events updated"
+    'notification birthdays creation': "%{smart_count} new birthday created |||| %{smart_count} new birthdays created"
 
     "konnector birthdays birthday": "Birthday of"
 

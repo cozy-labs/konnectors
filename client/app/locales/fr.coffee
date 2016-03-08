@@ -106,9 +106,9 @@ module.exports =
     'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification virginmobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification online_net': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification ical_feed creation': "%{nbCreations} nouvel événement importé. |||| %{nbCreations} nouveaux événements importés."
-    'notification ical_feed update': "%{nbUpdates} événement mis à jour. |||| %{nbCreations} événements mis à jour."
-    'notification birthdays creation': "%{nbCreations} nouvel anniversaire créé. |||| %{nbCreations} nouveaux anniversaires créés."
+    'notification ical_feed creation': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés."
+    'notification ical_feed update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
+    'notification birthdays creation': "%{smart_count} nouvel anniversaire créé. |||| %{smart_count} nouveaux anniversaires créés."
 
     "konnector danger zone": "Zone dangereuse"
     "konnector delete credentials": "Supprimer cette configuration."
