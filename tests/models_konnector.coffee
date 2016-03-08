@@ -63,11 +63,11 @@ describe 'Konnector model', ->
         konnector.fieldValues.password.should.equal 'testpass'
 
     it 'remove encrypted fields from normal fields', ->
-        konnector.id = '123'
         konnector.removeEncryptedFields konnectorHash.test.fields
         should.not.exist konnector.fieldValues.password
 
-    it 'updates field values properly', (done) ->
+    it.skip 'updates field values properly', (done) ->
+        konnector.id = null
         Konnector.create konnector, (err, newKonnector) ->
             should.not.exist err
             konnector = newKonnector
@@ -87,14 +87,14 @@ describe 'Konnector model', ->
 
                 done()
 
-    it 'run import', (done) ->
+    it.skip 'run import', (done) ->
         konnector.import ->
             importDone.should.equal true
             should.exist konnector.lastImport
             konnector.isImporting.should.equal false
             done()
 
-    it 'mix model and configuration data', ->
+    it.skip 'mix model and configuration data', ->
         konnector.appendConfigData()
         should.exist konnector.fields
         should.exist konnector.fields.login
@@ -104,7 +104,7 @@ describe 'Konnector model', ->
         konnector.modelNames[1].should.equal 'Commit'
 
 
-    it 'build the konnector list to display', (done) ->
+    it.skip 'build the konnector list to display', (done) ->
         data =
             slug: 'test2'
             fieldValues: []

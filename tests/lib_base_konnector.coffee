@@ -1,7 +1,5 @@
-fs = require 'fs'
-path = require 'path'
-
 should = require 'should'
+
 baseKonnector = require '../server/lib/base_konnector'
 Bill = require '../server/models/bill'
 Event = require '../server/models/event'
