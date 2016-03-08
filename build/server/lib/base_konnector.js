@@ -1,7 +1,9 @@
-const _ = require('lodash');
-const printit = require('printit');
-const slugify = require('cozy-slug');
-const fetcher = require('./fetcher');
+'use strict';
+
+var _ = require('lodash');
+var printit = require('printit');
+var slugify = require('cozy-slug');
+var fetcher = require('./fetcher');
 
 module.exports = {
 
@@ -16,30 +18,30 @@ module.exports = {
    * * Add a default fetch function that runs operations set at konnector
    * level.
    */
-  createNew: function (konnector) {
+  createNew: function createNew(konnector) {
     var slug = slugify(konnector.name).replace(/-/g, '_');
     var logger = printit({
       prefix: konnector.name,
       date: true
     });
     var modelsObj = {};
-    konnector.models.forEach(model => {
+    konnector.models.forEach(function (model) {
       modelsObj[model.displayName.toLowerCase()] = model;
     });
 
     return _.assignIn(konnector, {
       slug: slug,
-      description: `konnector description ${ slug }`,
+      description: 'konnector description ' + slug,
       logger: logger,
       models: modelsObj,
 
-      fetch: function (requiredFields, callback) {
+      fetch: function fetch(requiredFields, callback) {
         var importer = fetcher.new();
-        konnector.fetchOperations.forEach(operation => {
+        konnector.fetchOperations.forEach(function (operation) {
           importer.use(operation);
         });
         importer.args(requiredFields, {}, {});
-        importer.fetch((err, fields, entries) => {
+        importer.fetch(function (err, fields, entries) {
           if (err) {
             konnector.logger.error('Import failed.');
             callback(err);

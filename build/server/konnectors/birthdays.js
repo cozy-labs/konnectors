@@ -1,15 +1,15 @@
 'use strict';
 
-const _ = require('lodash');
-const async = require('async');
-const moment = require('moment');
-const slugify = require('cozy-slug');
+var _ = require('lodash');
+var async = require('async');
+var moment = require('moment');
+var slugify = require('cozy-slug');
 
-const baseKonnector = require('../lib/base_konnector');
-const localization = require('../lib/localization_manager');
+var baseKonnector = require('../lib/base_konnector');
+var localization = require('../lib/localization_manager');
 
-const Contact = require('../models/contact');
-const Event = require('../models/event');
+var Contact = require('../models/contact');
+var Event = require('../models/event');
 
 /*
  * The goal of this connector is to extract contact birthdays for contacts
@@ -32,11 +32,11 @@ var connector = module.exports = baseKonnector.createNew({
 
 function getContacts(requiredFields, entries, data, next) {
   connector.logger.info('Retrieving contacts from the Cozy');
-  Contact.all((err, contacts) => {
+  Contact.all(function (err, contacts) {
     if (err) {
       connector.logger.error('Cannot retrieve contacts from database');
     } else {
-      data.contacts = contacts.filter(contact => {
+      data.contacts = contacts.filter(function (contact) {
         return _.includes(contact.tags, requiredFields.tag);
       });
       connector.logger.info('Contacts retrieved.');
@@ -47,7 +47,7 @@ function getContacts(requiredFields, entries, data, next) {
 
 function extractBirthdays(requiredFields, entries, data, next) {
   entries.birthdays = [];
-  data.contacts.forEach(contact => {
+  data.contacts.forEach(function (contact) {
     if (contact.bday !== undefined) {
       var date = moment(contact.bday, 'YYYY-MM-DD');
       if (date.isValid()) {
@@ -65,24 +65,24 @@ function saveEvents(requiredFields, entries, data, next) {
   connector.logger.info('Saving birthdays...');
   entries.nbCreations = 0;
 
-  async.eachSeries(entries.birthdays, (birthday, done) => {
+  async.eachSeries(entries.birthdays, function (birthday, done) {
     var localizationKey = 'konnector birthdays birthday';
     var birthdayLabel = localization.t(localizationKey);
     var data = {
-      description: `${ birthdayLabel } ${ birthday.contactName }`,
+      description: birthdayLabel + ' ' + birthday.contactName,
       start: birthday.date.format('YYYY-MM-DD'),
       end: birthday.date.add(1, 'days').format('YYYY-MM-DD'),
       rrule: "FREQ=YEARLY;INTERVAL=1",
-      id: `${ birthday.date.format('MM-DD') }-${ slugify(birthday.contactName) }`,
+      id: birthday.date.format('MM-DD') + '-' + slugify(birthday.contactName),
       tags: [requiredFields.calendar]
     };
-    Event.createOrUpdate(data, (err, cozyEvent, changes) => {
-      if (err) connector.logger.error(`Birthday for ${ birthday.contactName } was not created`);
+    Event.createOrUpdate(data, function (err, cozyEvent, changes) {
+      if (err) connector.logger.error('Birthday for ' + birthday.contactName + ' was not created');
       if (changes.creation) entries.nbCreations++;
       done();
     });
-  }, err => {
-    connector.logger.info(`${ entries.nbCreations } birthdays were created.`);
+  }, function (err) {
+    connector.logger.info(entries.nbCreations + ' birthdays were created.');
     next();
   });
 }
