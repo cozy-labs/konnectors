@@ -100,14 +100,14 @@ function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.nbCreations > 0) {
     var localizationKey = 'notification ical_feed creation';
     var options = {
-      nbCreations: entries.nbCreations
+      smart_count: entries.nbCreations
     };
     entries.notifContent = localization.t(localizationKey, options);
   }
   if (entries.nbUpdates > 0) {
     var _localizationKey = 'notification ical_feed update';
     var _options = {
-      nbUpdates: entries.nbUpdates
+      smart_count: entries.nbUpdates
     };
     if (entries.notifContent === undefined) entries.notifContent = localization.t(_localizationKey, _options);else entries.notifContent += ' ' + localization.t(_localizationKey, _options);
   }

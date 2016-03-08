@@ -66,6 +66,8 @@ module.exports = {
   'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest.",
   'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda.",
   'konnector description googlecontacts': "Importez vos contacts Google dans votre Cozy via l'API de Google.",
+  'konnector description ical_feed': "Téléchargez et importez un fichier iCal disponible en ligne (.ics).",
+  'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts.",
   'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector",
   'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2.",
   'konnector customview googlecontacts 2': "Connecter votre compte Google",
@@ -85,6 +87,9 @@ module.exports = {
   'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
   'notification virginmobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
   'notification online_net': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
+  'notification ical_feed creation': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés.",
+  'notification ical_feed update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour.",
+  'notification birthdays creation': "%{smart_count} nouvel anniversaire créé. |||| %{smart_count} nouveaux anniversaires créés.",
   "konnector danger zone": "Zone dangereuse",
   "konnector delete credentials": "Supprimer cette configuration.",
   "konnector deleted": "La configuration de ce connecteur a bien été supprimée.",
@@ -92,5 +97,8 @@ module.exports = {
   'notification isen': "%{smart_count} nouveau support de cours importé |||| %{smart_count} nouveaux supports de cours importés",
   'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}",
   'notification isen date format': "DD/MM [à] HH:mm",
-  'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"
+  'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée",
+  "calendar": "Le calendrier dans lequel les événements seront importés",
+  "url": "URL cible",
+  "tag": "Tag"
 };

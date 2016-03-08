@@ -3,6 +3,9 @@ module.exports = {
   getEntryFileName: function(entry, options) {
     var extension, i, len, name, parameter, ref;
     name = "";
+    if (entry.date != null) {
+      entry.date = new Date(entry.date);
+    }
     if (typeof options === "string") {
       name = (entry.date.format('YYYYMM')) + "_" + options + ".pdf";
     } else {

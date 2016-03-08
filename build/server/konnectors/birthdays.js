@@ -91,7 +91,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.nbCreations > 0) {
     var localizationKey = 'notification birthdays creation';
     var options = {
-      nbCreations: entries.nbCreations
+      smart_count: entries.nbCreations
     };
     entries.notifContent = localization.t(localizationKey, options);
   }
