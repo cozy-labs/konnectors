@@ -74,7 +74,10 @@ module.exports = Contact = (function(superClass) {
     tags: [String],
     binary: Object,
     _attachments: Object,
-    accounts: [Account]
+    accounts: [Account],
+    initials: String,
+    sortedName: String,
+    ref: String
   };
 
   Contact.cast = function(attributes, target) {

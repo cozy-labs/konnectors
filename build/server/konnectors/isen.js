@@ -107,19 +107,25 @@ module.exports = {
     })(this));
   },
   fetchIcs: function(requiredFields, callback) {
-    var baseMainUrl, err, fetchUrl, firstPart, firstname, lastname, options, ref, ref1, secondPart;
-    baseMainUrl = 'https://web.isen-bretagne.fr/cc/PublishVCalendar';
-    ref = requiredFields.email.split('@'), firstPart = ref[0], secondPart = ref[1];
-    ref1 = firstPart.split('.'), firstname = ref1[0], lastname = ref1[1];
-    options = {
-      method: 'GET',
-      jar: true
-    };
+    var baseMainUrl, err, error, error1, fetchUrl, firstPart, firstname, lastname, options, ref, ref1, secondPart;
+    try {
+      ref = requiredFields.email.split('@'), firstPart = ref[0], secondPart = ref[1];
+      ref1 = firstPart.split('.'), firstname = ref1[0], lastname = ref1[1];
+    } catch (error1) {
+      error = error1;
+      firstname = '';
+      lastname = '';
+    }
     if (firstname !== '' && lastname !== '') {
+      baseMainUrl = 'https://web.isen-bretagne.fr/cc/PublishVCalendar';
       fetchUrl = baseMainUrl + "/" + firstname + "." + lastname + ".ics";
       log.debug("Fetching " + fetchUrl);
-      options.uri = fetchUrl;
-      options.timeout = 7000;
+      options = {
+        method: 'GET',
+        jar: true,
+        uri: fetchUrl,
+        timeout: 7000
+      };
       return request(options, function(err, res, body) {
         if (err != null) {
           return callback(err);
