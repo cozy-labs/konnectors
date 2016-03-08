@@ -138,6 +138,9 @@
     },
     "Tag": {
       "description": "Tags used to manage events and contacts."
+    },
+    "User": {
+      "description": "The user's timezone is required to import properly events."
     }
   },
   "cozy-displayName": "Konnectors",
