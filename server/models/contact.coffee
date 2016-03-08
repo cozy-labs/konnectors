@@ -55,6 +55,9 @@ module.exports = class Contact extends cozydb.CozyModel
         binary        : Object
         _attachments  : Object
         accounts      : [Account]
+        initials      : String
+        sortedName    : String
+        ref           : String
 
     @cast: (attributes, target) ->
         target = super attributes, target
