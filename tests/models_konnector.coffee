@@ -63,6 +63,7 @@ describe 'Konnector model', ->
         konnector.fieldValues.password.should.equal 'testpass'
 
     it 'remove encrypted fields from normal fields', ->
+        konnector.id = '123'
         konnector.removeEncryptedFields konnectorHash.test.fields
         should.not.exist konnector.fieldValues.password
 
