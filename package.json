@@ -133,8 +133,14 @@
     "Event": {
       "description": "Import event to fill the calendar."
     },
-    "Contacts": {
-      "description": "Synchronize contacts from Google."
+    "Contact": {
+      "description": "Create contacts from vendors or extract data from contact (for example to create birthdays)."
+    },
+    "Tag": {
+      "description": "Tags used to manage events and contacts."
+    },
+    "User": {
+      "description": "The user's timezone is required to import properly events."
     }
   },
   "cozy-displayName": "Konnectors",
