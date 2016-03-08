@@ -133,7 +133,7 @@
     "Event": {
       "description": "Import event to fill the calendar."
     },
-    "Contacts": {
+    "Contact": {
       "description": "Synchronize contacts from Google."
     }
   },
