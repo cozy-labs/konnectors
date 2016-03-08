@@ -64,17 +64,8 @@ class BankOperationLinker
 
         if not operationToLink?
             callback()
-        else if operationToLink.binary is undefined
-            @linkOperation operationToLink, entry, callback
-        else if not operationToLink.binary.file?
-            @linkOperation operationToLink, entry, callback
-        #This allow to update information for already linked operation
-        else if not operationToLink.binary.fileName?
-            @linkOperation operationToLink, entry, callback
-        else if not operationToLink.binary.fileMime?
-            @linkOperation operationToLink, entry, callback
         else
-            callback()
+            @linkOperation operationToLink, entry, callback
 
 
     # Save the binary ID and the file ID as an extra attribute of the
