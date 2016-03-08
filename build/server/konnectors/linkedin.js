@@ -142,38 +142,16 @@ function prepareCozyContacts(requiredFields, entries, data, next) {
     entries.cozyContactsByFn = {};
     entries.cozyContactsByAccountIds = {};
 
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    contacts.forEach(function (contact) {
+      entries.cozyContactsByFn[contact.fn] = contact;
+      var account = contact.getAccount(ACCOUNT_TYPE, entries.accountName);
 
-    try {
-      for (var _iterator = contacts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var contact = _step.value;
-
-        entries.cozyContactsByFn[contact.fn] = contact;
-        var account = contact.getAccount(ACCOUNT_TYPE, entries.accountName);
-
-        if (account) {
-          entries.cozyContactsByAccountIds[account.id] = contact;
-        }
+      if (account) {
+        entries.cozyContactsByAccountIds[account.id] = contact;
       }
+    });
 
-      // Initialise the counters
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-
+    // Initialise the counters
     entries.contactStats = {
       created: 0,
       updated: 0

@@ -145,14 +145,14 @@ function prepareCozyContacts(requiredFields, entries, data, next) {
     entries.cozyContactsByFn = {};
     entries.cozyContactsByAccountIds = {};
 
-    for (const contact of contacts) {
+    contacts.forEach((contact) => {
       entries.cozyContactsByFn[contact.fn] = contact;
       const account = contact.getAccount(ACCOUNT_TYPE, entries.accountName);
 
       if (account) {
         entries.cozyContactsByAccountIds[account.id] = contact;
       }
-    }
+    });
 
     // Initialise the counters
     entries.contactStats = {
