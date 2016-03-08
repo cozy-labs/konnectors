@@ -82,6 +82,8 @@ Event.createOrUpdate = (data, callback) ->
                     place: data.place
                     description: data.description
                     details: data.details
+                    rrule: data.rrule
+                    tags: data.tags
                 , (err) ->
                     event.beforeUpdate = oldValue
                     callback err, event, changes
