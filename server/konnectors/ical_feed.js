@@ -15,7 +15,7 @@ const Event = require('../models/event');
  * The goal of this connector is to fetch ICS file from an URL, parse it and
  * and store events in the Cozy
  */
-var connector = module.exports = baseKonnector.createNew({
+let connector = module.exports = baseKonnector.createNew({
   name: 'Ical Feed',
 
   fields: {
@@ -62,8 +62,8 @@ function parseFile(requiredFields, entries, data, next) {
       next(err);
 
     } else {
-      var parser = new ical.ICalParser();
-      var options = {defaultTimezone: user.timezone}
+      let parser = new ical.ICalParser();
+      let options = {defaultTimezone: user.timezone}
       parser.parseString(data.ical, options, (err, result) => {
 
         if (err) {
@@ -112,15 +112,15 @@ function saveEvents(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.nbCreations > 0) {
-    var localizationKey = 'notification ical_feed creation';
-    var options = {
+    let localizationKey = 'notification ical_feed creation';
+    let options = {
       nbCreations: entries.nbCreations,
     };
     entries.notifContent = localization.t(localizationKey, options);
   }
   if (entries.nbUpdates > 0) {
-    var localizationKey = 'notification ical_feed update';
-    var options = {
+    let localizationKey = 'notification ical_feed update';
+    let options = {
       nbUpdates: entries.nbUpdates
     };
     if (entries.notifContent === undefined)
