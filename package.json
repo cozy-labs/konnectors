@@ -134,7 +134,10 @@
       "description": "Import event to fill the calendar."
     },
     "Contact": {
-      "description": "Synchronize contacts from Google."
+      "description": "Create contacts from vendors or extract data from contact (for example to create birthdays)."
+    },
+    "Tag": {
+      "description": "Tags used to manage events and contacts."
     }
   },
   "cozy-displayName": "Konnectors",
