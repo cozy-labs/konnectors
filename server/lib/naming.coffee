@@ -26,7 +26,9 @@ module.exports =
     #
     getEntryFileName: (entry, options) ->
         name = ""
-
+        # We reset the date modified in save_data_and_file
+        if entry.date?
+            entry.date = new Date(entry.date)
         if typeof(options) is "string"
             name = "#{entry.date.format 'YYYYMM'}_#{options}.pdf"
 
