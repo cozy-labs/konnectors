@@ -41,6 +41,10 @@ module.exports = function(log, model, options, tags) {
             entry.vendor = options.vendor;
           }
         }
+        if (entry.pdfurl != null) {
+          entry.date = moment(entry.date).format('YYYY-MM-DD');
+          entry.date += "T00:00:00.000Z";
+        }
         return model.create(entry, function(err) {
           if (err) {
             log.raw(err);
@@ -95,8 +99,8 @@ checkForMissingFiles = function(options, callback) {
             log.error('An error occured while creating file');
             return log.raw(err);
           } else {
-            date = moment(entry.date).format('YYYY-MM-DD');
-            date += "T00:00:00.000Z";
+            date = moment(new Date(entry.date)).format('YYYY-MM-DD');
+            date += 'T00:00:00.000Z';
             return model.request('byDate', {
               key: date
             }, function(err, entries) {

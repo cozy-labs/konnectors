@@ -18,8 +18,7 @@ scopes = [
     'https://www.googleapis.com/auth/userinfo.email'
 ]
 
-google = require 'googleapis'
-OAuth2 = google.auth.OAuth2
+OAuth2 = require('google-auth-library')::OAuth2
 oauth2Client = new OAuth2 data.client_id, data.client_secret, data.redirect_uri
 
 module.exports.oauth2Client = oauth2Client

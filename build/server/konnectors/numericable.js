@@ -52,7 +52,10 @@ module.exports = {
     })).args(requiredFields, {}, {}).fetch(function(err, fields, entries) {
       var localizationKey, notifContent, options, ref;
       log.info("Import finished");
-      notifContent = null;
+      notifContent = "";
+      if (err) {
+        notifContent = "notification import error";
+      }
       if ((entries != null ? (ref = entries.filtered) != null ? ref.length : void 0 : void 0) > 0) {
         localizationKey = 'notification numericable';
         options = {
@@ -66,21 +69,21 @@ module.exports = {
 };
 
 logIn = function(requiredFields, billInfos, data, next) {
-  var appKeyOptions, billOptions, connexionUrl, logInOptions, monCompteUrl, redirectOptions, signInOptions, tokenAuthOptions;
-  monCompteUrl = "https://moncompte.numericable.fr";
-  connexionUrl = "https://connexion.numericable.fr";
+  var accountUrl, appKeyOptions, billOptions, connectionUrl, logInOptions, redirectOptions, signInOptions, tokenAuthOptions;
+  accountUrl = "https://moncompte.numericable.fr";
+  connectionUrl = "https://connexion.numericable.fr";
   appKeyOptions = {
     method: 'GET',
     jar: true,
-    url: monCompteUrl + "/pages/connection/Login.aspx"
+    url: accountUrl + "/pages/connection/Login.aspx"
   };
   logInOptions = {
     method: 'POST',
     jar: true,
-    url: connexionUrl + "/Oauth/Oauth.php",
+    url: connectionUrl + "/Oauth/Oauth.php",
     form: {
       'action': "connect",
-      'linkSSO': connection + "/pages/connection/Login.aspx?link=HOME",
+      'linkSSO': connectionUrl + "/pages/connection/Login.aspx?link=HOME",
       'appkey': "",
       'isMobile': ""
     }
@@ -88,12 +91,12 @@ logIn = function(requiredFields, billInfos, data, next) {
   redirectOptions = {
     method: 'POST',
     jar: true,
-    url: connexionUrl
+    url: connectionUrl
   };
   signInOptions = {
     method: 'POST',
     jar: true,
-    url: connexionUrl + "/Oauth/login/",
+    url: connectionUrl + "/Oauth/login/",
     form: {
       'login': requiredFields.login,
       'pwd': requiredFields.password
@@ -102,7 +105,7 @@ logIn = function(requiredFields, billInfos, data, next) {
   tokenAuthOptions = {
     method: 'POST',
     jar: true,
-    url: monCompteUrl + "/pages/connection/Login.aspx?link=HOME",
+    url: accountUrl + "/pages/connection/Login.aspx?link=HOME",
     qs: {
       accessToken: ""
     }
@@ -110,62 +113,63 @@ logIn = function(requiredFields, billInfos, data, next) {
   billOptions = {
     method: 'GET',
     jar: true,
-    uri: monCompteUrl + "/pages/billing/Invoice.aspx"
+    uri: accountUrl + "/pages/billing/Invoice.aspx"
   };
   log.info('Getting appkey');
   return request(appKeyOptions, function(err, res, body) {
     var $, appKey;
-    if (err) {
-      return next(err);
+    appKey = "";
+    if (!err) {
+      $ = cheerio.load(body);
+      appKey = $('#PostForm input[name="appkey"]').attr("value");
     }
-    $ = cheerio.load(body);
-    appKey = $('#PostForm input[name="appkey"]').attr("value");
     if (!appKey) {
-      return next("Could not retrieve app key");
+      log.info("Numericable: could not retrieve app key");
+      return next("key not found");
     }
     logInOptions.form.appkey = appKey;
     log.info('Logging in');
     return request(logInOptions, function(err, res, body) {
       if (err) {
         log.error('Login failed');
-        return next(err);
+        return next("error occurred during import.");
       }
       log.info('Signing in');
       return request(signInOptions, function(err, res, body) {
-        var redirectURL;
+        var redirectUrl;
         if (err) {
           log.error('Signin failed');
-          return next(err);
+          return next("bad credentials");
         }
-        redirectURL = res.headers.location;
-        if (!redirectURL) {
+        redirectUrl = res.headers.location;
+        if (!redirectUrl) {
           return next("Could not retrieve redirect URL");
         }
-        redirectOptions.url += redirectURL;
+        redirectOptions.url += redirectUrl;
         log.info("Fetching access token");
         return request(redirectOptions, function(err, res, body) {
           var accessToken;
-          if (err) {
-            log.error('Token fetching failed');
-            return next(err);
+          accessToken = "";
+          if (!err) {
+            $ = cheerio.load(body);
+            accessToken = $("#accessToken").attr("value");
           }
-          $ = cheerio.load(body);
-          accessToken = $("#accessToken").attr("value");
           if (!accessToken) {
-            return next("Could not retrieve access token");
+            log.error('Token fetching failed');
+            return next("error occurred during import.");
           }
           tokenAuthOptions.qs.accessToken = accessToken;
           log.info("Authenticating by token");
           return request(tokenAuthOptions, function(err, res, body) {
             if (err) {
               log.error('Authentication by token failed');
-              return next(err);
+              return next("error occurred during import.");
             }
             log.info('Fetching bills page');
             return request(billOptions, function(err, res, body) {
               if (err) {
                 log.error('An error occured while fetching ' + 'bills page');
-                return next(err);
+                return next("no bills retrieved");
               }
               data.html = body;
               return next();
@@ -212,9 +216,9 @@ parsePage = function(requiredFields, bills, data, next) {
       return bills.fetched.push(bill);
     }
   });
-  log.info(bills.fetched.length + " bills retrieved");
+  log.info(bills.fetched.length + " bill(s) retrieved");
   if (!bills.fetched.length) {
-    return next("No bills retrieved");
+    return next("no bills retrieved");
   } else {
     return next();
   }

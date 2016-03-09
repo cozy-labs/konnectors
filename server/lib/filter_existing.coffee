@@ -28,22 +28,24 @@ module.exports = (log, model, suffix, vendor) ->
                 # vendor to be added to the hash (useful for bills).
                 if vendor?
                     if entry.vendor is vendor
-                        entryHash[entry.date.toISOString()] = entry
+                        hash = "#{entry.date.format 'YYYY-MM-DD'}T00:00:00.000Z"
+                        entryHash[hash] = entry
 
 
                     # else do nothing
 
                 # Simply add the entry
                 else
-                    entryHash[entry.date.toISOString()] = entry
+                    hash = "#{entry.date.format 'YYYY-MM-DD'}T00:00:00.000Z"
+                    entryHash[hash] = entry
 
             # Keep only non already existing entries.
             entries.filtered = entries.fetched.filter (entry) ->
-                not entryHash[entry.date.toISOString()]?
+                hash = "#{entry.date.format 'YYYY-MM-DD'}T00:00:00.000Z"
+                not entryHash[hash]?
 
             # Keep only entries matching current vendor.
             entries.filtered = entries.filtered.filter (entry) ->
                 entry.vendor is vendor
-
             next()
 

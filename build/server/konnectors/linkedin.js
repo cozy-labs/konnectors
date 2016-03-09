@@ -142,38 +142,16 @@ function prepareCozyContacts(requiredFields, entries, data, next) {
     entries.cozyContactsByFn = {};
     entries.cozyContactsByAccountIds = {};
 
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    contacts.forEach(function (contact) {
+      entries.cozyContactsByFn[contact.fn] = contact;
+      var account = contact.getAccount(ACCOUNT_TYPE, entries.accountName);
 
-    try {
-      for (var _iterator = contacts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var contact = _step.value;
-
-        entries.cozyContactsByFn[contact.fn] = contact;
-        var account = contact.getAccount(ACCOUNT_TYPE, entries.accountName);
-
-        if (account) {
-          entries.cozyContactsByAccountIds[account.id] = contact;
-        }
+      if (account) {
+        entries.cozyContactsByAccountIds[account.id] = contact;
       }
+    });
 
-      // Initialise the counters
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator.return) {
-          _iterator.return();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
-    }
-
+    // Initialise the counters
     entries.contactStats = {
       created: 0,
       updated: 0
@@ -275,11 +253,11 @@ function saveContacts(contact, entries, next) {
     }
   } else if (entries.cozyContactsByFn[contact.fn]) {
     // Case where the contact already exists but was not imported from Linkedin.
-    var cozyContact = entries.cozyContactsByFn[contact.fn];
+    var _cozyContact = entries.cozyContactsByFn[contact.fn];
 
-    log.info('Link ' + cozyContact.fn + ' to linkedin account and update data.');
+    log.info('Link ' + _cozyContact.fn + ' to linkedin account and update data.');
 
-    updateContact(cozyContact, contact, imageUrl, entries.contactStats, next);
+    updateContact(_cozyContact, contact, imageUrl, entries.contactStats, next);
   } else {
     // Case where the contact is not listed in the database.
     log.info('Create new contact for ' + contact.fn + '.');
@@ -379,8 +357,8 @@ function retrieveAndSaveContacts(requiredFields, entries, data, done) {
  * Create the notification content bases on a given set of statistics
  */
 function createNotificationContent(requiredFields, entries, data, next) {
-  var localizationkey = undefined;
-  var options = undefined;
+  var localizationkey = void 0;
+  var options = void 0;
   var stats = entries.contactStats;
 
   // create the notification

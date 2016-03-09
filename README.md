@@ -18,6 +18,7 @@ If you want to build your own konnector, here is [a complete documentation](http
 * Free (Bill PDFs)
 * Free Mobile (Bill PDFs)
 * Numericable (Bill PDFs)
+* Online.net (Bill PDFs)
 * Orange (Bill PDFs)
 * Sosh (Bill PDFs)
 
@@ -31,6 +32,12 @@ If you want to build your own konnector, here is [a complete documentation](http
 
 * Github (commits)
 * Twitter (published tweets)
+* Linkedin (contact information)
+
+*Calendar*
+
+* Ical Feed (events)
+* Contact Birthdays (events)
 
 *Productivity*
 

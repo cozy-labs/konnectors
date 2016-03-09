@@ -67,16 +67,8 @@ BankOperationLinker = (function() {
     }
     if (operationToLink == null) {
       return callback();
-    } else if (operationToLink.binary === void 0) {
-      return this.linkOperation(operationToLink, entry, callback);
-    } else if (operationToLink.binary.file == null) {
-      return this.linkOperation(operationToLink, entry, callback);
-    } else if (operationToLink.binary.fileName == null) {
-      return this.linkOperation(operationToLink, entry, callback);
-    } else if (operationToLink.binary.fileMime == null) {
-      return this.linkOperation(operationToLink, entry, callback);
     } else {
-      return callback();
+      return this.linkOperation(operationToLink, entry, callback);
     }
   };
 

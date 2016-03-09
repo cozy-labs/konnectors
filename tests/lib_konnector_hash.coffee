@@ -16,6 +16,9 @@ describe 'Konnector Hash', ->
         Object.keys(konnectorHash).length.should.equal expectedLength
 
         for filename in moduleFiles
-            key = filename.substring 0, filename.length - '.coffee'.length
+            if filename.indexOf('coffee') > 0
+                key = filename.substring 0, filename.length - '.coffee'.length
+            else
+                key = filename.substring 0, filename.length - '.js'.length
             should.exist konnectorHash[key]
 

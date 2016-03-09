@@ -67,7 +67,7 @@ getKonnectorsToCreate = function(konnectorHash) {
     konnectorModule = konnectorModules[name];
     if (konnectorHash[konnectorModule.slug] == null) {
       konnectorsToCreate.push(konnectorModule);
-      console.info("New konnector to init: " + name);
+      log.info("New konnector to init: " + name);
     }
   }
   return konnectorsToCreate;

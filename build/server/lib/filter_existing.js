@@ -6,7 +6,7 @@ module.exports = function(log, model, suffix, vendor) {
       vendor = entries.fetched[0].vendor;
     }
     return model.all(function(err, entryObjects) {
-      var entry, entryHash, i, len;
+      var entry, entryHash, hash, i, len;
       if (err) {
         return next(err);
       }
@@ -15,14 +15,17 @@ module.exports = function(log, model, suffix, vendor) {
         entry = entryObjects[i];
         if (vendor != null) {
           if (entry.vendor === vendor) {
-            entryHash[entry.date.toISOString()] = entry;
+            hash = (entry.date.format('YYYY-MM-DD')) + "T00:00:00.000Z";
+            entryHash[hash] = entry;
           }
         } else {
-          entryHash[entry.date.toISOString()] = entry;
+          hash = (entry.date.format('YYYY-MM-DD')) + "T00:00:00.000Z";
+          entryHash[hash] = entry;
         }
       }
       entries.filtered = entries.fetched.filter(function(entry) {
-        return entryHash[entry.date.toISOString()] == null;
+        hash = (entry.date.format('YYYY-MM-DD')) + "T00:00:00.000Z";
+        return entryHash[hash] == null;
       });
       entries.filtered = entries.filtered.filter(function(entry) {
         return entry.vendor === vendor;

@@ -61,7 +61,10 @@ module.exports = {
   'konnector description nest': "Save current temperature measured by your Nest thermostat.",
   'konnector description numericable': "Download all your Numéricable Bills. This konnector requires the Files application to store the bill PDF files.",
   'konnector description virginmobile': "Download all your Virgin Mobile  bills. This konnector requires the Files application to store the bill PDF files.",
+  'konnector description online_net': "Download all your Online.net bills. This konnector requires the Files application to store the bill PDF files.",
   'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar.",
+  'konnector description ical_feed': "Download and import a remote Ical file (.ics).",
+  'konnector description birthdays': "Create events in your calendar for each birhday of your contacts.",
   'konnector description googlecontacts': "Import your google contacts into your Cozy through google's API.",
   'konnector customview googlecontacts 4': "Initialize or reset this konnector",
   'konnector customview googlecontacts 1': "1. Press \"connect your google account\" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step.",
@@ -83,6 +86,11 @@ module.exports = {
   'notification electrabel': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
   'notification numericable': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
   'notification virginmobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
+  'notification online_net': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported",
+  'notification ical_feed creation': "%{smart_count} new event imported |||| %{smart_count} new events imported",
+  'notification ical_feed update': "%{smart_count} new event updated |||| %{smart_count} new events updated",
+  'notification birthdays creation': "%{smart_count} new birthday created |||| %{smart_count} new birthdays created",
+  "konnector birthdays birthday": "Birthday of",
   "konnector danger zone": "Danger zone",
   "konnector delete credentials": "Delete this configuration.",
   "konnector deleted": "The konnector configuration was successfully deleted.",
@@ -90,5 +98,8 @@ module.exports = {
   'notification isen': "%{smart_count} new course material imported |||| %{smart_count} new course materials imported",
   'notification isen event changed': "Careful, the intervention %{description} will take place on %{newDate} instead of %{oldDate}",
   'notification isen date format': "MM/DD [at] HH:mm a",
-  'notification isen event deleted': "Careful, the intervention %{description} that should have taken place on %{date} has been canceled"
+  'notification isen event deleted': "Careful, the intervention %{description} that should have taken place on %{date} has been canceled",
+  "calendar": "Calendar in which events will be imported",
+  "url": "Target URL",
+  "tag": "Tag"
 };
