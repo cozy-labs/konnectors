@@ -93,6 +93,12 @@ function saveEvents(requiredFields, entries, data, next) {
 
   async.eachSeries(entries.events, (icalEvent, done) => {
     icalEvent.tags = [requiredFields.calendar];
+    console.log(icalEvent);
+    if(icalEvent.start.indexOf('T00:00:00+00:00') &&
+       icalEvent.end.indexOf('T00:00:00+00:00')) {
+         icalEvent.start = icalEvent.start.substring(0, 10);
+         icalEvent.end = icalEvent.end.substring(0, 10);
+    }
     Event.createOrUpdate(icalEvent, (err, cozyEvent, changes) => {
       if (err) {
         connector.logger.error(err);
