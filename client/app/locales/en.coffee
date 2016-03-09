@@ -79,7 +79,7 @@ module.exports =
     'konnector description online_net': "Download all your Online.net bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar."
     'konnector description ical_feed': "Download and import a remote Ical file (.ics)."
-    'konnector description birthdays': "Create events in your calendar for each birhday of your contacts."
+    'konnector description birthdays': "Create events in your calendar for each birhday of your contacts (only contacts that match given tag will be selected)."
     'konnector description googlecontacts': "Import your google contacts into your Cozy through google's API."
     'konnector customview googlecontacts 4': "Initialize or reset this konnector"
     'konnector customview googlecontacts 1': "1. Press \"connect your google account\" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step."
