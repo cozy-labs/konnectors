@@ -110,6 +110,8 @@ module.exports =
     'notification ical_feed update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
     'notification birthdays creation': "%{smart_count} nouvel anniversaire créé. |||| %{smart_count} nouveaux anniversaires créés."
 
+    "konnector birthdays birthday": "Anniversaire de"
+
     "konnector danger zone": "Zone dangereuse"
     "konnector delete credentials": "Supprimer cette configuration."
     "konnector deleted": "La configuration de ce connecteur a bien été supprimée."
