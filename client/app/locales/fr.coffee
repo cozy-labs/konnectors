@@ -83,6 +83,7 @@ module.exports =
     'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
     'konnector description googlecontacts': "Importez vos contacts Google dans votre Cozy via l'API de Google."
     'konnector description linkedin': "Importez vos contacts Linkeding dans votre Cozy."
+    'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
@@ -103,6 +104,7 @@ module.exports =
     'notification electrabel': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification virginmobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification ameli': "%{smart_count} nouveau remboursement importé |||| %{smart_count} nouveaux remboursement importés"
 
     "konnector danger zone": "Zone dangereuse"
     "konnector delete credentials": "Supprimer cette configuration."
