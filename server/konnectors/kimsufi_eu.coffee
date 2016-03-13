@@ -9,3 +9,4 @@ api =
     appSecret: ''
 
 connector = module.exports = baseOVHKonnector.createNew(api, name, slug)
+

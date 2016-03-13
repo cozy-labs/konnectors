@@ -52,7 +52,6 @@ module.exports =
     'open selected folder': 'Open selected folder'
 
     # Konnectors' description
-    'konnector description linkedin': "Import Linkedin contacts with cozy."
     'konnector description free': "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files."
     'konnector description free mobile': "Download all your phone bills from Free Mobile. This konnector requires the Files application to store the bill PDF files."
     'konnector description bouygues': "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
@@ -109,6 +108,8 @@ module.exports =
     'konnector description ical_feed': "Download and import a remote Ical file (.ics)."
     'konnector description birthdays': "Create events in your calendar for each birhday of your contacts."
     'konnector description googlecontacts': "Import your google contacts into your Cozy through google's API."
+    'konnector description linkedin': "Import your Linkedin contacts in your Cozy."
+    'konnector description ameli': "Import your Ameli reimbursements in your Cozy."
     'konnector customview googlecontacts 4': "Initialize or reset this konnector"
     'konnector customview googlecontacts 1': "1. Press \"connect your google account\" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step."
     'konnector customview googlecontacts 2': "Connect your Google account"
@@ -143,6 +144,7 @@ module.exports =
     'notification kimsufi_ca': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification soyoustart_eu': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification soyoustart_ca': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification ameli': "%{smart_count} new reimbursement imported |||| %{smart_count} new reimbursements imported"
 
     "konnector birthdays birthday": "Birthday of"
 

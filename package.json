@@ -98,6 +98,9 @@
     "InternetBill": {
       "description": "Internet bills fetched by Free Konnector."
     },
+    "HealthBill": {
+      "description": "Health bills fetched by Ameli Konnector."
+    },
     "CodeBill": {
       "description": "Code bills fetched by Github Konnector."
     },

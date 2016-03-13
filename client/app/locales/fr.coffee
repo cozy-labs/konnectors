@@ -55,7 +55,6 @@ module.exports =
     'open selected folder': 'Ouvrir le dossier sélectionné'
 
     # Konnectors' description
-    'konnector description linkedin': "Importer ses contacts Linkedin."
     'konnector description free': "Téléchargez toutes vos factures internet de Free. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description free mobile': "Téléchargez toutes vos factures Free Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description bouygues': "Téléchargez toutes vos factures téléphones de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
@@ -114,6 +113,7 @@ module.exports =
     'konnector description ical_feed': "Téléchargez et importez un fichier iCal disponible en ligne (.ics)."
     'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts."
     'konnector description linkedin': "Importez vos contacts LinkedIn dans votre Cozy."
+    'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
@@ -145,6 +145,7 @@ module.exports =
     'notification kimsufi_ca': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification soyoustart_eu': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification soyoustart_ca': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification ameli': "%{smart_count} nouveau remboursement importé |||| %{smart_count} nouveaux remboursement importés"
 
     "konnector danger zone": "Zone dangereuse"
     "konnector delete credentials": "Supprimer cette configuration."

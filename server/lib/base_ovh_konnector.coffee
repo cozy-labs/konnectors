@@ -13,13 +13,11 @@ module.exports =
             vendor: slug
             dateFormat: 'YYYYMMDD'
 
-        fakeLogger =
-            info: (text) -> connector?.logger.info(text)
-            error: (text) -> connector?.logger.error(text)
-            warn: (text) -> connector?.logger.warn(text)
-            debug: (text) -> connector?.logger.debug(text)
+        logger = require('printit')
+            prefix: name
+            date: true
 
-        ovhFetcherInstance = ovhFetcher.new(ovhApi, slug, fakeLogger)
+        ovhFetcherInstance = ovhFetcher.new(ovhApi, slug, logger)
 
         fetchBills = (requiredFields, entries, body, next) ->
             ovhFetcherInstance.fetchBills(requiredFields, entries, body, next)
@@ -36,10 +34,10 @@ module.exports =
 
             fetchOperations: [
               fetchBills,
-              filterExisting(fakeLogger, Bill)
-              saveDataAndFile(fakeLogger, Bill, fileOptions, ['bill']),
+              filterExisting(logger, Bill)
+              saveDataAndFile(logger, Bill, fileOptions, ['bill']),
               linkBankOperation
-                  log: fakeLogger
+                  log: logger
                   model: Bill
                   identifier: slug
                   dateDelta: 4

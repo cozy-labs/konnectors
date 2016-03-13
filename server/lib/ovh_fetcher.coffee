@@ -4,11 +4,15 @@ moment = require 'moment'
 async = require 'async'
 fetcher = require '../lib/fetcher'
 
+
 class OVHFetcher
+
+
     constructor: (ovhApi, slug, logger) ->
         @ovh = require('ovh')(ovhApi)
         @slug = slug
         @logger = logger
+
 
     fetchBills: (requiredFields, bills, data, next) =>
         @ovh.consumerKey = requiredFields.token or null
@@ -46,7 +50,7 @@ class OVHFetcher
     getLoginUrl: (callback) ->
         accessRules =
           'accessRules': [
-            { 'method': 'GET', 'path': '/me/*' }
+            { method: 'GET', path: '/me/*' }
           ]
 
         @logger.info 'Request the login url...'
@@ -54,18 +58,20 @@ class OVHFetcher
         , (err, credential) ->
             return callback err if err
 
-            callback(null, credential.validationUrl, credential.consumerKey)
+            callback null, credential.validationUrl, credential.consumerKey
 
 
     saveUrlAndToken: (url, token, callback) =>
         Konnector = require '../models/konnector'
         Konnector.all (err, konnectors) =>
             return callback err if err
-            konnector = konnectors.filter((k) => k.slug is @slug)[0]
+            ovhKonnector = (konnectors.filter (konnector) =>
+                konnector.slug is @slug)[0]
 
-            konnector.fieldValues['loginUrl'] = url
-            konnector.fieldValues['token'] = token
-            konnector.save callback
+            fieldValues =
+                loginUrl: url
+                token: token
+            ovhKonnector.updateAttributes {fieldValues}, callback
 
 
     needToConnectFirst: (requiredFields, callback) =>
@@ -76,7 +82,11 @@ class OVHFetcher
             requiredFields.loginUrl = url
             requiredFields.token = token
             @saveUrlAndToken url, token, ->
-                callback('You need to login to your OVH account first.')
+                callback(
+                    new Error 'You need to login to your OVH account first.')
+
 
 module.exports =
-    new: (ovhApi, slug, logger) -> new OVHFetcher(ovhApi, slug, logger)
+    new: (ovhApi, slug, logger) ->
+        new OVHFetcher ovhApi, slug, logger
+
