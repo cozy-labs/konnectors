@@ -77,6 +77,34 @@ module.exports =
     'konnector description numericable': "Download all your Numéricable Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description virginmobile': "Download all your Virgin Mobile  bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description online_net': "Download all your Online.net bills. This konnector requires the Files application to store the bill PDF files."
+    'konnector description ovh_eu': """
+    Download all your OVH Europe bills. This konnector requires the Files application to store the bill PDF files.<br/>
+    At your first import, we will generate a link from which you will be able to enter your OVH Europe credentials.
+    """
+    'konnector description ovh_ca': """
+    Download all your OVH North-America bills. This konnector requires the Files application to store the bill PDF files.<br/>
+    At your first import, we will generate a link from which you will be able to enter your OVH North-America credentials.
+    """
+    'konnector description runabove': """
+    Download all your RunAbove bills. This konnector requires the Files application to store the bill PDF files.<br/>
+    At your first import, we will generate a link from which you will be able to enter your RunAbove credentials.
+    """
+    'konnector description kimsufi_eu': """
+    Download all your Kimsufi Europe bills. This konnector requires the Files application to store the bill PDF files.<br/>
+    At your first import, we will generate a link from which you will be able to enter your Kimsufi Europe credentials.
+    """
+    'konnector description kimsufi_ca': """
+    Download all your Kimsufi North-America bills. This konnector requires the Files application to store the bill PDF files.<br/>
+    At your first import, we will generate a link from which you will be able to enter your Kimsufi North-America credentials.
+    """
+    'konnector description soyoustart_eu': """
+    Download all your SoYouStart Europe bills. This konnector requires the Files application to store the bill PDF files.<br/>
+    At your first import, we will generate a link from which you will be able to enter your SoYouStart Europe credentials.
+    """
+    'konnector description soyoustart_ca': """
+    Download all your SoYouStart North-America bills. This konnector requires the Files application to store the bill PDF files.<br/>
+    At your first import, we will generate a link from which you will be able to enter your SoYouStart North-America credentials.
+    """
     'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar."
     'konnector description ical_feed': "Download and import a remote Ical file (.ics)."
     'konnector description birthdays': "Create events in your calendar for each birhday of your contacts."
@@ -108,6 +136,13 @@ module.exports =
     'notification ical_feed creation': "%{smart_count} new event imported |||| %{smart_count} new events imported"
     'notification ical_feed update': "%{smart_count} new event updated |||| %{smart_count} new events updated"
     'notification birthdays creation': "%{smart_count} new birthday created |||| %{smart_count} new birthdays created"
+    'notification ovh_eu': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification ovh_ca': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification runabove': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification kimsufi_eu': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification kimsufi_ca': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification soyoustart_eu': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification soyoustart_ca': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
 
     "konnector birthdays birthday": "Birthday of"
 

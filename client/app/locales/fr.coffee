@@ -80,6 +80,34 @@ module.exports =
     'konnector description numericable': "Téléchargez toutes vos factures Numéricable. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description virginmobile': "Téléchargez toutes vos factures Virgin Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description online_net': "Téléchargez toutes vos factures Online.net. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description ovh_eu': """
+    Téléchargez toutes vos factures OVH Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
+    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants OVH Europe.
+    """
+    'konnector description ovh_ca': """
+    Téléchargez toutes vos factures OVH North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
+    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants OVH North-America.
+    """
+    'konnector description runabove': """
+    Téléchargez toutes vos factures RunAbove. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
+    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants RunAbove.
+    """
+    'konnector description kimsufi_eu': """
+    Téléchargez toutes vos factures Kimsufi Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
+    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants Kimsufi Europe.
+    """
+    'konnector description kimsufi_ca': """
+    Téléchargez toutes vos factures Kimsufi North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
+    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants Kimsufi North-America.
+    """
+    'konnector description soyoustart_eu': """
+    Téléchargez toutes vos factures SoYouStart Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
+    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants SoYouStart Europe.
+    """
+    'konnector description soyoustart_ca': """
+    Téléchargez toutes vos factures SoYouStart North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
+    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants SoYouStart North-America.
+    """
     'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest."
     'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
     'konnector description googlecontacts': "Importez vos contacts Google dans votre Cozy via l'API de Google."
@@ -110,6 +138,13 @@ module.exports =
     'notification ical_feed creation': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés."
     'notification ical_feed update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
     'notification birthdays creation': "%{smart_count} nouvel anniversaire créé. |||| %{smart_count} nouveaux anniversaires créés."
+    'notification ovh_eu': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification ovh_ca': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification runabove': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification kimsufi_eu': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification kimsufi_ca': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification soyoustart_eu': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification soyoustart_ca': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
 
     "konnector danger zone": "Zone dangereuse"
     "konnector delete credentials": "Supprimer cette configuration."
