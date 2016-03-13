@@ -85,6 +85,7 @@ module.exports =
     'konnector description googlecontacts': "Importez vos contacts Google dans votre Cozy via l'API de Google."
     'konnector description ical_feed': "Téléchargez et importez un fichier iCal disponible en ligne (.ics)."
     'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts."
+    'konnector description linkedin': "Importez vos contacts LinkedIn dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
