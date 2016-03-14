@@ -5,6 +5,7 @@ cozydb = require('cozydb');
 
 module.exports = Bill = cozydb.getModel('Bill', {
   type: String,
+  subtype: String,
   date: Date,
   vendor: String,
   amount: Number,
