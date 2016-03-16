@@ -11,14 +11,17 @@ module.exports = class KonnectorModel extends Backbone.Model
         fields = @get 'fields'
 
         # Remove fields where no value is expected.
-        delete fieldValues.loginUrl
-        delete fields.loginUrl
 
         # Check if there is an empty field
         numFieldValues = Object.keys(fieldValues).length
         numFields = Object.keys(fields).length
+
+        numFieldValues-- if fieldValues.loginUrl
+        numFields-- if fields.loginUrl
+
         noEmptyValue = true
         for field, fieldValue of fields
-            noEmptyValue = noEmptyValue and fieldValues[field]?.length > 0
+            if field isnt 'loginUrl'
+                noEmptyValue = noEmptyValue and fieldValues[field]?.length > 0
 
         return numFieldValues >= numFields and noEmptyValue
