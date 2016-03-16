@@ -64,7 +64,7 @@ module.exports =
     'konnector description twitter': """
     Download all your tweets published on Twitter. This konnector requires two
     identifiers and two secret keys. They can be generated on the <a
-    href="https://apps.twitter.com/">Twitter app dashboard</a>. There you will
+    href="https://apps.twitter.com/ target="_blank">Twitter app dashboard</a>. There you will
     be able to create an app. They will give you credentials for this app. The
     current konnector will use them to connect to Twitter and fetch your data.
     """
