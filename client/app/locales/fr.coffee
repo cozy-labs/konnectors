@@ -4,7 +4,7 @@ module.exports =
     'no bills retrieved': 'Pas de factures trouvées'
     'key not found': 'Clé non trouvée'
     'last import:': 'Dernière importation :'
-    'save and import': 'Sauvegarder et importer'
+    'save and import': 'Importer et sauvegarder'
     'auto import': 'Importation automatique'
     'imported data:': 'Données importées :'
     'importing...': 'importation en cours...'
@@ -117,7 +117,7 @@ module.exports =
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
-    'konnector customview googlecontacts 3': "2. Copiez cette chaîne de caractères dans le champs Auth code. Puis cliquez sur le bouton \"Sauvegarder et importer\" pour lancer l'importation.  Le nom du compte sera mis à jour automatiquement."
+    'konnector customview googlecontacts 3': "2. Copiez cette chaîne de caractères dans le champs Auth code. Puis cliquez sur le bouton \"Importer et sauvegarder \" pour lancer l'importation.  Le nom du compte sera mis à jour automatiquement."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
