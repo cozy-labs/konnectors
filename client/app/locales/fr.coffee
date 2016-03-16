@@ -81,31 +81,31 @@ module.exports =
     'konnector description online_net': "Téléchargez toutes vos factures Online.net. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description ovh_eu': """
     Téléchargez toutes vos factures OVH Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants OVH Europe.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description ovh_ca': """
     Téléchargez toutes vos factures OVH North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants OVH North-America.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description runabove': """
     Téléchargez toutes vos factures RunAbove. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants RunAbove.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description kimsufi_eu': """
     Téléchargez toutes vos factures Kimsufi Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants Kimsufi Europe.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description kimsufi_ca': """
     Téléchargez toutes vos factures Kimsufi North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants Kimsufi North-America.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description soyoustart_eu': """
     Téléchargez toutes vos factures SoYouStart Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants SoYouStart Europe.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description soyoustart_ca': """
     Téléchargez toutes vos factures SoYouStart North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants SoYouStart North-America.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest."
     'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
