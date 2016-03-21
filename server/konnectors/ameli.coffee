@@ -47,7 +47,8 @@ logIn = (requiredFields, billInfos, data, next) ->
 
     # First request to get the cookie
     request options, (err, res, body) ->
-
+        return next err if err?
+        
         loginOptions =
             method: 'POST'
             form: form
