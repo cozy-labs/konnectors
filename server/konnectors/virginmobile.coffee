@@ -83,23 +83,19 @@ logIn = (requiredFields, billInfos, data, next) ->
     request signInOptions, (err, res, body) ->
         if err
             log.error "Signin failed"
-            return next err
+            return next 'bad credentials'
 
         client.headers["Cookie"] = res.headers["set-cookie"]
 
         # Download bill information page.
         log.info 'Fetching bills list'
         client.get "api/getFacturesData", (err, res, body) ->
-            if err
+            if err or not body.success
                 log.error 'An error occured while fetching bills list'
-                return next err
+                return next "no bills retrieved"
 
-            if body.success
-                data.content = body.data
-                next()
-            else
-                log.error "Bills list fetch failed"
-                next "Could not fetch bills list"
+            data.content = body.data
+            next()
 
 # Layer to parse the fetched page to extract bill data.
 parsePage = (requiredFields, bills, data, next) ->

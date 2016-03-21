@@ -4,7 +4,7 @@ module.exports =
     'no bills retrieved': 'No bills retrieved'
     'key not found': 'Key not found'
     'last import:': 'Last import:'
-    'save and import': 'Save and import'
+    'save and import': 'Import and save'
     'auto import': 'Automatic import'
     'imported data:': 'Imported data:'
     'importing...': 'importing...'
@@ -64,7 +64,7 @@ module.exports =
     'konnector description twitter': """
     Download all your tweets published on Twitter. This konnector requires two
     identifiers and two secret keys. They can be generated on the <a
-    href="https://apps.twitter.com/">Twitter app dashboard</a>. There you will
+    href="https://apps.twitter.com/ target="_blank">Twitter app dashboard</a>. There you will
     be able to create an app. They will give you credentials for this app. The
     current konnector will use them to connect to Twitter and fetch your data.
     """
@@ -106,14 +106,14 @@ module.exports =
     """
     'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar."
     'konnector description ical_feed': "Download and import a remote Ical file (.ics)."
-    'konnector description birthdays': "Create events in your calendar for each birhday of your contacts."
+    'konnector description birthdays': "Create events in your calendar for each birhday of your contacts (only contacts that match given tag will be selected)."
     'konnector description googlecontacts': "Import your google contacts into your Cozy through google's API."
     'konnector description linkedin': "Import your Linkedin contacts in your Cozy."
     'konnector description ameli': "Import your Ameli reimbursements in your Cozy."
     'konnector customview googlecontacts 4': "Initialize or reset this konnector"
     'konnector customview googlecontacts 1': "1. Press \"connect your google account\" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step."
     'konnector customview googlecontacts 2': "Connect your Google account"
-    'konnector customview googlecontacts 3': "2. Paste this string in the Auth code field. Then press save and import to start the sync. Account name will be automatically updated."
+    'konnector customview googlecontacts 3': "2. Paste this string in the Auth code field. Then press 'Import and save' button to start the sync. Account name will be automatically updated."
 
 
     # Konnectors' notifications

@@ -4,7 +4,7 @@ module.exports =
     'no bills retrieved': 'Pas de factures trouvées'
     'key not found': 'Clé non trouvée'
     'last import:': 'Dernière importation :'
-    'save and import': 'Sauvegarder et importer'
+    'save and import': 'Importer et sauvegarder'
     'auto import': 'Importation automatique'
     'imported data:': 'Données importées :'
     'importing...': 'importation en cours...'
@@ -67,7 +67,7 @@ module.exports =
     'konnector description twitter': """
     Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert
     deux identifiants et deux clés secrètes. Vous pouvez les générer via le
-    <a href="https://apps.twitter.com/">tableau Twitter de gestion
+    <a href="https://apps.twitter.com/" target="_blank">tableau Twitter de gestion
     d'applications</a>. Vous pourrez y créer une application. Twitter vous
     fournira des identifiants pour cette application. Avec ces identifiants
     ce connecteur pourra récupérer vos données.
@@ -81,43 +81,43 @@ module.exports =
     'konnector description online_net': "Téléchargez toutes vos factures Online.net. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description ovh_eu': """
     Téléchargez toutes vos factures OVH Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants OVH Europe.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description ovh_ca': """
     Téléchargez toutes vos factures OVH North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants OVH North-America.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description runabove': """
     Téléchargez toutes vos factures RunAbove. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants RunAbove.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description kimsufi_eu': """
     Téléchargez toutes vos factures Kimsufi Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants Kimsufi Europe.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description kimsufi_ca': """
     Téléchargez toutes vos factures Kimsufi North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants Kimsufi North-America.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description soyoustart_eu': """
     Téléchargez toutes vos factures SoYouStart Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants SoYouStart Europe.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description soyoustart_ca': """
     Téléchargez toutes vos factures SoYouStart North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>
-    Lors de votre premier import nous générerons un lien à partir dulequel vous pourrez rentre vos identifiants SoYouStart North-America.
+    Lors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.
     """
     'konnector description nest': "Enregistrez la température actuelle mesurée par votre Nest."
     'konnector description isen': "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda."
     'konnector description googlecontacts': "Importez vos contacts Google dans votre Cozy via l'API de Google."
-    'konnector description ical_feed': "Téléchargez et importez un fichier iCal disponible en ligne (.ics)."
-    'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts."
     'konnector description linkedin': "Importez vos contacts LinkedIn dans votre Cozy."
+    'konnector description ical_feed': "Téléchargez et importez un fichier iCal disponible en ligne (.ics)."
+    'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts (seulement les contacts taggés avec le tag donné seront pris en compte."
     'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
-    'konnector customview googlecontacts 3': "2. Copiez cette chaîne de caractères dans le champs Auth code. Puis cliquez sur le bouton \"Sauvegarder et importer\" pour lancer l'importation.  Le nom du compte sera mis à jour automatiquement."
+    'konnector customview googlecontacts 3': "2. Copiez cette chaîne de caractères dans le champs Auth code. Puis cliquez sur le bouton \"Importer et sauvegarder \" pour lancer l'importation.  Le nom du compte sera mis à jour automatiquement."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -146,6 +146,8 @@ module.exports =
     'notification soyoustart_eu': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification soyoustart_ca': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification ameli': "%{smart_count} nouveau remboursement importé |||| %{smart_count} nouveaux remboursement importés"
+
+    "konnector birthdays birthday": "Anniversaire de"
 
     "konnector danger zone": "Zone dangereuse"
     "konnector delete credentials": "Supprimer cette configuration."
