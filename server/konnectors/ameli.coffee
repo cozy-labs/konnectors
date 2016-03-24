@@ -93,7 +93,7 @@ parsePage = (requiredFields, healthBills, data, next) ->
         subtype = $($(this).find('td').get(1)).text()
 
         amount = $($(this).find('td').get(2)).text()
-        amount = amount.replace ' Euros', ''
+        amount = amount.replace(' euros', '').replace(',','.')
         amount = parseFloat amount
 
         # Get the details url
