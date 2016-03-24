@@ -50,6 +50,9 @@ logIn = function(requiredFields, billInfos, data, next) {
   };
   return request(options, function(err, res, body) {
     var loginOptions;
+    if (err != null) {
+      return next(err);
+    }
     loginOptions = {
       method: 'POST',
       form: form,
