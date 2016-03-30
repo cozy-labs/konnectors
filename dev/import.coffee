@@ -1,17 +1,28 @@
-minimist = require 'minimist'
-Konnector = require '../server/models/konnector'
+path = require 'path'
+program = require 'commander'
+Konnector = require path.join  __dirname, '../server/models/konnector'
 
 log = require('printit')
     prefix: 'Konnector dev tool'
 
-argv = minimist process.argv.slice(2)
-konnectorName =  argv._[0]
 
-konnectorHash = {}
+program
+    .version('1.0.0')
+    .usage('<konnector>')
+    .parse(process.argv)
+
+
+
+unless program.args[0]?
+    program.outputHelp()
+    process.exit 1
+else
+    konnectorName = program.args[0]
 
 
 log.info "Looking for konnector #{konnectorName}"
 Konnector.all (err, konnectors) ->
+    konnectorHash = {}
     for konnector in konnectors
         konnectorHash[konnector.slug] = konnector
 
@@ -21,6 +32,7 @@ Konnector.all (err, konnectors) ->
         log.error "Konnector not found."
     else
         log.info "Import starting..."
+        konnector.fieldValues ?= {}
         konnector.import ->
             log.info "Import is finished."
 
