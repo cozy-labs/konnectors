@@ -55,7 +55,9 @@ logIn = (requiredFields, billInfos, data, next) ->
             url: submitUrl
             headers:
                 'Cookie': res.headers['set-cookie']
-                'Referer': 'https://assure.ameli.fr/PortailAS/appmanager/PortailAS/assure?_nfpb=true&_pageLabel=as_login_page'
+                'Referer': 'https://assure.ameli.fr/PortailAS/appmanager/' + \
+                           'PortailAS/assure?_nfpb=true&_pageLabel=' + \
+                           'as_login_page'
 
         # Second request to authenticate
         request loginOptions, (err, res, body) ->
@@ -133,7 +135,7 @@ getPdf = (bill, callback) ->
             pdfUrl = "https://assure.ameli.fr"
             pdfUrl += html('.r_lien_pdf').attr('href')
             # Remove all the dirty escape characters...
-            pdfUrl = pdfUrl.replace(/(?:\r\n|\r|\n|\t)/g, '');
+            pdfUrl = pdfUrl.replace(/(?:\r\n|\r|\n|\t)/g, '')
             bill.pdfurl = pdfUrl
             callback null
 
