@@ -50,10 +50,11 @@ function extractBirthdays(requiredFields, entries, data, next) {
   data.contacts.forEach(function (contact) {
     if (contact.bday !== undefined) {
       var date = moment(contact.bday, 'YYYY-MM-DD');
+      var contactName = contact.getName();
       if (date.isValid()) {
         entries.birthdays.push({
           date: date,
-          contactName: contact.getName()
+          contactName: contactName
         });
       }
     }
@@ -72,16 +73,20 @@ function saveEvents(requiredFields, entries, data, next) {
       description: birthdayLabel + ' ' + birthday.contactName,
       start: birthday.date.format('YYYY-MM-DD'),
       end: birthday.date.add(1, 'days').format('YYYY-MM-DD'),
-      rrule: "FREQ=YEARLY;INTERVAL=1",
+      rrule: 'FREQ=YEARLY;INTERVAL=1',
       id: birthday.date.format('MM-DD') + '-' + slugify(birthday.contactName),
       tags: [requiredFields.calendar]
     };
+
     Event.createOrUpdate(data, function (err, cozyEvent, changes) {
-      if (err) connector.logger.error('Birthday for ' + birthday.contactName + ' was not created');
+      if (err) {
+        connector.logger.error('Birthday for ' + birthday.contactName + ' was not created');
+      }
       if (changes.creation) entries.nbCreations++;
       done();
     });
   }, function (err) {
+    if (err) connector.logger.error(err);
     connector.logger.info(entries.nbCreations + ' birthdays were created.');
     next();
   });

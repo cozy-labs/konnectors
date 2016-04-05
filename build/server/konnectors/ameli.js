@@ -60,7 +60,7 @@ logIn = function(requiredFields, billInfos, data, next) {
       url: submitUrl,
       headers: {
         'Cookie': res.headers['set-cookie'],
-        'Referer': 'https://assure.ameli.fr/PortailAS/appmanager/PortailAS/assure?_nfpb=true&_pageLabel=as_login_page'
+        'Referer': 'https://assure.ameli.fr/PortailAS/appmanager/' + 'PortailAS/assure?_nfpb=true&_pageLabel=' + 'as_login_page'
       }
     };
     return request(loginOptions, function(err, res, body) {
