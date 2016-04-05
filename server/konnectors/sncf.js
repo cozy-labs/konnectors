@@ -26,7 +26,8 @@ const fileOptions = {
   dateFormat: 'YYYYMMDD',
 };
 
-const userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) Gecko/20100101 Firefox/36.0';
+const userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' +
+                  'Gecko/20100101 Firefox/36.0';
 
 
 const connector = module.exports = baseKonnector.createNew({
@@ -73,7 +74,7 @@ function logIn(requiredFields, entries, data, next) {
     },
   };
 
-  request(loginOptions, function onRes(err, res, body) {
+  request(loginOptions, (err, res, body) => {
     if (err) return next(err);
 
     const jsonRes = JSON.parse(body);
@@ -87,22 +88,21 @@ function logIn(requiredFields, entries, data, next) {
     };
     entries.events = [];
 
-    next();
+    return next();
   });
 }
 
 
 function getOrderHistoryPage(requiredFields, entries, data, next) {
-  const url = 'https://espace-client.voyages-sncf.com/espaceclient/ordersconsultation'
-            + '/showOrdersForAjaxRequest?pastOrder=true&onlyUsedOrder=false&pageToLoad=1';
+  const url = 'https://espace-client.voyages-sncf.com/espaceclient/ordersconsultation/showOrdersForAjaxRequest?pastOrder=true&onlyUsedOrder=false&pageToLoad=1';
 
   connector.logger.info('Download orders history HTML page...');
   getPage(url, (err, res, body) => {
-    if (err) return next();
+    if (err) return next(err);
 
     data.html = body;
     connector.logger.info('Orders history page downloaded.');
-    next();
+    return next();
   });
 }
 
@@ -113,7 +113,7 @@ function parseOrderHistoryPage(requiredFields, entries, data, next) {
   // Parse the orders page
   const $rows = $('table tbody tr:not(:last-child)');
   const { informations } = parseSNCFTable($, $rows);
-  informations.forEach(function forEachInformations(information) {
+  informations.forEach((information) => {
     const bill = {
       date: moment(information.orderDate, 'DD/MM/YYYY'),
       amount: information.amount,
@@ -138,7 +138,7 @@ function getOrderPage(requiredFields, entries, data, next) {
 
     data.html = body;
     connector.logger.info('Orders page downloaded.');
-    next();
+    return next();
   });
 }
 
@@ -152,7 +152,7 @@ function parseOrderPage(requiredFields, entries, data, next) {
 
   // console.log(informations);
   // console.log(detailPages);
-  informations.forEach(function forEachInformations(information) {
+  informations.forEach((information) => {
     const bill = {
       date: moment(information.orderDate, 'DD/MM/YYYY'),
       amount: information.amount,
@@ -165,7 +165,7 @@ function parseOrderPage(requiredFields, entries, data, next) {
   });
 
   // Fetch the detail of each order (for events)
-  async.eachSeries(Object.keys(detailPages), function forEachDetailPages(date, cb) {
+  async.eachSeries(Object.keys(detailPages), (date, cb) => {
     connector.logger.info(`Fetching order(s) of ${date}.`);
     getEvents(detailPages[date], entries.events, cb);
   }, next);
@@ -189,7 +189,7 @@ function getEvents(uri, events, callback) {
         subOrdersUris.push($subOrder.attr('href'));
       });
 
-      return async.eachSeries(subOrdersUris, function forEachSubOrdersuRI(subOrderUri, cb) {
+      return async.eachSeries(subOrdersUris, (subOrderUri, cb) => {
         getEvents(subOrderUri, events, cb);
       }, callback);
     }
@@ -207,8 +207,10 @@ function getEvents(uri, events, callback) {
     const $folder = $('.folder-box');
 
     const reference = $folder.find('.reference-dossier span').text();
-    const ticketChoice = $folder.parent().find('.types-retrait .chosen-mode-name').text();
-    const label = $roundTrip.eq(0).text().trim() + '/' + $roundTrip.eq(1).text().trim();
+    const ticketChoice =
+      $folder.parent().find('.types-retrait .chosen-mode-name').text();
+    const label =
+      `${$roundTrip.eq(0).text().trim()}/${$roundTrip.eq(1).text().trim()}`;
 
     $travels.each(function forEachTravels() {
       const $travel = $(this);
@@ -229,27 +231,33 @@ function getEvents(uri, events, callback) {
         // Yup, the generated HTML is just a joke.
         const beginHour = $departure.find('.hour p').eq(1).text().trim();
         const beginStation = $departure.find('.station p').eq(1).text().trim();
-        const trainType = $departure.find('.train_picto').text()
-                                    .replace('Transporteur :', '').trim();
-        const trainNumber = $departure.find('.train_number p').eq(1).text().trim();
-        const trainInfo = $departure.find('.train_infos .train_class p').eq(1).text().trim();
+        const trainType =
+          $departure.find('.train_picto').text()
+                    .replace('Transporteur :', '').trim();
+        const trainNumber =
+          $departure.find('.train_number p').eq(1).text().trim();
+        const trainInfo =
+          $departure.find('.train_infos .train_class p').eq(1).text().trim();
 
         const arrivalHour = $arrival.find('.hour p').eq(1).text().trim();
         const arrivalStation = $arrival.find('.station p').eq(1).text().trim();
 
         const description = `${travelType}: ${label}`;
 
-        let details = `${beginStation} -> ${arrivalStation}\n`
-                      + localization.t('konnector sncf reference') + `: ${reference}\n`
-                      + localization.t('konnector sncf ticket choice') + `: ${ticketChoice}\n`
-                      + `${trainType} ${trainNumber} - ${trainInfo}\n\n`;
+        let details = `${beginStation} -> ${arrivalStation}\n`;
+        details += localization.t('konnector sncf reference');
+        details += `: ${reference}\n`;
+        details += localization.t('konnector sncf ticket choice');
+        details += `: ${ticketChoice}\n`;
+        details += `${trainType} ${trainNumber} - ${trainInfo}\n\n`;
 
         // Add more informations for this travel for each passenger
-        Object.keys(moreInfos).forEach(function forEachPassengers(passenger) {
+        Object.keys(moreInfos).forEach((passenger) => {
           const moreInfo = moreInfos[passenger].shift();
           // Sometimes we don't have "more informations" for all travels
           if (moreInfo) {
-            details += `${passenger}: ${moreInfo.fare} - ${moreInfo.placeDetails}`;
+            details +=
+              `${passenger}: ${moreInfo.fare} - ${moreInfo.placeDetails}`;
           }
         });
 
@@ -266,7 +274,7 @@ function getEvents(uri, events, callback) {
       });
     });
 
-    callback();
+    return callback();
   });
 }
 
@@ -277,7 +285,8 @@ function customFilterExisting(requiredFields, entries, data, next) {
 
 
 function customSaveDataAndFile(requiredFields, entries, data, next) {
-  saveDataAndFile(logger, Bill, fileOptions, ['bill'])(requiredFields, entries.bills, data, next);
+  saveDataAndFile(logger, Bill, fileOptions, ['bill'])(
+      requiredFields, entries.bills, data, next);
 }
 
 
@@ -285,7 +294,7 @@ function saveEvents(requiredFields, entries, data, next) {
   entries.events.nbCreations = 0;
   entries.events.nbUpdates = 0;
 
-  async.eachSeries(entries.events, function forEachEntries(event, cb) {
+  async.eachSeries(entries.events, (event, cb) => {
     event.tags = [requiredFields.calendar];
 
     Event.createOrUpdate(event, (err, cozyEvent, changes) => {
@@ -320,7 +329,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
     if (entries.notifContent === undefined) {
       entries.notifContent = localization.t(localizationKey, options);
     } else {
-      entries.notifContent += ' ' + localization.t(localizationKey, options);
+      entries.notifContent += ` ${localization.t(localizationKey, options)}`;
     }
   }
 
@@ -332,7 +341,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
     if (entries.notifContent === undefined) {
       entries.notifContent = localization.t(localizationKey, options);
     } else {
-      entries.notifContent += ' ' + localization.t(localizationKey, options);
+      entries.notifContent += ` ${localization.t(localizationKey, options)}`;
     }
   }
 
@@ -371,10 +380,13 @@ function parseSNCFTable($, $rows) {
     const $cells = $(this).find('td');
 
     const refOrder = $cells.eq(dataIndices.refOrder).find('p').text().trim();
-    const labelOrder = $cells.eq(dataIndices.labelOrder).find('p').text().trim();
+    const labelOrder =
+      $cells.eq(dataIndices.labelOrder).find('p').text().trim();
     const price = $cells.eq(dataIndices.price).find('div').text().trim();
-    const orderDate = $cells.eq(dataIndices.orderDate).find('div').text().trim();
-    const detailPage = $cells.eq(dataIndices.detailPage).find('a').attr('href');
+    const orderDate =
+      $cells.eq(dataIndices.orderDate).find('div').text().trim();
+    const detailPage =
+      $cells.eq(dataIndices.detailPage).find('a').attr('href');
 
     const $dates = $cells.eq(dataIndices.dates).find('p');
     let dates = $dates.eq(0).text().trim();
@@ -422,7 +434,8 @@ function parseMoreInfos($, $moreInfos) {
     }
 
     // Get the infos
-    const fare = $row.find('.fare_details .fare-name').text().replace(':', '').trim();
+    const fare =
+      $row.find('.fare_details .fare-name').text().replace(':', '').trim();
 
     // Place detail or "no reservation"
     let placeDetails = null;

@@ -125,7 +125,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
     if (entries.notifContent === undefined) {
       entries.notifContent = localization.t(localizationKey, options);
     } else {
-      entries.notifContent += ' ' + localization.t(localizationKey, options);
+      entries.notifContent += ` ${localization.t(localizationKey, options)}`;
     }
   }
   next();
