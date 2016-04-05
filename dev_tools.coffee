@@ -12,8 +12,8 @@ program
     .option('-k, --change <connector>',
             'Change field values for given konnector.')
     .option('-f, --fields <fieldValues>', 'New value to set as fields.')
-    .option('-s, --show <model>', 'Show documents for given model.')
-    .option('-d, --delete <model>', 'Delete documents for given model.')
+    .option('-s, --show <docType>', 'Show documents for given model.')
+    .option('-d, --delete <docType>', 'Delete documents for given model.')
     .option('-c, --columns <columns>', 'Set column names for data table.')
     .option('-w, --widths <widths>', 'Set widths for data table columns.')
     .parse(process.argv)
