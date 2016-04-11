@@ -36,9 +36,9 @@ InternetBill.all = function (callback) {
 // Konnector
 
 module.exports = {
-    name: "Sfr box",
-    slug: "sfrbox",
-    description: 'konnector description sfr box',
+    name: "Sfr mobile",
+    slug: "sfrmobile",
+    description: 'konnector description sfr mobile',
     vendorLink: "https://www.sfr.fr/",
 
     fields: {
@@ -75,7 +75,7 @@ module.exports = {
             // TODO move this in a procedure.
             var notifContent = null;
             if (entries && entries.filtered && entries.filtered.length > 0) {
-                var localizationKey = 'notification sfr box';
+                var localizationKey = 'notification sfr mobile';
                 var options = { smart_count: entries.filtered.length };
                 notifContent = localization.t(localizationKey, options);
             }
@@ -132,7 +132,7 @@ function logIn(requiredFields, bills, data, next) {
 }
 
 function fetchBillingInfo(requiredFields, bills, data, next) {
-    var url = "https://espace-client.sfr.fr/facture-fixe/consultation";
+    var url = "https://espace-client.sfr.fr/facture-mobile/consultation";
 
     log.info('Fetch bill info');
     var options = {

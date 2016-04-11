@@ -1,5 +1,3 @@
-'use strict';
-
 /* global emit */
 
 var cozydb = require('cozydb');
@@ -20,6 +18,7 @@ var log = require('printit')({
     date: true
 });
 
+
 var InternetBill = cozydb.getModel('InternetBill', {
     date: Date,
     vendor: String,
@@ -29,16 +28,16 @@ var InternetBill = cozydb.getModel('InternetBill', {
     pdfurl: String
 });
 
-InternetBill.all = function (callback) {
+InternetBill.all = (callback) => {
     InternetBill.request('byDate', callback);
 };
 
 // Konnector
 
 module.exports = {
-    name: "Sfr box",
-    slug: "sfrbox",
-    description: 'konnector description sfr box',
+    name: "Sfr mobile",
+    slug: "sfrmobile",
+    description: 'konnector description sfr mobile',
     vendorLink: "https://www.sfr.fr/",
 
     fields: {
@@ -51,37 +50,44 @@ module.exports = {
     },
 
     // Define model requests.
-    init: function init(callback) {
-        InternetBill.defineRequest('byDate', function (doc) {
-            emit(doc.date, doc);
-        }, function (err) {
+    init: (callback) => {
+        InternetBill.defineRequest('byDate', (doc) => {emit(doc.date, doc);}, (err) => {
             callback(err);
         });
     },
-    fetch: function fetch(requiredFields, callback) {
+    fetch: (requiredFields, callback) => {
         log.info("Import started");
-        fetcher.new().use(getToken).use(logIn).use(fetchBillingInfo).use(parsePage).use(filterExisting(log, InternetBill)).use(saveDataAndFile(log, InternetBill, 'sfr', ['facture'])).use(linkBankOperation, {
-            log: log,
-            model: InternetBill,
-            identifier: 'SFR',
-            minDateDelta: 4,
-            maxDateDelta: 20,
-            amountDelta: 0.1
-        }).args(requiredFields, {}, {}).fetch(function (err, fields, entries) {
-            if (err) return callback(err);
+        fetcher.new()
+            .use(getToken)
+            .use(logIn)
+            .use(fetchBillingInfo)
+            .use(parsePage)
+            .use(filterExisting(log, InternetBill))
+            .use(saveDataAndFile(log, InternetBill, 'sfr', ['facture']))
+            .use(linkBankOperation, {
+                log: log,
+                model: InternetBill,
+                identifier: 'SFR',
+                minDateDelta: 4,
+                maxDateDelta: 20,
+                amountDelta: 0.1
+            })
+            .args(requiredFields, {}, {})
+            .fetch((err, fields, entries) => {
+                if (err) return callback(err);
 
-            log.info("Import finished");
+                log.info("Import finished");
 
-            // TODO move this in a procedure.
-            var notifContent = null;
-            if (entries && entries.filtered && entries.filtered.length > 0) {
-                var localizationKey = 'notification sfr box';
-                var options = { smart_count: entries.filtered.length };
-                notifContent = localization.t(localizationKey, options);
-            }
+                // TODO move this in a procedure.
+                var notifContent = null;
+                if (entries && entries.filtered && entries.filtered.length > 0) {
+                    var localizationKey = 'notification sfr mobile';
+                    var options = {smart_count: entries.filtered.length};
+                    notifContent = localization.t(localizationKey, options);
+                }
 
-            callback(null, notifContent);
-        });
+                callback(null, notifContent);
+            });
     }
 };
 
@@ -95,7 +101,7 @@ function getToken(requiredFields, bills, data, next) {
 
     log.info('Getting the token on Sfr Website...');
 
-    request(options, function (err, res, body) {
+    request(options, function(err, res, body) {
         if (err) return next(err);
 
         var $ = cheerio.load(body);
@@ -123,7 +129,7 @@ function logIn(requiredFields, bills, data, next) {
 
     log.info('Logging in on Sfr website...');
 
-    request(options, function (err) {
+    request(options, (err) => {
         if (err) return next(err);
 
         log.info('Successfully logged in.');
@@ -132,14 +138,14 @@ function logIn(requiredFields, bills, data, next) {
 }
 
 function fetchBillingInfo(requiredFields, bills, data, next) {
-    var url = "https://espace-client.sfr.fr/facture-fixe/consultation";
+    var url = "https://espace-client.sfr.fr/facture-mobile/consultation";
 
     log.info('Fetch bill info');
     var options = {
         method: 'GET',
         url: url
     };
-    request(options, function (err, res, body) {
+    request(options, function(err, res, body) {
         if (err) {
             log.error('An error occured while fetching bills');
             log.raw(err);
@@ -157,7 +163,7 @@ function parsePage(requiredFields, bills, data, next) {
     moment.locale('fr');
     var $ = cheerio.load(data.html);
 
-    $('#tab tr').each(function () {
+    $('#tab tr').each(function() {
         var date = $(this).find(".date").text();
         date = date.split(" ");
         date.pop();

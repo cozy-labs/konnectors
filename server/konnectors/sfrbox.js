@@ -107,7 +107,7 @@ function getToken(requiredFields, bills, data, next) {
         var $ = cheerio.load(body);
         data.token = $("input[name=lt]").val();
 
-        log.info("Token retrieved : " + data.token);
+        log.info("Token retrieved");
         next();
     });
 }
@@ -173,7 +173,6 @@ function parsePage(requiredFields, bills, data, next) {
         prix = parseFloat(prix);
         var pdf = $(this).find(".liens a").attr("href");
         pdf = "https://espace-client.sfr.fr" + pdf;
-        log.info("Pdf url : " + pdf);
 
         var bill = {
             date: date,
