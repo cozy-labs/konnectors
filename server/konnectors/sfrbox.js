@@ -19,8 +19,9 @@ var log = require('printit')({
 });
 
 
-var InternetBill = cozydb.getModel('InternetBill', {
+var Bill = cozydb.getModel('Bill', {
     date: Date,
+    type: String,
     vendor: String,
     amount: Number,
     fileId: String,
@@ -28,8 +29,8 @@ var InternetBill = cozydb.getModel('InternetBill', {
     pdfurl: String
 });
 
-InternetBill.all = (callback) => {
-    InternetBill.request('byDate', callback);
+Bill.all = (callback) => {
+    Bill.request('byDate', callback);
 };
 
 // Konnector
@@ -46,12 +47,12 @@ module.exports = {
         folderPath: "folder"
     },
     models: {
-        internetbill: InternetBill
+        bill: Bill
     },
 
     // Define model requests.
     init: (callback) => {
-        InternetBill.defineRequest('byDate', (doc) => {emit(doc.date, doc);}, (err) => {
+        Bill.defineRequest('byDate', (doc) => {emit(doc.date, doc);}, (err) => {
             callback(err);
         });
     },
@@ -62,11 +63,11 @@ module.exports = {
             .use(logIn)
             .use(fetchBillingInfo)
             .use(parsePage)
-            .use(filterExisting(log, InternetBill))
-            .use(saveDataAndFile(log, InternetBill, 'sfr', ['facture']))
+            .use(filterExisting(log, Bill))
+            .use(saveDataAndFile(log, Bill, 'sfr', ['facture']))
             .use(linkBankOperation, {
                 log: log,
-                model: InternetBill,
+                model: Bill,
                 identifier: 'SFR',
                 minDateDelta: 4,
                 maxDateDelta: 20,
@@ -176,6 +177,7 @@ function parsePage(requiredFields, bills, data, next) {
 
         var bill = {
             date: date,
+            type: "Internet",
             amount: prix,
             pdfurl: pdf,
             vendor: 'Sfr'
