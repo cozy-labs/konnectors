@@ -1,3 +1,5 @@
+'use strict';
+
 /* global emit */
 
 const cozydb = require('cozydb');
