@@ -24,7 +24,12 @@ module.exports =
     delete: (modelName, callback) ->
         Model = getModel modelName
         Model.requestDestroy 'byDate', (err) ->
-            callback()
+            if err
+                Model.requestDestroy 'all', (err) ->
+                    log.error.err if err
+                    callback err
+            else
+                callback()
 
 
     # Display in a table all instances of a given listed in database.

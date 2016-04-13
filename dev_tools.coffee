@@ -7,11 +7,12 @@ log = require('printit')
 
 program
     .usage('[options]')
-    .option('-s, --status [connector]', 'Show given connector data')
+    .option('-a, --status [connector]', 'Show given connector data')
     .option('-i, --import <connector>', 'Run import for given konnector.')
     .option('-k, --change <connector>',
             'Change field values for given konnector.')
     .option('-f, --fields <fieldValues>', 'New value to set as fields.')
+    .option('-n, --init', 'Init connectors metadata.')
     .option('-s, --show <docType>', 'Show documents for given model.')
     .option('-d, --delete <docType>', 'Delete documents for given model.')
     .option('-c, --columns <columns>', 'Set column names for data table.')
@@ -46,7 +47,6 @@ else if program.change
 
 else if program.import
     konnectorName = program.import
-    console.log 'import'
     log.info "Running import for #{konnectorName}..."
 
     connector.run konnectorName, (err) ->
@@ -54,6 +54,13 @@ else if program.import
             log.error err.message
         else
             log.info "Import is finished."
+
+
+else if program.init
+
+    log.info 'Start initializing connectors...'
+    connector.init ->
+        log.info 'Init done.'
 
 
 else if program.show or program.delete

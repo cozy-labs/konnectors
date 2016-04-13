@@ -1,6 +1,7 @@
 path = require 'path'
-Konnector = require path.join  __dirname, '../server/models/konnector'
-konnectorMap = require path.join  __dirname, '../server/lib/konnector_hash'
+Konnector = require '../server/models/konnector'
+konnectorMap = require '../server/lib/konnector_hash'
+initKonnectors = require '../server/init/konnectors'
 
 log = require('printit')
     prefix: 'Konnector dev tool'
@@ -54,7 +55,8 @@ module.exports =
             else
                 log.info "Import starting..."
                 konnector.fieldValues ?= {}
-                konnector.import ->
+                konnector.import (err) ->
+                    log.error err if err
                     callback()
 
 
@@ -97,4 +99,7 @@ module.exports =
             else
                 displayKonnector konnector for konnector in konnectors
             callback()
+
+
+    init: initKonnectors
 
