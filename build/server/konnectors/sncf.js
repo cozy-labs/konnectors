@@ -98,11 +98,8 @@ function parseOrderHistoryPage(requiredFields, entries, data, next) {
 
   // Parse the orders page
   var $rows = $('table tbody tr:not(:last-child)');
-
-  var _parseSNCFTable = parseSNCFTable($, $rows);
-
-  var informations = _parseSNCFTable.informations;
-
+  var table = parseSNCFTable($, $rows);
+  var informations = table.informations;
   informations.forEach(function (information) {
     var bill = {
       date: moment(information.orderDate, 'DD/MM/YYYY'),
@@ -136,15 +133,12 @@ function parseOrderPage(requiredFields, entries, data, next) {
 
   // Parse the orders page
   var $rows = $('table tbody tr:not(:last-child)');
-
-  var _parseSNCFTable2 = parseSNCFTable($, $rows);
-
-  var informations = _parseSNCFTable2.informations;
-  var detailPages = _parseSNCFTable2.detailPages;
+  var table = parseSNCFTable($, $rows);
+  var informations = table.informations;
+  var detailPages = table.detailPages;
 
   // console.log(informations);
   // console.log(detailPages);
-
   informations.forEach(function (information) {
     var bill = {
       date: moment(information.orderDate, 'DD/MM/YYYY'),
