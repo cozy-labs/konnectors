@@ -64,10 +64,10 @@ module.exports =
         else
 
             # Extract date information.
-            if req.body.fieldValues.date?
-                if req.body.fieldValues.date isnt ''
-                    date = req.body.fieldValues.date
-                delete req.body.fieldValues.date
+            if req.body.date?
+                if req.body.date isnt ''
+                    date = req.body.date
+                delete req.body.date
 
             req.konnector.updateFieldValues req.body, (err) ->
                 if err?
