@@ -19,7 +19,7 @@ describe 'Konnector model', ->
     konnector = new Konnector
         name: 'Test'
         slug: 'test'
-        fieldValues: []
+        accounts: [{}]
         importInterval: 'week'
 
     before (done) ->
@@ -57,44 +57,45 @@ describe 'Konnector model', ->
 
 
     it 'turn encrypted fields in normal fields', ->
-        konnector.password = JSON.stringify password: 'testpass'
+        konnector.password = JSON.stringify [password: 'testpass']
         konnector.injectEncryptedFields()
-        should.exist konnector.fieldValues.password
-        konnector.fieldValues.password.should.equal 'testpass'
+        should.exist konnector.accounts[0].password
+        konnector.accounts[0].password.should.equal 'testpass'
 
     it 'remove encrypted fields from normal fields', ->
         konnector.removeEncryptedFields konnectorHash.test.fields
-        should.not.exist konnector.fieldValues.password
+        should.not.exist konnector.accounts[0].password
 
-    it.skip 'updates field values properly', (done) ->
+    it 'updates field values properly', (done) ->
         konnector.id = null
         Konnector.create konnector, (err, newKonnector) ->
             should.not.exist err
             konnector = newKonnector
 
             data =
-                fieldValues:
+                accounts: [
                     login: 'testlogin'
                     password: 'testpass'
+                ]
 
             konnector.updateFieldValues data, (err, konnector) ->
 
                 should.not.exist err
-                konnector.password.should.equal '{"password":"testpass"}'
-                konnector.fieldValues.login.should.equal 'testlogin'
-                should.not.exist konnector.fieldValues.password
+                konnector.password.should.equal '[{"password":"testpass"}]'
+                konnector.accounts[0].login.should.equal 'testlogin'
+                should.not.exist konnector.accounts[0].password
                 konnector.importInterval.should.equal 'week'
 
                 done()
 
-    it.skip 'run import', (done) ->
+    it 'run import', (done) ->
         konnector.import ->
             importDone.should.equal true
             should.exist konnector.lastImport
             konnector.isImporting.should.equal false
             done()
 
-    it.skip 'mix model and configuration data', ->
+    it 'mix model and configuration data', ->
         konnector.appendConfigData()
         should.exist konnector.fields
         should.exist konnector.fields.login
@@ -104,13 +105,16 @@ describe 'Konnector model', ->
         konnector.modelNames[1].should.equal 'Commit'
 
 
-    it.skip 'build the konnector list to display', (done) ->
+    it 'build the konnector list to display', (done) ->
         data =
-            slug: 'test2'
-            fieldValues: []
+            slug: 'testList'
+            accounts: []
             importInterval: 'week'
 
         Konnector.create data, (err, konnector2) ->
+            should.not.exist err
+            konnectorHash[data.slug] = konnector2
+
             Konnector.getKonnectorsToDisplay (err, konnectors) ->
                 should.not.exist err
                 konnectors.length.should.equal Object.keys(konnectorHash).length
