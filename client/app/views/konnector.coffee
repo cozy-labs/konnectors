@@ -28,7 +28,7 @@ module.exports = class KonnectorView extends BaseView
     afterRender: =>
 
         slug = @model.get 'slug'
-        @values ?= @model.get('fieldValuesSet') or [{}]
+        @values ?= @model.get('accounts') or [{}]
         errorMessage = @model.get 'importErrorMessage'
 
         @$el.addClass "konnector-#{slug}"
@@ -166,10 +166,10 @@ module.exports = class KonnectorView extends BaseView
             date = $("##{slug}-import-date").val()
 
             @hideErrors()
-            fieldValuesSet = []
+            accounts = []
             for i, values of @values
-                fieldValuesSet.push @getFieldValues i
-            @values = fieldValuesSet
+                accounts.push @getFieldValues i
+            @values = accounts
 
             # Auto import interval and start date work separately from field
             # values
@@ -180,7 +180,7 @@ module.exports = class KonnectorView extends BaseView
             @disableImportButton()
 
             # Save field values and start importing data.
-            data = {fieldValuesSet, importInterval, date}
+            data = {accounts, importInterval, date}
             @model.set 'isImporting': true
 
             @model.save data,
@@ -387,7 +387,7 @@ target="_blank">
             else
                 alert t 'konnector deleted'
                 @model.set 'lastAutoImport', null
-                @model.set 'fieldValuesSet', [{}]
+                @model.set 'accounts', [{}]
                 @model.set 'password', '{}'
                 window.router.navigate '', trigger: true
 

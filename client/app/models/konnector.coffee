@@ -7,8 +7,8 @@ module.exports = class KonnectorModel extends Backbone.Model
     # Returns true if the user has fully configured the konnector (it checks if
     # every fields are filled).
     isConfigured: ->
-        fieldValuesSet = @get('fieldValuesSet') or [{}]
-        fieldValues = fieldValuesSet[0] or {}
+        accounts = @get('accounts') or [{}]
+        fieldValues = accounts[0] or {}
         fields = @get 'fields'
 
         # Remove fields where no value is expected.
