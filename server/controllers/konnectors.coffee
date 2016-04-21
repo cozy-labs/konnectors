@@ -41,7 +41,7 @@ module.exports =
 
         data =
             lastAutoImport: null
-            fieldValues: {}
+            accounts: []
             password: '{}'
 
         req.konnector.updateAttributes data, (err, konnector) ->

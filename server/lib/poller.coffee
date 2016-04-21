@@ -138,7 +138,7 @@ class KonnectorPoller
     create: (konnector, nextUpdate) ->
         @nextUpdates[konnector.slug] = [nextUpdate, konnector]
 
-        log.info "#{konnector.slug} : Next update #{nextUpdate.format(format)}"
+        log.info "#{konnector.slug}: Next update #{nextUpdate.format(format)}"
         @createTimeout konnector, nextUpdate
 
 
