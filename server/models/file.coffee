@@ -55,13 +55,6 @@ File.createNew = (fileName, path, url, tags, callback) ->
         class: 'document'
         mime: 'application/pdf'
 
-    # Index file to DS indexer.
-    index = (newFile) ->
-        newFile.index ["name"], (err) ->
-            log.error err if err and Object.keys(err).length isnt 0
-            File.find newFile.id, (err, file) ->
-                callback err, file
-
     # Attach binary to newly created file.
     attachBinary = (newFile) ->
         newFile.attachBinary filePath, "name": "file", (err) ->
@@ -70,7 +63,8 @@ File.createNew = (fileName, path, url, tags, callback) ->
                 callback err
             else
                 fs.unlink filePath, ->
-                    index newFile
+                    File.find newFile.id, (err, file) ->
+                        callback err, file
 
     # Save file in a tmp folder while attachBinary supports stream.
     options =
