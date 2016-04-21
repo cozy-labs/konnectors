@@ -20,7 +20,7 @@ var log = require('printit')({
     date: true
 });
 
-var PhoneBill = cozydb.getModel('PhoneBill', {
+var InternetBill = cozydb.getModel('InternetBill', {
     date: Date,
     vendor: String,
     amount: Number,
@@ -29,8 +29,8 @@ var PhoneBill = cozydb.getModel('PhoneBill', {
     pdfurl: String
 });
 
-PhoneBill.all = function (callback) {
-    PhoneBill.request('byDate', callback);
+InternetBill.all = function (callback) {
+    InternetBill.request('byDate', callback);
 };
 
 // Konnector
@@ -47,12 +47,12 @@ module.exports = {
         folderPath: "folder"
     },
     models: {
-        phonebill: PhoneBill
+        internetbill: InternetBill
     },
 
     // Define model requests.
     init: function init(callback) {
-        PhoneBill.defineRequest('byDate', function (doc) {
+        InternetBill.defineRequest('byDate', function (doc) {
             emit(doc.date, doc);
         }, function (err) {
             callback(err);
@@ -60,9 +60,9 @@ module.exports = {
     },
     fetch: function fetch(requiredFields, callback) {
         log.info("Import started");
-        fetcher.new().use(getToken).use(logIn).use(fetchBillingInfo).use(parsePage).use(filterExisting(log, PhoneBill)).use(saveDataAndFile(log, PhoneBill, 'sfr', ['facture'])).use(linkBankOperation, {
+        fetcher.new().use(getToken).use(logIn).use(fetchBillingInfo).use(parsePage).use(filterExisting(log, InternetBill)).use(saveDataAndFile(log, InternetBill, 'sfr', ['facture'])).use(linkBankOperation, {
             log: log,
-            model: PhoneBill,
+            model: InternetBill,
             identifier: 'SFR',
             minDateDelta: 4,
             maxDateDelta: 20,
