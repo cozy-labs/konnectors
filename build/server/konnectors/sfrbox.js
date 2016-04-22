@@ -36,7 +36,7 @@ InternetBill.all = function (callback) {
 // Konnector
 
 module.exports = {
-    name: "Sfrbox",
+    name: "Sfr box",
     slug: "sfrbox",
     description: 'konnector description sfr box',
     vendorLink: "https://www.sfr.fr/",
