@@ -38,7 +38,7 @@ InternetBill.all = function (callback) {
 module.exports = {
     name: "Sfrbox",
     slug: "sfrbox",
-    description: 'konnector description sfr',
+    description: 'konnector description sfr box',
     vendorLink: "https://www.sfr.fr/",
 
     fields: {
@@ -75,7 +75,7 @@ module.exports = {
             // TODO move this in a procedure.
             var notifContent = null;
             if (entries && entries.filtered && entries.filtered.length > 0) {
-                var localizationKey = 'notification sfr';
+                var localizationKey = 'notification sfr box';
                 var options = { smart_count: entries.filtered.length };
                 notifContent = localization.t(localizationKey, options);
             }

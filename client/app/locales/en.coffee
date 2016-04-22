@@ -56,6 +56,7 @@ module.exports =
     'konnector description free mobile': "Download all your phone bills from Free Mobile. This konnector requires the Files application to store the bill PDF files."
     'konnector description bouygues': "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
     'konnector description bouygues box': "Download all your internet bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
+    'konnector description sfr box': "Download all your internet bills from Sfr. This konnector requires the Files application to store the bill PDF files."
     'konnector description github': "Download all your Github Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description github commits': "Save infos from all your Github Commits."
     'konnector description jawbone': "Download Move and Sleep Data from Jawbone CSV file."
@@ -149,6 +150,7 @@ module.exports =
     'notification sncf bills': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification sncf events creation': "%{smart_count} new event imported |||| %{smart_count} new events imported"
     'notification sncf events update': "%{smart_count} new event updated |||| %{smart_count} new events updated"
+    'notification sfr box': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
 
     "konnector birthdays birthday": "Birthday of"
 
