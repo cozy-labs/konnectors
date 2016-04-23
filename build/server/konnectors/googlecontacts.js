@@ -104,18 +104,24 @@ saveTokensInKonnector = function(requiredFields, entries, data, callback) {
   log.debug('saveTokensInKonnector');
   Konnector = require('../models/konnector');
   return Konnector.all(function(err, konnectors) {
-    var konnector;
+    var accounts, konnector;
     if (err) {
       return callback(err);
     }
     konnector = konnectors.filter(function(k) {
       return k.slug === 'googlecontacts';
     })[0];
-    konnector.fieldValues['accountName'] = requiredFields.accountName;
-    konnector.fieldValues['accessToken'] = requiredFields.accessToken;
-    konnector.fieldValues['refreshToken'] = requiredFields.refreshToken;
-    konnector.fieldValues['authCode'] = requiredFields.authCode;
-    return konnector.save(callback);
+    accounts = [
+      {
+        accountName: requiredFields.accountName,
+        accessToken: requiredFields.accessToken,
+        refreshToken: requiredFields.refreshToken,
+        authCode: requiredFields.authCode
+      }
+    ];
+    return konnector.updateAttributes({
+      accounts: accounts
+    }, callback);
   });
 };
 

@@ -44,14 +44,25 @@ module.exports = function(callback) {
 };
 
 konnectorResetValue = function(konnector, callback) {
-  if (konnector.isImporting === true) {
-    return konnector.updateAttributes({
+  var data;
+  if (konnector.isImporting || konnector.fieldValues) {
+    log.info("Cleaning fields for konnector " + slug + "...");
+    konnector.cleanFieldValues();
+    data = {
+      fieldValues: konnector.fieldValues,
+      accounts: konnector.accounts,
+      password: konnector.password,
       isImporting: false
-    }, function(err) {
+    };
+    return konnector.updateAttributes(data, function(err) {
+      var slug;
+      slug = konnector.slug;
       if (err) {
-        log.debug(konnector.slug + " | " + err);
+        log.info("An error occured cleaning konnector " + slug);
+        log.error(err);
       } else {
-        log.debug(konnector.slug + ": reseting isImporting");
+        log.info("Fields for konnector " + slug + " are cleaned");
+        log.info(konnector.slug + " fields cleaned.");
       }
       return callback();
     });

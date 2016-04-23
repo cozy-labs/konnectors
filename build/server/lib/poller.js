@@ -124,7 +124,7 @@ KonnectorPoller = (function() {
 
   KonnectorPoller.prototype.create = function(konnector, nextUpdate) {
     this.nextUpdates[konnector.slug] = [nextUpdate, konnector];
-    log.info(konnector.slug + " : Next update " + (nextUpdate.format(format)));
+    log.info(konnector.slug + ": Next update " + (nextUpdate.format(format)));
     return this.createTimeout(konnector, nextUpdate);
   };
 
