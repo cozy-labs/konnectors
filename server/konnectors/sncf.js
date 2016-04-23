@@ -260,7 +260,7 @@ function getEvents(uri, events, callback) {
           // Sometimes we don't have "more informations" for all travels
           if (moreInfo) {
             details +=
-              `${passenger}: ${moreInfo.fare} - ${moreInfo.placeDetails}`;
+              `${passenger}: ${moreInfo.fare} - ${moreInfo.place_details}`;
           }
         });
 
