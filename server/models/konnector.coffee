@@ -99,14 +99,6 @@ Konnector::updateFieldValues = (data, callback) ->
         callback err, @
 
 
-Konnector::cleanFieldValues = (callback) ->
-
-    if @fieldValues?
-        @accounts ?= []
-        @accounts.unshift @fieldValues
-        @fieldValues = null
-
-
 # Run import process for given konnector. It runs the fetch command for each
 # account set via the accounts attributes.
 # If an error occured on a given import, it stops the process and marks the
@@ -216,4 +208,19 @@ Konnector.getKonnectorsToDisplay = (callback) ->
             catch err
                 log.error 'An error occured while filtering konnectors'
                 callback err
+
+
+# Patch function to move fieldValues field to accounts field. accounts field is
+# different because it's an array of field values (the goal is to allow several
+# accounts instead of one).
+Konnector::cleanFieldValues = (callback) ->
+
+    if @fieldValues?
+        @accounts ?= []
+        @accounts.unshift @fieldValues
+        @fieldValues = null
+
+    if @password? and @password[0] is '{'
+        password = JSON.parse @password
+        @password = JSON.stringify [password]
 

@@ -46,6 +46,7 @@ logIn = function(requiredFields, billInfos, data, next) {
   options = {
     method: 'GET',
     jar: true,
+    strictSSL: false,
     url: loginUrl
   };
   return request(options, function(err, res, body) {
@@ -57,10 +58,11 @@ logIn = function(requiredFields, billInfos, data, next) {
       method: 'POST',
       form: form,
       jar: true,
+      strictSSL: false,
       url: submitUrl,
       headers: {
         'Cookie': res.headers['set-cookie'],
-        'Referer': 'https://assure.ameli.fr/PortailAS/appmanager/PortailAS/assure?_nfpb=true&_pageLabel=as_login_page'
+        'Referer': 'https://assure.ameli.fr/PortailAS/appmanager/' + 'PortailAS/assure?_nfpb=true&_pageLabel=' + 'as_login_page'
       }
     };
     return request(loginOptions, function(err, res, body) {
@@ -73,6 +75,7 @@ logIn = function(requiredFields, billInfos, data, next) {
         reimbursementOptions = {
           method: 'GET',
           jar: true,
+          strictSSL: false,
           url: reimbursementUrl
         };
         return request(reimbursementOptions, function(err, res, body) {
@@ -127,6 +130,7 @@ getPdf = function(bill, callback) {
   options = {
     method: 'GET',
     jar: true,
+    strictSSL: false,
     url: detailsUrl
   };
   return request(options, function(err, res, body) {
