@@ -14,7 +14,7 @@ describe 'Konnector model', ->
 
     createdFile = null
     server = null
-    importDone = false
+    importDone = 0
 
     konnector = new Konnector
         name: 'Test'
@@ -38,7 +38,7 @@ describe 'Konnector model', ->
                             login: 'text'
                             password: 'password'
                         fetch: (values, callback) ->
-                            importDone = true
+                            importDone++
                             callback()
                         models:
                             bills: Bill
@@ -90,7 +90,7 @@ describe 'Konnector model', ->
 
     it 'run import', (done) ->
         konnector.import ->
-            importDone.should.equal true
+            importDone.should.equal 1
             should.exist konnector.lastImport
             konnector.isImporting.should.equal false
             done()
@@ -126,4 +126,24 @@ describe 'Konnector model', ->
 
                 konnector2.destroy ->
                     done()
+
+    it 'run double import', (done) ->
+        konnector.accounts.push
+            login: 'login2'
+
+        konnector.import ->
+            importDone.should.equal 3
+            should.exist konnector.lastImport
+            konnector.isImporting.should.equal false
+            done()
+
+    it 'run triple import', (done) ->
+        konnector.accounts.push
+            login: 'login3'
+
+        konnector.import ->
+            importDone.should.equal 6
+            should.exist konnector.lastImport
+            konnector.isImporting.should.equal false
+            done()
 

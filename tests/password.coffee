@@ -40,6 +40,29 @@ describe 'Injecting/Removing encrypted fields', ->
             for name, value of @fields
                 accountKeys.should.containEql name
 
+    describe 'Injecting fields [multi accounts]', ->
+        it 'When I call inject encrypted fields on the connector object', ->
+            @konnector = new Konnector
+                slug: 'test'
+                accounts: [
+                    username: 'myname'
+                ,
+                    username: 'myname2'
+                ]
+                password: '[{"pass": "azerty"},{"pass": "azerty"}]'
+            @fields =
+                username: "text"
+                pass: "password"
+                key: "password"
+            @konnector.injectEncryptedFields()
+
+        it 'then the fields Values should be completely filled', ->
+            for account in @konnector.accounts[0]
+                accountKeys = Object.keys accounts
+                for name, value of @fields
+                    accountKeys.should.containEql name
+
+
     describe 'Removing fields', ->
 
         it 'When I call removeEncryptedFields on the connector object', ->
