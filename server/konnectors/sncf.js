@@ -2,7 +2,7 @@
 
 const async = require('async');
 const cheerio = require('cheerio');
-const moment = require('moment');
+const moment = require('moment-timezone');
 const request = require('request');
 
 const baseKonnector = require('../lib/base_konnector');
@@ -265,14 +265,20 @@ function getEvents(uri, events, callback) {
         });
 
         const momentFormat = 'DD MMMM YYYY HH mm';
+        // SNCF is in the french timezone
+        const momentZone = 'Europe/Paris';
+
         const event = {
           description,
           details,
           id: date + trainType + trainNumber,
-          start: moment(`${date} ${beginHour}`, momentFormat),
-          end: moment(`${date} ${arrivalHour}`, momentFormat),
+          start: moment.tz(`${date} ${beginHour}`, momentFormat, momentZone)
+                .toISOString(),
+          end: moment.tz(`${date} ${arrivalHour}`, momentFormat, momentZone)
+              .toISOString(),
           place: beginStation,
         };
+
         events.push(event);
       });
     });
