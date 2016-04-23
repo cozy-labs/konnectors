@@ -9,51 +9,78 @@ Konnector = require '../models/konnector'
 konnectorModules = require '../lib/konnector_hash'
 
 
+# Ensure that model fields are properly configured for 0.6.0 version.
+# It means that account information are stored in the accounts field and
+# that password is properly constructed to handle multiple accounts.
+patch060 = (callback) ->
+    Konnector.request 'all',  (err, konnectors) ->
+        async.eachSeries konnectors, (konnector, done) ->
+            if konnector.fieldValues?
+                slug = konnector.slug
+                log.info "Cleaning fields for konnector #{slug}..."
+                konnector.cleanFieldValues()
+                data =
+                    fieldValues: konnector.fieldValues
+                    accounts: konnector.accounts
+                    password: konnector.password
+
+                konnector.updateAttributes data, (err) ->
+                    if err
+                        log.info "An error occured cleaning konnector #{slug}"
+                        log.error err
+                    else
+                        log.info "Fields for konnector #{slug} are cleaned."
+                    done()
+            else
+                done()
+        , (err) ->
+            callback()
+
+
 # Ensure that all konnector modules have a proper module created and that their
 # isImporting flag is set to false.
 module.exports = (callback) ->
-    Konnector.all (err, konnectors) ->
-        if err
-            log.error err
-            callback err
 
-        else
-            konnectorHash = {}
-            async.eachSeries konnectors, (konnector, done) ->
-                konnectorHash[konnector.slug] = konnector
-                konnectorResetValue konnector, done
+    patch060 ->
+        Konnector.all (err, konnectors) ->
+            console.log konnector.fieldValues for konnector in konnectors
+            if err
+                log.error err
+                callback err
 
-            , (err) ->
-                log.error err if err
+            else
+                konnectorHash = {}
+                async.eachSeries konnectors, (konnector, done) ->
+                    konnectorHash[konnector.slug] = konnector
+                    konnectorResetValue konnector, done
 
-                konnectorsToCreate = getKonnectorsToCreate konnectorHash
+                , (err) ->
+                    log.error err if err
 
-                if konnectorsToCreate.length is 0
-                    callback()
-                else
-                    createKonnectors konnectorsToCreate, callback
+                    konnectorsToCreate = getKonnectorsToCreate konnectorHash
+
+                    if konnectorsToCreate.length is 0
+                        callback()
+                    else
+                        createKonnectors konnectorsToCreate, callback
 
 
 # Reset konnector importing flags: isImporting flag is set to false if value
 # is true. This happens when the app is crashing while importing.
-# Ensure that model fields are properly configured for 0.6.0 version.
 konnectorResetValue = (konnector, callback) ->
 
     if konnector.isImporting or konnector.fieldValues
-        log.info "Cleaning fields for konnector #{slug}..."
+        log.info "Reseting isImporting field for #{slug}..."
         konnector.cleanFieldValues()
         data =
-            fieldValues: konnector.fieldValues
-            accounts: konnector.accounts
-            password: konnector.password
             isImporting: false
         konnector.updateAttributes data, (err) ->
             slug = konnector.slug
             if err
-                log.info "An error occured cleaning konnector #{slug}"
+                log.info "An error occured reseting isImporting for #{slug}"
                 log.error err
             else
-                log.info "Fields for konnector #{slug} are cleaned"
+                log.info "IsImporting field for #{slug} is reseted."
                 log.info "#{konnector.slug} fields cleaned."
             callback()
 
