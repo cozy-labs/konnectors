@@ -6,7 +6,10 @@
   ],
 
   "rules": {
-    "no-param-reassign": [0, {"props": false}]
+    "no-param-reassign": [0, {"props": false}],
+    "strict": 0,
+    "no-shadow": 0,
+    "no-use-before-define": 0
   }
 }
 
