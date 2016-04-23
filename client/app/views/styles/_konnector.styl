@@ -12,8 +12,8 @@
         // circle on top of the box
         $header-size = 306px
         header
-            width               $header-size
             height              $header-size
+            width               $header-size
             margin              1em auto
             background-image    url('../images/illustrations/illustrations-konnectors.svg')
             background-position center center
@@ -64,33 +64,39 @@
             color blue
 
             &:hover
-                color orange
+                color blue - 10%
 
         // Generated inputs styles
         input
         textarea
-            border none
-            border-left 5px solid blue
-            background #f9f9f9
+            border 2px solid transparent
+            border-radius 2px
+            background #EAEEF2
             width 500px
             padding 10px
             font-size 15px
             outline none
+            transition all 0.3s ease
+
 
         select
-            border 1px solid blue
+            border-color blue
             outline none
 
         input:hover
         textarea:hover
         select:hover
-            border-color orange
+            border-color #ACB8C5
 
         input:focus
         textarea:focus
         select:focus
-            border-color orange - 10%
+            border-color blue
+            background white
 
+        .small
+            padding 0.5em
+            font-size 0.6em
 
     .danger-zone
         h3
@@ -110,5 +116,3 @@
             &:focus
                box-shadow none
 
-
-            

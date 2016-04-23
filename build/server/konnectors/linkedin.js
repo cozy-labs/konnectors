@@ -49,7 +49,7 @@ function retrieveTokens(requiredFields, entries, data, next) {
 
     log.info('CSRF Token retrieved successfully.');
 
-    next();
+    return next();
   });
 }
 
@@ -81,7 +81,7 @@ function logIn(requiredFields, entries, data, next) {
       return next(new Error('Wrong login or password.'));
     }
 
-    next();
+    return next();
   });
 }
 
@@ -117,7 +117,7 @@ function retrieveContactList(requiredFields, entries, data, next) {
     } else {
       return next(new Error('Error retrieving contacts from request'));
     }
-    next();
+    return next();
   });
 }
 
@@ -159,7 +159,7 @@ function prepareCozyContacts(requiredFields, entries, data, next) {
 
     log.info('Cozy contacts loaded.');
 
-    next();
+    return next();
   });
 }
 
@@ -175,7 +175,7 @@ function getOrCreateTag(requiredFields, entries, data, next) {
 
     entries.tag = tag;
 
-    next();
+    return next();
   });
 }
 
@@ -196,7 +196,7 @@ function savePicture(fromCozy, imageUrl, next) {
           return next(err);
         }
         log.info('Picture successfully saved for ' + fromCozy.fn + '.');
-        next();
+        return next();
       });
     });
   } else {
@@ -267,7 +267,7 @@ function saveContacts(contact, entries, next) {
       }
 
       entries.contactStats.created += 1;
-      savePicture(createdContact, imageUrl, next);
+      return savePicture(createdContact, imageUrl, next);
     });
   }
 }
@@ -336,7 +336,7 @@ function retrieveAndSaveContacts(requiredFields, entries, data, done) {
         id: bodyData.id
       });
 
-      saveContacts(newFormatedContact, entries, next);
+      return saveContacts(newFormatedContact, entries, next);
     });
   };
 

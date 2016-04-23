@@ -36,16 +36,27 @@ module.exports = (callback) ->
 
 # Reset konnector importing flags: isImporting flag is set to false if value
 # is true. This happens when the app is crashing while importing.
+# Ensure that model fields are properly configured for 0.6.0 version.
 konnectorResetValue = (konnector, callback) ->
 
-    if konnector.isImporting is true
-
-        konnector.updateAttributes isImporting: false, (err) ->
+    if konnector.isImporting or konnector.fieldValues
+        log.info "Cleaning fields for konnector #{slug}..."
+        konnector.cleanFieldValues()
+        data =
+            fieldValues: konnector.fieldValues
+            accounts: konnector.accounts
+            password: konnector.password
+            isImporting: false
+        konnector.updateAttributes data, (err) ->
+            slug = konnector.slug
             if err
-                log.debug "#{konnector.slug} | #{err}"
+                log.info "An error occured cleaning konnector #{slug}"
+                log.error err
             else
-                log.debug "#{konnector.slug}: reseting isImporting"
+                log.info "Fields for konnector #{slug} are cleaned"
+                log.info "#{konnector.slug} fields cleaned."
             callback()
+
     else
         callback()
 

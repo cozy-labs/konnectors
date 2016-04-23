@@ -1,4 +1,5 @@
-americano = require 'cozydb'
+cozydb = require 'cozydb'
+async = require 'async'
 konnectorHash = require '../lib/konnector_hash'
 
 log = require('printit')
@@ -6,10 +7,14 @@ log = require('printit')
     date: true
 
 
-module.exports = Konnector = americano.getModel 'Konnector',
+module.exports = Konnector = cozydb.getModel 'Konnector',
     slug: String
+    # This field is no more used, still there for backward compability
     fieldValues: Object
-    password: type: String, default: '{}'
+    accounts: [Object], default: [{}]
+    password:
+        type: String
+        default: '[{}]'
     lastSuccess: Date
     lastImport: Date
     lastAutoImport: Date
@@ -24,22 +29,11 @@ module.exports = Konnector = americano.getModel 'Konnector',
 Konnector.all = (callback) ->
     Konnector.request 'all', (err, konnectors) ->
         konnectors ?= []
-        konnectors.forEach (konnector) -> konnector.injectEncryptedFields()
+        for konnector in konnectors
+            konnector.injectEncryptedFields()
+            if konnector.slug is 'ical_feed'
+                console.log konnector
         callback err, konnectors
-
-
-# Unencrypt password fields and set them as normal fields.
-Konnector::injectEncryptedFields = ->
-    try
-        parsedPasswords = JSON.parse @password
-        @fieldValues[name] = val for name, val of parsedPasswords
-    catch error
-        log.error "Attempt to retrieve password for #{@slug} failed: #{error}"
-        log.error @password
-        log.error "It may be due to an error while unencrypting password field."
-        @fieldValues ?= {}
-        @fieldValues.password = @password
-        @password = password: @password
 
 
 # Return fields registered in the konnector module. If it's not defined,
@@ -51,6 +45,20 @@ Konnector::getFields = ->
         return @fields
 
 
+# Unencrypt password fields and set them as normal fields.
+Konnector::injectEncryptedFields = ->
+    try
+        parsedPasswords = JSON.parse @password
+        @cleanFieldValues()
+        for passwords, i in parsedPasswords
+            if @accounts[i]?
+                @accounts[i][name] = val for name, val of passwords
+    catch error
+        log.error "Attempt to retrieve password for #{@slug} failed: #{error}"
+        log.error @password
+        log.error "It may be due to an error while unencrypting password field."
+
+
 # Remove encrypted fields data from field list. Set password attribute with
 # encrpyted fields data to save them encrypted.
 # The data system by default encrypt the password attribute on every object.
@@ -60,74 +68,93 @@ Konnector::removeEncryptedFields = (fields) ->
         log.warn "Fields variable undefined, use curren one instead."
         fields = @getFields()
 
-    password = {}
-    for name, type of fields when type is "password"
-        password[name] = @fieldValues[name]
-        delete @fieldValues[name]
+    @cleanFieldValues()
+    password = []
+
+    for account in @accounts
+        passwords = {}
+        for name, type of fields when type is "password"
+            passwords[name] = account[name]
+            delete account[name]
+        password.push passwords
+
     @password = JSON.stringify password
 
 
 # Update field values with the one given in parameters.
-Konnector::updateFieldValues = (newKonnector, callback) ->
+Konnector::updateFieldValues = (data, callback) ->
     fields = @getFields()
+    data.accounts ?= []
+    data.accounts.unshift data.fieldValues if data.fieldValues?
 
-    @fieldValues = newKonnector.fieldValues
+    @accounts = data.accounts
     @removeEncryptedFields fields
+    @importInterval = data.importInterval or @importInterval
 
     data =
-        fieldValues: @fieldValues
+        accounts: @accounts
         password: @password
-        importInterval: newKonnector.importInterval or @importInterval
-    @updateAttributes data, callback
+        importInterval: @importInterval
+    @updateAttributes data, (err) =>
+        callback err, @
 
 
-# Run import process for given konnector.
+# Run import process for given konnector. It runs the fetch command for each
+# account set via the accounts attributes.
+# If an error occured on a given import, it stops the process and marks the
+# whole connector with errors.
 Konnector::import = (callback) ->
+
+    @cleanFieldValues()
+
+    async.eachSeries @accounts, (values, next) =>
+        @runImport values, next
+    , (err) =>
+        if err
+            data =
+                isImporting: false
+                lastImport: new Date()
+                importErrorMessage: err.message
+        else
+            data =
+                isImporting: false
+                lastSuccess: new Date()
+                lastImport: new Date()
+                importErrorMessage: null
+
+        @updateAttributes data, (err) ->
+            log.info 'Konnector metadate updated.'
+            callback err
+
+
+Konnector::runImport = (values, callback) ->
     @updateAttributes isImporting: true, (err) =>
 
         if err?
             log.error 'An error occured while modifying konnector state'
             log.raw err
 
-            data =
-                isImporting: false
-                lastImport: new Date()
-            @updateAttributes data, callback
+            callback err
 
         else
             konnectorModule = konnectorHash[@slug]
 
             @injectEncryptedFields()
-            # Pass last import to the konnector
-            @fieldValues['lastSuccess'] = @lastSuccess
-            konnectorModule.fetch @fieldValues, (importErr, notifContent) =>
+            values.lastSuccess = @lastSuccess
+            konnectorModule.fetch values, (importErr, notifContent) =>
                 fields = @getFields()
                 @removeEncryptedFields fields
 
                 if importErr? and \
                 typeof(importErr) is 'object' and \
                 importErr.message?
-                    data =
-                        isImporting: false
-                        importErrorMessage: importErr.message
-                    @updateAttributes data, ->
-                        callback importErr, notifContent
+                    callback importErr, notifContent
 
                 else if importErr? and typeof(importErr) is 'string'
-                    data =
-                        isImporting: false
-                        importErrorMessage: importErr
-                    @updateAttributes data, ->
-                        callback importErr, notifContent
+                    callback importErr, notifContent
 
                 else
-                    data =
-                        isImporting: false
-                        lastSuccess: new Date()
-                        lastImport: new Date()
-                        importErrorMessage: null
-                    @updateAttributes data, (importErr) ->
-                        callback importErr, notifContent
+                    callback null, notifContent
 
 
 # Append data from module file of curent konnector.
@@ -181,3 +208,19 @@ Konnector.getKonnectorsToDisplay = (callback) ->
             catch err
                 log.error 'An error occured while filtering konnectors'
                 callback err
+
+
+# Patch function to move fieldValues field to accounts field. accounts field is
+# different because it's an array of field values (the goal is to allow several
+# accounts instead of one).
+Konnector::cleanFieldValues = (callback) ->
+
+    if @fieldValues?
+        @accounts ?= []
+        @accounts.unshift @fieldValues
+        @fieldValues = null
+
+    if @password? and @password[0] is '{'
+        password = JSON.parse @password
+        @password = JSON.stringify [password]
+

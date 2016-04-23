@@ -11,8 +11,8 @@ module.exports = Bill = cozydb.getModel 'Bill',
     pdfurl: String
     binaryId: String
     fileId: String
+    content: String
 
 
 Bill.all = (callback) ->
     Bill.request 'byDate', callback
-

@@ -42,16 +42,19 @@ logIn = (requiredFields, billInfos, data, next) ->
     options =
         method: 'GET'
         jar: true
+        strictSSL: false
         url: loginUrl
 
 
     # First request to get the cookie
     request options, (err, res, body) ->
-
+        return next err if err?
+        
         loginOptions =
             method: 'POST'
             form: form
             jar: true
+            strictSSL: false
             url: submitUrl
             headers:
                 'Cookie': res.headers['set-cookie']
@@ -71,6 +74,7 @@ logIn = (requiredFields, billInfos, data, next) ->
                 reimbursementOptions =
                     method: 'GET'
                     jar: true
+                    strictSSL: false
                     url: reimbursementUrl
 
                 # Last request to get the reimbursements
@@ -124,6 +128,7 @@ getPdf = (bill, callback) ->
     options =
         method: 'GET'
         jar: true
+        strictSSL: false
         url: detailsUrl
 
     # Request to get the pdf url
