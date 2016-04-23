@@ -52,8 +52,8 @@ module.exports =
             .use(linkBankOperation
                 log: log
                 model: Bill
-                identifier: 'online_net'
-                dateDelta: 4
+                identifier: 'online'
+                dateDelta: 14
                 amountDelta: 0.1
             )
             .args(requiredFields, {}, {})
