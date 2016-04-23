@@ -63,7 +63,7 @@ module.exports = {
     fetcher.new().use(getToken).use(logIn).use(fetchBillingInfo).use(parsePage).use(filterExisting(log, Bill)).use(saveDataAndFile(log, Bill, 'sfr', ['facture'])).use(linkBankOperation, {
       log: log,
       model: Bill,
-      identifier: 'SFR',
+      identifier: 'SFR MOBILE',
       minDateDelta: 4,
       maxDateDelta: 20,
       amountDelta: 0.1

@@ -69,7 +69,7 @@ module.exports = {
     .use(linkBankOperation, {
       log,
       model: Bill,
-      identifier: 'SFR',
+      identifier: 'SFR MOBILE',
       minDateDelta: 4,
       maxDateDelta: 20,
       amountDelta: 0.1,
