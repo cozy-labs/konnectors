@@ -31,8 +31,6 @@ Konnector.all = (callback) ->
         konnectors ?= []
         for konnector in konnectors
             konnector.injectEncryptedFields()
-            if konnector.slug is 'ical_feed'
-                console.log konnector
         callback err, konnectors
 
 

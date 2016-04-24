@@ -21,8 +21,6 @@
     "cozy-slug": "0.2.2",
     "cozydb": "0.1.10",
     "google-auth-library": "0.9.7",
-    "imagemagick-stream": "4.0.1",
-    "is-array": "^1.0.1",
     "jade": "1.11.0",
     "lodash": "4.9.0",
     "moment": "2.12.0",

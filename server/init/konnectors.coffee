@@ -43,7 +43,6 @@ module.exports = (callback) ->
 
     patch060 ->
         Konnector.all (err, konnectors) ->
-            console.log konnector.fieldValues for konnector in konnectors
             if err
                 log.error err
                 callback err

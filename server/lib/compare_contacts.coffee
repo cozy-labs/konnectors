@@ -138,8 +138,10 @@ _union = (a, b) ->
     b = b or []
     return a.concat b.filter (item) -> return a.indexOf(item) < 0
 
+
 _extend = (a, b) ->
     for k, v of b
         if v?
             a[k] = v
     return a
+
