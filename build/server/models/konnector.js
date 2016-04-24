@@ -51,9 +51,6 @@ Konnector.all = function(callback) {
     for (j = 0, len = konnectors.length; j < len; j++) {
       konnector = konnectors[j];
       konnector.injectEncryptedFields();
-      if (konnector.slug === 'ical_feed') {
-        console.log(konnector);
-      }
     }
     return callback(err, konnectors);
   });

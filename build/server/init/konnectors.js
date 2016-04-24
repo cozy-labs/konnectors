@@ -50,11 +50,7 @@ patch060 = function(callback) {
 module.exports = function(callback) {
   return patch060(function() {
     return Konnector.all(function(err, konnectors) {
-      var i, konnector, konnectorHash, len;
-      for (i = 0, len = konnectors.length; i < len; i++) {
-        konnector = konnectors[i];
-        console.log(konnector.fieldValues);
-      }
+      var konnectorHash;
       if (err) {
         log.error(err);
         return callback(err);
