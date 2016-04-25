@@ -18,7 +18,7 @@ const log = require('printit')({
 });
 
 const fileOptions = {
-  vendor: 'Sfrmobile',
+  vendor: 'SFR',
   dateFormat: 'YYYYMMDD',
 };
 
@@ -26,7 +26,7 @@ const Bill = require('../models/bill');
 
 // Konnector
 const connector = module.exports = baseKonnector.createNew({
-  name: 'Sfr mobile',
+  name: 'SFR Mobile',
   fields: {
     login: 'text',
     password: 'password',
