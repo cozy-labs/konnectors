@@ -148,22 +148,22 @@ function parsePage(requiredFields, bills, data, next) {
   next();
 }
 
-function customFilterExisting(requiredFields, entries, data, next) {
-  filterExisting(log, Bill)(requiredFields, entries.bills, data, next);
+function customFilterExisting(requiredFields, bills, data, next) {
+  filterExisting(log, Bill)(requiredFields, bills, data, next);
 }
 
-function customSaveDataAndFile(requiredFields, entries, data, next) {
+function customSaveDataAndFile(requiredFields, bills, data, next) {
   const fnsave = saveDataAndFile(log, Bill, fileOptions, ['bill']);
-  fnsave(requiredFields, entries.bills, data, next);
+  fnsave(requiredFields, bills, data, next);
 }
 
-function buildNotifContent(requiredFields, entries, data, next) {
-  if (entries.bills.filtered.length > 0) {
+function buildNotifContent(requiredFields, bills, data, next) {
+  if (bills.filtered.length > 0) {
     const localizationKey = 'notification sfr box';
     const options = {
-      smart_count: entries.bills.filtered.length,
+      smart_count: bills.filtered.length,
     };
-    entries.notifContent = localization.t(localizationKey, options);
+    bills.notifContent = localization.t(localizationKey, options);
   }
 
   next();
