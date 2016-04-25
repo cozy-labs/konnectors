@@ -1,91 +1,47 @@
 'use strict';
 
-/* global emit */
-
-var cozydb = require('cozydb');
 var request = require('request').defaults({
   jar: true
 });
 var moment = require('moment');
 var cheerio = require('cheerio');
+var baseKonnector = require('../lib/base_konnector');
 
-var fetcher = require('../lib/fetcher');
 var filterExisting = require('../lib/filter_existing');
-var saveDataAndFile = require('../lib/save_data_and_file');
 var localization = require('../lib/localization_manager');
+var saveDataAndFile = require('../lib/save_data_and_file');
 var linkBankOperation = require('../lib/link_bank_operation');
 
 var log = require('printit')({
-  prefix: 'Sfr',
+  prefix: 'Sfr box',
   date: true
 });
 
-var Bill = cozydb.getModel('Bill', {
-  date: Date,
-  type: String,
-  vendor: String,
-  amount: Number,
-  fileId: String,
-  binaryId: String,
-  pdfurl: String
-});
-
-Bill.all = function (callback) {
-  Bill.request('byDate', callback);
+var fileOptions = {
+  vendor: 'Sfrbox',
+  dateFormat: 'YYYYMMDD'
 };
 
-// Konnector
+var Bill = require('../models/bill');
 
-module.exports = {
+// Konnector
+var connector = module.exports = baseKonnector.createNew({
   name: 'Sfr box',
-  slug: 'sfrbox',
-  description: 'konnector description sfr box',
-  vendorLink: 'https://www.sfr.fr/',
   fields: {
     login: 'text',
     password: 'password',
     folderPath: 'folder'
   },
-  models: {
-    bill: Bill
-  },
-
-  // Define model requests.
-  init: function init(callback) {
-    Bill.defineRequest('byDate', function (doc) {
-      emit(doc.date, doc);
-    }, function (err) {
-      callback(err);
-    });
-  },
-  fetch: function fetch(requiredFields, callback) {
-    log.info('Import started');
-    fetcher.new().use(getToken).use(logIn).use(fetchBillingInfo).use(parsePage).use(filterExisting(log, Bill)).use(saveDataAndFile(log, Bill, 'sfr', ['facture'])).use(linkBankOperation, {
-      log: log,
-      model: Bill,
-      identifier: 'SFR FIXE',
-      minDateDelta: 4,
-      maxDateDelta: 20,
-      amountDelta: 0.1
-    }).args(requiredFields, {}, {}).fetch(function (err, fields, entries) {
-      var notifContent = void 0;
-      var localizationKey = void 0;
-      var options = void 0;
-      if (err) return callback(err);
-
-      log.info('Import finished');
-
-      // TODO move this in a procedure.
-      if (entries && entries.filtered && entries.filtered.length > 0) {
-        localizationKey = 'notification sfr box';
-        options = { smart_count: entries.filtered.length };
-        notifContent = localization.t(localizationKey, options);
-      }
-
-      return callback(null, notifContent);
-    });
-  }
-};
+  models: [Bill],
+  fetchOperations: [getToken, logIn, fetchBillingInfo, parsePage, customFilterExisting, customSaveDataAndFile, linkBankOperation({
+    log: log,
+    model: Bill,
+    identifier: 'SFR FIXE',
+    minDateDelta: 4,
+    maxDateDelta: 20,
+    amountDelta: 0.1
+  }), buildNotifContent]
+});
 
 // Procedure to get the login token
 function getToken(requiredFields, bills, data, next) {
@@ -95,7 +51,7 @@ function getToken(requiredFields, bills, data, next) {
     method: 'GET'
   };
 
-  log.info('Getting the token on Sfr Website...');
+  connector.logger.info('Getting the token on Sfr Website...');
 
   request(options, function (err, res, body) {
     if (err) return next(err);
@@ -103,7 +59,7 @@ function getToken(requiredFields, bills, data, next) {
     var $ = cheerio.load(body);
     data.token = $('input[name=lt]').val();
 
-    log.info('Token retrieved');
+    connector.logger.info('Token retrieved');
     return next();
   });
 }
@@ -123,12 +79,12 @@ function logIn(requiredFields, bills, data, next) {
     }
   };
 
-  log.info('Logging in on Sfr website...');
+  connector.logger.info('Logging in on Sfr website...');
 
   request(options, function (err) {
     if (err) return next(err);
 
-    log.info('Successfully logged in.');
+    connector.logger.info('Successfully logged in.');
     return next();
   });
 }
@@ -136,7 +92,7 @@ function logIn(requiredFields, bills, data, next) {
 function fetchBillingInfo(requiredFields, bills, data, next) {
   var url = 'https://espace-client.sfr.fr/facture-fixe/consultation';
 
-  log.info('Fetch bill info');
+  connector.logger.info('Fetch bill info');
   var options = {
     method: 'GET',
     url: url
@@ -147,7 +103,7 @@ function fetchBillingInfo(requiredFields, bills, data, next) {
       log.raw(err);
       return next(err);
     }
-    log.info('Fetch bill info succeeded');
+    connector.logger.info('Fetch bill info succeeded');
 
     data.html = body;
     return next();
@@ -179,6 +135,27 @@ function parsePage(requiredFields, bills, data, next) {
     };
     bills.fetched.push(bill);
   });
-  log.info('Successfully parsed the page');
+  connector.logger.info('Successfully parsed the page');
+  next();
+}
+
+function customFilterExisting(requiredFields, entries, data, next) {
+  filterExisting(log, Bill)(requiredFields, entries.bills, data, next);
+}
+
+function customSaveDataAndFile(requiredFields, entries, data, next) {
+  var fnsave = saveDataAndFile(log, Bill, fileOptions, ['bill']);
+  fnsave(requiredFields, entries.bills, data, next);
+}
+
+function buildNotifContent(requiredFields, entries, data, next) {
+  if (entries.bills.filtered.length > 0) {
+    var localizationKey = 'notification sfr box';
+    var options = {
+      smart_count: entries.bills.filtered.length
+    };
+    entries.notifContent = localization.t(localizationKey, options);
+  }
+
   next();
 }
