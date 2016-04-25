@@ -59,6 +59,14 @@ module.exports =
             colWidths: colWidths
 
         Model.all (err, models) ->
+            models.sort (a, b) ->
+                if a.slug?
+                    a.slug.localeCompare b.slug
+                else if a.date?
+                    a.date > b.date
+                else
+                    a.id > b.id
+
             for model in models
                 if cols.length is 0
                     row = [
