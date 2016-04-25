@@ -34,6 +34,13 @@ Konnector.all = (callback) ->
         callback err, konnectors
 
 
+# Return a konnector for a given key.
+Konnector.get = (slug, callback) ->
+    Konnector.request 'all', (err, konnectors) ->
+        konnector = konnectors.find (konnector) -> konnector.slug is slug
+        callback err, konnector
+
+
 # Return fields registered in the konnector module. If it's not defined,
 # it uses the current fields.
 Konnector::getFields = ->
@@ -156,8 +163,8 @@ Konnector::runImport = (values, callback) ->
 
 
 # Append data from module file of curent konnector.
-Konnector::appendConfigData = ->
-    konnectorData = konnectorHash[@slug]
+Konnector::appendConfigData = (konnectorData) ->
+    konnectorData ?= konnectorHash[@slug]
 
     unless konnectorData?
         msg = "Config data cannot be appended for konnector #{@slug}: " + \
