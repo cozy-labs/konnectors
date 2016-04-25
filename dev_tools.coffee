@@ -37,9 +37,13 @@ else if program.change
         log.info "Changing fields for #{konnectorName} with #{fields}."
         connector.change konnectorName, fields, (err) ->
             if err
+                log.error "Failed to change fields."
                 log.error err
             else
-                log.info "Fields were successfully changed for #{konnectorName}"
+                log.info """
+Fields were successfully changed for #{konnectorName}
+Note: only fields described in the connector file are stored.
+"""
 
     else
         log.error "Field values are required (see --fields option)."
@@ -51,6 +55,7 @@ else if program.import
 
     connector.run konnectorName, (err) ->
         if err
+            log.error "An error occured while trying to run the import."
             log.error err.message
         else
             log.info "Import is finished."
@@ -67,8 +72,11 @@ else if program.show or program.delete
 
     if program.delete
         modelName = program.delete
-        data.delete modelName, ->
-            log.info 'All models were destroyed.'
+        data.delete modelName, (err) ->
+            if err
+                log.info 'Destroying models failed.'
+            else
+                log.info 'All models were destroyed.'
 
     else if program.show
         modelName = program.show

@@ -1,7 +1,5 @@
 path = require 'path'
-Konnector = require '../server/models/konnector'
-konnectorMap = require '../server/lib/konnector_hash'
-initKonnectors = require '../server/init/konnectors'
+cozydb = require 'cozydb'
 
 log = require('printit')
     prefix: 'Konnector dev tool'
@@ -10,44 +8,30 @@ log = require('printit')
 # Display most important fields of a konnector. It hides the password
 # in case some are stored in the field values of the connector.
 displayKonnector = (konnector) ->
+    konnector.removeEncryptedFields()
     data =
         slug: konnector.slug
-        fieldValues: konnector.fieldValues
+        accounts: konnector.accounts
         fields: konnector.fields
         lastSuccess: konnector.lastSuccess
         lastImport: konnector.lastImport
         isImporting: konnector.isImporting
         importInterval: konnector.importInterval
         importErrorMessage: konnector.importErrorMessage
+    console.log data
 
     log.lineBreak()
-    for key, value of data
-        if key is 'fieldValues'
-            console.log "fieldValues:"
-            for fieldKey, fieldValue of value
-                if fieldKey isnt 'password'
-                    console.log "    #{fieldKey}: #{fieldValue}"
-                else
-                    console.log "    #{fieldKey}: *******"
-        else
-            if key isnt 'password'
-                console.log "#{key}: #{value}"
-            else
-                console.log "#{key}: ******"
-    log.lineBreak()
-
 
 module.exports =
 
 
     # Run an import to avoid running the full web app.
     run: (konnectorName, callback) ->
-        Konnector.all (err, konnectors) ->
-            konnectorHash = {}
-            for konnector in konnectors
-                konnectorHash[konnector.slug] = konnector
-
-            konnector = konnectorHash[konnectorName]
+        Konnector = require '../server/models/konnector'
+        konnectorConfig = require "../server/konnectors/#{konnectorName}"
+        Konnector.get konnectorName, (err, konnector) ->
+            return callback err if err
+            konnector.appendConfigData konnectorConfig
 
             if not konnector?
                 callback new Error "Konnector not found."
@@ -65,11 +49,12 @@ module.exports =
     # Expected format for fields is an array of string following this syntax:
     # ["key1:value1", "key2:value2"]
     change: (konnectorName, fields, callback) ->
-        fieldValues = {}
+        account = {}
         for field in fields
             [key, value] = field.split(':')
-            fieldValues[key] = value
+            account[key] = value
 
+        Konnector = require '../server/models/konnector'
         Konnector.all (err, konnectors) ->
             return callback err if err
 
@@ -77,12 +62,12 @@ module.exports =
                 konnector.slug is konnectorName
             konnectorMetaData = konnectorMap[konnector.slug]
 
-            for key, value of fieldValues
+            for key, value of account
                 unless konnectorMetaData.fields[key]
-                    delete fieldValues[key]
+                    delete account[key]
 
             if konnector
-                konnector.updateAttributes {fieldValues}, callback
+                konnector.updateAttributes accounts: [account], callback
             else
                 callback new Error(
                     "Can't find given konnector (slug expected).")
@@ -91,6 +76,7 @@ module.exports =
     # Display konnector information stored in the database. It helps debugging
     # by ensuring that values are properly set.
     display: (konnectorName, callback) ->
+        Konnector = require '../server/models/konnector'
         Konnector.all (err, konnectors) ->
             if konnectorName
                 konnector = konnectors.find (konnector) ->
@@ -101,5 +87,9 @@ module.exports =
             callback()
 
 
-    init: initKonnectors
+    init: (callback) ->
+        initKonnectors = require '../server/init/konnectors'
+        cozydb.configure {}, null, ->
+            initKonnectors ->
+                callback()
 

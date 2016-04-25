@@ -44,9 +44,14 @@ describe.skip 'Testing konnector controller', ->
             it 'When the import function is called', (done) ->
                 Konnector.all (err, body) =>
                     for konnector in body when konnector.slug is 'free'
-                        konnector.fieldValues = "login": "test", "password": "password", "date": "", 'folderPath': ""
+                        konnector.accounts = [
+                            login: "test"
+                            password: "password"
+                            folderPath: ""
+                        ]
+                        konnector.date = ''
                         konnector.importInterval = 'none'
-                        konnector.password = '{"password": "password"}'
+                        konnector.password = '[{"password": "password"}]'
                         @id = konnector.id
                         client.put "konnectors/#{konnector.id}", konnector, (err, res, body) =>
                             @body = body
@@ -107,9 +112,14 @@ describe.skip 'Testing konnector controller', ->
             it 'When import function is called', (done) ->
                 Konnector.all (err, body) =>
                     for konnector in body when konnector.slug is 'free'
-                        konnector.fieldValues = "login": "test", "password": "password", "date": "", 'folderPath': ""
+                        konnector.accounts = [
+                            login: "test"
+                            password: "password"
+                            folderPath: ""
+                        ]
+                        konnector.date = ''
                         konnector.importInterval = 'day'
-                        konnector.password = '{"password": "password"}'
+                        konnector.password = '[{"password": "password"}]'
                         @id = konnector.id
                         client.put "konnectors/#{konnector.id}", konnector, (err, res, body) =>
                             @body = body
@@ -213,7 +223,12 @@ describe.skip 'Testing konnector controller', ->
             it 'When the konnector is created', (done) ->
                 Konnector.all (err, body) =>
                     for konnector in body when konnector.slug is 'free'
-                        konnector.fieldValues = "login": "test", "password": "password", "date": "03/01/1970", 'folderPath': ""
+                        konnector.accounts = [
+                            login: "test"
+                            password: "password"
+                            folderPath: ""
+                        ]
+                        konnector.date "03/01/1970"
                         konnector.importInterval = 'day'
                         konnector.password = '{"password": "password"}'
                         @id = konnector.id

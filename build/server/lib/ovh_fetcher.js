@@ -81,19 +81,21 @@ OVHFetcher = (function() {
     Konnector = require('../models/konnector');
     return Konnector.all((function(_this) {
       return function(err, konnectors) {
-        var fieldValues, ovhKonnector;
+        var accounts, ovhKonnector;
         if (err) {
           return callback(err);
         }
         ovhKonnector = (konnectors.filter(function(konnector) {
           return konnector.slug === _this.slug;
         }))[0];
-        fieldValues = {
-          loginUrl: url,
-          token: token
-        };
+        accounts = [
+          {
+            loginUrl: url,
+            token: token
+          }
+        ];
         return ovhKonnector.updateAttributes({
-          fieldValues: fieldValues
+          accounts: accounts
         }, callback);
       };
     })(this));

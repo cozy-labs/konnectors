@@ -41,7 +41,7 @@ module.exports = {
     var data;
     data = {
       lastAutoImport: null,
-      fieldValues: {},
+      accounts: [],
       password: '{}'
     };
     return req.konnector.updateAttributes(data, function(err, konnector) {
@@ -58,11 +58,11 @@ module.exports = {
         message: 'konnector is importing'
       });
     } else {
-      if (req.body.fieldValues.date != null) {
-        if (req.body.fieldValues.date !== '') {
-          date = req.body.fieldValues.date;
+      if (req.body.date != null) {
+        if (req.body.date !== '') {
+          date = req.body.date;
         }
-        delete req.body.fieldValues.date;
+        delete req.body.date;
       }
       return req.konnector.updateFieldValues(req.body, function(err) {
         var poller;

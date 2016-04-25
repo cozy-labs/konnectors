@@ -53,7 +53,7 @@ File.isPresent = function(fullPath, callback) {
 };
 
 File.createNew = function(fileName, path, url, tags, callback) {
-  var attachBinary, data, filePath, index, now, options, stream;
+  var attachBinary, data, filePath, now, options, stream;
   now = moment().toISOString();
   filePath = "/tmp/" + fileName;
   data = {
@@ -65,16 +65,6 @@ File.createNew = function(fileName, path, url, tags, callback) {
     "class": 'document',
     mime: 'application/pdf'
   };
-  index = function(newFile) {
-    return newFile.index(["name"], function(err) {
-      if (err && Object.keys(err).length !== 0) {
-        log.error(err);
-      }
-      return File.find(newFile.id, function(err, file) {
-        return callback(err, file);
-      });
-    });
-  };
   attachBinary = function(newFile) {
     return newFile.attachBinary(filePath, {
       "name": "file"
@@ -84,7 +74,9 @@ File.createNew = function(fileName, path, url, tags, callback) {
         return callback(err);
       } else {
         return fs.unlink(filePath, function() {
-          return index(newFile);
+          return File.find(newFile.id, function(err, file) {
+            return callback(err, file);
+          });
         });
       }
     });

@@ -8,6 +8,9 @@ h2.name
 
 .description!= t(model.description)
 .fields
+div
+    button.small#add-button #{t('add an account')}
+    button.small#remove-button #{t('remove last account')}
 .buttons
     button#import-button #{t('save and import')}
 

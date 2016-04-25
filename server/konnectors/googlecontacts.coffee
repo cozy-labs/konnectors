@@ -154,12 +154,15 @@ saveTokensInKonnector = (requiredFields, entries, data, callback) ->
         return callback err if err
         konnector = konnectors.filter((k) -> k.slug is'googlecontacts')[0]
 
-        konnector.fieldValues['accountName'] = requiredFields.accountName
-        konnector.fieldValues['accessToken'] = requiredFields.accessToken
-        konnector.fieldValues['refreshToken'] = requiredFields.refreshToken
-        konnector.fieldValues['authCode'] = requiredFields.authCode
+        accounts = [
+            accountName: requiredFields.accountName
+            accessToken: requiredFields.accessToken
+            refreshToken: requiredFields.refreshToken
+            authCode: requiredFields.authCode
+        ]
 
-        konnector.save callback
+        konnector.updateAttributes {accounts}, callback
+
 
 # Fetch changes in google contacts since last successfull fetch.
 fetchGoogleChanges = (requiredFields, entries, data, callback) ->

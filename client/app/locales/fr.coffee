@@ -59,6 +59,8 @@ module.exports =
     'konnector description free mobile': "Téléchargez toutes vos factures Free Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description bouygues': "Téléchargez toutes vos factures téléphones de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description bouygues box': "Téléchargez toutes vos factures internet de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description sfr box': "Téléchargez toutes vos factures internet de Sfr. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description sfr mobile': "Téléchargez toutes vos factures internet de Sfr. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description github': "Téléchargez toutes vos factures Github. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description github commits': "Sauvegardez les informations de tous vos commits Github."
     'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone."
@@ -150,6 +152,8 @@ module.exports =
     'notification sncf bills': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification sncf events creation': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés."
     'notification sncf events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
+    'notification sfr box': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification sfr mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
 
     "konnector birthdays birthday": "Anniversaire de"
 

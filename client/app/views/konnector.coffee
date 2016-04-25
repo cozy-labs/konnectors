@@ -10,6 +10,8 @@ module.exports = class KonnectorView extends BaseView
 
     events:
         "click #import-button": "onImportClicked"
+        "click #add-button": "onAddClicked"
+        "click #remove-button": "onRemoveClicked"
         "click #delete-button": "onDeleteClicked"
 
     subscriptions:
@@ -26,7 +28,7 @@ module.exports = class KonnectorView extends BaseView
     afterRender: =>
 
         slug = @model.get 'slug'
-        values = @model.get 'fieldValues' or {}
+        @values ?= @model.get('accounts') or [{}]
         errorMessage = @model.get 'importErrorMessage'
 
         @$el.addClass "konnector-#{slug}"
@@ -38,18 +40,27 @@ module.exports = class KonnectorView extends BaseView
         else if errorMessage
             @showErrors t errorMessage
 
-        values ?= {}
+        @values.push {} if @values.length is 0
+
+        # Create an account line for each set of values.
+        end = @values.length - 1
+        for i, values of @values
+            @renderValues values, slug, i
+            @$('.fields').append '<hr/>' if i isnt end
+
+        @addIntervalWidget slug
+
+
+    renderValues: (values, slug, index) =>
         for name, val of @model.get 'fields'
             values[name] ?= ""
 
-            @addFieldWidget slug, name, val, values
+            @addFieldWidget slug, name, val, values, index
 
             # If the widget added is a folder selector, we add a change
             # listener that will change the open folder button link every time
             # the selector is changed.
-            @configureFolderInput slug, name if val is 'folder'
-
-        @addIntervalWidget slug
+            @configureFolderInput slug, name, index if val is 'folder'
 
 
     # Show import status and enable/disable the import button depending on this
@@ -59,8 +70,8 @@ module.exports = class KonnectorView extends BaseView
         isImporting = @model.get 'isImporting'
         lastImport = @model.get 'lastImport'
 
+        @$('.last-import').html t('importing...')
         if isImporting
-            @$('.last-import').html t('importing...')
             @disableImportButton()
 
         else if lastImport?
@@ -97,6 +108,54 @@ module.exports = class KonnectorView extends BaseView
         @$('.error').hide()
 
 
+    # When add button is clicked, it grabs account values currently set in
+    # fields. Then, it adds an empty account to this list. The empty account
+    # will lead the rendering operation to a new set of fields. Such, the user
+    # will be able to configure a new account.
+    onAddClicked: ->
+        values = []
+        for i in [0..(@values.length - 1)]
+            values.push @getFieldValues i
+        values.push {}
+        @values = values
+
+        @render()
+        @$('#add-button').hide() if @values.length > 4
+
+
+    # When remove button is clicked, it grabs account values currently set in
+    # fields. Then, it removes last account from this list. It will lead
+    # the rendering to remove the fields for the last account.
+    onRemoveClicked: ->
+        values = []
+        for i in [0..(@values.length - 1)]
+            values.push @getFieldValues i
+        values.pop()
+        @values = values
+
+        @render()
+        @$('#add-button').hide() if @values.length > 4
+
+
+
+    # Get values for account located at given index.
+    getFieldValues: (index) ->
+        slug = @model.get 'slug'
+        fieldValues = {}
+
+        for name, val of @model.get 'fields'
+
+            # For folder fields, it requires to convert the value (a folder
+            # id) to a folder path.
+            if val is 'folder'
+                fieldValues[name] = @getFolderPath slug, name, index
+
+            # For simple fields, just get the value of the field.
+            else
+                fieldValues[name] = $("##{slug}-#{name}#{index}-input").val()
+        fieldValues
+
+
     # Grab data from field. Make data compatible with expected konnector input.
     # Then ask to the backend to run the import.
     onImportClicked: ->
@@ -104,23 +163,13 @@ module.exports = class KonnectorView extends BaseView
         # Don't restart the import if an import is running.
         unless @model.get 'isImporting'
             slug = @model.get 'slug'
-            importDate = $("##{slug}-import-date").val()
+            date = $("##{slug}-import-date").val()
 
             @hideErrors()
-
-            fieldValues =
-                date: importDate
-
-            for name, val of @model.get 'fields'
-
-                # For folder fields, it requires to convert the value (a folder
-                # id) to a folder path.
-                if val is 'folder'
-                    fieldValues[name] = @getFolderPath slug, name
-
-                # For simple fields, just get the value of the field.
-                else
-                    fieldValues[name] = $("##{slug}-#{name}-input").val()
+            accounts = []
+            for i, values of @values
+                accounts.push @getFieldValues i
+            @values = accounts
 
             # Auto import interval and start date work separately from field
             # values
@@ -131,8 +180,9 @@ module.exports = class KonnectorView extends BaseView
             @disableImportButton()
 
             # Save field values and start importing data.
-            data = {fieldValues, importInterval}
+            data = {accounts, importInterval, date}
             @model.set 'isImporting': true
+
             @model.save data,
                 success: (model, success) ->
                     # Success is handled via the realtime engine.
@@ -151,8 +201,8 @@ module.exports = class KonnectorView extends BaseView
 
     # Get folder id from the current value of given folder field. Then convert
     # it to the folder path. Finally it returns the converted value.
-    getFolderPath: (slug, name) ->
-        id = $("##{slug}-#{name}-input").val()
+    getFolderPath: (slug, name, index) ->
+        id = $("##{slug}-#{name}#{index}-input").val()
         value = ''
         path = _.findWhere(@paths, id: id)
         value = path.path if path?
@@ -161,8 +211,8 @@ module.exports = class KonnectorView extends BaseView
 
     # Add a change listener to update the "open folder" link each time
     # the selected folder changes.
-    configureFolderInput: (slug, name) ->
-        input = @$("##{slug}-#{name}-input")
+    configureFolderInput: (slug, name, index) ->
+        input = @$("##{slug}-#{name}#{index}-input")
         input.change ->
             id = input.val()
             folderButton = input.parent().parent().find(".folder-link")
@@ -170,19 +220,19 @@ module.exports = class KonnectorView extends BaseView
             folderButton.attr 'href', link
 
 
-    addFieldWidget: (slug, name, val, values) ->
+    addFieldWidget: (slug, name, val, values, index) ->
         if val is 'label'
             fieldHtml = """
 <div class="field line #{'hidden' if val is 'hidden'}">
-    <label for="#{slug}-#{name}-input">#{t(name)} : </label>
-    <b id="#{slug}-#{name}-input" >#{values[name]}</b>
+    <label for="#{slug}-#{name}#{index}-input">#{t(name)} : </label>
+    <b id="#{slug}-#{name}#{index}-input" >#{values[name]}</b>
 </div>
 """
         else if val is 'link'
             fieldHtml = """
 <div class="field line #{'hidden' if val is 'hidden'}">
-    <label for="#{slug}-#{name}-input">#{t(name)} : </label>
-    <a target="_blank" href="#{values[name]}" id="#{slug}-#{name}-input" >
+    <label for="#{slug}-#{name}#{index}-input">#{t(name)} : </label>
+    <a target="_blank" href="#{values[name]}" id="#{slug}-#{name}#{index}-input" >
         #{values[name]}
     </a>
 </div>
@@ -190,14 +240,14 @@ module.exports = class KonnectorView extends BaseView
         else
             fieldHtml = """
 <div class="field line #{'hidden' if val is 'hidden'}">
-<div><label for="#{slug}-#{name}-input">#{t(name)}</label></div>
+<div><label for="#{slug}-#{name}#{index}-input">#{t(name)}</label></div>
 """
 
             if val is 'folder'
 
                 # Add a widget to select given folder.
                 fieldHtml += """
-<div><select id="#{slug}-#{name}-input" class="folder"">
+<div><select id="#{slug}-#{name}#{index}-input" class="folder"">
 """
                 selectedPath = path: '', id: ''
                 pathName = values[name]
@@ -231,7 +281,7 @@ target="_blank">
 
             else
                 fieldHtml += """
-<div><input id="#{slug}-#{name}-input" type="#{val}"
+<div><input id="#{slug}-#{name}#{index}-input" type="#{val}"
 
         value="#{values[name]}" #{'readonly' if val is 'readonly'} /></div>
 </div>
@@ -337,7 +387,7 @@ target="_blank">
             else
                 alert t 'konnector deleted'
                 @model.set 'lastAutoImport', null
-                @model.set 'fieldValues', {}
+                @model.set 'accounts', [{}]
                 @model.set 'password', '{}'
                 window.router.navigate '', trigger: true
 
@@ -351,3 +401,4 @@ target="_blank">
 
         @model.set 'importErrorMessage', errorMessage
         @showErrors errorMessage
+

@@ -74,7 +74,6 @@ module.exports =
                 return callback err if err
                 log.info "Import finished"
 
-                # TODO move this in a procedure.
                 notifContent = null
                 if entries?.filtered?.length > 0
                     localizationKey = 'notification bouygues'

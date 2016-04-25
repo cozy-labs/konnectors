@@ -109,9 +109,6 @@ class KonnectorPoller
     createTimeout: (konnector, nextUpdate) ->
         now = moment()
         interval = nextUpdate.diff now.clone(), 'ms'
-        #console.log nextUpdate.format 'DD-MM-YYYY'
-        #console.log now.format 'DD-MM-YYYY'
-        #console.log interval
         if interval < day
             @startTimeout konnector, interval
 
@@ -138,7 +135,7 @@ class KonnectorPoller
     create: (konnector, nextUpdate) ->
         @nextUpdates[konnector.slug] = [nextUpdate, konnector]
 
-        log.info "#{konnector.slug} : Next update #{nextUpdate.format(format)}"
+        log.info "#{konnector.slug}: Next update #{nextUpdate.format(format)}"
         @createTimeout konnector, nextUpdate
 
 

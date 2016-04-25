@@ -194,7 +194,7 @@ describe.skip 'Testing konnector poller', ->
                         for konnector in body when konnector.slug is 'free'
                             konnector.importInterval = 'week'
                             konnector.lastAutoImport = moment().format()
-                            konnector.fieldValues = {}
+                            konnector.accounts = [{}]
                             poller.add null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
@@ -230,7 +230,7 @@ describe.skip 'Testing konnector poller', ->
                         for konnector in body when konnector.slug is 'free'
                             konnector.importInterval = 'day'
                             konnector.lastAutoImport = moment().format()
-                            konnector.fieldValues = {}
+                            konnector.accounts = [{}]
                             poller.add null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
@@ -266,7 +266,7 @@ describe.skip 'Testing konnector poller', ->
                         for konnector in body when konnector.slug is 'free'
                             konnector.importInterval = 'hour'
                             konnector.lastAutoImport = moment().format()
-                            konnector.fieldValues = {}
+                            konnector.accounts = [{}]
                             poller.add null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()
@@ -301,7 +301,7 @@ describe.skip 'Testing konnector poller', ->
                         for konnector in body when konnector.slug is 'free'
                             konnector.importInterval = 'month'
                             konnector.lastAutoImport = moment().format()
-                            konnector.fieldValues = {}
+                            konnector.accounts = [{}]
                             poller.add null, konnector, () =>
                                 @spy.callCount.should.equal 0
                                 done()

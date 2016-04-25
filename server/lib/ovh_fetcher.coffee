@@ -68,10 +68,11 @@ class OVHFetcher
             ovhKonnector = (konnectors.filter (konnector) =>
                 konnector.slug is @slug)[0]
 
-            fieldValues =
+            accounts = [
                 loginUrl: url
                 token: token
-            ovhKonnector.updateAttributes {fieldValues}, callback
+            ]
+            ovhKonnector.updateAttributes {accounts}, callback
 
 
     needToConnectFirst: (requiredFields, callback) =>

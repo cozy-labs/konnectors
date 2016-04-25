@@ -156,6 +156,5 @@ billviewer?invoiceId="+billID+ "&contractAccountID="+data.clientID
                 vendor: 'Electrabel'
                 pdfurl: pdfUrl
                 type: 'energy'
-            #console.log bill
             bills.fetched.push bill
     next()
