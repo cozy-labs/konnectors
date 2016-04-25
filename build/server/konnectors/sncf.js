@@ -1,10 +1,10 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
 
 var async = require('async');
 var cheerio = require('cheerio');
-var moment = require('moment');
+var moment = require('moment-timezone');
 var request = require('request');
 
 var baseKonnector = require('../lib/base_konnector');
@@ -169,7 +169,7 @@ function getEvents(uri, events, callback) {
     // This is a page composed of many orders.
     // Recursively fetch them individually.
     if ($subOrders.length !== 0) {
-      var _ret = function () {
+      var _ret = (function () {
         var subOrdersUris = [];
         $subOrders.each(function forEachSubOrders() {
           var $subOrder = $(this);
@@ -181,7 +181,7 @@ function getEvents(uri, events, callback) {
             getEvents(subOrderUri, events, cb);
           }, callback)
         };
-      }();
+      })();
 
       if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
     }
@@ -242,19 +242,23 @@ function getEvents(uri, events, callback) {
           var moreInfo = moreInfos[passenger].shift();
           // Sometimes we don't have "more informations" for all travels
           if (moreInfo) {
-            details += passenger + ': ' + moreInfo.fare + ' - ' + moreInfo.placeDetails;
+            details += passenger + ': ' + moreInfo.fare + ' - ' + moreInfo.place_details;
           }
         });
 
         var momentFormat = 'DD MMMM YYYY HH mm';
+        // SNCF is in the french timezone
+        var momentZone = 'Europe/Paris';
+
         var event = {
           description: description,
           details: details,
           id: date + trainType + trainNumber,
-          start: moment(date + ' ' + beginHour, momentFormat),
-          end: moment(date + ' ' + arrivalHour, momentFormat),
+          start: moment.tz(date + ' ' + beginHour, momentFormat, momentZone).toISOString(),
+          end: moment.tz(date + ' ' + arrivalHour, momentFormat, momentZone).toISOString(),
           place: beginStation
         };
+
         events.push(event);
       });
     });

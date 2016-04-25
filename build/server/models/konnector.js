@@ -56,6 +56,16 @@ Konnector.all = function(callback) {
   });
 };
 
+Konnector.get = function(slug, callback) {
+  return Konnector.request('all', function(err, konnectors) {
+    var konnector;
+    konnector = konnectors.find(function(konnector) {
+      return konnector.slug === slug;
+    });
+    return callback(err, konnector);
+  });
+};
+
 Konnector.prototype.getFields = function() {
   var ref;
   if (konnectorHash[this.slug] != null) {
@@ -207,9 +217,11 @@ Konnector.prototype.runImport = function(values, callback) {
   })(this));
 };
 
-Konnector.prototype.appendConfigData = function() {
-  var key, konnectorData, match, modelNames, msg, name, ref, value;
-  konnectorData = konnectorHash[this.slug];
+Konnector.prototype.appendConfigData = function(konnectorData) {
+  var key, match, modelNames, msg, name, ref, value;
+  if (konnectorData == null) {
+    konnectorData = konnectorHash[this.slug];
+  }
   if (konnectorData == null) {
     msg = ("Config data cannot be appended for konnector " + this.slug + ": ") + "missing config file.";
     throw new Error(msg);

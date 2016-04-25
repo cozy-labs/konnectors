@@ -20,6 +20,7 @@
     "clean-css-brunch": "> 1.0 < 1.5",
     "coffee-script-brunch": "> 1.0 < 1.5",
     "css-brunch": "> 1.0 < 1.5",
+    "jade": "^1.11.0",
     "jade-brunch": "> 1.0 < 1.5",
     "javascript-brunch": "> 1.0 < 1.5",
     "stylus-brunch": "> 1.0 < 1.5",

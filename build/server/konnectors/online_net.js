@@ -56,8 +56,8 @@ module.exports = {
     return fetcher["new"]().use(logIn).use(parsePage).use(filterExisting(log, Bill)).use(saveDataAndFile(log, Bill, fileOptions, ['bill'])).use(linkBankOperation({
       log: log,
       model: Bill,
-      identifier: 'online_net',
-      dateDelta: 4,
+      identifier: 'online',
+      dateDelta: 14,
       amountDelta: 0.1
     })).args(requiredFields, {}, {}).fetch(function(err, fields, entries) {
       var localizationKey, notifContent, options, ref;
