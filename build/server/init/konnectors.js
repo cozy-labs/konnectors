@@ -79,7 +79,7 @@ module.exports = function(callback) {
 konnectorResetValue = function(konnector, callback) {
   var data;
   if (konnector.isImporting || konnector.fieldValues) {
-    log.info("Reseting isImporting field for " + slug + "...");
+    log.info("Reseting isImporting field for " + konnector.slug + "...");
     konnector.cleanFieldValues();
     data = {
       isImporting: false
