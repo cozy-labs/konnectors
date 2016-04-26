@@ -69,7 +69,7 @@ module.exports = (callback) ->
 konnectorResetValue = (konnector, callback) ->
 
     if konnector.isImporting or konnector.fieldValues
-        log.info "Reseting isImporting field for #{slug}..."
+        log.info "Reseting isImporting field for #{konnector.slug}..."
         konnector.cleanFieldValues()
         data =
             isImporting: false
