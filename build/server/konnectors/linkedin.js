@@ -357,8 +357,8 @@ function retrieveAndSaveContacts(requiredFields, entries, data, done) {
  * Create the notification content bases on a given set of statistics
  */
 function createNotificationContent(requiredFields, entries, data, next) {
-  var localizationkey = undefined;
-  var options = undefined;
+  var localizationkey = void 0;
+  var options = void 0;
   var stats = entries.contactStats;
 
   // create the notification

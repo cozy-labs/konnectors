@@ -15,6 +15,7 @@ module.exports =
     'login': 'Identifiant'
     'password': 'Mot de passe'
     'email': 'Mail'
+    'bank_identifier': 'Identifiant bancaire'
     'accessToken': 'Access token'
     'accessTokenSecret': 'Access token secret'
     'consumerKey': 'Consumer Key'
