@@ -112,9 +112,9 @@ Konnector::import = (callback) ->
 
     @cleanFieldValues()
 
-    async.eachSeries @accounts, (values, next) =>
+    async.mapSeries @accounts, (values, next) =>
         @runImport values, next
-    , (err) =>
+    , (err, notifContents) =>
         if err
             data =
                 isImporting: false
@@ -129,7 +129,7 @@ Konnector::import = (callback) ->
 
         @updateAttributes data, (err) ->
             log.info 'Konnector metadate updated.'
-            callback err
+            callback err, notifContents
 
 
 Konnector::runImport = (values, callback) ->
