@@ -162,8 +162,7 @@ customLinkBankOperation = (requiredFields, healthBills, data, next) ->
             identifier: if requiredFields.bank_identifier == "" then 'C.P.A.M.' else requiredFields.bank_identifier
             dateDelta: 10
             amountDelta: 0.1
-    )
-    next()
+    )(requiredFields, healthBills, data, next)
 
 fileOptions =
     vendor: 'ameli'

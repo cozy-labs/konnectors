@@ -163,14 +163,13 @@ buildNotification = function(requiredFields, healthBills, data, next) {
 };
 
 customLinkBankOperation = function(requiredFields, healthBills, data, next) {
-  linkBankOperation({
+  return linkBankOperation({
     log: log,
     model: Bill,
     identifier: requiredFields.bank_identifier === "" ? 'C.P.A.M.' : requiredFields.bank_identifier,
     dateDelta: 10,
     amountDelta: 0.1
-  });
-  return next();
+  })(requiredFields, healthBills, data, next);
 };
 
 fileOptions = {
