@@ -32,7 +32,8 @@ module.exports =
     'authCode': "Auth code"
     'accountName': "Nom du compte"
     'date format': 'DD/MM/YYYY [à] HH[h]mm'
-
+    'add an account': "Ajouter un compte"
+    'remove last account': "Supprimer le dernier compte"
 
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.
@@ -59,8 +60,8 @@ module.exports =
     'konnector description free mobile': "Téléchargez toutes vos factures Free Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description bouygues': "Téléchargez toutes vos factures téléphones de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description bouygues box': "Téléchargez toutes vos factures internet de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
-    'konnector description sfr box': "Téléchargez toutes vos factures internet de Sfr. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
-    'konnector description sfr mobile': "Téléchargez toutes vos factures internet de Sfr. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description sfr_box': "Téléchargez toutes vos factures internet de SFR. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description sfr_mobile': "Téléchargez toutes vos factures internet de SFR. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description github': "Téléchargez toutes vos factures Github. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description github commits': "Sauvegardez les informations de tous vos commits Github."
     'konnector description jawbone': "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone."
@@ -117,6 +118,7 @@ module.exports =
     'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts (seulement les contacts taggés avec le tag donné seront pris en compte."
     'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy."
     'konnector description sncf': "Importez vos factures et événements SNCF dans votre Cozy."
+    'konnector description doctolib': "Importez vos rendez-vous Doctolib dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
@@ -152,9 +154,10 @@ module.exports =
     'notification sncf bills': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification sncf events creation': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés."
     'notification sncf events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
-    'notification sfr box': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification sfr mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-
+    'notification sfr_box': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification sfr_mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification doctolib creation': "%{smart_count} nouveau rendez-vous importé |||| %{smart_count} nouveaux rendez-vous importés"
+    'notification doctolib update': "%{smart_count} rendez-vous mis à jour |||| %{smart_count} rendez-vous mis à jour"
     "konnector birthdays birthday": "Anniversaire de"
 
     "konnector sncf reference": "Référence"

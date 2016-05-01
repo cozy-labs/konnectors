@@ -32,6 +32,8 @@ module.exports =
     'authCode': "Auth code"
     'accountName': "Account name"
     'date format': 'LLL'
+    'add an account': "Add an account"
+    'remove last account': "Remove last account"
 
     'home headline': """
     With Konnectors you can retrieve many data and save them into your Cozy.
@@ -56,8 +58,8 @@ module.exports =
     'konnector description free mobile': "Download all your phone bills from Free Mobile. This konnector requires the Files application to store the bill PDF files."
     'konnector description bouygues': "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
     'konnector description bouygues box': "Download all your internet bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files."
-    'konnector description sfr box': "Download all your internet bills from Sfr or Red. This konnector requires the Files application to store the bill PDF files."
-    'konnector description sfr mobile': "Download all your mobile bills from Sfr or Red. This konnector requires the Files application to store the bill PDF files."
+    'konnector description sfr_box': "Download all your internet bills from SFR or Red. This konnector requires the Files application to store the bill PDF files."
+    'konnector description sfr_mobile': "Download all your mobile bills from SFR or Red. This konnector requires the Files application to store the bill PDF files."
     'konnector description github': "Download all your Github Bills. This konnector requires the Files application to store the bill PDF files."
     'konnector description github commits': "Save infos from all your Github Commits."
     'konnector description jawbone': "Download Move and Sleep Data from Jawbone CSV file."
@@ -113,6 +115,7 @@ module.exports =
     'konnector description linkedin': "Import your Linkedin contacts in your Cozy."
     'konnector description ameli': "Import your Ameli reimbursements in your Cozy."
     'konnector description sncf': "Import your SNCF bills and events in your Cozy."
+    'konnector description doctolib': "Import you Doctolib appointments in you Cozy."
     'konnector customview googlecontacts 4': "Initialize or reset this konnector"
     'konnector customview googlecontacts 1': "1. Press \"connect your google account\" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step."
     'konnector customview googlecontacts 2': "Connect your Google account"
@@ -151,8 +154,10 @@ module.exports =
     'notification sncf bills': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification sncf events creation': "%{smart_count} new event imported |||| %{smart_count} new events imported"
     'notification sncf events update': "%{smart_count} new event updated |||| %{smart_count} new events updated"
-    'notification sfr box': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
-    'notification sfr mobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification sfr_box': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification sfr_mobile': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification doctolib creation': "%{smart_count} new event imported |||| %{smart_count} new events imported"
+    'notification doctolib update': "%{smart_count} event updated |||| %{smart_count} events updated"
 
     "konnector birthdays birthday": "Birthday of"
 
