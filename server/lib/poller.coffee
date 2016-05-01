@@ -155,7 +155,7 @@ class KonnectorPoller
 
                 # Next import will start at start date.
                 data =
-                    lastAutoImport: moment(startDate).toDate()
+                    lastAutoImport: moment(startDate, 'DD-MM-YYYY').toDate()
                     importInterval: konnector.importInterval
                 fields = konnectorHash[konnector.slug]
                 konnector.removeEncryptedFields fields
