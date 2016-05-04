@@ -40,7 +40,7 @@ module.exports =
     """
     'home config step 1': "Sélectionnez un connecteur dans le menu à gauche"
     'home config step 2': "Suivez les instructions pour le configurer"
-    'home config step 3': "Vos données sont récupérées et intégrer à votre Cozy"
+    'home config step 3': "Vos données sont récupérées et intégrées à votre Cozy"
 
     'home more info': "Quelques informations supplémentaires :"
     'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique"
