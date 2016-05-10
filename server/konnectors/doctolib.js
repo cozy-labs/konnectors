@@ -137,7 +137,7 @@ function saveEvents(requiredFields, entries, data, next) {
   entries.nbUpdates = 0;
   async.eachSeries(entries.events, icalEvent => {
     icalEvent.caldavuri = icalEvent.id;
-    icalEvent.docType = "Event";
+    icalEvent.docType = 'Event';
     delete icalEvent._id;
     delete icalEvent._attachments;
     delete icalEvent._rev;
@@ -183,7 +183,6 @@ function saveEvents(requiredFields, entries, data, next) {
       } else {
         // Create the event.
         connector.logger.info('Creating event');
-        
         Event.create(icalEvent, (err) => {
           if (err) {
             next(err);
