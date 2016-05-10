@@ -1,16 +1,15 @@
 {
   "name": "konnectors",
   "version": "0.6.6",
-  "engines": [
-    "node = 0.10.x"
-  ],
-  "description": "Store data from the web in your Cozy",
+  "description": "Set of connectors to fetch data from the web and store them into your Cozy.",
+  "cozy-displayName": "Konnectors",
+  "cozy-color": "#e26987",
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/frankrousseau/konnectors.git"
+    "url": "https://github.com/cozy-labs/konnectors.git"
   },
-  "main": "server.coffee",
+  "main": "/build/server.js",
   "dependencies": {
     "americano": "0.4.5",
     "async": "1.5.2",
@@ -57,7 +56,8 @@
     "build": "sh scripts/build.sh",
     "test": "sh scripts/tests.sh",
     "lint": "sh scripts/lint.sh",
-    "start": "node build/server.js"
+    "start": "node build/server.js",
+    "prebuild": "npm install && cd client && npm install"
   },
   "contributors": [
     "Alexandre Kalatzis",
@@ -148,7 +148,5 @@
     "User": {
       "description": "The user's timezone is required to import properly events."
     }
-  },
-  "cozy-displayName": "Konnectors",
-  "cozy-color": "#e26987"
+  }
 }
