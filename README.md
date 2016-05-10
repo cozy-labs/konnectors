@@ -7,6 +7,12 @@ into your Cozy.
 
 If you want to build your own connector, here is [a complete documentation](https://github.com/cozy-labs/konnectors/wiki)
 
+# Contributing rules
+
+* Make your pull requests on the master branch.
+* Follow the [Cozy Guidelines](https://github.com/cozy/cozy-guidelines)
+* Do not include the build in your pull request.
+
 # Available connectors
 
 *Bills*
