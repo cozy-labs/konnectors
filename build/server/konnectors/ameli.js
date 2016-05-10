@@ -163,10 +163,15 @@ buildNotification = function(requiredFields, healthBills, data, next) {
 };
 
 customLinkBankOperation = function(requiredFields, healthBills, data, next) {
+  var identifier;
+  identifier = 'C.P.A.M.';
+  if (requiredFields.bank_identifier !== "") {
+    identifier = requiredFields.bank_identifier;
+  }
   return linkBankOperation({
     log: log,
     model: Bill,
-    identifier: requiredFields.bank_identifier === "" ? 'C.P.A.M.' : requiredFields.bank_identifier,
+    identifier: identifier,
     dateDelta: 10,
     amountDelta: 0.1
   })(requiredFields, healthBills, data, next);

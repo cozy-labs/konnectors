@@ -27,9 +27,9 @@ module.exports = function(konnector) {
         log.error(err);
         localizationKey = 'notification import error';
         notifContents = [
-          localization.t(localizationKey, {
+          localization.t(localizationKey), {
             name: model.name
-          })
+          }
         ];
       }
       notificationSlug = konnector.slug;
