@@ -157,12 +157,12 @@ Konnector.prototype.updateFieldValues = function(data, callback) {
 
 Konnector.prototype["import"] = function(callback) {
   this.cleanFieldValues();
-  return async.eachSeries(this.accounts, (function(_this) {
+  return async.mapSeries(this.accounts, (function(_this) {
     return function(values, next) {
       return _this.runImport(values, next);
     };
   })(this), (function(_this) {
-    return function(err) {
+    return function(err, notifContents) {
       var data;
       if (err) {
         data = {
@@ -180,7 +180,7 @@ Konnector.prototype["import"] = function(callback) {
       }
       return _this.updateAttributes(data, function(err) {
         log.info('Konnector metadate updated.');
-        return callback(err);
+        return callback(err, notifContents);
       });
     };
   })(this));

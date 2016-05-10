@@ -21,31 +21,35 @@ module.exports = function(konnector) {
   if ((konnector.fieldValues != null) && konnector.isImporting === false) {
     log.debug("Importing " + konnector.slug);
     model = require("../konnectors/" + konnector.slug);
-    return konnector["import"](function(err, notifContent) {
+    return konnector["import"](function(err, notifContents) {
       var data, localizationKey, notificationSlug, prefix;
       if ((err != null) && ((typeof err === 'object' && Object.keys(err).length > 0) || typeof err === String)) {
         log.error(err);
         localizationKey = 'notification import error';
-        notifContent = localization.t(localizationKey, {
-          name: model.name
-        });
+        notifContents = [
+          localization.t(localizationKey, {
+            name: model.name
+          })
+        ];
       }
       notificationSlug = konnector.slug;
-      if (notifContent != null) {
+      if ((notifContents != null) && typeof notifContents === 'object' && notifContents.length) {
         prefix = localization.t('notification prefix', {
           name: model.name
         });
-        notification.createOrUpdatePersistent(notificationSlug, {
-          app: 'konnectors',
-          text: prefix + " " + notifContent,
-          resource: {
+        notifContents.each(function(notif) {
+          return notification.createOrUpdatePersistent(notificationSlug, {
             app: 'konnectors',
-            url: "konnector/" + konnector.slug
-          }
-        }, function(err) {
-          if (err != null) {
-            return log.error(err);
-          }
+            text: prefix + " " + notif,
+            resource: {
+              app: 'konnectors',
+              url: "konnector/" + konnector.slug
+            }
+          }, function(err) {
+            if (err != null) {
+              return log.error(err);
+            }
+          });
         });
       } else {
         notification.destroy(notificationSlug, function(err) {

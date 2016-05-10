@@ -22,7 +22,7 @@ module.exports = (konnector) ->
         log.debug "Importing #{konnector.slug}"
         model = require "../konnectors/#{konnector.slug}"
 
-        konnector.import (err, notifContent) ->
+        konnector.import (err, notifContents) ->
 
             # err can be an object or a string
             if err? and
@@ -30,20 +30,21 @@ module.exports = (konnector) ->
             typeof(err) is String)
                 log.error err
                 localizationKey = 'notification import error'
-                notifContent = localization.t localizationKey, name: model.name
+                notifContents = [localization.t localizationKey, name: model.name]
 
             notificationSlug = konnector.slug
 
-            if notifContent?
+            if notifContents? and typeof notifContents == 'object' and notifContents.length
                 prefix = localization.t 'notification prefix', name: model.name
-                notification.createOrUpdatePersistent notificationSlug,
-                    app: 'konnectors'
-                    text: "#{prefix} #{notifContent}"
-                    resource:
+                notifContents.each (notif) ->
+                    notification.createOrUpdatePersistent notificationSlug,
                         app: 'konnectors'
-                        url: "konnector/#{konnector.slug}"
-                , (err) ->
-                    log.error err if err?
+                        text: "#{prefix} #{notif}"
+                        resource:
+                            app: 'konnectors'
+                            url: "konnector/#{konnector.slug}"
+                    , (err) ->
+                        log.error err if err?
 
             else
                 # If there was an error before, but that last import was
