@@ -10,7 +10,7 @@ If you want to build your own connector, here is [a complete documentation](http
 # Contributing rules
 
 * Make your pull requests on the master branch.
-* Follow the [Cozy Guidelines](https://github.com/cozy/cozy-guidelines)
+* Follow the [Cozy Guidelines](https://github.com/cozy/cozy-guidelines).
 * Do not include the build in your pull request.
 
 # Available connectors
