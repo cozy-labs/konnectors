@@ -155,6 +155,14 @@ buildNotification = (requiredFields, healthBills, data, next) ->
 
     next()
 
+customLinkBankOperation = (requiredFields, healthBills, data, next) ->
+    linkBankOperation(
+            log: log
+            model:  Bill
+            identifier: if requiredFields.bank_identifier == "" then 'C.P.A.M.' else requiredFields.bank_identifier
+            dateDelta: 10
+            amountDelta: 0.1
+    )(requiredFields, healthBills, data, next)
 
 fileOptions =
     vendor: 'ameli'
@@ -169,6 +177,7 @@ module.exports = baseKonnector.createNew
     fields:
         login: "text"
         password: "password"
+        bank_identifier: "string"
         folderPath: "folder"
 
     models: [Bill]
@@ -178,13 +187,7 @@ module.exports = baseKonnector.createNew
         parsePage,
         filterExisting(log, Bill),
         saveDataAndFile(log, Bill, fileOptions, ['health', 'bill']),
-        linkBankOperation(
-            log: log
-            model:  Bill
-            identifier: 'C.P.A.M.'
-            dateDelta: 10
-            amountDelta: 0.1
-        ),
+        customLinkBankOperation,
         buildNotification
     ]
 
