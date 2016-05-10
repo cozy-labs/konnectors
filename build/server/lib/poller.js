@@ -141,7 +141,7 @@ KonnectorPoller = (function() {
       konnector.injectEncryptedFields();
       if (startDate != null) {
         data = {
-          lastAutoImport: moment(startDate).toDate(),
+          lastAutoImport: moment(startDate, 'DD-MM-YYYY').toDate(),
           importInterval: konnector.importInterval
         };
         fields = konnectorHash[konnector.slug];
