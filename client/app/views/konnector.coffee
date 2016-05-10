@@ -232,7 +232,8 @@ module.exports = class KonnectorView extends BaseView
             fieldHtml = """
 <div class="field line #{'hidden' if val is 'hidden'}">
     <label for="#{slug}-#{name}#{index}-input">#{t(name)} : </label>
-    <a target="_blank" href="#{values[name]}" id="#{slug}-#{name}#{index}-input" >
+    <a target="_blank" href="#{values[name]}"
+       id="#{slug}-#{name}#{index}-input">
         #{values[name]}
     </a>
 </div>
