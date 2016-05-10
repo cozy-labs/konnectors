@@ -49,7 +49,7 @@ logIn = (requiredFields, billInfos, data, next) ->
     # First request to get the cookie
     request options, (err, res, body) ->
         return next err if err?
-        
+
         loginOptions =
             method: 'POST'
             form: form
@@ -156,12 +156,16 @@ buildNotification = (requiredFields, healthBills, data, next) ->
     next()
 
 customLinkBankOperation = (requiredFields, healthBills, data, next) ->
+    identifier = 'C.P.A.M.'
+    if requiredFields.bank_identifier isnt ""
+        identifier = requiredFields.bank_identifier
+
     linkBankOperation(
-            log: log
-            model:  Bill
-            identifier: if requiredFields.bank_identifier == "" then 'C.P.A.M.' else requiredFields.bank_identifier
-            dateDelta: 10
-            amountDelta: 0.1
+        log: log
+        model:  Bill
+        identifier: identifier
+        dateDelta: 10
+        amountDelta: 0.1
     )(requiredFields, healthBills, data, next)
 
 fileOptions =

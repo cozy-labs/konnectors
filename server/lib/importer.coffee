@@ -30,11 +30,16 @@ module.exports = (konnector) ->
             typeof(err) is String)
                 log.error err
                 localizationKey = 'notification import error'
-                notifContents = [localization.t localizationKey, name: model.name]
+                notifContents = [
+                    localization.t localizationKey
+                    name: model.name
+                ]
 
             notificationSlug = konnector.slug
 
-            if notifContents? and typeof notifContents == 'object' and notifContents.length
+            if notifContents? \
+            and typeof(notifContents) is 'object' \
+            and notifContents.length
                 prefix = localization.t 'notification prefix', name: model.name
                 notifContents.each (notif) ->
                     notification.createOrUpdatePersistent notificationSlug,

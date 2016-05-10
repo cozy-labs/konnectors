@@ -30,7 +30,7 @@ describe 'contact helper', ->
             values.forEach (string) ->
                 name = CH.fnToN string
                 name.should.be.Array
-                name.should.have.length '5'
+                name.should.have.length 5
 
         it 'should put value as firstname', ->
             CH.fnToN('full name').should.eql [
@@ -63,7 +63,7 @@ describe 'contact helper', ->
             ].forEach (string) ->
                 name = CH.adrStringToArray string
                 name.should.be.Array
-                name.should.have.length '7'
+                name.should.have.length 7
 
         it 'should put string in street address field', ->
             address = '12, rue René Boulanger\n75010 Paris'
