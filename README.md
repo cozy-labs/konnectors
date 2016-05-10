@@ -9,14 +9,18 @@ If you want to build your own connector, here is [a complete documentation](http
 
 # Contributing rules
 
+Before opening any pull requests make sure that you follow these rules:
+
 * Make your pull requests on the master branch.
 * Follow the [Cozy Guidelines](https://github.com/cozy/cozy-guidelines).
+* Make sure that `npm run lint` doesn't return any errors.
 * Do not include the build in your pull request.
 
 # Available connectors
 
 *Bills*
 
+* Ameli (Bill PDFs)
 * Bouygues Telecom (Bill PDFs)
 * Bouygues Box (Bill PDFs)
 * Digital Ocean (Bill PDFs)
@@ -24,9 +28,13 @@ If you want to build your own connector, here is [a complete documentation](http
 * Free (Bill PDFs)
 * Free Mobile (Bill PDFs)
 * Numericable (Bill PDFs)
+* OVH (Bill PDFs)
 * Online.net (Bill PDFs)
 * Orange (Bill PDFs)
 * Sosh (Bill PDFs)
+* SFR (Bill PDFs)
+* Virgin Mobile (Bill PDFs)
+
 
 *Internet Of Things*
 
@@ -39,19 +47,19 @@ If you want to build your own connector, here is [a complete documentation](http
 * Github (commits)
 * Twitter (published tweets)
 * Linkedin (contact information)
+* Google (contact information)
 
 *Calendar*
 
 * Ical Feed (events)
 * Contact Birthdays (events)
+* Doctolib (events)
+* SNCF (events)
+* Google (events)
 
 *Productivity*
 
 * RescueTime (activities)
-
-# What we would like to see
-
-* weather tracker: store your location and track temperature and pluviometry.
 
 # Build
 
