@@ -30,6 +30,12 @@ module.exports =
     event:
         all: americano.defaultRequests.all
         bycaldavuri: americano.defaultRequests.by 'caldavuri'
+        allLike: (doc) -> emit({
+            start: doc.start,
+            end: doc.end,
+            tags: doc.tags,
+            description: doc.description
+        }, doc)
 
     tag:
         byName: (doc) -> emit doc.name, doc
