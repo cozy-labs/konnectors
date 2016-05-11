@@ -175,11 +175,15 @@ function saveEvents(requiredFields, entries, data, next) {
             details: icalEvent.details,
             rrule: icalEvent.rrule,
           }, (err) => {
-            next(err);
+            if (err) {
+              next(err);
+            }
+            entries.nbUpdates++;
+            next();
           });
-          entries.nbCreations++;
+        } else {
+          next();
         }
-        next();
       } else {
         // Create the event.
         connector.logger.info('Creating event');
@@ -187,7 +191,7 @@ function saveEvents(requiredFields, entries, data, next) {
           if (err) {
             next(err);
           }
-          entries.nbUpdates++;
+          entries.nbCreations++;
           next();
         });
       }
@@ -224,11 +228,12 @@ function buildNotifContent(requiredFields, entries, data, next) {
     const options = {
       smart_count: entries.nbUpdates,
     };
-    if (entries.notifContent === undefined) {
+    if (!entries.notifContent) {
       entries.notifContent = localization.t(localizationKey, options);
     } else {
       entries.notifContent += ` ${localization.t(localizationKey, options)}`;
     }
   }
+      console.log(entries);
   next();
 }
