@@ -41,7 +41,7 @@ module.exports = (konnector) ->
             and typeof(notifContents) is 'object' \
             and notifContents.length
                 prefix = localization.t 'notification prefix', name: model.name
-                notifContents.each (notif) ->
+                notifContents.filter((notif) -> notif).each (notif) ->
                     notification.createOrUpdatePersistent notificationSlug,
                         app: 'konnectors'
                         text: "#{prefix} #{notif}"

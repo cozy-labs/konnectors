@@ -37,7 +37,9 @@ module.exports = function(konnector) {
         prefix = localization.t('notification prefix', {
           name: model.name
         });
-        notifContents.each(function(notif) {
+        notifContents.filter(function(notif) {
+          return notif;
+        }).each(function(notif) {
           return notification.createOrUpdatePersistent(notificationSlug, {
             app: 'konnectors',
             text: prefix + " " + notif,
