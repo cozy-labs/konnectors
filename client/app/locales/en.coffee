@@ -122,6 +122,7 @@ module.exports =
     'konnector customview googlecontacts 2': "Connect your Google account"
     'konnector customview googlecontacts 3': "2. Paste this string in the Auth code field. Then press 'Import and save' button to start the sync. Account name will be automatically updated."
     'konnector description directenergie': "Downloads all your bills from the French energy provider Direct Energie."
+    'konnector description captain_train' : 'Downloads all your bills from the train ticket reseller Captain Train. This connector only uses normal authentification (email/password) and no Facebook/Google login. This konnector does not provides events for your calendar. For this visit, your Captain Train account (<a href="https://www.captaintrain.com/preferences/calendars">here</a>) and use the provided Ical feed link with the Ical Feed connector(<a href="#konnector/ical_feed">here<a>).'
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
@@ -160,6 +161,7 @@ module.exports =
     'notification doctolib creation': "%{smart_count} new event imported |||| %{smart_count} new events imported"
     'notification doctolib update': "%{smart_count} event updated |||| %{smart_count} events updated"
     'notification direct energie': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification captain_train': "%{smart_count} new invoice imported |||| %{smart_count} new bills imported"
 
     "konnector birthdays birthday": "Birthday of"
 
