@@ -114,7 +114,7 @@ module.exports =
     'konnector description birthdays': "Create events in your calendar for each birhday of your contacts (only contacts that match given tag will be selected)."
     'konnector description googlecontacts': "Import your google contacts into your Cozy through google's API."
     'konnector description linkedin': "Import your Linkedin contacts in your Cozy."
-    'konnector description ameli': "Import your Ameli reimbursements in your Cozy."
+    'konnector description ameli': "Import your Ameli reimbursements in your Cozy. The login here is only the 13 digits."
     'konnector description sncf': "Import your SNCF bills and events in your Cozy."
     'konnector description doctolib': "Import you Doctolib appointments in you Cozy."
     'konnector customview googlecontacts 4': "Initialize or reset this konnector"
