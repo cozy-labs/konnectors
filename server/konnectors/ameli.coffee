@@ -20,6 +20,7 @@ log = require('printit')
 
 checkLogin = (requiredFields, billInfos, data, next) ->
     if requiredFields.login.length > 13
+        log.error "Login with " + requiredFields.login.length + " digits : refused"
         next 'bad credentials'
     else next()
 
