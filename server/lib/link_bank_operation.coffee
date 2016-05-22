@@ -31,9 +31,10 @@ class BankOperationLinker
     # For a given entry we look for an operation with same date and same
     # amount.
     linkOperationIfExist: (entry, callback) =>
-        date = new Date entry.date
+        date = new Date (entry.paidDate || entry.date)
         startDate = moment(date).subtract @minDateDelta, 'days'
         endDate = moment(date).add @maxDateDelta, 'days'
+
         startkey = "#{startDate.format "YYYY-MM-DDT00:00:00.000"}Z"
         endkey = "#{endDate.format "YYYY-MM-DDT00:00:00.000"}Z"
 
@@ -47,15 +48,15 @@ class BankOperationLinker
     # and the file ID as an extra attribute of the operation.
     linkRightOperation: (operations, entry, callback) ->
         operationToLink = null
+
         try
             amount = parseFloat entry.amount
         catch
             amount = 0
+
         for operation in operations
 
-            operationAmount = operation.amount
-            if operationAmount < 0
-                operationAmount = operationAmount * -1
+            operationAmount = Math.abs operation.amount
 
             if operation.title.toLowerCase().indexOf(@identifier) >= 0 and \
             (amount - @minAmountDelta) <= operationAmount and \
