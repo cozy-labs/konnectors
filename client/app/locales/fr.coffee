@@ -117,7 +117,7 @@ module.exports =
     'konnector description linkedin': "Importez vos contacts LinkedIn dans votre Cozy."
     'konnector description ical_feed': "Téléchargez et importez un fichier iCal disponible en ligne (.ics)."
     'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts (seulement les contacts taggés avec le tag donné seront pris en compte."
-    'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy."
+    'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy. L'identifiant doit être constitué des 13 premiers chiffres de votre numéro de sécurité sociale."
     'konnector description sncf': "Importez vos factures et événements SNCF dans votre Cozy."
     'konnector description doctolib': "Importez vos rendez-vous Doctolib dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
