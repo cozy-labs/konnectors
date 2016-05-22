@@ -33,6 +33,8 @@ const connector = module.exports = factory.createNew({
 const log = connector.logger.info.bind(connector.logger);
 const logErr = connector.logger.error.bind(connector.logger);
 
+const ERROR_LOGIN = 'Les informations renseignées ne correspondent pas';
+
 function logIn(requiredFields, bills, data, next) {
   log('Trying to log in...');
 
@@ -49,11 +51,21 @@ function logIn(requiredFields, bills, data, next) {
     },
   };
 
-  request(logInOptions, err => {
+  request(logInOptions, (err, res, body) => {
     if (err) {
       logErr('Error when logging in');
       next(err);
       return;
+    }
+
+    const $ = cheerio.load(body);
+    const alerts = $('.alerte');
+    if (alerts.length) {
+      const alertText = alerts.find('.bodytext').text();
+      if (alertText.indexOf(ERROR_LOGIN) !== -1) {
+        next(new Error('bad credentials'));
+        return;
+      }
     }
 
     connector.logger.info('Logged in.');
