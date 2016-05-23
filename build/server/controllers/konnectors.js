@@ -22,7 +22,7 @@ module.exports = {
       if (err) {
         return next(err);
       } else if (konnector == null) {
-        return res.send(404);
+        return res.sendStatus(404);
       } else {
         konnector.injectEncryptedFields();
         konnectorModule = require("../konnectors/" + konnector.slug);

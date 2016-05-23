@@ -168,7 +168,7 @@ Konnector.prototype["import"] = function(callback) {
         data = {
           isImporting: false,
           lastImport: new Date(),
-          importErrorMessage: err.message
+          importErrorMessage: err.message.replace(/<[^>]*>/ig, '')
         };
       } else {
         data = {
@@ -278,7 +278,9 @@ Konnector.prototype.cleanFieldValues = function(callback) {
     if (this.accounts == null) {
       this.accounts = [];
     }
-    this.accounts.unshift(this.fieldValues);
+    if (Object.keys(this.fieldValues).length > 0) {
+      this.accounts.unshift(this.fieldValues);
+    }
     this.fieldValues = null;
   }
   if ((this.password != null) && this.password[0] === '{') {

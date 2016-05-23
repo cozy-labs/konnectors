@@ -15,9 +15,7 @@ BankOperationLinker = (function() {
     this.log = options.log;
     this.model = options.model;
     this.identifier = options.identifier.toLowerCase();
-    this.amountDelta = options.amountDelta || 0;
-    this.minAmountDelta = options.minAmountDelta || this.amountDelta;
-    this.maxAmountDelta = options.maxAmountDelta || this.amountDelta;
+    this.amountDelta = options.amountDelta || 0.001;
     this.dateDelta = options.dateDelta || 15;
     this.minDateDelta = options.minDateDelta || this.dateDelta;
     this.maxDateDelta = options.maxDateDelta || this.dateDelta;
@@ -29,7 +27,7 @@ BankOperationLinker = (function() {
 
   BankOperationLinker.prototype.linkOperationIfExist = function(entry, callback) {
     var date, endDate, endkey, startDate, startkey;
-    date = new Date(entry.date);
+    date = new Date(entry.paidDate || entry.date);
     startDate = moment(date).subtract(this.minDateDelta, 'days');
     endDate = moment(date).add(this.maxDateDelta, 'days');
     startkey = (startDate.format("YYYY-MM-DDT00:00:00.000")) + "Z";
@@ -48,21 +46,22 @@ BankOperationLinker = (function() {
   };
 
   BankOperationLinker.prototype.linkRightOperation = function(operations, entry, callback) {
-    var amount, error, i, len, operation, operationAmount, operationToLink;
+    var amount, amountDelta, error, i, len, minAmountDelta, opAmount, operation, operationToLink;
     operationToLink = null;
     try {
-      amount = parseFloat(entry.amount);
+      amount = Math.abs(parseFloat(entry.amount));
     } catch (error) {
-      amount = 0;
+      callback();
+      return;
     }
+    minAmountDelta = Infinity;
     for (i = 0, len = operations.length; i < len; i++) {
       operation = operations[i];
-      operationAmount = operation.amount;
-      if (operationAmount < 0) {
-        operationAmount = operationAmount * -1;
-      }
-      if (operation.title.toLowerCase().indexOf(this.identifier) >= 0 && (amount - this.minAmountDelta) <= operationAmount && (amount + this.maxAmountDelta) >= operationAmount) {
+      opAmount = Math.abs(operation.amount);
+      amountDelta = Math.abs(opAmount - amount);
+      if (operation.title.toLowerCase().indexOf(this.identifier) >= 0 && amountDelta <= this.amountDelta && amountDelta <= minAmountDelta) {
         operationToLink = operation;
+        minAmountDelta = amountDelta;
       }
     }
     if (operationToLink == null) {
