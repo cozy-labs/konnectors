@@ -222,7 +222,8 @@ Konnector::cleanFieldValues = (callback) ->
 
     if @fieldValues?
         @accounts ?= []
-        @accounts.unshift @fieldValues
+        if Object.keys(@fieldValues).length > 0
+            @accounts.unshift @fieldValues
         @fieldValues = null
 
     if @password? and @password[0] is '{'
