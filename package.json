@@ -22,7 +22,7 @@
     "google-auth-library": "0.9.8",
     "imagemagick-stream": "3.0.0",
     "jade": "1.11.0",
-    "lodash": "4.12.0",
+    "lodash": "4.13.1",
     "moment": "2.13.0",
     "moment-timezone": "0.5.4",
     "nest-api": "0.0.5",
