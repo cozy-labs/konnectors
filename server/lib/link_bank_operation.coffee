@@ -16,9 +16,7 @@ class BankOperationLinker
         @log = options.log
         @model = options.model
         @identifier = options.identifier.toLowerCase()
-        @amountDelta = options.amountDelta or 0
-        @minAmountDelta = options.minAmountDelta or @amountDelta
-        @maxAmountDelta = options.maxAmountDelta or @amountDelta
+        @amountDelta = options.amountDelta or 0.001
         @dateDelta = options.dateDelta or 15
         @minDateDelta = options.minDateDelta or @dateDelta
         @maxDateDelta = options.maxDateDelta or @dateDelta
@@ -50,18 +48,22 @@ class BankOperationLinker
         operationToLink = null
 
         try
-            amount = parseFloat entry.amount
+            amount = Math.abs parseFloat entry.amount
         catch
-            amount = 0
+            callback()
+            return
 
+        minAmountDelta = Infinity
         for operation in operations
 
-            operationAmount = Math.abs operation.amount
+            opAmount = Math.abs operation.amount
+            amountDelta = Math.abs opAmount - amount
 
             if operation.title.toLowerCase().indexOf(@identifier) >= 0 and \
-            (amount - @minAmountDelta) <= operationAmount and \
-            (amount + @maxAmountDelta) >= operationAmount
+            amountDelta <= @amountDelta and \
+            amountDelta <= minAmountDelta
                 operationToLink = operation
+                minAmountDelta = amountDelta
 
         if not operationToLink?
             callback()
