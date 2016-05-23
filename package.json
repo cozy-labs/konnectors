@@ -22,7 +22,7 @@
     "google-auth-library": "0.9.8",
     "imagemagick-stream": "3.0.0",
     "jade": "1.11.0",
-    "lodash": "4.12.0",
+    "lodash": "4.13.1",
     "moment": "2.13.0",
     "moment-timezone": "0.5.4",
     "nest-api": "0.0.5",
@@ -47,7 +47,7 @@
     "eslint-config-airbnb": "9.0.1",
     "express": "4.13.4",
     "minimist": "1.2.0",
-    "mocha": "2.4.5",
+    "mocha": "2.5.1",
     "nock": "8.0.0",
     "should": "8.3.1",
     "sinon": "1.17.4"
