@@ -9,7 +9,7 @@ log = require('printit')
 # in case some are stored in the field values of the connector.
 displayKonnector = (konnector) ->
     konnector.removeEncryptedFields()
-    data =
+    log.raw
         slug: konnector.slug
         accounts: konnector.accounts
         fields: konnector.fields
@@ -18,7 +18,6 @@ displayKonnector = (konnector) ->
         isImporting: konnector.isImporting
         importInterval: konnector.importInterval
         importErrorMessage: konnector.importErrorMessage
-    console.log data
 
     log.lineBreak()
 
@@ -55,6 +54,7 @@ module.exports =
             account[key] = value
 
         Konnector = require '../server/models/konnector'
+        konnectorMap = require '../server/lib/konnector_hash'
         Konnector.all (err, konnectors) ->
             return callback err if err
 
