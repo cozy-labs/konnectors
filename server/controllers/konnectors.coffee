@@ -16,7 +16,7 @@ module.exports =
             if err
                 next err
             else if not konnector?
-                res.send 404
+                res.sendStatus 404
             else
                 konnector.injectEncryptedFields()
 

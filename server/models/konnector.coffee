@@ -119,7 +119,7 @@ Konnector::import = (callback) ->
             data =
                 isImporting: false
                 lastImport: new Date()
-                importErrorMessage: err.message
+                importErrorMessage: err.message.replace /<[^>]*>/ig, ''
         else
             data =
                 isImporting: false

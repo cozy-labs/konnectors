@@ -117,13 +117,14 @@ module.exports =
     'konnector description linkedin': "Importez vos contacts LinkedIn dans votre Cozy."
     'konnector description ical_feed': "Téléchargez et importez un fichier iCal disponible en ligne (.ics)."
     'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts (seulement les contacts taggés avec le tag donné seront pris en compte."
-    'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy."
+    'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy. L'identifiant doit être constitué des 13 premiers chiffres de votre numéro de sécurité sociale."
     'konnector description sncf': "Importez vos factures et événements SNCF dans votre Cozy."
     'konnector description doctolib': "Importez vos rendez-vous Doctolib dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
     'konnector customview googlecontacts 3': "2. Copiez cette chaîne de caractères dans le champs Auth code. Puis cliquez sur le bouton \"Importer et sauvegarder \" pour lancer l'importation.  Le nom du compte sera mis à jour automatiquement."
+    'konnector description directenergie': "Télécharge toutes vos factures pour votre compte actif depuis le site de Direct Energie."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -159,6 +160,8 @@ module.exports =
     'notification sfr_mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification doctolib creation': "%{smart_count} nouveau rendez-vous importé |||| %{smart_count} nouveaux rendez-vous importés"
     'notification doctolib update': "%{smart_count} rendez-vous mis à jour |||| %{smart_count} rendez-vous mis à jour"
+    'notification direct energie': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+
     "konnector birthdays birthday": "Anniversaire de"
 
     "konnector sncf reference": "Référence"
