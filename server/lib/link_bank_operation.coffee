@@ -15,7 +15,10 @@ class BankOperationLinker
     constructor: (options) ->
         @log = options.log
         @model = options.model
-        @identifier = options.identifier.toLowerCase()
+        if typeof(options.identifier) is 'string'
+            @identifier = [options.identifier.toLowerCase()]
+        else
+            @identifier = options.identifier.map((id) -> id.toLowerCase())
         @amountDelta = options.amountDelta or 0.001
         @dateDelta = options.dateDelta or 15
         @minDateDelta = options.minDateDelta or @dateDelta
@@ -59,11 +62,13 @@ class BankOperationLinker
             opAmount = Math.abs operation.amount
             amountDelta = Math.abs opAmount - amount
 
-            if operation.title.toLowerCase().indexOf(@identifier) >= 0 and \
-            amountDelta <= @amountDelta and \
-            amountDelta <= minAmountDelta
-                operationToLink = operation
-                minAmountDelta = amountDelta
+            for identifier in @identifier
+                if operation.title.toLowerCase().indexOf(identifier) >= 0 and \
+                amountDelta <= @amountDelta and \
+                amountDelta <= minAmountDelta
+                    operationToLink = operation
+                    minAmountDelta = amountDelta
+                    break
 
         if not operationToLink?
             callback()
