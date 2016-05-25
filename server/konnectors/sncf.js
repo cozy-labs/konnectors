@@ -221,7 +221,8 @@ function getEvents(uri, events, callback) {
       const $moreInfos = $travel.find('.travel_more_infos_table');
 
       const moreInfos = parseMoreInfos($, $moreInfos);
-      const date = $date.find('p').eq(1).text().trim();
+      const date = $date.find('p').eq(1).text()
+                                        .trim();
       const travelType = $date.find('.label').text().trim();
 
       // When we have correpondances for example
@@ -232,18 +233,33 @@ function getEvents(uri, events, callback) {
         const $arrival = $travelSegment.find('.arrival');
 
         // Yup, the generated HTML is just a joke.
-        const beginHour = $departure.find('.hour p').eq(1).text().trim();
-        const beginStation = $departure.find('.station p').eq(1).text().trim();
+        const beginHour = $departure.find('.hour p')
+                                    .eq(1)
+                                    .text()
+                                    .trim();
+        const beginStation = $departure.find('.station p')
+                                       .eq(1)
+                                       .text()
+                                       .trim();
         const trainType =
           $departure.find('.train_picto').text()
-                    .replace('Transporteur :', '').trim();
+                    .replace('Transporteur :', '')
+                    .trim();
         const trainNumber =
-          $departure.find('.train_number p').eq(1).text().trim();
+          $departure.find('.train_number p').eq(1)
+                                            .text()
+                                            .trim();
         const trainInfo =
-          $departure.find('.train_infos .train_class p').eq(1).text().trim();
+          $departure.find('.train_infos .train_class p').eq(1)
+                                                        .text()
+                                                        .trim();
 
-        const arrivalHour = $arrival.find('.hour p').eq(1).text().trim();
-        const arrivalStation = $arrival.find('.station p').eq(1).text().trim();
+        const arrivalHour = $arrival.find('.hour p').eq(1)
+                                                    .text()
+                                                    .trim();
+        const arrivalStation = $arrival.find('.station p').eq(1)
+                                                          .text()
+                                                          .trim();
 
         const description = `${travelType}: ${label}`;
 
@@ -388,12 +404,19 @@ function parseSNCFTable($, $rows) {
   $rows.each(function forEachRows() {
     const $cells = $(this).find('td');
 
-    const refOrder = $cells.eq(dataIndices.refOrder).find('p').text().trim();
+    const refOrder = $cells.eq(dataIndices.refOrder).find('p')
+                                                    .text()
+                                                    .trim();
     const labelOrder =
-      $cells.eq(dataIndices.labelOrder).find('p').text().trim();
-    const price = $cells.eq(dataIndices.price).find('div').text().trim();
+      $cells.eq(dataIndices.labelOrder).find('p')
+                                       .text()
+                                       .trim();
+    const price = $cells.eq(dataIndices.price).find('div')
+                                              .text()
+                                              .trim();
     const orderDate =
-      $cells.eq(dataIndices.orderDate).find('div').text().trim();
+      $cells.eq(dataIndices.orderDate).find('div').text()
+                                                  .trim();
     const detailPage =
       $cells.eq(dataIndices.detailPage).find('a').attr('href');
 
@@ -444,7 +467,8 @@ function parseMoreInfos($, $moreInfos) {
 
     // Get the infos
     const fare =
-      $row.find('.fare_details .fare-name').text().replace(':', '').trim();
+      $row.find('.fare_details .fare-name').text().replace(':', '')
+                                                  .trim();
 
     // Place detail or "no reservation"
     let placeDetails = null;
