@@ -18,7 +18,7 @@
     "cozy-notifications-helper": "1.1.0",
     "cozy-realtime-adapter": "1.0.2",
     "cozy-slug": "0.2.2",
-    "cozydb": "0.1.11",
+    "cozydb": "0.1.12",
     "google-auth-library": "0.9.8",
     "imagemagick-stream": "3.0.0",
     "jade": "1.11.0",
