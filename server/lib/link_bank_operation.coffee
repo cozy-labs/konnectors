@@ -52,6 +52,10 @@ class BankOperationLinker
 
         try
             amount = Math.abs parseFloat entry.amount
+            # By default, an entry is an expense. If it is not, it should be
+            # declared as a refund: isRefund=true.
+            if not entry.isRefund? || not entry.isRefund
+                amount = -amount
         catch
             callback()
             return
@@ -59,7 +63,12 @@ class BankOperationLinker
         minAmountDelta = Infinity
         for operation in operations
 
+
             opAmount = Math.abs operation.amount
+
+            if not entry.isRefund? || not entry.isRefund
+                opAmount = -opAmount
+
             amountDelta = Math.abs opAmount - amount
 
             for identifier in @identifier
