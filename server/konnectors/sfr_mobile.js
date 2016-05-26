@@ -126,7 +126,9 @@ function parsePage(requiredFields, bills, data, next) {
 
   $('#tab tr').each(function each() {
     let date = $(this).find('.date').text();
-    let prix = $(this).find('.prix').text().replace('€', '').replace(',', '.');
+    let prix = $(this).find('.prix').text()
+                                    .replace('€', '')
+                                    .replace(',', '.');
     let pdf = $(this).find('.liens a').attr('href');
     date = date.split(' ');
     date.pop();
