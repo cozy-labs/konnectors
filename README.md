@@ -15,6 +15,7 @@ Before opening any pull requests make sure that you follow these rules:
 * Follow the [Cozy Guidelines](https://github.com/cozy/cozy-guidelines).
 * Make sure that `npm run lint` doesn't return any errors.
 * Do not include the build in your pull request.
+* Explain in the Pull Request which problem is solved and how you fixed it.
 
 # Available connectors
 
