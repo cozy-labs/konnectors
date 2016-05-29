@@ -15,7 +15,10 @@ class BankOperationLinker
     constructor: (options) ->
         @log = options.log
         @model = options.model
-        @identifier = options.identifier.toLowerCase()
+        if typeof(options.identifier) is 'string'
+            @identifier = [options.identifier.toLowerCase()]
+        else
+            @identifier = options.identifier.map((id) -> id.toLowerCase())
         @amountDelta = options.amountDelta or 0.001
         @dateDelta = options.dateDelta or 15
         @minDateDelta = options.minDateDelta or @dateDelta
@@ -49,6 +52,10 @@ class BankOperationLinker
 
         try
             amount = Math.abs parseFloat entry.amount
+
+            # By default, an entry is an expense. If it is not, it should be
+            # declared as a refund: isRefund=true.
+            amount *= -1 if entry.isRefund? and entry.isRefund
         catch
             callback()
             return
@@ -57,13 +64,24 @@ class BankOperationLinker
         for operation in operations
 
             opAmount = Math.abs operation.amount
-            amountDelta = Math.abs opAmount - amount
 
-            if operation.title.toLowerCase().indexOf(@identifier) >= 0 and \
-            amountDelta <= @amountDelta and \
-            amountDelta <= minAmountDelta
-                operationToLink = operation
-                minAmountDelta = amountDelta
+            # By default, an entry is an expense. If it is not, it should be
+            # declared as a refund: isRefund=true.
+            opAmount *= -1 if entry.isRefund? and entry.isRefund
+
+            amountDelta = Math.abs (opAmount - amount)
+
+            # Select the operation to link based on the minimal amount
+            # difference to the expected one and if the label matches one
+            # of the possible labels (identifier)
+            for identifier in @identifier
+
+                if operation.title.toLowerCase().indexOf(identifier) >= 0 and \
+                amountDelta <= @amountDelta and \
+                amountDelta <= minAmountDelta
+                    operationToLink = operation
+                    minAmountDelta = amountDelta
+                    break
 
         if not operationToLink?
             callback()

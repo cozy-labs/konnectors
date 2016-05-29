@@ -12,6 +12,7 @@ module.exports = Bill = cozydb.getModel 'Bill',
     binaryId: String
     fileId: String
     content: String
+    isRefund: Boolean
 
 
 Bill.all = (callback) ->
