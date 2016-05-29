@@ -1,8 +1,7 @@
 Konnector = require '../models/konnector'
-localization = require '../lib/localization_manager'
-NotificationHelper = require 'cozy-notifications-helper'
-notification = new NotificationHelper 'konnectors'
 konnectorHash = require '../lib/konnector_hash'
+handleNotification = require '../lib/notification_handler'
+
 log = require('printit')
     prefix: 'konnector controller'
 
@@ -84,20 +83,3 @@ module.exports =
                             else
                                 handleNotification req.konnector, notifContent
                     res.status(200).send success: true
-
-
-# Create a notification telling how many data were imported.
-handleNotification = (konnector, notifContent) ->
-    notificationSlug = konnector.slug
-    model = konnectorHash[konnector.slug]
-
-    if notifContent?
-        prefix = localization.t 'notification prefix', name: model.name
-        notification.createOrUpdatePersistent notificationSlug,
-            app: 'konnectors'
-            text: "#{prefix} #{notifContent}"
-            resource:
-                app: 'konnectors'
-                url: "konnector/#{konnector.slug}"
-        , (err) ->
-            log.error err if err?

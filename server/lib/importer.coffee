@@ -1,12 +1,12 @@
 async = require 'async'
-NotificationHelper = require 'cozy-notifications-helper'
+handleNotification = require './notification_handler'
 log = require('printit')
     prefix: null
     date: true
 
 Konnector = require '../models/konnector'
 localization = require './localization_manager'
-notification = new NotificationHelper 'konnectors'
+
 
 
 # Runs import operation for a given konnector. Once done, it propagates a
@@ -35,28 +35,8 @@ module.exports = (konnector) ->
                     name: model.name
                 ]
 
-            notificationSlug = konnector.slug
-
-            if notifContents? \
-            and typeof(notifContents) is 'object' \
-            and notifContents.length
-                prefix = localization.t 'notification prefix', name: model.name
-                notifContents.filter((notif) -> notif).each (notif) ->
-                    notification.createOrUpdatePersistent notificationSlug,
-                        app: 'konnectors'
-                        text: "#{prefix} #{notif}"
-                        resource:
-                            app: 'konnectors'
-                            url: "konnector/#{konnector.slug}"
-                    , (err) ->
-                        log.error err if err?
-
-            else
-                # If there was an error before, but that last import was
-                # successful AND didn't not return a notification content, the
-                # error notification is simply removed.
-                notification.destroy notificationSlug, (err) ->
-                    log.error err if err?
+            # Through the notifications.
+            handleNotification(this, notifContents)
 
             # Update the lastAutoImport with the current date
             data = lastAutoImport: new Date()
