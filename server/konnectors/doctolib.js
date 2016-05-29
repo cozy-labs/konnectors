@@ -196,6 +196,9 @@ function saveEvents(requiredFields, entries, data, next) {
         });
       }
     });
+  }, (err) => {
+    connector.logger.info('Events are saved.');
+    next(err);
   });
 }
 
