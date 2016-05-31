@@ -296,7 +296,8 @@ function fetchBills(requiredFields, entries, data, next) {
         bill.amount = (paidAmount + reinboursedAmount + penaltiesAmount) / 100;
       } else {
         // Find the unique Refund based on the emission date
-        bill.amount = listRefund.find(refund => refund.date === proof.created_at).refunded_cents / 100;
+        const refund = listRefund.find(refund => refund.date === proof.created_at);
+        bill.amount = (refund.refunded_cents - refund.added_cents) / 100;
         bill.isRefund = true;
       }
 
