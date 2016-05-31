@@ -116,10 +116,12 @@ Konnector::import = (callback) ->
         @runImport values, next
     , (err, notifContents) =>
         if err
+            errMessage = if err.message? then err.message else err.toString()
             data =
                 isImporting: false
                 lastImport: new Date()
-                importErrorMessage: err.message.replace /<[^>]*>/ig, ''
+                importErrorMessage: errMessage.replace(/<[^>]*>/ig, '')
+
         else
             data =
                 isImporting: false
