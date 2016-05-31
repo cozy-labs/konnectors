@@ -13,7 +13,8 @@ module.exports = Bill = cozydb.getModel('Bill', {
   pdfurl: String,
   binaryId: String,
   fileId: String,
-  content: String
+  content: String,
+  isRefund: Boolean
 });
 
 Bill.all = function(callback) {

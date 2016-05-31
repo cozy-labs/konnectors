@@ -14,7 +14,13 @@ BankOperationLinker = (function() {
     this.linkOperationIfExist = bind(this.linkOperationIfExist, this);
     this.log = options.log;
     this.model = options.model;
-    this.identifier = options.identifier.toLowerCase();
+    if (typeof options.identifier === 'string') {
+      this.identifier = [options.identifier.toLowerCase()];
+    } else {
+      this.identifier = options.identifier.map(function(id) {
+        return id.toLowerCase();
+      });
+    }
     this.amountDelta = options.amountDelta || 0.001;
     this.dateDelta = options.dateDelta || 15;
     this.minDateDelta = options.minDateDelta || this.dateDelta;
@@ -46,10 +52,13 @@ BankOperationLinker = (function() {
   };
 
   BankOperationLinker.prototype.linkRightOperation = function(operations, entry, callback) {
-    var amount, amountDelta, error, i, len, minAmountDelta, opAmount, operation, operationToLink;
+    var amount, amountDelta, error, i, identifier, j, len, len1, minAmountDelta, opAmount, operation, operationToLink, ref;
     operationToLink = null;
     try {
       amount = Math.abs(parseFloat(entry.amount));
+      if ((entry.isRefund != null) && entry.isRefund) {
+        amount *= -1;
+      }
     } catch (error) {
       callback();
       return;
@@ -58,10 +67,18 @@ BankOperationLinker = (function() {
     for (i = 0, len = operations.length; i < len; i++) {
       operation = operations[i];
       opAmount = Math.abs(operation.amount);
+      if ((entry.isRefund != null) && entry.isRefund) {
+        opAmount *= -1;
+      }
       amountDelta = Math.abs(opAmount - amount);
-      if (operation.title.toLowerCase().indexOf(this.identifier) >= 0 && amountDelta <= this.amountDelta && amountDelta <= minAmountDelta) {
-        operationToLink = operation;
-        minAmountDelta = amountDelta;
+      ref = this.identifier;
+      for (j = 0, len1 = ref.length; j < len1; j++) {
+        identifier = ref[j];
+        if (operation.title.toLowerCase().indexOf(identifier) >= 0 && amountDelta <= this.amountDelta && amountDelta <= minAmountDelta) {
+          operationToLink = operation;
+          minAmountDelta = amountDelta;
+          break;
+        }
       }
     }
     if (operationToLink == null) {
