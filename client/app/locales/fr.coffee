@@ -124,6 +124,7 @@ module.exports =
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
     'konnector customview googlecontacts 2': "Connecter votre compte Google"
     'konnector customview googlecontacts 3': "2. Copiez cette chaîne de caractères dans le champs Auth code. Puis cliquez sur le bouton \"Importer et sauvegarder \" pour lancer l'importation.  Le nom du compte sera mis à jour automatiquement."
+    'konnector description facebook_events': "Importez vos événements Facebook dans votre Cozy. Pour ce faire, cliquez sur le bouton Connect, suivez les instructions, puis copier le code, puis revenez sur cette page pour le coller dans le champs Access token."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -159,6 +160,7 @@ module.exports =
     'notification sfr_mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification doctolib creation': "%{smart_count} nouveau rendez-vous importé |||| %{smart_count} nouveaux rendez-vous importés"
     'notification doctolib update': "%{smart_count} rendez-vous mis à jour |||| %{smart_count} rendez-vous mis à jour"
+    'notification facebook_events': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
     "konnector birthdays birthday": "Anniversaire de"
 
     "konnector sncf reference": "Référence"

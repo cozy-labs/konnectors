@@ -48,6 +48,7 @@ Before opening any pull requests make sure that you follow these rules:
 * Twitter (published tweets)
 * Linkedin (contact information)
 * Google (contact information)
+* Facebook (event information)
 
 *Calendar*
 

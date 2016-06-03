@@ -2,20 +2,20 @@
 
 const async = require('async');
 const request = require('request');
-const cozydb = require('cozydb');
 const moment = require('moment');
+const toQueryString = require('querystring').stringify;
 
 const baseKonnector = require('../lib/base_konnector');
 const localization = require('../lib/localization_manager');
 
 const Event = require('../models/event');
 
-const API_ROOT = 'https://graph.facebook.com/v2.5/';
+const API_ROOT = 'https://graph.facebook.com/v2.6/';
 
-const appId = '181683981887939' ;
-const appSecret = 'eb1a6431ec6f4adc5ac9ec4dc98d3962';
+const appId = '991700800927312';
+const appSecret = 'a04e8cf918a382ea0b19cf1b6fbc2506';
 
-const scope = 'user_events' ;
+const scope = 'user_events';
 
 
 /*
@@ -25,11 +25,11 @@ const scope = 'user_events' ;
 const connector = module.exports = baseKonnector.createNew({
   name: 'Facebook Events',
   slug: 'facebook_events',
-  customView: '<p>To konnect your Facebook account, click here:</p>' +
-    '<a href=' + getOAuthProxyUrl() + ' target="_blank" >Facebook Login</a>',
+  customView: `<a href=${getOAuthProxyUrl()} target="_blank" >Connect</a>`,
 
   fields: {
     accessToken: 'text',
+    calendar: 'text',
   },
 
   models: [Event],
@@ -46,57 +46,64 @@ const connector = module.exports = baseKonnector.createNew({
 });
 
 function getOAuthProxyUrl() {
-  var baseUri = 'https://jacquarg.github.io/proxy_redirect/facebook_events/';
-  var params = 'appId=' + appId + '&scope=' + scope;
-  params += '&redirect=display'
-  return  baseUri + '?' + params ;
+  const baseUri = 'https://jacquarg.github.io/proxy_redirect/facebook_events/';
+  const params = {
+    appId,
+    scope,
+    redirect: 'display',
+  };
+
+  return `${baseUri}?${toQueryString(params)}`;
 }
 
 
 function updateToken(requiredFields, entries, data, next) {
   connector.logger.info('Update facebook token');
 
-  request.get(API_ROOT + 'oauth/access_token?' +
-    'grant_type=fb_exchange_token&client_id=' + appId +
-    '&client_secret=' + appSecret +
-    '&fb_exchange_token=' + requiredFields.accessToken,
+  const params = {
+    grant_type: 'fb_exchange_token',
+    client_id: appId,
+    client_secret: appSecret,
+    fb_exchange_token: requiredFields.accessToken,
+  };
+
+  request.get(`${API_ROOT}oauth/access_token?${toQueryString(params)}`,
     (err, res, body) => {
       if (err) {
-        connector.logger.error('Update token failed: ' + err.msg);
-        // TODO : notification "reconnect"
+        connector.logger.error(`Update token failed: ${err.msg}`);
+        // TODO : notification token is broken, "reconnect"
       } else {
-        data.accessToken = JSON.parse(body).access_token ;
+        data.accessToken = JSON.parse(body).access_token;
       }
       next(err);
-  });
-
+    });
 }
 
 // Save konnector's fieldValues during fetch process.
 function saveTokenInKonnector(requiredFields, entries, data, callback) {
   connector.logger.info('Save refreshed token.');
 
-  var Konnector = require('../models/konnector');
-    // TODO: should work:
-    // Konnector.get(connector.slug, function(err, konnector) {
+  const Konnector = require('../models/konnector');
+
+  // TODO: should work:
+  // Konnector.get(connector.slug, function(err, konnector) {
   Konnector.all((err, konnectors) => {
     if (err) {
       connector.logger.error("Can't fetch konnector instances", + err.msg);
       return callback(err);
     }
-
+    let konnector = null;
     try {
-      var konnector = konnectors.filter(function(k) {
-          return k.slug === connector.slug;
+      konnector = konnectors.filter((k) => {
+        return k.slug === connector.slug;
       })[0];
 
       // Find which account we are using now.
-      var currentAccount = konnector.accounts.filter(function(account) {
+      const currentAccount = konnector.accounts.filter((account) => {
         return account.accessToken === requiredFields.accessToken;
       })[0];
 
       currentAccount.accessToken = data.accessToken;
-
     } catch (e) {
       connector.logger.error("Can't fetch konnector instances");
       return callback(e);
@@ -109,23 +116,23 @@ function saveTokenInKonnector(requiredFields, entries, data, callback) {
 
 function downloadData(requiredFields, entries, data, next) {
   connector.logger.info('Downloading events data from Facebook...');
-  request.get(API_ROOT + 'me/events?access_token='+ requiredFields.accessToken,
+  request.get(`${API_ROOT}me/events?access_token=${requiredFields.accessToken}`,
     (err, res, body) => {
-
-    if (err) {
-      connector.logger.error('Download failed: ' + err.msg);
-    } else {
-      connector.logger.info('Download succeeded.');
-      // We don't handle pagination here, thinking that, with polling, usefull // events will fit in the first page.
-      try {
-        data.raw = JSON.parse(body).data;
-      } catch (e) {
-        connector.logger.error("Can't parse fetched data.");
-        err = e;
+      if (err) {
+        connector.logger.error(`Download failed: ${err.msg}`);
+      } else {
+        connector.logger.info('Download succeeded.');
+        // We don't handle pagination here, thinking that,
+        // with polling, usefull // events will fit in the first page.
+        try {
+          data.raw = JSON.parse(body).data;
+        } catch (e) {
+          connector.logger.error("Can't parse fetched data.");
+          err = e;
+        }
       }
-    }
-    next(err);
-  });
+      next(err);
+    });
 }
 
 
@@ -133,54 +140,58 @@ function downloadData(requiredFields, entries, data, next) {
 function parseData(requiredFields, entries, data, next) {
   connector.logger.info('Parsing raw Events Data...');
 
-  var list = data.raw.map((fbEvent) => {
+  const list = data.raw.map((fbEvent) => {
     try {
-      if (fbEvent.rsvp_status !== "attending") {
+      if (fbEvent.rsvp_status !== 'attending') {
         return null;
       }
 
-      var date = new Date(fbEvent.start_time);
+      const date = new Date(fbEvent.start_time);
 
-      var locationStr = '';
+      let locationStr = '';
       if (fbEvent.place) {
-          locationStr = fbEvent.place.name;
-          if (fbEvent.place.location) {
-            locationStr += ', ' + fbEvent.place.location.street + ', ';
-            locationStr += fbEvent.place.location.city;
-            locationStr += ' ' + fbEvent.place.location.zip;
-            locationStr += ' (' + fbEvent.place.location.latitude;
-            locationStr += ', ' + fbEvent.place.location.longitude + ')';
-          }
+        locationStr = fbEvent.place.name;
+        if (fbEvent.place.location) {
+          locationStr += `, ${fbEvent.place.location.street}, `;
+          locationStr += fbEvent.place.location.city;
+          locationStr += ' ';
+          locationStr += fbEvent.place.location.zip;
+          locationStr += ' (';
+          locationStr += fbEvent.place.location.latitude;
+          locationStr += ', ';
+          locationStr += fbEvent.place.location.longitude;
+          locationStr += ')';
+        }
       }
 
       return {
         start: date.toISOString(),
-        end: moment(date).add(2, 'hours').toISOString(), // TODO create an end time !
+        end: moment(date).add(2, 'hours').toISOString(),
         place: locationStr,
         details: fbEvent.description,
         description: fbEvent.name,
-        tags: ['Facebook Events'],
+        tags: [requiredFields.calendar],
         // attendees: []
         // created:
-        id: "" + fbEvent.id,
-        // caldavuri: "" + fbEvent.id, // actualy used elsewhere as external id.
-        // uuid
+
+        // Event.createOrUpdate moves it id to caldavuri field.
+        id: String(fbEvent.id),
         lastModification: new Date().toISOString(),
 
         accounts: {
-          "type": "com.facebook",
-          "name": "me",
-          "id": "" + fbEvent.id,
-          "lastUpdate": new Date().toISOString() }
+          type: 'com.facebook',
+          name: 'me',
+          id: String(fbEvent.id),
+          lastUpdate: new Date().toISOString(),
+        },
       };
-
-    } catch(e) {
+    } catch (e) {
       connector.logger.error('Skip an event while parsing it.', e);
       return null;
     }
   });
 
-  entries.events = list.filter((ev) => { return ev !== null });
+  entries.events = list.filter(ev => { return ev !== null; });
 
   next();
 }
