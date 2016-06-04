@@ -164,7 +164,8 @@ module.exports =
     'notification doctolib update': "%{smart_count} rendez-vous mis à jour |||| %{smart_count} rendez-vous mis à jour"
     'notification direct energie': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification captain_train': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification facebook_events': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
+    'notification facebook_events creation': "%{smart_count} nouvel événement imporé. |||| %{smart_count} nouveaux événements importés."
+    'notification facebook_events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
     "konnector birthdays birthday": "Anniversaire de"
 
     "konnector sncf reference": "Référence"

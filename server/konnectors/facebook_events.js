@@ -94,14 +94,11 @@ function saveTokenInKonnector(requiredFields, entries, data, callback) {
     }
     let konnector = null;
     try {
-      konnector = konnectors.filter((k) => {
-        return k.slug === connector.slug;
-      })[0];
+      konnector = konnectors.filter(k => k.slug === connector.slug)[0];
 
       // Find which account we are using now.
-      const currentAccount = konnector.accounts.filter((account) => {
-        return account.accessToken === requiredFields.accessToken;
-      })[0];
+      const currentAccount = konnector.accounts.filter(account =>
+        account.accessToken === requiredFields.accessToken)[0];
 
       currentAccount.accessToken = data.accessToken;
     } catch (e) {
@@ -191,7 +188,7 @@ function parseData(requiredFields, entries, data, next) {
     }
   });
 
-  entries.events = list.filter(ev => { return ev !== null; });
+  entries.events = list.filter(ev => ev !== null; );
 
   next();
 }

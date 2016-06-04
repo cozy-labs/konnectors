@@ -163,8 +163,8 @@ module.exports =
     'notification doctolib update': "%{smart_count} event updated |||| %{smart_count} events updated"
     'notification direct energie': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification captain_train': "%{smart_count} new invoice imported |||| %{smart_count} new bills imported"
-    'notification facebook_events': "%{smart_count] event updated |||| %{smart_count} events updated"
->>>>>>> 18bcaa8... Fb Event konnector : Update to dedicated Facebook App. Lint fixes.
+    'notification facebook_events creation': "%{smart_count] new event imported |||| %{smart_count} events updated"
+    'notification facebook_events updated': "%{smart_count] event updated |||| %{smart_count} events updated"
     "konnector birthdays birthday": "Birthday of"
 
     "konnector sncf reference": "Reference"
