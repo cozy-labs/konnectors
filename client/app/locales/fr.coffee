@@ -160,7 +160,8 @@ module.exports =
     'notification sfr_mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification doctolib creation': "%{smart_count} nouveau rendez-vous importé |||| %{smart_count} nouveaux rendez-vous importés"
     'notification doctolib update': "%{smart_count} rendez-vous mis à jour |||| %{smart_count} rendez-vous mis à jour"
-    'notification facebook_events': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
+    'notification facebook_events creation': "%{smart_count} nouvel événement imporé. |||| %{smart_count} nouveaux événements importés."
+    'notification facebook_events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
     "konnector birthdays birthday": "Anniversaire de"
 
     "konnector sncf reference": "Référence"
