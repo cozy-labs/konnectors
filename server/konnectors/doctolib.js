@@ -38,7 +38,7 @@ const baseUrl = 'https://www.doctolib.fr/';
 
 function login(requiredFields, entries, data, next) {
   const loginUrl = `${baseUrl}login`;
-  const eventsPageUrl = `${baseUrl}mon-compte/rendez-vous`;
+  const eventsPageUrl = `${baseUrl}account/appointments`;
   connector.logger.info('Logging in to doctolib');
   const options = {
     method: 'GET',
@@ -48,39 +48,38 @@ function login(requiredFields, entries, data, next) {
   request(options, (err, res, body) => {
     if (err) {
       connector.logger.error('Coud not connect to the service');
-      next(err);
-    } else {
-      const $ = cheerio.load(body);
-      const form = {
-        kind: $('input[name=kind]').val(),
-        utf8: $('input[name=utf8]').val(),
-        authenticity_token: $('input[name=authenticity_token]').val(),
-        commit: $('input[name=commit]').val(),
-        username: requiredFields.login,
-        password: requiredFields.password,
-      };
-      options.method = 'POST';
-      options.url = loginUrl;
-      options.form = form;
-      request(options, (err, res) => {
-        if (err) {
-          next(err);
-        }
-        if (res.statusCode === 302 &&
-          res.headers.location === `${baseUrl}sessions/nouveau`) {
-          next('bad credentials');
-        }
-        options.url = eventsPageUrl;
-        options.method = 'GET';
-        request(options, (err, res, body) => {
-          if (err) {
-            next(err);
-          }
-          data.html = body;
-          next();
-        });
-      });
+      return next(err);
     }
+    const $ = cheerio.load(body);
+    const form = {
+      kind: $('input[name=kind]').val(),
+      utf8: $('input[name=utf8]').val(),
+      authenticity_token: $('input[name=authenticity_token]').val(),
+      commit: $('input[name=commit]').val(),
+      username: requiredFields.login,
+      password: requiredFields.password,
+    };
+    options.method = 'POST';
+    options.url = loginUrl;
+    options.form = form;
+    request(options, (err, res) => {
+      if (err) {
+        return next(err);
+      }
+      if (res.statusCode === 302 &&
+        res.headers.location === `${baseUrl}sessions/new`) {
+        return next('bad credentials');
+      }
+      options.url = eventsPageUrl;
+      options.method = 'GET';
+      request(options, (err, res, body) => {
+        if (err) {
+          return next(err);
+        }
+        data.html = body;
+        return next();
+      });
+    });
   });
 }
 
@@ -108,26 +107,25 @@ function parseEventFiles(requiredFields, entries, data, next) {
     options.url = `${baseUrl}${path}`;
     request(options, (err, res, body) => {
       if (err) {
-        next(err);
+        return callback(err);
       }
       parser.parseString(body, parserOptions, (err, result) => {
         if (err) {
           connector.logger.error('Parsing failed.');
-          next(err);
-        } else {
-          const newEvents = Event.extractEvents(result,
-            requiredFields.calendar);
-          Array.prototype.push.apply(events, newEvents);
-          callback();
+          return callback(err);
         }
+        const newEvents = Event.extractEvents(result,
+            requiredFields.calendar);
+        Array.prototype.push.apply(events, newEvents);
+        return callback();
       });
     });
   }, (err) => {
     if (err) {
-      next(err);
+      return next(err);
     }
     entries.events = events;
-    next();
+    return next();
   });
 }
 
@@ -135,7 +133,7 @@ function saveEvents(requiredFields, entries, data, next) {
   connector.logger.info('Saving Events...');
   entries.nbCreations = 0;
   entries.nbUpdates = 0;
-  async.eachSeries(entries.events, icalEvent => {
+  async.eachSeries(entries.events, (icalEvent, callback) => {
     icalEvent.caldavuri = icalEvent.id;
     icalEvent.docType = 'Event';
     delete icalEvent._id;
@@ -163,7 +161,7 @@ function saveEvents(requiredFields, entries, data, next) {
     };
     Event.request('allLike', requestOptions, (err, founds) => {
       if (err) {
-        next(err);
+        return callback(err);
       }
       if (founds && founds.length > 0) {
         const found = founds[0];
@@ -176,29 +174,29 @@ function saveEvents(requiredFields, entries, data, next) {
             rrule: icalEvent.rrule,
           }, (err) => {
             if (err) {
-              next(err);
+              return callback(err);
             }
             entries.nbUpdates++;
-            next();
+            return callback();
           });
         } else {
-          next();
+          return callback();
         }
       } else {
         // Create the event.
         connector.logger.info('Creating event');
         Event.create(icalEvent, (err) => {
           if (err) {
-            next(err);
+            return callback(err);
           }
           entries.nbCreations++;
-          next();
+          return callback();
         });
       }
     });
   }, (err) => {
     connector.logger.info('Events are saved.');
-    next(err);
+    return next(err);
   });
 }
 
@@ -210,11 +208,10 @@ function getTimeZone(requiredFields, entries, data, next) {
       if (err === null) {
         err = new Error('Cannot retrieve Cozy user timezone.');
       }
-      next(err);
-    } else {
-      data.timezone = user.timezone;
-      next();
+      return next(err);
     }
+    data.timezone = user.timezone;
+    return next();
   });
 }
 
@@ -237,5 +234,5 @@ function buildNotifContent(requiredFields, entries, data, next) {
       entries.notifContent += ` ${localization.t(localizationKey, options)}`;
     }
   }
-  next();
+  return next();
 }
