@@ -319,9 +319,10 @@ function fetchBills(requiredFields, entries, data, next) {
             bill.amount = (paidAmount + reinboursedAmount + penaltiesAmount) / 100;
           } else {
             // Find the unique Refund based on the emission date
-            bill.amount = listRefund.find(function (refund) {
+            var refund = listRefund.find(function (refund) {
               return refund.date === proof.created_at;
-            }).refunded_cents / 100;
+            });
+            bill.amount = (refund.refunded_cents - refund.added_cents) / 100;
             bill.isRefund = true;
           }
 

@@ -163,12 +163,13 @@ Konnector.prototype["import"] = function(callback) {
     };
   })(this), (function(_this) {
     return function(err, notifContents) {
-      var data;
+      var data, errMessage;
       if (err) {
+        errMessage = err.message != null ? err.message : err.toString();
         data = {
           isImporting: false,
           lastImport: new Date(),
-          importErrorMessage: err.message.replace(/<[^>]*>/ig, '')
+          importErrorMessage: errMessage.replace(/<[^>]*>/ig, '')
         };
       } else {
         data = {
