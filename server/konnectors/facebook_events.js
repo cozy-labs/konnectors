@@ -82,9 +82,11 @@ function updateToken(requiredFields, entries, data, next) {
 // Save konnector's fieldValues during fetch process.
 function saveTokenInKonnector(requiredFields, entries, data, callback) {
   connector.logger.info('Save refreshed token.');
-
+  // The linter is desactivated because it is not possible to put the
+  // require statement at the top of the file.
+  /* eslint-disable global-require */
   const Konnector = require('../models/konnector');
-
+  /* eslint-enable global-require */
   // TODO: should work:
   // Konnector.get(connector.slug, function(err, konnector) {
   Konnector.all((err, konnectors) => {
@@ -106,7 +108,8 @@ function saveTokenInKonnector(requiredFields, entries, data, callback) {
       return callback(e);
     }
 
-    konnector.updateAttributes({ accounts: konnector.accounts }, callback);
+    return konnector.updateAttributes({ accounts: konnector.accounts },
+      callback);
   });
 }
 
@@ -149,15 +152,24 @@ function parseData(requiredFields, entries, data, next) {
       if (fbEvent.place) {
         locationStr = fbEvent.place.name;
         if (fbEvent.place.location) {
-          locationStr += `, ${fbEvent.place.location.street}, `;
-          locationStr += fbEvent.place.location.city;
-          locationStr += ' ';
-          locationStr += fbEvent.place.location.zip;
-          locationStr += ' (';
-          locationStr += fbEvent.place.location.latitude;
-          locationStr += ', ';
-          locationStr += fbEvent.place.location.longitude;
-          locationStr += ')';
+          if (fbEvent.place.location.street) {
+            locationStr += `, ${fbEvent.place.location.street}, `;
+          }
+          if (fbEvent.place.location.city) {
+            locationStr += fbEvent.place.location.city;
+          }
+          if (fbEvent.place.location.zip) {
+            locationStr += ' ';
+            locationStr += fbEvent.place.location.zip;
+          }
+          if (fbEvent.place.location.latitude &&
+              fbEvent.place.location.longitude) {
+            locationStr += ' (';
+            locationStr += fbEvent.place.location.latitude;
+            locationStr += ', ';
+            locationStr += fbEvent.place.location.longitude;
+            locationStr += ')';
+          }
         }
       }
 
@@ -188,7 +200,7 @@ function parseData(requiredFields, entries, data, next) {
     }
   });
 
-  entries.events = list.filter(ev => ev !== null; );
+  entries.events = list.filter(ev => ev !== null);
 
   next();
 }
@@ -211,7 +223,7 @@ function saveEvents(requiredFields, entries, data, next) {
     });
   }, (err) => {
     connector.logger.info('Events are saved.');
-    next(err);
+    return next(err);
   });
 }
 
