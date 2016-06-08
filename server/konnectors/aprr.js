@@ -69,11 +69,7 @@ function getHiddenInputs(requiredFields, bills, data, next) {
 
     const $ = cheerio.load(body);
 
-	// saving cookies
-	data.cookie = res.headers['set-cookie'][0];
-	//console.log(data.cookie);
-
-	var obj = {};
+    var obj = {};
     $( "body" ).find("input[type='hidden']").each(function(){
 		obj[$(this).attr('name')] = $(this).val();
 	});
