@@ -110,9 +110,8 @@ function logIn(requiredFields, bills, data, next) {
 
     if (body.search('processus=login_fail') > -1) {
       isLogged = false;
+      log.debug(body);
     }
-
-    log.debug(body);
 
     if (isLogged) {
       connector.logger.info('Successfully logged in.');
