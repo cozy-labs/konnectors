@@ -15,7 +15,11 @@ Before opening any pull requests make sure that you follow these rules:
 * Follow the [Cozy Guidelines](https://github.com/cozy/cozy-guidelines).
 * Make sure that `npm run lint` doesn't return any errors.
 * Do not include the build in your pull request.
-* Explain in the Pull Request which problem is solved and how you fixed it.
+* All the keys for the locales are present :
+ * 'konnector description my_connector_name' : explains what the connetor does
+ * Notifications if you connector pops up notifications on completed fetch
+* You have updated the connector list (if relevant)
+* Explain in the Pull Request which problem is solved and how you fixed it (plateform changes).
 
 # Available connectors
 
@@ -24,7 +28,9 @@ Before opening any pull requests make sure that you follow these rules:
 * Ameli (Bill PDFs)
 * Bouygues Telecom (Bill PDFs)
 * Bouygues Box (Bill PDFs)
+* Captain Train (Bill PDFs)
 * Digital Ocean (Bill PDFs)
+* Direct Energie (Bill PDFś)
 * Electrabel (Bill PDFs)
 * Free (Bill PDFs)
 * Free Mobile (Bill PDFs)
@@ -49,13 +55,13 @@ Before opening any pull requests make sure that you follow these rules:
 * Twitter (published tweets)
 * Linkedin (contact information)
 * Google (contact information)
-* Facebook (event information)
 
 *Calendar*
 
 * Ical Feed (events)
 * Contact Birthdays (events)
 * Doctolib (events)
+* Facebook (events)
 * SNCF (events)
 * Google (events)
 
