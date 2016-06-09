@@ -126,7 +126,8 @@ parsePage = (requiredFields, bills, data, next) ->
     $ = cheerio.load data.html
     $('.pane li').each ->
         amount = $($(this).find('strong').get(1)).html()
-        amount = amount.replace ' Euros', ''
+        amount = amount.replace(' Euros', '').replace('&euro;', '')
+        amount = amount.replace(',', '.').trim()
         amount = parseFloat amount
 
         pdfUrl = $(this).find('.last a').attr 'href'
