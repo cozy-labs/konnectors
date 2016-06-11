@@ -35,14 +35,14 @@ const fileOptions = {
 };
 
 const Bill = require('../models/bill');
-const baseUrl = 'https://secure.fr.vente-privee.com/';
+const baseUrl = 'https://secure.fr.vente-privee.com';
 
 // Konnector
 const connector = module.exports = baseKonnector.createNew({
-  name: 'Vente-Privee',
-  slug: 'Vente-Privee',
-  description: 'konnector description vente-privee',
-  vendorLink: `${baseUrl}/connexion.aspx`,
+  name: 'Vente-Privee.com',
+  slug: 'vente-privee-com',
+  description: 'konnector description vente_privee',
+  vendorLink: `${baseUrl}`,
   fields: {
     login: 'text',
     password: 'password',
@@ -70,7 +70,7 @@ const connector = module.exports = baseKonnector.createNew({
 
 // Procedure to get hidden inputs
 function getHiddenInputs(requiredFields, bills, data, next) {
-  const url = 'https://secure.fr.vente-privee.com/authentication/login/FR?ReturnUrl=%2fmemberaccount%2forder';
+  const url = `${baseUrl}/authentication/login/FR?ReturnUrl=%2fmemberaccount%2forder`;
   const options = {
     url,
     method: 'GET',
@@ -103,10 +103,10 @@ function getHiddenInputs(requiredFields, bills, data, next) {
 function logIn(requiredFields, bills, data, next) {
   const options = {
     method: 'POST',
-    url: 'https://secure.fr.vente-privee.com/authentication/login/FR?ReturnUrl=%2fmemberaccount%2forder',
+    url: `${baseUrl}/authentication/login/FR?ReturnUrl=%2fmemberaccount%2forder`,
     form: data.inputs,
     headers: {
-      Referer: 'https://secure.fr.vente-privee.com/authentication/login/FR?ReturnUrl=%2fmemberaccount%2forder',
+      Referer: `${baseUrl}/authentication/login/FR?ReturnUrl=%2fmemberaccount%2forder`,
     },
   };
 
@@ -180,8 +180,8 @@ function parsePage(requiredFields, bills, data, next) {
         date: moment(orderDate, 'DD/MM/YY'),
         type: 'shop',
         amount: orderAmount,
-        pdfurl: `https://secure.fr.vente-privee.com/memberaccount/order/invoice?orderId=${orderId}`,
-        vendor: 'Vente-Privee',
+        pdfurl: `${baseUrl}/memberaccount/order/invoice?orderId=${orderId}`,
+        vendor: 'vente-privee.com',
       };
 
       // saving bill
@@ -196,7 +196,7 @@ function parsePage(requiredFields, bills, data, next) {
 }
 
 function logOut(requiredFields, bills, data, next) {
-  const url = 'https://secure.fr.vente-privee.com/vp4/Login/Logout.ashx';
+  const url = `${baseUrl}/vp4/Login/Logout.ashx`;
   const options = {
     method: 'GET',
     url,
