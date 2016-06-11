@@ -87,8 +87,8 @@ function getHiddenInputs(requiredFields, bills, data, next) {
     });
 
     // adding login/pwd
-    obj['ctl00$PlaceHolderMain$TextBoxLogin'] = requiredFields.login;
-    obj['ctl00$PlaceHolderMain$TextBoxPass'] = requiredFields.password;
+    obj.ctl00$PlaceHolderMain$TextBoxLogin = requiredFields.login;
+    obj.ctl00$PlaceHolderMain$TextBoxPass = requiredFields.password;
     obj['ctl00$PlaceHolderMain$ImageButtonConnection.x'] = Math.floor((Math.random() * 10) + 1);
     obj['ctl00$PlaceHolderMain$ImageButtonConnection.y'] = Math.floor((Math.random() * 10) + 1);
 
