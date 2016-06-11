@@ -42,7 +42,7 @@ const connector = module.exports = baseKonnector.createNew({
   name: 'Vente-Privee.com',
   slug: 'vente-privee-com',
   description: 'konnector description vente_privee',
-  vendorLink: `${baseUrl}`,
+  vendorLink: baseUrl,
   fields: {
     login: 'text',
     password: 'password',
