@@ -127,6 +127,7 @@ module.exports =
     'konnector description directenergie': "Télécharge toutes vos factures pour votre compte actif depuis le site de Direct Energie."
     'konnector description captain_train' : "Télécharge toutes les factures du vendeur de billet de train Captain Train. Ce connector ne supporte qu'une autentification normale (email/mot de passe), et ne permet pas la connection avec les comptes Facebook ou Google. Ce connector ne fournit pas non plus d'évenements pour votre agenda. Pour ceci, activez l'option sur votre compte capitaine train (<a href=\"https://www.captaintrain.com/preferences/calendars\">ici</a>) et utilisez le lien du flux Ical fourni avec le connector Ical feed (<a href=\"#konnector/ical_feed\">ici<a>)."
     'konnector description facebook_events': "Importez vos événements Facebook dans votre Cozy. Pour ce faire, cliquez sur le bouton Connect, suivez les instructions, puis copier le code, puis revenez sur cette page pour le coller dans le champs Access token."
+    'konnector description aprr' : "Télécharge toutes vos factures depuis le site internet de APRR (compte avec badge télépéage)."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -166,6 +167,8 @@ module.exports =
     'notification captain_train': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification facebook_events creation': "%{smart_count} nouvel événement imporé. |||| %{smart_count} nouveaux événements importés."
     'notification facebook_events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
+    'notification aprr': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+
     "konnector birthdays birthday": "Anniversaire de"
 
     "konnector sncf reference": "Référence"
