@@ -27,6 +27,7 @@ const Bill = require('../models/bill');
 // Konnector
 const connector = module.exports = baseKonnector.createNew({
   name: 'SFR Mobile',
+  description: 'konnector description sfr_mobile',
   fields: {
     login: 'text',
     password: 'password',
@@ -161,7 +162,7 @@ function customSaveDataAndFile(requiredFields, bills, data, next) {
 
 function buildNotifContent(requiredFields, bills, data, next) {
   if (bills.filtered.length > 0) {
-    const localizationKey = 'notification sfr mobile';
+    const localizationKey = 'notification sfr_mobile';
     const options = {
       smart_count: bills.filtered.length,
     };
