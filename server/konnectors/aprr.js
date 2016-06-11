@@ -40,7 +40,7 @@ const connector = module.exports = baseKonnector.createNew({
   name: 'APRR',
   slug: 'APRR',
   description: 'konnector description aprr',
-  vendorLink: `${baseUrl}/connexion.aspx`,
+  vendorLink: baseUrl,
   fields: {
     login: 'text',
     password: 'password',
