@@ -1,3 +1,11 @@
+/*
+// This konnector retrieves invoices from french motorway company APRR
+// website https://espaceclient.aprr.fr
+// creation : 11/06/2016
+// creator : https://github.com/SomeAverageDev
+// this konnector works for customers having an automatic toll payment system
+// also called "badge telepeage"
+*/
 'use strict';
 
 const request = require('request').defaults({
