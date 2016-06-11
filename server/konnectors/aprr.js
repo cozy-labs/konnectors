@@ -57,7 +57,7 @@ const connector = module.exports = baseKonnector.createNew({
     linkBankOperation({
       log,
       model: Bill,
-      identifier: 'APRR',
+      identifier: 'APRR AUTOROUTE',
       minDateDelta: 4,
       maxDateDelta: 20,
       amountDelta: 0.1,
