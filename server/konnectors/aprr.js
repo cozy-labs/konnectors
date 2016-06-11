@@ -205,11 +205,13 @@ function parsePage(requiredFields, bills, data, next) {
 
 function customFilterExisting(requiredFields, bills, data, next) {
   filterExisting(log, Bill)(requiredFields, bills, data, next);
+  return next();
 }
 
 function customSaveDataAndFile(requiredFields, bills, data, next) {
   const fnsave = saveDataAndFile(log, Bill, fileOptions, ['peage', 'facture']);
   fnsave(requiredFields, bills, data, next);
+  return next();
 }
 
 function buildNotifContent(requiredFields, bills, data, next) {
