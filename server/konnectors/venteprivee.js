@@ -155,7 +155,6 @@ function parsePage(requiredFields, bills, data, next) {
     log.debug('trId:', trId);
 
     if (typeof (trId) === 'undefined') {
-      // next tr
       return true;
     }
 
@@ -169,9 +168,13 @@ function parsePage(requiredFields, bills, data, next) {
 
       orderDate = $tds.eq(1).text().trim();
       orderAmount = $tds.eq(2).text().trim();
-      orderAmount = parseFloat(((orderAmount.match(/(\d+,\d+)/))[0])
-                                             .replace(',', '.')
-                              );
+      try {
+        orderAmount = parseFloat(((orderAmount.match(/(\d+,\d+)/))[0])
+                                              .replace(',', '.'));
+      }
+      catch (e) {
+        orderAmount = 0;
+      }
 
       log.debug('orderDate:', orderDate);
       log.debug('orderAmount:', orderAmount);
@@ -229,5 +232,5 @@ function buildNotifContent(requiredFields, bills, data, next) {
     bills.notifContent = localization.t(localizationKey, options);
   }
 
-  next();
+  return next();
 }

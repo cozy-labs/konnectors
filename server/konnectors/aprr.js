@@ -200,7 +200,7 @@ function parsePage(requiredFields, bills, data, next) {
 
   connector.logger.info('Successfully parsed the page, bills found:',
     bills.fetched.length);
-  next();
+  return next();
 }
 
 function customFilterExisting(requiredFields, bills, data, next) {
@@ -221,5 +221,5 @@ function buildNotifContent(requiredFields, bills, data, next) {
     bills.notifContent = localization.t(localizationKey, options);
   }
 
-  next();
+  return next();
 }
