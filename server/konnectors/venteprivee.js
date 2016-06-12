@@ -225,7 +225,7 @@ function customSaveDataAndFile(requiredFields, bills, data, next) {
 
 function buildNotifContent(requiredFields, bills, data, next) {
   if (bills.filtered.length > 0) {
-    const localizationKey = 'notification vente-privee';
+    const localizationKey = 'notification vente_privee';
     const options = {
       smart_count: bills.filtered.length,
     };
