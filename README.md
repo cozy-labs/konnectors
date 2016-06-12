@@ -41,6 +41,8 @@ Before opening any pull requests make sure that you follow these rules:
 * Sosh (Bill PDFs)
 * SFR (Bill PDFs)
 * Virgin Mobile (Bill PDFs)
+* APRR (Bill PDFs)
+* Vente-Privee.com (Bill PDFs)
 
 
 *Internet Of Things*
