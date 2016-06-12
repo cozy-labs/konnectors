@@ -125,7 +125,7 @@ module.exports =
     'konnector description captain_train' : 'Downloads all your bills from the train ticket reseller Captain Train. This connector only uses normal authentification (email/password) and no Facebook/Google login. This konnector does not provides events for your calendar. For this visit, your Captain Train account (<a href="https://www.captaintrain.com/preferences/calendars">here</a>) and use the provided Ical feed link with the Ical Feed connector(<a href="#konnector/ical_feed">here<a>).'
     'konnector description facebook_events': "Import your Facebook's events in your Cozy. To setup, clic on Connect, then follow instructions, then copy the given code, and past it in the Access token field."
     'konnector description aprr' : 'Downloads all your invoices from the APRR website (account with telepeage). This konnector requires the Files application to store the invoices PDF files.'
-    'konnector description vente-privee' : 'Downloads all your invoices from the vente-privee.com website. This konnector requires the Files application to store the invoices PDF files.'
+    'konnector description vente_privee' : 'Downloads all your invoices from the vente-privee.com website. This konnector requires the Files application to store the invoices PDF files.'
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
