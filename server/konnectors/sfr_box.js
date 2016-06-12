@@ -27,7 +27,6 @@ const Bill = require('../models/bill');
 // Konnector
 const connector = module.exports = baseKonnector.createNew({
   name: 'SFR Box',
-  description: 'konnector description sfr_box',
   fields: {
     login: 'text',
     password: 'password',

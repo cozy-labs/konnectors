@@ -30,7 +30,7 @@ const log = require('printit')({
 });
 
 const fileOptions = {
-  vendor: 'Vente-Privee',
+  vendor: 'vente-privee',
   dateFormat: 'YYYYMMDD',
 };
 
@@ -39,9 +39,7 @@ const baseUrl = 'https://secure.fr.vente-privee.com';
 
 // Konnector
 const connector = module.exports = baseKonnector.createNew({
-  name: 'Vente-Privee.com',
-  slug: 'vente-privee-com',
-  description: 'konnector description vente_privee',
+  name: 'Vente-Privée',
   vendorLink: baseUrl,
   fields: {
     login: 'text',

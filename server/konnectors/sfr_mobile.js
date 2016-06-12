@@ -27,7 +27,6 @@ const Bill = require('../models/bill');
 // Konnector
 const connector = module.exports = baseKonnector.createNew({
   name: 'SFR Mobile',
-  description: 'konnector description sfr_mobile',
   fields: {
     login: 'text',
     password: 'password',
