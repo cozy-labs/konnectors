@@ -13,7 +13,7 @@
   "dependencies": {
     "americano": "0.4.5",
     "async": "1.5.2",
-    "cheerio": "0.20.0",
+    "cheerio": "0.21.0",
     "cozy-ical": "1.1.22",
     "cozy-notifications-helper": "1.1.0",
     "cozy-realtime-adapter": "1.0.2",
