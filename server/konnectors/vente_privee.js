@@ -74,6 +74,10 @@ function getHiddenInputs(requiredFields, bills, data, next) {
     method: 'GET',
   };
 
+  if (requiredFields.login.length === 0 || requiredFields.password.length === 0) {
+    return next('bad credentials');
+  }
+
   connector.logger.info('Getting the hidden inputs...');
 
   request(options, (err, res, body) => {
@@ -119,10 +123,10 @@ function logIn(requiredFields, bills, data, next) {
       if (err != null) {
         log.error(err);
       }
-      if (requiredFields.password == null) {
+      if (requiredFields.password.length === 0) {
         log.error('No password');
       }
-      if (requiredFields.login == null) {
+      if (requiredFields.login.length === 0) {
         log.error('No login');
       }
       if (res.statusCode !== 200) {

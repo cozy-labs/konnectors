@@ -72,6 +72,10 @@ function getHiddenInputs(requiredFields, bills, data, next) {
     method: 'GET',
   };
 
+  if (requiredFields.login.length === 0 || requiredFields.password.length === 0) {
+    return next('bad credentials');
+  }
+
   connector.logger.info('Getting the hidden inputs...');
 
   request(options, (err, res, body) => {
