@@ -79,7 +79,9 @@ function login(requiredFields, entries, data, next) {
         data.html = body;
         return next();
       });
+      return null;
     });
+    return null;
   });
 }
 
@@ -119,6 +121,7 @@ function parseEventFiles(requiredFields, entries, data, next) {
         Array.prototype.push.apply(events, newEvents);
         return callback();
       });
+      return null;
     });
   }, (err) => {
     if (err) {
@@ -177,10 +180,11 @@ function saveEvents(requiredFields, entries, data, next) {
               return callback(err);
             }
             entries.nbUpdates++;
-            return callback();
+            callback();
+            return null;
           });
         } else {
-          return callback();
+          callback();
         }
       } else {
         // Create the event.
@@ -193,6 +197,7 @@ function saveEvents(requiredFields, entries, data, next) {
           return callback();
         });
       }
+      return null;
     });
   }, (err) => {
     connector.logger.info('Events are saved.');
