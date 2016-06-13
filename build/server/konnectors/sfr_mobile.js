@@ -150,7 +150,7 @@ function customSaveDataAndFile(requiredFields, bills, data, next) {
 
 function buildNotifContent(requiredFields, bills, data, next) {
   if (bills.filtered.length > 0) {
-    var localizationKey = 'notification sfr mobile';
+    var localizationKey = 'notification sfr_mobile';
     var options = {
       smart_count: bills.filtered.length
     };

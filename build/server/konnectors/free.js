@@ -133,7 +133,8 @@ parsePage = function(requiredFields, bills, data, next) {
   $('.pane li').each(function() {
     var amount, bill, date, month, pdfUrl;
     amount = $($(this).find('strong').get(1)).html();
-    amount = amount.replace(' Euros', '');
+    amount = amount.replace(' Euros', '').replace('&euro;', '');
+    amount = amount.replace(',', '.').trim();
     amount = parseFloat(amount);
     pdfUrl = $(this).find('.last a').attr('href');
     pdfUrl = "https://adsl.free.fr/" + pdfUrl;
