@@ -176,7 +176,8 @@ function customFilterExisting(requiredFields, entries, data, next) {
 }
 
 function customSaveDataAndFile(requiredFields, entries, data, next) {
-  saveDataAndFile(log, Bill, fileOptions, ['facture'])(requiredFields, entries, data, next);
+  saveDataAndFile(log, Bill, fileOptions, ['facture'])(
+      requiredFields, entries, data, next);
 }
 
 function buildNotifContent(requiredFields, entries, data, next) {

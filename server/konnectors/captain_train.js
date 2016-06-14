@@ -56,7 +56,8 @@ const fileOptions = {
 
 const baseUrl = 'https://www.captaintrain.com/';
 const client = requestJson.createClient(baseUrl);
-const userAgent = 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:37.0) Gecko/20100101 Firefox/37.0';
+const userAgent = 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:37.0) ' +
+                  'Gecko/20100101 Firefox/37.0';
 // Authenticity token used by the jequest-json client.
 let csrfToken;
 client.headers['user-agent'] = userAgent;
@@ -97,7 +98,8 @@ function login(requiredFields, entries, data, next) {
     };
     client.headers.cookie = cookie;
     // Signin
-    client.post(`${baseUrl}api/v5/account/signin`, signinForm, (err, res, body) => {
+    const signinPath = `${baseUrl}api/v5/account/signin`;
+    client.post(signinPath, signinForm, (err, res, body) => {
       if (err) {
         logger.error(err);
         next(err);
@@ -130,7 +132,8 @@ function login(requiredFields, entries, data, next) {
         client.headers.cookie = cookie;
         client.headers.Authorization = `Token token="${token}"`;
         data.authHeader = `Token token="${token}"`;
-        // the api/v5/pnrs uri gives all information necessary to get bill information
+        // the api/v5/pnrs uri gives all information necessary to get bill
+        // information
         client.get(`${baseUrl}api/v5/pnrs`, (err, res, body) => {
           if (err) {
             logger.error(err);
@@ -158,7 +161,9 @@ function computeNextDate(pnrs) {
   //    - YY: year of the first month before the youngest received pnr
 
   // Indentify the minimum date in the pnr list
-  const minDate = pnrs.reduce((min, pnr) => Math.min(+min, +new Date(pnr.sort_date)), Infinity);
+  const minDate = pnrs.reduce(
+    (min, pnr) => Math.min(+min, +new Date(pnr.sort_date)), Infinity
+  );
   return moment(minDate).subtract(1, 'month').set('date', 1)
                         .format('YYYY-MM-DD');
 }
@@ -234,7 +239,8 @@ function fetchBills(requiredFields, entries, data, next) {
       continue;
     }
 
-    // The proof can be duplicated, we only manage the one which were not taken care of already.
+    // The proof can be duplicated, we only manage the one which were not taken
+    // care of already.
     if (managedProofId.indexOf(proof.id) !== -1) {
       // This proof is already dealt with
       continue;
@@ -244,18 +250,21 @@ function fetchBills(requiredFields, entries, data, next) {
     }
 
     // A bill can be linked to several pnrs, we retrieve all of them
-    // For some unknown reason, some users don't have pnrs backlinked to proofs,
-    // let's initialize the array with the one linked to the proof.
+    // For some unknown reason, some users don't have pnrs backlinked to
+    // proofs, let's initialize the array with the one linked to the proof.
     let linkedPNR = [data.pnrs.find(pnr => pnr.id === proof.pnr_id)];
     try {
-      linkedPNR = data.pnrs.filter(pnr => pnr.proof_ids.indexOf(proof.id) !== -1);
+      linkedPNR = data.pnrs.filter(
+        pnr => pnr.proof_ids.indexOf(proof.id) !== -1
+      );
     } catch (e) {
       // We do nothing with the error as linkedPNR is set anyway.
       logger.error('linkedPNR');
       logger.error(e);
     }
 
-    // For some unknown reason, some users don't have system set for the pnr. By default we set it to sncf
+    // For some unknown reason, some users don't have system set for the pnr.
+    // By default we set it to sncf
     linkedPNR = linkedPNR.map(pnr => {
       if (typeof pnr.system === 'undefined') {
         pnr.system = 'sncf';
@@ -263,11 +272,17 @@ function fetchBills(requiredFields, entries, data, next) {
       return pnr;
     });
 
-    // We try to find the list of the systems. there will be one bankoperation/proof/system
-    const systems = linkedPNR.reduce((sys, pnr) =>
-            sys.indexOf(pnr.system) === -1 ? sys.concat(pnr.system) : sys, []);
+    // We try to find the list of the systems. there will be one
+    // bankoperation/proof/system
+    const systems = linkedPNR.reduce((sys, pnr) => {
+      if (sys.indexOf(pnr.system) === -1) {
+        return sys.concat(pnr.system);
+      }
+      return sys;
+    }, []);
 
-    // Calculate the amount of each system because their is one operation per system.
+    // Calculate the amount of each system because their is one operation per
+    // system.
     for (const system of systems) {
       const bill = {
         pdfurl: proof.url,
@@ -281,22 +296,34 @@ function fetchBills(requiredFields, entries, data, next) {
 
       // Get the list of refunds for the current bill
       let refundID = [];
-      refundID = linkedPNR.filter(pnr => pnr.system === system).reduce((list, pnr) => list.concat(pnr.after_sales_log_ids), []);
+      refundID = linkedPNR.filter(pnr => pnr.system === system).reduce(
+        (list, pnr) => list.concat(pnr.after_sales_log_ids), []
+      );
       let listRefund = [];
-      listRefund = refundID.reduce((list, id) => list.concat(data.after_sales_logs.find(asl => asl.id === id)), []);
+      listRefund = refundID.reduce((list, id) => list.concat(
+        data.after_sales_logs.find(asl => asl.id === id)), []
+      );
 
 
       if (proof.type === 'purchase') {
         // Compute the sum of refunds for the current bill
-        const reinboursedAmount = listRefund.reduce((sum, rb) => sum - rb.added_cents + rb.refunded_cents, 0);
+        const reinboursedAmount = listRefund.reduce(
+          (sum, rb) => sum - rb.added_cents + rb.refunded_cents, 0
+        );
         // We compute the amount of not reimbursed trips.
-        const paidAmount = linkedPNR.filter(pnr => pnr.system === system).reduce((sum, p) => sum + p.cents, 0);
+        const paidAmount =
+          linkedPNR.filter(pnr => pnr.system === system).reduce(
+            (sum, p) => sum + p.cents, 0
+          );
         // Get the the sum of penalties
-        const penaltiesAmount = listRefund.reduce((sum, rb) => sum + rb.penalty_cents, 0);
+        const penaltiesAmount = listRefund.reduce(
+          (sum, rb) => sum + rb.penalty_cents, 0);
         bill.amount = (paidAmount + reinboursedAmount + penaltiesAmount) / 100;
       } else {
         // Find the unique Refund based on the emission date
-        const refund = listRefund.find(refund => refund.date === proof.created_at);
+        const refund = listRefund.find(
+          refund => refund.date === proof.created_at
+        );
         bill.amount = (refund.refunded_cents - refund.added_cents) / 100;
         bill.isRefund = true;
       }

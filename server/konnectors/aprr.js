@@ -72,32 +72,37 @@ function getHiddenInputs(requiredFields, bills, data, next) {
     method: 'GET',
   };
 
-  if (requiredFields.login.length === 0 || requiredFields.password.length === 0) {
-    return next('bad credentials');
-  }
+  if (requiredFields.login.length === 0
+      || requiredFields.password.length === 0) {
+    next('bad credentials');
+  } else {
+    connector.logger.info('Getting the hidden inputs...');
 
-  connector.logger.info('Getting the hidden inputs...');
+    request(options, (err, res, body) => {
+      const obj = {};
+      if (err) {
+        next(err);
+      } else {
+        const $ = cheerio.load(body);
 
-  request(options, (err, res, body) => {
-    const obj = {};
-    if (err) return next(err);
+        $('body').find('input[type=\'hidden\']').each(function a() {
+          obj[$(this).attr('name')] = $(this).val();
+        });
 
-    const $ = cheerio.load(body);
+        // adding login/pwd
+        obj.ctl00$PlaceHolderMain$TextBoxLogin = requiredFields.login;
+        obj.ctl00$PlaceHolderMain$TextBoxPass = requiredFields.password;
+        obj['ctl00$PlaceHolderMain$ImageButtonConnection.x'] =
+          Math.floor((Math.random() * 10) + 1);
+        obj['ctl00$PlaceHolderMain$ImageButtonConnection.y'] =
+          Math.floor((Math.random() * 10) + 1);
 
-    $('body').find('input[type=\'hidden\']').each(function a() {
-      obj[$(this).attr('name')] = $(this).val();
+        data.inputs = obj;
+
+        next();
+      }
     });
-
-    // adding login/pwd
-    obj.ctl00$PlaceHolderMain$TextBoxLogin = requiredFields.login;
-    obj.ctl00$PlaceHolderMain$TextBoxPass = requiredFields.password;
-    obj['ctl00$PlaceHolderMain$ImageButtonConnection.x'] = Math.floor((Math.random() * 10) + 1);
-    obj['ctl00$PlaceHolderMain$ImageButtonConnection.y'] = Math.floor((Math.random() * 10) + 1);
-
-    data.inputs = obj;
-
-    return next();
-  });
+  }
 }
 
 
@@ -185,7 +190,8 @@ function parsePage(requiredFields, bills, data, next) {
           date: moment([billDate[1], month, 28]),
           type: 'Peage',
           amount: billAmount,
-          pdfurl: `${baseUrl}/MaConsommation/conso_factures.aspx?facture=${billReference}`,
+          pdfurl: `${baseUrl}/MaConsommation/conso_factures.aspx?` +
+                  'facture=${billReference}',
           vendor: 'APRR',
         };
 

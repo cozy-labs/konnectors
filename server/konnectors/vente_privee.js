@@ -11,7 +11,8 @@ const request = require('request').defaults({
   followAllRedirects: true,
   headers: {
     'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) ' +
+                  'Gecko/20100101 Firefox/47.0',
   },
 });
 
@@ -68,47 +69,53 @@ const connector = module.exports = baseKonnector.createNew({
 
 // Procedure to get hidden inputs
 function getHiddenInputs(requiredFields, bills, data, next) {
-  const url = `${baseUrl}/authentication/login/FR?ReturnUrl=%2fmemberaccount%2forder`;
+  const url = `${baseUrl}/authentication/login/` +
+              'FR?ReturnUrl=%2fmemberaccount%2forder';
   const options = {
     url,
     method: 'GET',
   };
 
-  if (requiredFields.login.length === 0 || requiredFields.password.length === 0) {
-    return next('bad credentials');
-  }
+  if (requiredFields.login.length === 0
+      || requiredFields.password.length === 0) {
+    next('bad credentials');
+  } else {
+    connector.logger.info('Getting the hidden inputs...');
 
-  connector.logger.info('Getting the hidden inputs...');
+    request(options, (err, res, body) => {
+      const obj = {};
+      if (err) {
+        next(err);
+      } else {
+        const $ = cheerio.load(body);
 
-  request(options, (err, res, body) => {
-    const obj = {};
-    if (err) return next(err);
+        $('body').find('input[type=\'hidden\']').each(function a() {
+          obj[$(this).attr('name')] = $(this).val();
+        });
 
-    const $ = cheerio.load(body);
+        // adding login/pwd
+        obj['PortalTheme.CountryTheme.CouleurTexte'] = 'black';
+        obj.Mail = requiredFields.login;
+        obj.Password = requiredFields.password;
 
-    $('body').find('input[type=\'hidden\']').each(function a() {
-      obj[$(this).attr('name')] = $(this).val();
+        data.inputs = obj;
+
+        next();
+      }
     });
-
-    // adding login/pwd
-    obj['PortalTheme.CountryTheme.CouleurTexte'] = 'black';
-    obj.Mail = requiredFields.login;
-    obj.Password = requiredFields.password;
-
-    data.inputs = obj;
-
-    return next();
-  });
+  }
 }
 
 // Procedure to login
 function logIn(requiredFields, bills, data, next) {
   const options = {
     method: 'POST',
-    url: `${baseUrl}/authentication/login/FR?ReturnUrl=%2fmemberaccount%2forder`,
+    url: `${baseUrl}/authentication/login/` +
+         'FR?ReturnUrl=%2fmemberaccount%2forder',
     form: data.inputs,
     headers: {
-      Referer: `${baseUrl}/authentication/login/FR?ReturnUrl=%2fmemberaccount%2forder`,
+      Referer: `${baseUrl}/authentication/login/` +
+               'FR?ReturnUrl=%2fmemberaccount%2forder',
     },
   };
 
@@ -173,8 +180,7 @@ function parsePage(requiredFields, bills, data, next) {
       try {
         orderAmount = parseFloat(((orderAmount.match(/(\d+,\d+)/))[0])
                                               .replace(',', '.'));
-      }
-      catch (e) {
+      } catch (e) {
         orderAmount = 0;
       }
 
@@ -210,21 +216,23 @@ function logOut(requiredFields, bills, data, next) {
   request(options, (err) => {
     if (err) {
       log.error(err);
-      return next(err);
+      next(err);
+    } else {
+      next();
     }
-    return next();
   });
 }
 
 function customFilterExisting(requiredFields, bills, data, next) {
   filterExisting(log, Bill)(requiredFields, bills, data, next);
-    return next();
+  next();
 }
 
 function customSaveDataAndFile(requiredFields, bills, data, next) {
-  const fnsave = saveDataAndFile(log, Bill, fileOptions, ['vente-privee', 'facture']);
+  const fnsave = saveDataAndFile(
+      log, Bill, fileOptions, ['vente-privee', 'facture']);
   fnsave(requiredFields, bills, data, next);
-    return next();
+  next();
 }
 
 function buildNotifContent(requiredFields, bills, data, next) {
@@ -235,6 +243,5 @@ function buildNotifContent(requiredFields, bills, data, next) {
     };
     bills.notifContent = localization.t(localizationKey, options);
   }
-
-  return next();
+  next();
 }
