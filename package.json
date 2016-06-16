@@ -54,7 +54,8 @@
   },
   "scripts": {
     "build": "sh scripts/build.sh",
-    "test": "sh scripts/tests.sh",
+    "test": "sh scripts/lint.sh && sh scripts/tests.sh",
+    "test:server": "sh scripts/tests.sh",
     "lint": "sh scripts/lint.sh",
     "start": "node build/server.js",
     "prebuild": "npm install && cd client && npm install"
