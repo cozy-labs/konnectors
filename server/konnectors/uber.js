@@ -109,11 +109,11 @@ function logIn(requiredFields, bills, data, next) {
 
 function getTrips(requiredFields, bills, data, next) {
   let $ = cheerio.load(data.tripsPage);
-  const tripsId = $('tr[class=trip-expand__origin]')
+  const tripsId = $('tbody .trip-expand__origin')
                   .map((i, element) => $(element).data('target'))
                   .get()
                   .map(trip => trip.replace('#trip-', ''));
-  log.info(`Found ${tripsId.length} uber bills`);
+  log.info(`Found ${tripsId.length} uber trips`);
   const fetchedBills = [];
   async.eachSeries(tripsId, (tripId, callback) => {
     const tripOption = {
@@ -131,6 +131,7 @@ function getTrips(requiredFields, bills, data, next) {
       const amount = $('td[class="text--right alpha weight--semibold"]')
                     .text()
                     .replace('€', '')
+                    .replace(',', '.')
                     .trim();
       const billUrlOptions = {
         jar: true,
@@ -143,6 +144,10 @@ function getTrips(requiredFields, bills, data, next) {
           log.raw(err);
           return callback(err);
         }
+        if (res.statusCode >= 400) {
+          log.info('No bill for this trip');
+          return callback();
+        }
         let parsedBody;
         try {
           parsedBody = JSON.parse(body);
@@ -150,6 +155,12 @@ function getTrips(requiredFields, bills, data, next) {
           log.err(e);
           return callback(e);
         }
+        // This can be due to a cancelled trip.
+        if (parsedBody.length === 0) {
+          log.info('No bill for this trip');
+          return callback();
+        }
+
         const bill = {
           date: new Date(parsedBody[0].invoice_date),
           amount: parseFloat(amount),
