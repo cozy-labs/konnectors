@@ -42,37 +42,39 @@ function login(requiredFields, entries, data, next) {
   request(options, function (err, res, body) {
     if (err) {
       connector.logger.error('Coud not connect to the service');
-      return next(err);
-    }
-    var $ = cheerio.load(body);
-    var form = {
-      kind: $('input[name=kind]').val(),
-      utf8: $('input[name=utf8]').val(),
-      authenticity_token: $('input[name=authenticity_token]').val(),
-      commit: $('input[name=commit]').val(),
-      username: requiredFields.login,
-      password: requiredFields.password
-    };
-    options.method = 'POST';
-    options.url = loginUrl;
-    options.form = form;
-    request(options, function (err, res) {
-      if (err) {
-        return next(err);
-      }
-      if (res.statusCode === 302 && res.headers.location === baseUrl + 'sessions/new') {
-        return next('bad credentials');
-      }
-      options.url = eventsPageUrl;
-      options.method = 'GET';
-      request(options, function (err, res, body) {
+      next(err);
+    } else {
+      var $ = cheerio.load(body);
+      var form = {
+        kind: $('input[name=kind]').val(),
+        utf8: $('input[name=utf8]').val(),
+        authenticity_token: $('input[name=authenticity_token]').val(),
+        commit: $('input[name=commit]').val(),
+        username: requiredFields.login,
+        password: requiredFields.password
+      };
+      options.method = 'POST';
+      options.url = loginUrl;
+      options.form = form;
+      request(options, function (err, res) {
         if (err) {
-          return next(err);
+          next(err);
+        } else if (res.statusCode === 302 && res.headers.location === baseUrl + 'sessions/new') {
+          next('bad credentials');
+        } else {
+          options.url = eventsPageUrl;
+          options.method = 'GET';
+          request(options, function (err, res, body) {
+            if (err) {
+              next(err);
+            } else {
+              data.html = body;
+              next();
+            }
+          });
         }
-        data.html = body;
-        return next();
       });
-    });
+    }
   });
 }
 
@@ -100,17 +102,19 @@ function parseEventFiles(requiredFields, entries, data, next) {
     options.url = '' + baseUrl + path;
     request(options, function (err, res, body) {
       if (err) {
-        return callback(err);
+        callback(err);
+      } else {
+        parser.parseString(body, parserOptions, function (err, result) {
+          if (err) {
+            connector.logger.error('Parsing failed.');
+            callback(err);
+          } else {
+            var newEvents = Event.extractEvents(result, requiredFields.calendar);
+            Array.prototype.push.apply(events, newEvents);
+            callback();
+          }
+        });
       }
-      parser.parseString(body, parserOptions, function (err, result) {
-        if (err) {
-          connector.logger.error('Parsing failed.');
-          return callback(err);
-        }
-        var newEvents = Event.extractEvents(result, requiredFields.calendar);
-        Array.prototype.push.apply(events, newEvents);
-        return callback();
-      });
     });
   }, function (err) {
     if (err) {
@@ -152,9 +156,8 @@ function saveEvents(requiredFields, entries, data, next) {
     };
     Event.request('allLike', requestOptions, function (err, founds) {
       if (err) {
-        return callback(err);
-      }
-      if (founds && founds.length > 0) {
+        callback(err);
+      } else if (founds && founds.length > 0) {
         var found = founds[0];
         if (found.place !== icalEvent.place || found.details !== icalEvent.details) {
           connector.logger.info('Updating event');
@@ -164,29 +167,31 @@ function saveEvents(requiredFields, entries, data, next) {
             rrule: icalEvent.rrule
           }, function (err) {
             if (err) {
-              return callback(err);
+              callback(err);
+            } else {
+              entries.nbUpdates++;
+              callback();
             }
-            entries.nbUpdates++;
-            return callback();
           });
         } else {
-          return callback();
+          callback();
         }
       } else {
         // Create the event.
         connector.logger.info('Creating event');
         Event.create(icalEvent, function (err) {
           if (err) {
-            return callback(err);
+            callback(err);
+          } else {
+            entries.nbCreations++;
+            callback();
           }
-          entries.nbCreations++;
-          return callback();
         });
       }
     });
   }, function (err) {
     connector.logger.info('Events are saved.');
-    return next(err);
+    next(err);
   });
 }
 

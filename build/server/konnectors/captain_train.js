@@ -48,7 +48,7 @@ var fileOptions = {
 
 var baseUrl = 'https://www.captaintrain.com/';
 var client = requestJson.createClient(baseUrl);
-var userAgent = 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:37.0) Gecko/20100101 Firefox/37.0';
+var userAgent = 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:37.0) ' + 'Gecko/20100101 Firefox/37.0';
 // Authenticity token used by the jequest-json client.
 var csrfToken = void 0;
 client.headers['user-agent'] = userAgent;
@@ -89,7 +89,8 @@ function login(requiredFields, entries, data, next) {
     };
     client.headers.cookie = cookie;
     // Signin
-    client.post(baseUrl + 'api/v5/account/signin', signinForm, function (err, res, body) {
+    var signinPath = baseUrl + 'api/v5/account/signin';
+    client.post(signinPath, signinForm, function (err, res, body) {
       if (err) {
         logger.error(err);
         next(err);
@@ -122,7 +123,8 @@ function login(requiredFields, entries, data, next) {
         client.headers.cookie = cookie;
         client.headers.Authorization = 'Token token="' + token + '"';
         data.authHeader = 'Token token="' + token + '"';
-        // the api/v5/pnrs uri gives all information necessary to get bill information
+        // the api/v5/pnrs uri gives all information necessary to get bill
+        // information
         client.get(baseUrl + 'api/v5/pnrs', function (err, res, body) {
           if (err) {
             logger.error(err);
@@ -233,7 +235,8 @@ function fetchBills(requiredFields, entries, data, next) {
         return 'continue';
       }
 
-      // The proof can be duplicated, we only manage the one which were not taken care of already.
+      // The proof can be duplicated, we only manage the one which were not taken
+      // care of already.
       if (managedProofId.indexOf(proof.id) !== -1) {
         // This proof is already dealt with
         return 'continue';
@@ -243,8 +246,8 @@ function fetchBills(requiredFields, entries, data, next) {
       }
 
       // A bill can be linked to several pnrs, we retrieve all of them
-      // For some unknown reason, some users don't have pnrs backlinked to proofs,
-      // let's initialize the array with the one linked to the proof.
+      // For some unknown reason, some users don't have pnrs backlinked to
+      // proofs, let's initialize the array with the one linked to the proof.
       var linkedPNR = [data.pnrs.find(function (pnr) {
         return pnr.id === proof.pnr_id;
       })];
@@ -258,7 +261,8 @@ function fetchBills(requiredFields, entries, data, next) {
         logger.error(e);
       }
 
-      // For some unknown reason, some users don't have system set for the pnr. By default we set it to sncf
+      // For some unknown reason, some users don't have system set for the pnr.
+      // By default we set it to sncf
       linkedPNR = linkedPNR.map(function (pnr) {
         if (typeof pnr.system === 'undefined') {
           pnr.system = 'sncf';
@@ -266,12 +270,17 @@ function fetchBills(requiredFields, entries, data, next) {
         return pnr;
       });
 
-      // We try to find the list of the systems. there will be one bankoperation/proof/system
+      // We try to find the list of the systems. there will be one
+      // bankoperation/proof/system
       var systems = linkedPNR.reduce(function (sys, pnr) {
-        return sys.indexOf(pnr.system) === -1 ? sys.concat(pnr.system) : sys;
+        if (sys.indexOf(pnr.system) === -1) {
+          return sys.concat(pnr.system);
+        }
+        return sys;
       }, []);
 
-      // Calculate the amount of each system because their is one operation per system.
+      // Calculate the amount of each system because their is one operation per
+      // system.
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
