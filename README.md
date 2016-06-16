@@ -15,9 +15,10 @@ Before opening any pull requests make sure that you follow these rules:
 * Follow the [Cozy Guidelines](https://github.com/cozy/cozy-guidelines).
 * Make sure that `npm run lint` doesn't return any errors.
 * Do not include the build in your pull request.
-* All the keys for the locales are present :
- * 'konnector description my_connector_name' : explains what the connetor does
- * Notifications if you connector pops up notifications on completed fetch
+* For konnector addtion, make sure that the following locale keys are present:
+ * 'konnector description my_connector_name': explains what the connetor does
+ * Notification texts: if you connector pops up notifications on completed fetch,
+   it requires a localized text.
 * You have updated the connector list (if relevant)
 * Explain in the Pull Request which problem is solved and how you fixed it (plateform changes).
 
