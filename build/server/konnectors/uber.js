@@ -102,12 +102,12 @@ function logIn(requiredFields, bills, data, next) {
 
 function getTrips(requiredFields, bills, data, next) {
   var $ = cheerio.load(data.tripsPage);
-  var tripsId = $('tr[class=trip-expand__origin]').map(function (i, element) {
+  var tripsId = $('tbody .trip-expand__origin').map(function (i, element) {
     return $(element).data('target');
   }).get().map(function (trip) {
     return trip.replace('#trip-', '');
   });
-  log.info('Found ' + tripsId.length + ' uber bills');
+  log.info('Found ' + tripsId.length + ' uber trips');
   var fetchedBills = [];
   async.eachSeries(tripsId, function (tripId, callback) {
     var tripOption = {
@@ -122,7 +122,7 @@ function getTrips(requiredFields, bills, data, next) {
         return callback(err);
       }
       $ = cheerio.load(body);
-      var amount = $('td[class="text--right alpha weight--semibold"]').text().replace('€', '').trim();
+      var amount = $('td[class="text--right alpha weight--semibold"]').text().replace('€', '').replace(',', '.').trim();
       var billUrlOptions = {
         jar: true,
         method: 'GET',
@@ -134,6 +134,10 @@ function getTrips(requiredFields, bills, data, next) {
           log.raw(err);
           return callback(err);
         }
+        if (res.statusCode >= 400) {
+          log.info('No bill for this trip');
+          return callback();
+        }
         var parsedBody = void 0;
         try {
           parsedBody = JSON.parse(body);
@@ -141,6 +145,12 @@ function getTrips(requiredFields, bills, data, next) {
           log.err(e);
           return callback(e);
         }
+        // This can be due to a cancelled trip.
+        if (parsedBody.length === 0) {
+          log.info('No bill for this trip');
+          return callback();
+        }
+
         var bill = {
           date: new Date(parsedBody[0].invoice_date),
           amount: parseFloat(amount),
