@@ -145,7 +145,7 @@ function getTrips(requiredFields, bills, data, next) {
           return callback(err);
         }
         if (res.statusCode >= 400) {
-          log.info('No bill for this trip');
+          log.info(`No bill for this trip (${tripId})`);
           return callback();
         }
         let parsedBody;
@@ -157,7 +157,7 @@ function getTrips(requiredFields, bills, data, next) {
         }
         // This can be due to a cancelled trip.
         if (parsedBody.length === 0) {
-          log.info('No bill for this trip');
+          log.info(`No bill for this trip (${tripId})`);
           return callback();
         }
 
