@@ -23,7 +23,7 @@ module.exports =
     'apikey': 'Api key'
     'phoneNumber': 'Phone number'
     'folderPath': 'Folder path'
-    'none' : 'None'
+    'none' : 'No schedule selected'
     'every hour': 'Every hour'
     'every day': 'Every day'
     'every week': 'Every week'
@@ -178,7 +178,7 @@ module.exports =
     "konnector sncf ticket choice": "Ticket choice"
 
     "konnector danger zone": "Danger zone"
-    "konnector delete credentials": "Delete this configuration."
+    "konnector delete credentials": "Delete this configuration"
     "konnector deleted": "The konnector configuration was successfully deleted."
     "konnector deletion error": "An error occured while deleting this konnector configuration."
 

@@ -8,10 +8,10 @@ h2.name
 
 .description!= t(model.description)
 .fields
-div
+div.add-buttons
     button.small#add-button #{t('add an account')}
     button.small#remove-button #{t('remove last account')}
-.buttons
+.buttons.config
     button#import-button #{t('save and import')}
 
 if model.importErrorMessage && !model.isImporting

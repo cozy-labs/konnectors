@@ -46,7 +46,8 @@ module.exports = class KonnectorView extends BaseView
         end = @values.length - 1
         for i, values of @values
             @renderValues values, slug, i
-            @$('.fields').append '<hr/>' if i isnt end
+            if i isnt end
+                @$('.fields').append '<div class="separator"/>&nbsp;</div>'
 
         @addIntervalWidget slug
 
@@ -305,7 +306,6 @@ target="_blank">
 
         fieldHtml = """
 <div class="field line">
-<div><label for="#{slug}-autoimport-input">#{t 'auto import'}</label></div>
 <div><select id="#{slug}-autoimport-input" class="autoimport">
 """
         for key, value of intervals
@@ -327,7 +327,7 @@ target="_blank">
 </div>
 </div>
 """
-        @$('.fields').append fieldHtml
+        @$('.config').append fieldHtml
 
         @autoImportInput = @$("##{slug}-autoimport-input")
         @firstImport = @$("##{slug}-first-import")
