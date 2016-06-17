@@ -101,10 +101,11 @@ function getHiddenInputs(requiredFields, bills, data, next) {
 
         next();
       }
+      return true;
     });
   }
+  return true;
 }
-
 
 // Procedure to login
 function logIn(requiredFields, bills, data, next) {
@@ -121,21 +122,24 @@ function logIn(requiredFields, bills, data, next) {
 
   request(options, (err, res, body) => {
     let isLogged = true;
-    if (err) return next(err);
+    if (err) {
+      return next(err);
+    }
 
     if (body.search('processus=login_fail') > -1) {
       isLogged = false;
-      log.debug(body);
     }
 
     if (isLogged) {
       connector.logger.info('Successfully logged in.');
     } else {
       log.error('Authentification error');
+      log.debug(body);
       return next('bad credentials');
     }
     return next();
   });
+  return true;
 }
 
 function fetchBillingInfo(requiredFields, bills, data, next) {
@@ -159,6 +163,7 @@ function fetchBillingInfo(requiredFields, bills, data, next) {
 
     return next();
   });
+  return true;
 }
 
 function parsePage(requiredFields, bills, data, next) {
@@ -208,6 +213,7 @@ function parsePage(requiredFields, bills, data, next) {
 
   connector.logger.info('Successfully parsed the page, bills found:',
     bills.fetched.length);
+
   return next();
 }
 

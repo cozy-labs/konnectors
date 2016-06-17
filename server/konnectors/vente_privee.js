@@ -99,11 +99,12 @@ function getHiddenInputs(requiredFields, bills, data, next) {
         obj.Password = requiredFields.password;
 
         data.inputs = obj;
-
         next();
       }
+      return true;
     });
   }
+  return true;
 }
 
 // Procedure to login
@@ -122,23 +123,28 @@ function logIn(requiredFields, bills, data, next) {
   connector.logger.info('Logging in on VentePrivee website...');
 
   request(options, (err, res, body) => {
-    log.debug(res.statusCode);
-    log.debug(res.headers);
+    let isLogged = true;
 
-    if ((err != null) || res.statusCode !== 200) {
+    if (err != null) {
+      log.error(err);
+      isLogged = false;
+    }
+    if (res.statusCode !== 200) {
+      log.debug('statusCode != 200');
+      isLogged = false;
+    }
+    if (body.search('authenticationForm') > 0) {
+      log.debug('body.search:authenticationForm');
+      isLogged = false;
+    }
+
+    if (isLogged) {
+      connector.logger.info('Successfully logged in.');
+    } else {
       log.error('Authentification error');
-      if (err != null) {
-        log.error(err);
-      }
-      if (requiredFields.password.length === 0) {
-        log.error('No password');
-      }
-      if (requiredFields.login.length === 0) {
-        log.error('No login');
-      }
-      if (res.statusCode !== 200) {
-        log.debug(body);
-      }
+      log.debug('options:', JSON.stringify(options, null, 4));
+      log.debug('headers:', JSON.stringify(res.headers, null, 4));
+      log.debug(body);
       return next('bad credentials');
     }
 
@@ -147,6 +153,7 @@ function logIn(requiredFields, bills, data, next) {
     connector.logger.info('Successfully logged in.');
     return next();
   });
+  return true;
 }
 
 function parsePage(requiredFields, bills, data, next) {
@@ -181,6 +188,7 @@ function parsePage(requiredFields, bills, data, next) {
         orderAmount = parseFloat(((orderAmount.match(/(\d+,\d+)/))[0])
                                               .replace(',', '.'));
       } catch (e) {
+        log.error('parseFloat error:', e);
         orderAmount = 0;
       }
 
@@ -198,12 +206,12 @@ function parsePage(requiredFields, bills, data, next) {
       // saving bill
       bills.fetched.push(bill);
     }
-    return true;
+    return next();
   });
 
   connector.logger.info('Successfully parsed the page, bills found:',
     bills.fetched.length);
-  return next();
+  return true;
 }
 
 function logOut(requiredFields, bills, data, next) {
@@ -216,23 +224,24 @@ function logOut(requiredFields, bills, data, next) {
   request(options, (err) => {
     if (err) {
       log.error(err);
-      next(err);
-    } else {
-      next();
+      return next(err);
     }
+    return next();
   });
+  connector.logger.info('Successfully logout');
+  return true;
 }
 
 function customFilterExisting(requiredFields, bills, data, next) {
   filterExisting(log, Bill)(requiredFields, bills, data, next);
-  next();
+  return next();
 }
 
 function customSaveDataAndFile(requiredFields, bills, data, next) {
   const fnsave = saveDataAndFile(
-      log, Bill, fileOptions, ['vente-privee', 'facture']);
+    log, Bill, fileOptions, ['vente-privee', 'facture']);
   fnsave(requiredFields, bills, data, next);
-  next();
+  return next();
 }
 
 function buildNotifContent(requiredFields, bills, data, next) {
@@ -243,5 +252,5 @@ function buildNotifContent(requiredFields, bills, data, next) {
     };
     bills.notifContent = localization.t(localizationKey, options);
   }
-  next();
+  return next();
 }
