@@ -112,56 +112,57 @@ Konnector::import = (callback) ->
 
     @cleanFieldValues()
 
-    async.mapSeries @accounts, (values, next) =>
-        @runImport values, next
-    , (err, notifContents) =>
-        if err
-            errMessage = if err.message? then err.message else err.toString()
-            data =
-                isImporting: false
-                lastImport: new Date()
-                importErrorMessage: errMessage.replace(/<[^>]*>/ig, '')
+    @updateAttributes isImporting: true, (err) =>
+        async.mapSeries @accounts, (values, next) =>
+            @runImport values, next
+        , (err, notifContents) =>
+            if err
+                log.error err
+                errMessage = if err.message? then err.message else err.toString()
+                data =
+                    isImporting: false
+                    lastImport: new Date()
+                    importErrorMessage: errMessage.replace(/<[^>]*>/ig, '')
 
-        else
-            data =
-                isImporting: false
-                lastSuccess: new Date()
-                lastImport: new Date()
-                importErrorMessage: null
+            else
+                data =
+                    isImporting: false
+                    lastSuccess: new Date()
+                    lastImport: new Date()
+                    importErrorMessage: null
 
-        @updateAttributes data, (err) ->
-            log.info 'Konnector metadate updated.'
-            callback err, notifContents
+            @updateAttributes data, (err) ->
+                log.info 'Konnector metadata updated.'
+                callback err, notifContents
 
 
 Konnector::runImport = (values, callback) ->
-    @updateAttributes isImporting: true, (err) =>
 
-        if err?
-            log.error 'An error occured while modifying konnector state'
-            log.raw err
+    if err?
+        log.error 'An error occured while modifying konnector state'
+        log.raw err
 
-            callback err
+        callback err
 
-        else
-            konnectorModule = konnectorHash[@slug]
+    else
+        konnectorModule = konnectorHash[@slug]
 
-            @injectEncryptedFields()
-            values.lastSuccess = @lastSuccess
-            konnectorModule.fetch values, (importErr, notifContent) =>
-                fields = @getFields()
-                @removeEncryptedFields fields
+        @injectEncryptedFields()
+        values.lastSuccess = @lastSuccess
+        konnectorModule.fetch values, (importErr, notifContent) =>
+            fields = @getFields()
+            @removeEncryptedFields fields
 
-                if importErr? and \
-                typeof(importErr) is 'object' and \
-                importErr.message?
-                    callback importErr, notifContent
+            if importErr? and \
+            typeof(importErr) is 'object' and \
+            importErr.message?
+                callback importErr, notifContent
 
-                else if importErr? and typeof(importErr) is 'string'
-                    callback importErr, notifContent
+            else if importErr? and typeof(importErr) is 'string'
+                callback importErr, notifContent
 
-                else
-                    callback null, notifContent
+            else
+                callback null, notifContent
 
 
 # Append data from module file of curent konnector.
@@ -220,7 +221,7 @@ Konnector.getKonnectorsToDisplay = (callback) ->
 # Patch function to move fieldValues field to accounts field. accounts field is
 # different because it's an array of field values (the goal is to allow several
 # accounts instead of one).
-Konnector::cleanFieldValues = (callback) ->
+Konnector::cleanFieldValues = ->
 
     if @fieldValues?
         @accounts ?= []
