@@ -272,8 +272,12 @@ module.exports = class KonnectorView extends BaseView
 
                 # Add a button to open quickly the selected folder in the files
                 # app.
+                # If no path is already set, the link should point to the root
+                # uri of the files app
+                folderPath = if selectedPath.id then \
+                "/#apps/files/folders/#{selectedPath.id}" else "/#apps/files/"
                 fieldHtml += """
-<a href="/#apps/files/folders/#{selectedPath.id}"
+<a href="#{folderPath}"
 class="folder-link"
 target="_blank">
 #{t "open selected folder"}
