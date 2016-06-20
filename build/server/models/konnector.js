@@ -157,65 +157,64 @@ Konnector.prototype.updateFieldValues = function(data, callback) {
 
 Konnector.prototype["import"] = function(callback) {
   this.cleanFieldValues();
-  return async.mapSeries(this.accounts, (function(_this) {
-    return function(values, next) {
-      return _this.runImport(values, next);
-    };
-  })(this), (function(_this) {
-    return function(err, notifContents) {
-      var data, errMessage;
-      if (err) {
-        errMessage = err.message != null ? err.message : err.toString();
-        data = {
-          isImporting: false,
-          lastImport: new Date(),
-          importErrorMessage: errMessage.replace(/<[^>]*>/ig, '')
-        };
-      } else {
-        data = {
-          isImporting: false,
-          lastSuccess: new Date(),
-          lastImport: new Date(),
-          importErrorMessage: null
-        };
-      }
-      return _this.updateAttributes(data, function(err) {
-        log.info('Konnector metadate updated.');
-        return callback(err, notifContents);
+  return this.updateAttributes({
+    isImporting: true
+  }, (function(_this) {
+    return function(err) {
+      return async.mapSeries(_this.accounts, function(values, next) {
+        return _this.runImport(values, next);
+      }, function(err, notifContents) {
+        var data, errMessage;
+        if (err) {
+          log.error(err);
+          errMessage = err.message != null ? err.message : err.toString();
+          data = {
+            isImporting: false,
+            lastImport: new Date(),
+            importErrorMessage: errMessage.replace(/<[^>]*>/ig, '')
+          };
+        } else {
+          data = {
+            isImporting: false,
+            lastSuccess: new Date(),
+            lastImport: new Date(),
+            importErrorMessage: null
+          };
+        }
+        return _this.updateAttributes(data, function(err) {
+          log.info('Konnector metadata updated.');
+          return callback(err, notifContents);
+        });
       });
     };
   })(this));
 };
 
 Konnector.prototype.runImport = function(values, callback) {
-  return this.updateAttributes({
-    isImporting: true
-  }, (function(_this) {
-    return function(err) {
-      var konnectorModule;
-      if (err != null) {
-        log.error('An error occured while modifying konnector state');
-        log.raw(err);
-        return callback(err);
-      } else {
-        konnectorModule = konnectorHash[_this.slug];
-        _this.injectEncryptedFields();
-        values.lastSuccess = _this.lastSuccess;
-        return konnectorModule.fetch(values, function(importErr, notifContent) {
-          var fields;
-          fields = _this.getFields();
-          _this.removeEncryptedFields(fields);
-          if ((importErr != null) && typeof importErr === 'object' && (importErr.message != null)) {
-            return callback(importErr, notifContent);
-          } else if ((importErr != null) && typeof importErr === 'string') {
-            return callback(importErr, notifContent);
-          } else {
-            return callback(null, notifContent);
-          }
-        });
-      }
-    };
-  })(this));
+  var konnectorModule;
+  if (typeof err !== "undefined" && err !== null) {
+    log.error('An error occured while modifying konnector state');
+    log.raw(err);
+    return callback(err);
+  } else {
+    konnectorModule = konnectorHash[this.slug];
+    this.injectEncryptedFields();
+    values.lastSuccess = this.lastSuccess;
+    return konnectorModule.fetch(values, (function(_this) {
+      return function(importErr, notifContent) {
+        var fields;
+        fields = _this.getFields();
+        _this.removeEncryptedFields(fields);
+        if ((importErr != null) && typeof importErr === 'object' && (importErr.message != null)) {
+          return callback(importErr, notifContent);
+        } else if ((importErr != null) && typeof importErr === 'string') {
+          return callback(importErr, notifContent);
+        } else {
+          return callback(null, notifContent);
+        }
+      };
+    })(this));
+  }
 };
 
 Konnector.prototype.appendConfigData = function(konnectorData) {
@@ -273,7 +272,7 @@ Konnector.getKonnectorsToDisplay = function(callback) {
   });
 };
 
-Konnector.prototype.cleanFieldValues = function(callback) {
+Konnector.prototype.cleanFieldValues = function() {
   var password;
   if (this.fieldValues != null) {
     if (this.accounts == null) {

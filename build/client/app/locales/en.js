@@ -23,7 +23,7 @@ module.exports = {
   'apikey': 'Api key',
   'phoneNumber': 'Phone number',
   'folderPath': 'Folder path',
-  'none': 'None',
+  'none': 'No schedule selected',
   'every hour': 'Every hour',
   'every day': 'Every day',
   'every week': 'Every week',
@@ -137,7 +137,7 @@ module.exports = {
   "konnector sncf reference": "Reference",
   "konnector sncf ticket choice": "Ticket choice",
   "konnector danger zone": "Danger zone",
-  "konnector delete credentials": "Delete this configuration.",
+  "konnector delete credentials": "Delete this configuration",
   "konnector deleted": "The konnector configuration was successfully deleted.",
   "konnector deletion error": "An error occured while deleting this konnector configuration.",
   'notification isen': "%{smart_count} new course material imported |||| %{smart_count} new course materials imported",
@@ -146,5 +146,6 @@ module.exports = {
   'notification isen event deleted': "Careful, the intervention %{description} that should have taken place on %{date} has been canceled",
   "calendar": "Calendar in which events will be imported",
   "url": "Target URL",
-  "tag": "Tag"
+  "tag": "Tag",
+  "bad credentials": "Bad credentials. Check the konnector fields and run the import again."
 };

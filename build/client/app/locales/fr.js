@@ -127,7 +127,7 @@ module.exports = {
   'notification doctolib update': "%{smart_count} rendez-vous mis à jour |||| %{smart_count} rendez-vous mis à jour",
   'notification direct energie': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
   'notification captain_train': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
-  'notification facebook_events creation': "%{smart_count} nouvel événement imporé. |||| %{smart_count} nouveaux événements importés.",
+  'notification facebook_events creation': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés.",
   'notification facebook_events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour.",
   'notification aprr': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
   'notification vente_privee': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées",
@@ -145,5 +145,6 @@ module.exports = {
   'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée",
   "calendar": "Le calendrier dans lequel les événements seront importés",
   "url": "URL cible",
-  "tag": "Tag"
+  "tag": "Tag",
+  "bad credentials": "Mauvais identifiants. Verifiez les champs que vous avez renseigné."
 };
