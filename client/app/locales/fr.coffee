@@ -189,3 +189,4 @@ module.exports =
     "calendar": "Le calendrier dans lequel les événements seront importés"
     "url": "URL cible"
     "tag": "Tag"
+    "bad credentials": "Mauvais identifiants. Verifiez les champs que vous avez renseigné."

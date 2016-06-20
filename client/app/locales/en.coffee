@@ -189,3 +189,4 @@ module.exports =
     "calendar": "Calendar in which events will be imported"
     "url": "Target URL"
     "tag": "Tag"
+    "bad credentials": "Bad credentials. Check the konnector fields and run the import again."
