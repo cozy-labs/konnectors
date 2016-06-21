@@ -27,6 +27,7 @@ Before opening any pull requests make sure that you follow these rules:
 *Bills*
 
 * Ameli (Bill PDFs)
+* APRR (Bill PDFs)
 * Bouygues Telecom (Bill PDFs)
 * Bouygues Box (Bill PDFs)
 * Captain Train (Bill PDFs)
@@ -42,7 +43,7 @@ Before opening any pull requests make sure that you follow these rules:
 * Sosh (Bill PDFs)
 * SFR (Bill PDFs)
 * Virgin Mobile (Bill PDFs)
-* APRR (Bill PDFs)
+* Uber (Bill PDFs)
 * Vente-Privee.com (Bill PDFs)
 
 
