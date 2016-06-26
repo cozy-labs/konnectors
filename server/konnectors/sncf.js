@@ -4,6 +4,7 @@ const async = require('async');
 const cheerio = require('cheerio');
 const moment = require('moment-timezone');
 const request = require('request');
+const url = require('url');
 
 const baseKonnector = require('../lib/base_konnector');
 const filterExisting = require('../lib/filter_existing');
@@ -29,6 +30,7 @@ const fileOptions = {
 const userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' +
                   'Gecko/20100101 Firefox/36.0';
 
+const momentZone = 'Europe/Paris';
 
 const connector = module.exports = baseKonnector.createNew({
   name,
@@ -43,8 +45,6 @@ const connector = module.exports = baseKonnector.createNew({
 
   fetchOperations: [
     logIn,
-    getOrderHistoryPage,
-    parseOrderHistoryPage,
     getOrderPage,
     parseOrderPage,
     customFilterExisting,
@@ -92,44 +92,6 @@ function logIn(requiredFields, entries, data, next) {
   });
 }
 
-
-function getOrderHistoryPage(requiredFields, entries, data, next) {
-  const url = 'https://espace-client.voyages-sncf.com/espaceclient/ordersconsultation/showOrdersForAjaxRequest?pastOrder=true&onlyUsedOrder=false&pageToLoad=1';
-
-  connector.logger.info('Download orders history HTML page...');
-  getPage(url, (err, res, body) => {
-    if (err) return next(err);
-
-    data.html = body;
-    connector.logger.info('Orders history page downloaded.');
-    return next();
-  });
-}
-
-
-function parseOrderHistoryPage(requiredFields, entries, data, next) {
-  const $ = cheerio.load(data.html);
-
-  // Parse the orders page
-  const $rows = $('table tbody tr:not(:last-child)');
-  const table = parseSNCFTable($, $rows);
-  const informations = table.informations;
-  informations.forEach((information) => {
-    const bill = {
-      date: moment(information.orderDate, 'DD/MM/YYYY'),
-      amount: information.amount,
-      vendor: 'SNCF',
-      type: 'transport',
-      content: `${information.labelOrder} - ${information.dates}`,
-    };
-
-    entries.bills.fetched.push(bill);
-  });
-
-  next();
-}
-
-
 function getOrderPage(requiredFields, entries, data, next) {
   const url = 'https://espace-client.voyages-sncf.com/espaceclient/ordersconsultation/showOrdersForAjaxRequest?pastOrder=false&pageToLoad=1';
 
@@ -146,36 +108,293 @@ function getOrderPage(requiredFields, entries, data, next) {
 
 function parseOrderPage(requiredFields, entries, data, next) {
   const $ = cheerio.load(data.html);
+  const eventsToFetch = [];
 
   // Parse the orders page
-  const $rows = $('table tbody tr:not(:last-child)');
-  const table = parseSNCFTable($, $rows);
-  const informations = table.informations;
-  const detailPages = table.detailPages;
+  const $rows = $('.commande');
+  $rows.each(function eachRow() {
+    const $row = $(this);
 
-  // console.log(informations);
-  // console.log(detailPages);
-  informations.forEach((information) => {
+    const orderInformations = parseOrderRow($, $row);
+
     const bill = {
-      date: moment(information.orderDate, 'DD/MM/YYYY'),
-      amount: information.amount,
+      date: moment(orderInformations.date, 'DD/MM/YY'),
+      amount: orderInformations.amount,
       vendor: 'SNCF',
       type: 'transport',
-      content: `${information.labelOrder} - ${information.dates}`,
+      content: `${orderInformations.label} - ${orderInformations.reference}`,
     };
 
     entries.bills.fetched.push(bill);
+
+    if (orderInformations.isTravel === true) {
+      eventsToFetch.push(orderInformations);
+    }
   });
 
   // Fetch the detail of each order (for events)
-  async.eachSeries(Object.keys(detailPages), (date, cb) => {
-    connector.logger.info(`Fetching order(s) of ${date}.`);
-    getEvents(detailPages[date], entries.events, cb);
+  async.eachSeries(eventsToFetch, (orderInformations, cb) => {
+    getEvents(orderInformations, entries.events, cb);
+  }, next);
+}
+
+function parseOrderRow($, $row) {
+  const reference = $row.find('.commande__detail div:nth-child(1) .texte--important')
+                        .eq(0)
+                        .text()
+                        .trim();
+  const label = $row.find('.commande__haut .texte--insecable')
+                    .map(function mapRow() {
+                      return $(this).text().trim();
+                    })
+                    .get()
+                    .join('/');
+  const date = $row.find('.commande__detail div:nth-child(2) .texte--important')
+                   .eq(0)
+                   .text()
+                   .trim();
+  const amount = $row.find('.commande__detail div:nth-child(3) .texte--important')
+                     .eq(0)
+                     .text()
+                     .trim()
+                     .replace(' €', '');
+
+  const $link = $row.find('.commande__bas a');
+  // Boolean, the order is not always a travel (could be a discount card...)
+  const isTravel = $link.text().trim().indexOf('voyage') !== -1;
+  const link = $link.attr('href');
+
+  // Parse query string to get the owner name
+  const owner = url.parse(link, true).query.ownerName;
+
+  return {
+    reference,
+    label,
+    date,
+    amount,
+    isTravel,
+    owner,
+  };
+}
+
+function getEvents(orderInformations, events, callback) {
+  // Try to get the detail order
+  const uri = `http://monvoyage.voyages-sncf.com/vsa/api/order/fr_FR/${orderInformations.owner}/${orderInformations.reference}`;
+  getPage(uri, (err, res, body) => {
+    if (err) return callback(err);
+
+    const result = JSON.parse(body);
+    // This order is in the old html page format
+    if (result.order === null) {
+      return getEventsOld(orderInformations, events, callback);
+    }
+
+    const folders = result.order.folders;
+    folders.forEach((folder) => {
+      // Create our passengers (id associated to their name)
+      const passengers = {};
+      folder.passengers.forEach((passenger) => {
+        passengers[passenger.passengerId] = passenger.displayName;
+      });
+
+      // Parse each travel
+      folder.travels.forEach((travel) => {
+        let travelType;
+        if (travel.type === 'OUTWARD') {
+          travelType = localization.t('konnector sncf outward');
+        } else {
+          travelType = localization.t('konnector sncf inward');
+        }
+
+        // Each travel can be composed of several segments
+        travel.segments.forEach((segment) => {
+          const departureDate = segment.departureDate;
+          const arrivalDate = segment.arrivalDate;
+
+          const departureStation = segment.origin.stationName;
+          const arrivalStation = segment.destination.stationName;
+
+          const departureCity = segment.origin.cityName;
+          const arrivalCity = segment.destination.cityName;
+
+          const trainType = segment.transport.label;
+          const trainNumber = segment.trainNumber;
+          const trainClass = segment.comfortClass;
+
+          const segmentPassengers = {};
+
+          // More informations for each passenger (placement...)
+          const placements = segment.placements;
+          Object.keys(placements).forEach((passengerId) => {
+            const placement = placements[passengerId];
+            segmentPassengers[passengerId] = {
+              placement: {
+                car: placement.coachNumber,
+                seat: placement.seatNumber,
+              },
+            };
+          });
+
+          const fares = segment.fares;
+          Object.keys(fares).forEach((passengerId) => {
+            const fare = fares[passengerId];
+
+            // Maybe there is no placement for this segment (TER...)
+            if (!segmentPassengers[passengerId]) {
+              segmentPassengers[passengerId] = {};
+            }
+
+            segmentPassengers[passengerId].fare = fare.name;
+          });
+
+          const description = `${travelType}: ${departureCity}/${arrivalCity}`;
+
+          let details = `${departureStation} -> ${arrivalStation}\n`;
+          details += localization.t('konnector sncf reference');
+          details += `: ${orderInformations.reference}\n`;
+          details += `${trainType} ${trainNumber}\n`;
+          details += localization.t('konnector sncf class');
+          details += `: ${trainClass}\n\n`;
+
+          Object.keys(segmentPassengers).forEach((passengerId) => {
+            const passengerName = passengers[passengerId];
+            const segmentPassenger = segmentPassengers[passengerId];
+
+            if (segmentPassenger) {
+              let passengerPlace = '';
+              if (segmentPassenger.placement !== undefined) {
+                passengerPlace = localization.t('konnector sncf car');
+                passengerPlace += ` ${segmentPassenger.placement.car} `;
+                passengerPlace += localization.t('konnector sncf place');
+                passengerPlace += ` ${segmentPassenger.placement.seat}`;
+              }
+
+              let passengerFare = '';
+              if (segmentPassenger.fare !== undefined) {
+                if (passengerPlace !== '') {
+                  passengerFare = ' -';
+                }
+
+                passengerFare += ` ${segmentPassenger.fare}`;
+              }
+
+              details += `${passengerName}: ${passengerPlace}${passengerFare}`;
+            }
+          });
+
+          const event = {
+            description,
+            details,
+            id: departureDate + trainType + trainNumber,
+            start: moment.tz(departureDate, moment.ISO_8601, momentZone)
+                         .toISOString(),
+            end: moment.tz(arrivalDate, moment.ISO_8601, momentZone)
+                       .toISOString(),
+            place: departureStation,
+          };
+
+          events.push(event);
+        });
+      });
+    });
+
+    return callback();
+  });
+}
+
+
+function customFilterExisting(requiredFields, entries, data, next) {
+  filterExisting(logger, Bill)(requiredFields, entries.bills, data, next);
+}
+
+
+function customSaveDataAndFile(requiredFields, entries, data, next) {
+  saveDataAndFile(logger, Bill, fileOptions, ['bill'])(
+      requiredFields, entries.bills, data, next);
+}
+
+
+function saveEvents(requiredFields, entries, data, next) {
+  entries.events.nbCreations = 0;
+  entries.events.nbUpdates = 0;
+
+  async.eachSeries(entries.events, (event, cb) => {
+    event.tags = [requiredFields.calendar];
+
+    Event.createOrUpdate(event, (err, cozyEvent, changes) => {
+      if (err) {
+        connector.logger.error(err);
+        connector.logger.error('Event cannot be saved.');
+      } else {
+        if (changes.creation) entries.events.nbCreations++;
+        if (changes.update) entries.events.nbUpdates++;
+      }
+
+      cb();
+    });
   }, next);
 }
 
 
-function getEvents(uri, events, callback) {
+function buildNotifContent(requiredFields, entries, data, next) {
+  if (entries.bills.filtered.length > 0) {
+    const localizationKey = 'notification sncf bills';
+    const options = {
+      smart_count: entries.bills.filtered.length,
+    };
+    entries.notifContent = localization.t(localizationKey, options);
+  }
+
+  if (entries.events.nbCreations > 0) {
+    const localizationKey = 'notification sncf events creation';
+    const options = {
+      smart_count: entries.events.nbCreations,
+    };
+    if (entries.notifContent === undefined) {
+      entries.notifContent = localization.t(localizationKey, options);
+    } else {
+      entries.notifContent += ` ${localization.t(localizationKey, options)}`;
+    }
+  }
+
+  if (entries.nbUpdates > 0) {
+    const localizationKey = 'notification sncf events update';
+    const options = {
+      smart_count: entries.events.nbUpdates,
+    };
+    if (entries.notifContent === undefined) {
+      entries.notifContent = localization.t(localizationKey, options);
+    } else {
+      entries.notifContent += ` ${localization.t(localizationKey, options)}`;
+    }
+  }
+
+  next();
+}
+
+
+function getPage(url, callback) {
+  const options = {
+    method: 'GET',
+    uri: url,
+    jar: true,
+    headers: {
+      'User-Agent': userAgent,
+    },
+  };
+
+  return request(options, callback);
+}
+
+
+// ----------------------------------------------------------------------------
+// Functions to parse old SNCF pages
+
+
+// SNCF did not change the html pages for old orders, only for new ones
+function getEventsOld(orderInformations, events, callback) {
+  const uri = `http://espace-client.voyages-sncf.com/services-train/suivi-commande?pnrRef=${orderInformations.reference}&ownerName=${orderInformations.owner}&fromCustomerAccount=true`;
+
   // Try to get the detail order
   getPage(uri, (err, res, body) => {
     if (err) return callback(err);
@@ -302,153 +521,6 @@ function getEvents(uri, events, callback) {
     return callback();
   });
 }
-
-
-function customFilterExisting(requiredFields, entries, data, next) {
-  filterExisting(logger, Bill)(requiredFields, entries.bills, data, next);
-}
-
-
-function customSaveDataAndFile(requiredFields, entries, data, next) {
-  saveDataAndFile(logger, Bill, fileOptions, ['bill'])(
-      requiredFields, entries.bills, data, next);
-}
-
-
-function saveEvents(requiredFields, entries, data, next) {
-  entries.events.nbCreations = 0;
-  entries.events.nbUpdates = 0;
-
-  async.eachSeries(entries.events, (event, cb) => {
-    event.tags = [requiredFields.calendar];
-
-    Event.createOrUpdate(event, (err, cozyEvent, changes) => {
-      if (err) {
-        connector.logger.error(err);
-        connector.logger.error('Event cannot be saved.');
-      } else {
-        if (changes.creation) entries.events.nbCreations++;
-        if (changes.update) entries.events.nbUpdates++;
-      }
-
-      cb();
-    });
-  }, next);
-}
-
-
-function buildNotifContent(requiredFields, entries, data, next) {
-  if (entries.bills.filtered.length > 0) {
-    const localizationKey = 'notification sncf bills';
-    const options = {
-      smart_count: entries.bills.filtered.length,
-    };
-    entries.notifContent = localization.t(localizationKey, options);
-  }
-
-  if (entries.events.nbCreations > 0) {
-    const localizationKey = 'notification sncf events creation';
-    const options = {
-      smart_count: entries.events.nbCreations,
-    };
-    if (entries.notifContent === undefined) {
-      entries.notifContent = localization.t(localizationKey, options);
-    } else {
-      entries.notifContent += ` ${localization.t(localizationKey, options)}`;
-    }
-  }
-
-  if (entries.nbUpdates > 0) {
-    const localizationKey = 'notification sncf events update';
-    const options = {
-      smart_count: entries.events.nbUpdates,
-    };
-    if (entries.notifContent === undefined) {
-      entries.notifContent = localization.t(localizationKey, options);
-    } else {
-      entries.notifContent += ` ${localization.t(localizationKey, options)}`;
-    }
-  }
-
-  next();
-}
-
-
-function getPage(url, callback) {
-  const options = {
-    method: 'GET',
-    uri: url,
-    jar: true,
-    headers: {
-      'User-Agent': userAgent,
-    },
-  };
-
-  return request(options, callback);
-}
-
-
-function parseSNCFTable($, $rows) {
-  const dataIndices = {
-    refOrder: 0,
-    labelOrder: 1,
-    dates: 2,
-    price: 3,
-    orderDate: 5,
-    detailPage: 6,
-  };
-  const informations = [];
-  const detailPages = {};
-
-  // Parse the orders page
-  $rows.each(function forEachRows() {
-    const $cells = $(this).find('td');
-
-    const refOrder = $cells.eq(dataIndices.refOrder).find('p')
-                                                    .text()
-                                                    .trim();
-    const labelOrder =
-      $cells.eq(dataIndices.labelOrder).find('p')
-                                       .text()
-                                       .trim();
-    const price = $cells.eq(dataIndices.price).find('div')
-                                              .text()
-                                              .trim();
-    const orderDate =
-      $cells.eq(dataIndices.orderDate).find('div').text()
-                                                  .trim();
-    const detailPage =
-      $cells.eq(dataIndices.detailPage).find('a').attr('href');
-
-    const $dates = $cells.eq(dataIndices.dates).find('p');
-    let dates = $dates.eq(0).text().trim();
-    if ($dates.length > 1) {
-      dates += ` - ${$dates.eq(1).text().trim()}`;
-    }
-
-    // price === '' ---> canceled travel
-    // So we don't add it to the bills
-    if (price !== '') {
-      informations.push({
-        refOrder,
-        labelOrder,
-        dates,
-        orderDate: moment(orderDate, 'DD/MM/YYYY'),
-        amount: price.replace('€', ''),
-        vendor: 'SNCF',
-        type: 'transport',
-      });
-
-      detailPages[orderDate] = detailPage;
-    }
-  });
-
-  return {
-    informations,
-    detailPages,
-  };
-}
-
 
 function parseMoreInfos($, $moreInfos) {
   const moreInfos = {};
