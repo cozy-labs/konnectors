@@ -182,6 +182,11 @@ module.exports =
 
     "konnector sncf reference": "Référence"
     "konnector sncf ticket choice": "Choix du billet"
+    "konnector sncf outward": "Aller"
+    "konnector sncf inward": "Retour"
+    "konnector sncf class": "Classe"
+    "konnector sncf car": "voiture"
+    "konnector sncf place": "place"
 
     "konnector danger zone": "Zone dangereuse"
     "konnector delete credentials": "Supprimer cette configuration."
