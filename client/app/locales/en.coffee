@@ -126,6 +126,7 @@ module.exports =
     'konnector description facebook_events': "Import your Facebook's events in your Cozy. To setup, clic on Connect, then follow instructions, then copy the given code, and past it in the Access token field."
     'konnector description aprr' : 'Downloads all your invoices from the APRR website (account with telepeage). This konnector requires the Files application to store the invoices PDF files.'
     'konnector description vente_privee' : 'Downloads all your invoices from the vente-privee.com website. This konnector requires the Files application to store the invoices PDF files.'
+    'konnector description podcast': 'Download your favourite audio podcasts from a RSS feed. This import can take a while.'
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
@@ -169,6 +170,7 @@ module.exports =
     'notification facebook_events updated': "%{smart_count] event updated |||| %{smart_count} events updated"
     'notification aprr': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification vente_privee': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+    'notification podcast': "%{smart_count} new podcast(s) imported |||| %{smart_count} new podcast(s) imported"
 
     "konnector birthdays birthday": "Birthday of"
 

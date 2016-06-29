@@ -2,6 +2,7 @@ fs = require 'fs'
 americano = require 'cozydb'
 request = require 'request'
 moment = require 'moment'
+mimetype = require 'mimetype'
 Binary = require './binary'
 log = require('printit')
     prefix: 'konnectors'
@@ -45,6 +46,20 @@ File.isPresent = (fullPath, callback) ->
 File.createNew = (fileName, path, url, tags, callback) ->
     now = moment().toISOString()
     filePath = "/tmp/#{fileName}"
+    mime = mimetype.lookup(fileName) || 'application/pdf'
+
+    # Returns a file calss depending of the mime type. It's useful to render
+    # icons properly.
+    getFileClass = (type) ->
+        switch type.split('/')[0]
+            when 'image' then fileClass = "image"
+            when 'application' then fileClass = "document"
+            when 'text' then fileClass = "document"
+            when 'audio' then fileClass = "music"
+            when 'video' then fileClass = "video"
+            else
+                fileClass = "file"
+        fileClass
 
     data =
         name: fileName
@@ -52,8 +67,8 @@ File.createNew = (fileName, path, url, tags, callback) ->
         creationDate: now
         lastModification: now
         tags: tags
-        class: 'document'
-        mime: 'application/pdf'
+        class: getFileClass mime
+        mime: mime
 
     # Attach binary to newly created file.
     attachBinary = (newFile) ->
