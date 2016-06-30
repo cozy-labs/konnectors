@@ -73,7 +73,7 @@ Before opening any pull requests make sure that you follow these rules:
 
 * RescueTime (activities)
 
-*Hobies*
+*Hobbies*
 
 * Podcasts (audio podcasts episodes)
 
