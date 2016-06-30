@@ -167,8 +167,8 @@ module.exports =
     'notification doctolib update': "%{smart_count} event updated |||| %{smart_count} events updated"
     'notification direct energie': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification captain_train': "%{smart_count} new invoice imported |||| %{smart_count} new bills imported"
-    'notification facebook_events creation': "%{smart_count] new event imported |||| %{smart_count} events updated"
-    'notification facebook_events updated': "%{smart_count] event updated |||| %{smart_count} events updated"
+    'notification facebook_events creation': "%{smart_count} new event imported |||| %{smart_count} events updated"
+    'notification facebook_events updated': "%{smart_count} event updated |||| %{smart_count} events updated"
     'notification aprr': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification vente_privee': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
 <<<<<<< HEAD
@@ -181,6 +181,11 @@ module.exports =
 
     "konnector sncf reference": "Reference"
     "konnector sncf ticket choice": "Ticket choice"
+    "konnector sncf outward": "Outward"
+    "konnector sncf inward": "Inward"
+    "konnector sncf class": "Class"
+    "konnector sncf car": "car"
+    "konnector sncf place": "place"
 
     "konnector danger zone": "Danger zone"
     "konnector delete credentials": "Delete this configuration"
