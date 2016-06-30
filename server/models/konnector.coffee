@@ -118,7 +118,8 @@ Konnector::import = (callback) ->
         , (err, notifContents) =>
             if err
                 log.error err
-                errMessage = if err.message? then err.message else err.toString()
+                errMessage = \
+                    if err.message? then err.message else err.toString()
                 data =
                     isImporting: false
                     lastImport: new Date()
