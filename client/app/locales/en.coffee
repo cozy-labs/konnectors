@@ -127,6 +127,7 @@ module.exports =
     'konnector description aprr' : 'Downloads all your invoices from the APRR website (account with telepeage). This konnector requires the Files application to store the invoices PDF files.'
     'konnector description vente_privee' : 'Downloads all your invoices from the vente-privee.com website. This konnector requires the Files application to store the invoices PDF files.'
     'konnector description uber' : 'Downloads all your invoices from the Uber website. This konnector requires the Files application to store the invoices PDF files.'
+    'konnector description podcast': 'Download your favourite audio podcasts from a RSS feed. This import can take a while.'
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
@@ -170,7 +171,11 @@ module.exports =
     'notification facebook_events updated': "%{smart_count] event updated |||| %{smart_count} events updated"
     'notification aprr': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
     'notification vente_privee': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+<<<<<<< HEAD
     'notification uber': "%{smart_count} new invoice imported |||| %{smart_count} new invoices imported"
+=======
+    'notification podcast': "%{smart_count} new podcast(s) imported |||| %{smart_count} new podcast(s) imported"
+>>>>>>> f0910709493a815adc37b581e8d886d414c4af0e
 
     "konnector birthdays birthday": "Birthday of"
 

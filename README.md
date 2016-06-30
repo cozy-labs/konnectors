@@ -72,6 +72,10 @@ Before opening any pull requests make sure that you follow these rules:
 
 * RescueTime (activities)
 
+*Hobies*
+
+* Podcasts (audio podcasts episodes)
+
 # Build
 
 To build this application:

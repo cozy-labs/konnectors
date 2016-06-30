@@ -39,3 +39,6 @@ module.exports =
 
     tag:
         byName: (doc) -> emit doc.name, doc
+
+    track:
+        all: americano.defaultRequests.all

@@ -29,8 +29,5 @@ Folder.allPath = (callback) ->
 Folder.createNewFolder = (folder, callback) ->
     Folder.create folder, (err, newFolder) ->
         return callback err if err
-
-        newFolder.index ["name"], (err) ->
-        console.log err if err
         callback null, newFolder
 

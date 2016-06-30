@@ -129,6 +129,8 @@ module.exports =
     'konnector description facebook_events': "Importez vos événements Facebook dans votre Cozy. Pour ce faire, cliquez sur le bouton Connect, suivez les instructions, puis copier le code, puis revenez sur cette page pour le coller dans le champs Access token."
     'konnector description aprr' : "Télécharge toutes vos factures depuis le site internet de APRR (compte avec badge télépéage). Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description uber' : "Télécharge toutes vos factures depuis le site internet d'Uber. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description vente_privee' : 'Télécharge toutes vos factures depuis le site internet vente-privee.com. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l\'application Files soit installée sur votre Cozy.'
+    'konnector description podcast': 'Téléchargez vos podcasts audios préférés depuis leurs flux RSS. Les importations peuvent prendre du temps.'
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
@@ -170,7 +172,11 @@ module.exports =
     'notification facebook_events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
     'notification aprr': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification vente_privee': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+<<<<<<< HEAD
     'notification uber': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+=======
+    'notification podcast': "%{smart_count} nouveau(x) podcast(s) importé(s) |||| %{smart_count} nouveau(x) podcast(s) importé(s)"
+>>>>>>> f0910709493a815adc37b581e8d886d414c4af0e
 
     "konnector birthdays birthday": "Anniversaire de"
 
