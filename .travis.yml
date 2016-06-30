@@ -24,6 +24,10 @@ before_install:
     - export TOKEN=apptoken
     - mkdir log
 
+script:
+    - npm run test
+    - npm run lint
+
 after_failure:
     - cat cozy-data-system/forever-ds.log
     - cat cozy-data-system/log/test.log
