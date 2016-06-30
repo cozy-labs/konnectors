@@ -172,11 +172,8 @@ module.exports =
     'notification facebook_events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
     'notification aprr': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification vente_privee': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-<<<<<<< HEAD
     'notification uber': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-=======
     'notification podcast': "%{smart_count} nouveau(x) podcast(s) importé(s) |||| %{smart_count} nouveau(x) podcast(s) importé(s)"
->>>>>>> f0910709493a815adc37b581e8d886d414c4af0e
 
     "konnector birthdays birthday": "Anniversaire de"
 

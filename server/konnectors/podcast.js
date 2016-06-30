@@ -92,10 +92,10 @@ function parseFeed(requiredFields, entries, data, next) {
 
 // Create files from the episodes' data
 function createFiles(requiredFields, entries, data, next) {
-  const files = episodes.map(function (episode) {
-    return new Promise(function (saved) {
+  const files = episodes.map((episode) =>
+    new Promise((saved) => {
       const filename = path.basename(url.parse(episode.url).pathname);
-      const pathname = requiredFields.folderPath + '/' + podcastName;
+      const pathname = `${requiredFields.folderPath}/${podcastName}`;
       // Creating the file
       return createFileIfNotPresent(filename, pathname, episode.url
       , (err, file) => {
@@ -106,8 +106,8 @@ function createFiles(requiredFields, entries, data, next) {
         episode.file = file;
         return saved();
       });
-    });
-  });
+    })
+  );
   // Wait for all the files to be created
   Promise.all(files).then(() => { next(); });
 }
@@ -116,18 +116,18 @@ function createFiles(requiredFields, entries, data, next) {
 // Create Track elements in the DataSystem for each episode from the files
 // previously created
 function createTracks(requiredFields, entries, data, next) {
-  const tracks = episodes.map(function (episode) {
-    return new Promise(function (saved) {
+  const tracks = episodes.map((episode) =>
+    new Promise((saved) =>
       // Creating the tracks
-      return createTrackIfNotPresent(episode.name, episode.file._id, (err) => {
+      createTrackIfNotPresent(episode.name, episode.file._id, (err) => {
         if (err) {
           log.error(err);
           return next(err);
         }
         return saved();
-      });
-    });
-  });
+      })
+    )
+  );
   // Wait for all the tracks to be created
   Promise.all(tracks).then(() => { next(); });
 }
@@ -178,7 +178,7 @@ function requestFeed(feedUrl, next) {
 // Push episodes to the episodes global array, formatted
 // array: The array of episodes to push into the global array
 function pushEpisodes(array) {
-  for (let episode of array) {
+  for (const episode of array) {
     episodes.push({
       name: episode.title,
       url: episode.enclosure.url,
@@ -198,7 +198,7 @@ function createFolderIfNotPresent(foldername, folderpath, next) {
       next(err);
     }
 
-    for (let folder of folders) {
+    for (const folder of folders) {
       if (folder.name === name) {
         return next();
       }
@@ -230,7 +230,7 @@ function createFileIfNotPresent(filename, path, url, next) {
       next(err);
     }
 
-    for (let file of files) {
+    for (const file of files) {
       if (file.name === filename && file.path === path) {
         return next(null, file);
       }
@@ -252,13 +252,13 @@ function createFileIfNotPresent(filename, path, url, next) {
 // fileID: ID identifying the file to link to the track
 // next(err): Callback
 function createTrackIfNotPresent(trackName, fileID, next) {
-  Track.request('all', function (err, tracks) {
+  Track.request('all', (err, tracks) => {
     if (err) {
       log.error(err);
       next(err);
     }
 
-    for (let track of tracks) {
+    for (const track of tracks) {
       // Not Darude - Sandstorm
       if (track.metas.title === trackName
         && track.ressource.fileID === fileID) {
