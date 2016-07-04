@@ -15,16 +15,16 @@ localization = require './localization_manager'
 # It changes the isImporting status of the konnector. It is set to false before
 # and after the import. It is set to true during the import.
 # It saves the import date by changing the last import field.
-module.exports = (konnector) ->
+module.exports = (konnector, callback) ->
 
     # check if the konnector is created and if its not already importing
-    if konnector.fieldValues? and konnector.isImporting is false
-        log.debug "Importing #{konnector.slug}"
+    if konnector.accounts?.length > 0 and konnector.isImporting is false
+        log.info "Run import for #{konnector.slug}."
         model = require "../konnectors/#{konnector.slug}"
 
         konnector.import (err, notifContents) ->
 
-            # err can be an object or a string
+            # Change notification to an error message if an error occured.
             if err? and
             ((typeof(err) is 'object' and Object.keys(err).length > 0) or
             typeof(err) is String)
@@ -35,14 +35,16 @@ module.exports = (konnector) ->
                     name: model.name
                 ]
 
-            # Through the notifications.
-            handleNotification(this, notifContents)
+            # Send the notifications.
+            handleNotification konnector, notifContents
 
-            # Update the lastAutoImport with the current date
+            # Update the lastAutoImport with the current date.
             data = lastAutoImport: new Date()
             konnector.updateAttributes data, (err) ->
                 log.error err if err?
+                callback?()
 
     else
-        log.debug "Connector #{konnector.slug} already importing"
+        log.info "Connector #{konnector.slug} is already importing."
+        callback?()
 
