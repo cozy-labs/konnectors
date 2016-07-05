@@ -186,7 +186,7 @@ class KonnectorPoller
                 konnector.updateAttributes data, (err, body) =>
                     log.error err if err?
 
-                    @create konnector, @findNextUpdate(konnector)
+                    @schedule konnector, @findNextUpdate(konnector)
                     callback() if callback?
 
         else
