@@ -8,6 +8,6 @@ a(href="#konnector/#{model.slug}")
         - if (model.isImporting === true)
             div.spinholder
                 img(src="images/spinner.svg")
-        - else if (model.errorMessage != null)
+        - else if (model.importErrorMessage !== null)
             i.fa.fa-warning(title=t('error occurred during import.'))
 
