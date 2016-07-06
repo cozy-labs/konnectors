@@ -3,7 +3,7 @@ moment = require "moment"
 fs = require 'fs'
 path = require 'path'
 log = require('printit')
-    prefix: null
+    prefix: 'Scheduler'
     date: true
 
 importer = require "./importer"
@@ -104,8 +104,9 @@ class KonnectorPoller
             @createTimeout konnector, nextUpdate
 
 
-    # If the import should be run in less than 24h, creates it.
-    # It is created only if it fits in the period before the next checking.
+    # If the import should be run in less than 24h, a timeout call is
+    # generated and indexed. Else it does nothing (a new checking will
+    # be made in 24h for all indexed schedules).
     createTimeout: (konnector, nextUpdate) ->
         now = moment()
         interval = nextUpdate.diff now.clone(), 'ms'
@@ -113,7 +114,8 @@ class KonnectorPoller
             @startTimeout konnector, interval
 
 
-    # Set up the timeout and save its reference into the timeout hash.
+    # Set up the timeout that will run the import at given interval.
+    # and save its reference into the timeout hash.
     startTimeout: (konnector, interval) ->
         nextImport = @runImport.bind @, konnector, interval
         clearTimeout @timeouts[konnector.slug] if @timeouts[konnector.slug]?
@@ -123,24 +125,29 @@ class KonnectorPoller
     # Run import. Then it sets the date for the next import. Finally,
     # it saves information in the nextUpdate hash and sets the import timeout
     # if it fits in the 24h period.
+    # NB: There is cycle here, runImport will generate a timeout that
+    # will call run import again.
     runImport: (konnector, interval) ->
+        log.info "Import scheduler starts import for #{konnector.slug}"
         importer konnector # This function is asynchronous.
         now = moment()
         nextUpdate = now.add periods[konnector.importInterval], 'ms'
-        @create konnector, nextUpdate
+        @schedule konnector, nextUpdate
 
 
-    # Add konnector and the next import date to the nextUpdates hash.
-    # Create import timeout if needed.
-    create: (konnector, nextUpdate) ->
+    # Schedule a connector import by adding the connector and the next import
+    # date to the nextUpdates hash.  Directly create import timeout if needed
+    # (if first import doesn't occur in the following 24 hours).
+    schedule: (konnector, nextUpdate) ->
         @nextUpdates[konnector.slug] = [nextUpdate, konnector]
 
         log.info "#{konnector.slug}: Next update #{nextUpdate.format(format)}"
         @createTimeout konnector, nextUpdate
 
 
-    # Update import timeout and nextUpdates for this konnector that was
-    # modified or newly created.
+    # Update import timeout and nextUpdates for a given konnector.
+    # This function should be called after a modification or a creation
+    # of a connector.
     add: (startDate, konnector, callback=null) ->
 
         # If there is already a timeout for this konnector, destroy it.
@@ -179,7 +186,7 @@ class KonnectorPoller
                 konnector.updateAttributes data, (err, body) =>
                     log.error err if err?
 
-                    @create konnector, @findNextUpdate(konnector)
+                    @schedule konnector, @findNextUpdate(konnector)
                     callback() if callback?
 
         else
