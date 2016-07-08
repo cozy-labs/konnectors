@@ -35,10 +35,6 @@ Folder.createNewFolder = function(folder, callback) {
     if (err) {
       return callback(err);
     }
-    newFolder.index(["name"], function(err) {});
-    if (err) {
-      console.log(err);
-    }
     return callback(null, newFolder);
   });
 };

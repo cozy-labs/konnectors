@@ -48,5 +48,8 @@ module.exports = {
     byName: function(doc) {
       return emit(doc.name, doc);
     }
+  },
+  track: {
+    all: americano.defaultRequests.all
   }
 };

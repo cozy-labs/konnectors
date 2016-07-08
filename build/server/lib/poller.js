@@ -10,7 +10,7 @@ fs = require('fs');
 path = require('path');
 
 log = require('printit')({
-  prefix: null,
+  prefix: 'Scheduler',
   date: true
 });
 
@@ -116,13 +116,14 @@ KonnectorPoller = (function() {
 
   KonnectorPoller.prototype.runImport = function(konnector, interval) {
     var nextUpdate, now;
+    log.info("Import scheduler starts import for " + konnector.slug);
     importer(konnector);
     now = moment();
     nextUpdate = now.add(periods[konnector.importInterval], 'ms');
-    return this.create(konnector, nextUpdate);
+    return this.schedule(konnector, nextUpdate);
   };
 
-  KonnectorPoller.prototype.create = function(konnector, nextUpdate) {
+  KonnectorPoller.prototype.schedule = function(konnector, nextUpdate) {
     this.nextUpdates[konnector.slug] = [nextUpdate, konnector];
     log.info(konnector.slug + ": Next update " + (nextUpdate.format(format)));
     return this.createTimeout(konnector, nextUpdate);
@@ -172,7 +173,7 @@ KonnectorPoller = (function() {
             if (err != null) {
               log.error(err);
             }
-            _this.create(konnector, _this.findNextUpdate(konnector));
+            _this.schedule(konnector, _this.findNextUpdate(konnector));
             if (callback != null) {
               return callback();
             }

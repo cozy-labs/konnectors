@@ -14,10 +14,10 @@ Konnector = require('../models/konnector');
 
 localization = require('./localization_manager');
 
-module.exports = function(konnector) {
-  var model;
-  if ((konnector.fieldValues != null) && konnector.isImporting === false) {
-    log.debug("Importing " + konnector.slug);
+module.exports = function(konnector, callback) {
+  var model, ref;
+  if (((ref = konnector.accounts) != null ? ref.length : void 0) > 0 && konnector.isImporting === false) {
+    log.info("Run import for " + konnector.slug + ".");
     model = require("../konnectors/" + konnector.slug);
     return konnector["import"](function(err, notifContents) {
       var data, localizationKey;
@@ -30,17 +30,19 @@ module.exports = function(konnector) {
           }
         ];
       }
-      handleNotification(this, notifContents);
+      handleNotification(konnector, notifContents);
       data = {
         lastAutoImport: new Date()
       };
       return konnector.updateAttributes(data, function(err) {
         if (err != null) {
-          return log.error(err);
+          log.error(err);
         }
+        return typeof callback === "function" ? callback() : void 0;
       });
     });
   } else {
-    return log.debug("Connector " + konnector.slug + " already importing");
+    log.info("Connector " + konnector.slug + " is already importing.");
+    return typeof callback === "function" ? callback() : void 0;
   }
 };
