@@ -191,6 +191,10 @@ module.exports =
                         return callback err if err
 
                         measures = JSON.parse body
+                        if not measures.body?
+                            log.error "Measures have no body"
+                            return callback()
+
                         saveBodyMeasures measures.body.measuregrps, (err) ->
                             return callback err if err
 
