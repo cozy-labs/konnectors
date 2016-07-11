@@ -111,6 +111,7 @@ function createFiles(requiredFields, entries, data, next) {
       callback();
     });
   }, (err) => {
+    if (err) return next(err);
     connector.logger.info('File creations finished.');
     next();
   });
