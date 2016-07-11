@@ -87,12 +87,14 @@ File.createNew = (fileName, path, url, tags, callback) ->
         method: 'GET'
         jar: true
 
+    log.info "Downloading file at #{url}..."
     stream = request options, (err, res, body) ->
         if res?.statusCode is 200
             # Once done create file metadata then attach binary to file.
             try
                 stats = fs.statSync filePath
                 data.size = stats["size"]
+                log.info "File at #{url} downloaded."
                 File.create data, (err, newFile) ->
                     if err
                         log.error err
