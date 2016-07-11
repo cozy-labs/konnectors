@@ -99,6 +99,9 @@
     "Sleep": {
       "description": "Sleep data from jawbone.com."
     },
+    "Track": {
+      "description": "Metadata about music tracks stored in the Cozy."
+    },
     "TwitterTweet": {
       "description": "Tweets you published on Twitter."
     },
