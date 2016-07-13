@@ -159,6 +159,5 @@
     "Track": {
       "description": "Tracks imported by the podcast connector"
     }
-    }
   }
 }
