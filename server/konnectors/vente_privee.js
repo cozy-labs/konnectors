@@ -74,8 +74,7 @@ function getHiddenInputs(requiredFields, bills, data, next) {
   const options = {
     url,
     method: 'GET',
-  }
-    ;
+  };
 
   if (requiredFields.login.length === 0
       || requiredFields.password.length === 0) {
