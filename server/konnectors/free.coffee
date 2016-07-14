@@ -62,7 +62,7 @@ module.exports =
             .use(linkBankOperation
                 log: log
                 model: InternetBill
-                identifier: ['free telecom', ' free hautdebit']
+                identifier: ['free telecom', 'free hautdebit']
                 dateDelta: 10
                 amountDelta: 0.1
             )
