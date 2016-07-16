@@ -7,7 +7,6 @@ const saveDataAndFile = require('../lib/save_data_and_file');
 const linkBankOperation = require('../lib/link_bank_operation');
 const requestJson = require('request-json');
 const request = require('request');
-const cheerio = require('cheerio');
 const moment = require('moment');
 
 const Bill = require('../models/bill');
@@ -58,8 +57,7 @@ const baseUrl = 'https://www.captaintrain.com/';
 const client = requestJson.createClient(baseUrl);
 const userAgent = 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:37.0) ' +
                   'Gecko/20100101 Firefox/37.0';
-// Authenticity token used by the jequest-json client.
-let csrfToken;
+
 client.headers['user-agent'] = userAgent;
 function login(requiredFields, entries, data, next) {
   const options = {
@@ -71,16 +69,12 @@ function login(requiredFields, entries, data, next) {
     },
     jar: true,
   };
-  request(options, (err, res, body) => {
+  request(options, (err) => {
     if (err) {
       logger.error(err);
       next(err);
     }
-    // Retrieve the authenticity token
-    const $ = cheerio.load(body);
-    csrfToken = $('meta[name=csrf-token]').attr('content');
-    // Retrieve the cookie for the request-json clien
-    let cookie = res.headers['set-cookie'][0];
+
     // Signin form
     const signinForm = {
       concur_auth_code: null,
@@ -96,7 +90,6 @@ function login(requiredFields, entries, data, next) {
       source: null,
       user_itokend: null,
     };
-    client.headers.cookie = cookie;
     // Signin
     const signinPath = `${baseUrl}api/v5/account/signin`;
     client.post(signinPath, signinForm, (err, res, body) => {
@@ -108,45 +101,25 @@ function login(requiredFields, entries, data, next) {
       if (res.statusCode === 422) {
         next('bad credentials');
       }
-
       // Retrieve token for json client
       const token = body.meta.token;
-
-     // Login data for the json client
-      const loginData = {
-        email: requiredFields.login,
-        password: requiredFields.password,
-        authenticity_token: csrfToken,
-      };
-      options.method = 'POST';
-      options.url = `${baseUrl}login`;
-      options.form = loginData;
-      // Log in
-      request(options, (err, res) => {
-        // Update cookie
-        cookie = res.headers['set-cookie'][0];
+    //  client.headers.cookie = cookie;
+      client.headers.Authorization = `Token token="${token}"`;
+      data.authHeader = `Token token="${token}"`;
+      // the api/v5/pnrs uri gives all information necessary to get bill
+      // information
+      client.get(`${baseUrl}api/v5/pnrs`, (err, res, body) => {
         if (err) {
+          logger.error(err);
           next(err);
         }
-
-        client.headers.cookie = cookie;
-        client.headers.Authorization = `Token token="${token}"`;
-        data.authHeader = `Token token="${token}"`;
-        // the api/v5/pnrs uri gives all information necessary to get bill
-        // information
-        client.get(`${baseUrl}api/v5/pnrs`, (err, res, body) => {
-          if (err) {
-            logger.error(err);
-            next(err);
-          }
-          // We check their are bills
-          if (body.proofs && body.proofs.length > 0) {
-            saveMetadata(data, body);
-            getNextMetaData(computeNextDate(body.pnrs), data, next);
-          } else {
-            next();
-          }
-        });
+        // We check their are bills
+        if (body.proofs && body.proofs.length > 0) {
+          saveMetadata(data, body);
+          getNextMetaData(computeNextDate(body.pnrs), data, next);
+        } else {
+          next();
+        }
       });
     });
   });
