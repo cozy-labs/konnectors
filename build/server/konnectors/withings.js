@@ -224,6 +224,10 @@ module.exports = {
               return callback(err);
             }
             measures = JSON.parse(body);
+            if (measures.body == null) {
+              log.error("Measures have no body");
+              return callback();
+            }
             return saveBodyMeasures(measures.body.measuregrps, function(err) {
               var onMeasures, startDate;
               if (err) {

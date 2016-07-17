@@ -7,7 +7,6 @@ var saveDataAndFile = require('../lib/save_data_and_file');
 var linkBankOperation = require('../lib/link_bank_operation');
 var requestJson = require('request-json');
 var request = require('request');
-var cheerio = require('cheerio');
 var moment = require('moment');
 
 var Bill = require('../models/bill');
@@ -49,8 +48,7 @@ var fileOptions = {
 var baseUrl = 'https://www.captaintrain.com/';
 var client = requestJson.createClient(baseUrl);
 var userAgent = 'Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:37.0) ' + 'Gecko/20100101 Firefox/37.0';
-// Authenticity token used by the jequest-json client.
-var csrfToken = void 0;
+
 client.headers['user-agent'] = userAgent;
 function login(requiredFields, entries, data, next) {
   var options = {
@@ -62,16 +60,12 @@ function login(requiredFields, entries, data, next) {
     },
     jar: true
   };
-  request(options, function (err, res, body) {
+  request(options, function (err) {
     if (err) {
       logger.error(err);
       next(err);
     }
-    // Retrieve the authenticity token
-    var $ = cheerio.load(body);
-    csrfToken = $('meta[name=csrf-token]').attr('content');
-    // Retrieve the cookie for the request-json clien
-    var cookie = res.headers['set-cookie'][0];
+
     // Signin form
     var signinForm = {
       concur_auth_code: null,
@@ -87,7 +81,6 @@ function login(requiredFields, entries, data, next) {
       source: null,
       user_itokend: null
     };
-    client.headers.cookie = cookie;
     // Signin
     var signinPath = baseUrl + 'api/v5/account/signin';
     client.post(signinPath, signinForm, function (err, res, body) {
@@ -99,45 +92,25 @@ function login(requiredFields, entries, data, next) {
       if (res.statusCode === 422) {
         next('bad credentials');
       }
-
       // Retrieve token for json client
       var token = body.meta.token;
-
-      // Login data for the json client
-      var loginData = {
-        email: requiredFields.login,
-        password: requiredFields.password,
-        authenticity_token: csrfToken
-      };
-      options.method = 'POST';
-      options.url = baseUrl + 'login';
-      options.form = loginData;
-      // Log in
-      request(options, function (err, res) {
-        // Update cookie
-        cookie = res.headers['set-cookie'][0];
+      //  client.headers.cookie = cookie;
+      client.headers.Authorization = 'Token token="' + token + '"';
+      data.authHeader = 'Token token="' + token + '"';
+      // the api/v5/pnrs uri gives all information necessary to get bill
+      // information
+      client.get(baseUrl + 'api/v5/pnrs', function (err, res, body) {
         if (err) {
+          logger.error(err);
           next(err);
         }
-
-        client.headers.cookie = cookie;
-        client.headers.Authorization = 'Token token="' + token + '"';
-        data.authHeader = 'Token token="' + token + '"';
-        // the api/v5/pnrs uri gives all information necessary to get bill
-        // information
-        client.get(baseUrl + 'api/v5/pnrs', function (err, res, body) {
-          if (err) {
-            logger.error(err);
-            next(err);
-          }
-          // We check their are bills
-          if (body.proofs && body.proofs.length > 0) {
-            saveMetadata(data, body);
-            getNextMetaData(computeNextDate(body.pnrs), data, next);
-          } else {
-            next();
-          }
-        });
+        // We check their are bills
+        if (body.proofs && body.proofs.length > 0) {
+          saveMetadata(data, body);
+          getNextMetaData(computeNextDate(body.pnrs), data, next);
+        } else {
+          next();
+        }
       });
     });
   });

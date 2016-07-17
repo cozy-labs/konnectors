@@ -2,6 +2,7 @@
 
 var url = require('url');
 var path = require('path');
+var async = require('async');
 var request = require('request');
 var xml = require('pixl-xml');
 var NotifHelper = require('cozy-notifications-helper');
@@ -31,7 +32,7 @@ var episodes = [];
 var podcastName = '';
 var alreadyExists = 0;
 
-module.exports = baseKonnector.createNew({
+var connector = module.exports = baseKonnector.createNew({
   name: 'Podcast',
 
   models: [Track],
@@ -56,6 +57,9 @@ function init(requiredFields, entries, data, next) {
 // folder for it, and pushes the retrieved episode into the global array
 function parseFeed(requiredFields, entries, data, next) {
   requestFeed(requiredFields.url, function (err, rawFeed) {
+    if (err) return next(err);
+    connector.logger.info('Raw feed fetched');
+
     if (!rawFeed.length || !rawFeed.match(/^\s*</)) {
       var error = new Error('Invalid feed');
       log.error(error);
@@ -72,6 +76,7 @@ function parseFeed(requiredFields, entries, data, next) {
         return next(err);
       }
       // Saving 5 latest episodes
+      connector.logger.info('Saving last five episodes');
       pushEpisodes(parsedFeed.item.slice(0, 5));
       return next();
     });
@@ -80,23 +85,22 @@ function parseFeed(requiredFields, entries, data, next) {
 
 // Create files from the episodes' data
 function createFiles(requiredFields, entries, data, next) {
-  var files = episodes.map(function (episode) {
-    return new Promise(function (saved) {
-      var filename = path.basename(url.parse(episode.url).pathname);
-      var pathname = requiredFields.folderPath + '/' + podcastName;
-      // Creating the file
-      return createFileIfNotPresent(filename, pathname, episode.url, function (err, file) {
-        if (err) {
-          log.error(err);
-          return next(err);
-        }
-        episode.file = file;
-        return saved();
-      });
+  connector.logger.info('File creations started...');
+
+  async.eachSeries(episodes, function (episode, callback) {
+    var filename = path.basename(url.parse(episode.url).pathname);
+    var pathname = requiredFields.folderPath + '/' + podcastName;
+    createFileIfNotPresent(filename, pathname, episode.url, function (err, file) {
+      if (err) {
+        log.error(err);
+        return callback(err);
+      }
+      episode.file = file;
+      callback();
     });
-  });
-  // Wait for all the files to be created
-  Promise.all(files).then(function () {
+  }, function (err) {
+    if (err) return next(err);
+    connector.logger.info('File creations finished.');
     next();
   });
 }
@@ -104,22 +108,18 @@ function createFiles(requiredFields, entries, data, next) {
 // Create Track elements in the DataSystem for each episode from the files
 // previously created
 function createTracks(requiredFields, entries, data, next) {
-  var tracks = episodes.map(function (episode) {
-    return new Promise(function (saved) {
-      return(
-        // Creating the tracks
-        createTrackIfNotPresent(episode.name, episode.file._id, function (err) {
-          if (err) {
-            log.error(err);
-            return next(err);
-          }
-          return saved();
-        })
-      );
+  connector.logger.info('Track creations started...');
+  async.eachSeries(episodes, function (episode, callback) {
+    createTrackIfNotPresent(episode.name, episode.file._id, function (err) {
+      if (err) {
+        log.error(err);
+        return callback(err);
+      }
+      return callback();
     });
-  });
-  // Wait for all the tracks to be created
-  Promise.all(tracks).then(function () {
+  }, function (err) {
+    if (err) return next(err);
+    connector.logger.info('Track creations finished.');
     next();
   });
 }
@@ -148,19 +148,19 @@ function notify(requiredFields, entries, data, next) {
 
 // Requests a RSS feed and passes it as a string to the callback
 // feedUrl: String containing the URL to request
-// next(err, rawFeed): Callback
-function requestFeed(feedUrl, next) {
+// callback(err, rawFeed): Callback
+function requestFeed(feedUrl, callback) {
   request(feedUrl, function (error, response, body) {
     if (error) {
       log.error(error);
-      return next(error);
+      return callback(error);
     }
     if (!response.headers['content-type'].match(/xml/)) {
       var _error = new Error('Feed\'s content type is not XML');
       log.error(_error);
-      return next(_error);
+      return callback(_error);
     }
-    return next(null, body);
+    return callback(null, body);
   });
 }
 
@@ -175,6 +175,7 @@ function pushEpisodes(array) {
     for (var _iterator = array[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
       var episode = _step.value;
 
+      connector.logger.info(episode.title);
       episodes.push({
         name: episode.title,
         url: episode.enclosure.url
@@ -199,12 +200,12 @@ function pushEpisodes(array) {
 // Check if a folder already exists and creates it if not
 // name: Folder name
 // path: Folder path
-// next(err): Callback
-function createFolderIfNotPresent(foldername, folderpath, next) {
+// callback(err): Callback
+function createFolderIfNotPresent(foldername, folderpath, callback) {
   Folder.all(function (err, folders) {
     if (err) {
       log.error(err);
-      next(err);
+      callback(err);
     }
 
     var _iteratorNormalCompletion2 = true;
@@ -215,8 +216,8 @@ function createFolderIfNotPresent(foldername, folderpath, next) {
       for (var _iterator2 = folders[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
         var folder = _step2.value;
 
-        if (folder.name === name) {
-          return next();
+        if (folder.name === foldername) {
+          return callback();
         }
       }
     } catch (err) {
@@ -238,11 +239,12 @@ function createFolderIfNotPresent(foldername, folderpath, next) {
       name: foldername,
       path: folderpath
     }, function (err) {
+      connector.info(foldername + ' folder created.');
       if (err) {
         log.error(err);
-        next(err);
+        callback(err);
       }
-      return next();
+      return callback();
     });
   });
 }
@@ -251,12 +253,12 @@ function createFolderIfNotPresent(foldername, folderpath, next) {
 // name: File name
 // path: File path
 // url: URL to download the file from
-// next(err, file): Callback
-function createFileIfNotPresent(filename, path, url, next) {
+// callback(err, file): Callback
+function createFileIfNotPresent(filename, path, url, callback) {
   File.all({}, function (err, files) {
     if (err) {
       log.error(err);
-      next(err);
+      callback(err);
     }
 
     var _iteratorNormalCompletion3 = true;
@@ -268,7 +270,7 @@ function createFileIfNotPresent(filename, path, url, next) {
         var file = _step3.value;
 
         if (file.name === filename && file.path === path) {
-          return next(null, file);
+          return callback(null, file);
         }
       }
     } catch (err) {
@@ -286,12 +288,14 @@ function createFileIfNotPresent(filename, path, url, next) {
       }
     }
 
-    return File.createNew(filename, path, url, [], function (err, file) {
+    connector.logger.info('Creating ' + filename + '...');
+    File.createNew(filename, path, url, [], function (err, file) {
       if (err) {
         log.error(err);
-        return next(err);
+        return callback(err);
       }
-      return next(null, file);
+      connector.logger.info('File ' + filename + ' created.');
+      return callback(null, file);
     });
   });
 }
@@ -299,12 +303,12 @@ function createFileIfNotPresent(filename, path, url, next) {
 // Check if a track already exists and creates it if not
 // trakName: Track name as it will appear in cozy-music
 // fileID: ID identifying the file to link to the track
-// next(err): Callback
-function createTrackIfNotPresent(trackName, fileID, next) {
+// callback(err): Callback
+function createTrackIfNotPresent(trackName, fileID, callback) {
   Track.request('all', function (err, tracks) {
     if (err) {
       log.error(err);
-      next(err);
+      callback(err);
     }
 
     var _iteratorNormalCompletion4 = true;
@@ -318,7 +322,7 @@ function createTrackIfNotPresent(trackName, fileID, next) {
         // Not Darude - Sandstorm
         if (track.metas.title === trackName && track.ressource.fileID === fileID) {
           alreadyExists++;
-          return next();
+          return callback();
         }
       }
     } catch (err) {
@@ -336,12 +340,14 @@ function createTrackIfNotPresent(trackName, fileID, next) {
       }
     }
 
-    return Track.createFromFile(trackName, fileID, function (err) {
+    connector.logger.info('Creating track ' + trackName + '...');
+    Track.createFromFile(trackName, fileID, function (err) {
       if (err) {
         log.error(err);
-        return next(err);
+        return callback(err);
       }
-      return next();
+      connector.logger.info('Track ' + trackName + ' created.');
+      return callback();
     });
   });
 }

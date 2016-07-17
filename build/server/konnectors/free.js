@@ -66,7 +66,7 @@ module.exports = {
     return fetcher["new"]().use(logIn).use(parsePage).use(filterExisting(log, InternetBill)).use(saveDataAndFile(log, InternetBill, 'free', ['facture'])).use(linkBankOperation({
       log: log,
       model: InternetBill,
-      identifier: ['free telecom', ' free hautdebit'],
+      identifier: ['free telecom', 'free hautdebit'],
       dateDelta: 10,
       amountDelta: 0.1
     })).args(requiredFields, {}, {}).fetch(function(err, fields, entries) {

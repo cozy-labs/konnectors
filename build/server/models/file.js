@@ -112,12 +112,14 @@ File.createNew = function(fileName, path, url, tags, callback) {
     method: 'GET',
     jar: true
   };
+  log.info("Downloading file at " + url + "...");
   stream = request(options, function(err, res, body) {
     var error, stats;
     if ((res != null ? res.statusCode : void 0) === 200) {
       try {
         stats = fs.statSync(filePath);
         data.size = stats["size"];
+        log.info("File at " + url + " downloaded.");
         return File.create(data, function(err, newFile) {
           if (err) {
             log.error(err);
