@@ -123,6 +123,28 @@ function parsePage(requiredFields, bills, data, next) {
   bills.fetched = [];
   moment.locale('fr');
   const $ = cheerio.load(data.html);
+  const baseURL = 'https://espace-client.sfr.fr';
+
+  const firstBill = $('#facture');
+  const firstBillUrl = $('#lien-telecharger-pdf').attr('href');
+  // The year is not provided, but we assume this is the current year or that
+  // it will be provided if different from the current year
+  let firstBillDate = firstBill.find('tr.header h3').text().substr(17);
+  firstBillDate = moment(firstBillDate, 'D MMM YYYY');
+
+  const price = firstBill.find('tr.total td.prix').text()
+                                                .replace('€', '')
+                                                .replace(',', '.');
+
+  const bill = {
+    date: firstBillDate,
+    type: 'Mobile',
+    amount: parseFloat(price),
+    pdfurl: `${baseURL}${firstBillUrl}`,
+    vendor: 'Sfr'
+  };
+
+  bills.fetched.push(bill);
 
   $('#tab tr').each(function each() {
     let date = $(this).find('.date').text();
@@ -135,7 +157,7 @@ function parsePage(requiredFields, bills, data, next) {
     date = date.join(' ');
     date = moment(date, 'D MMM YYYY');
     prix = parseFloat(prix);
-    pdf = `https://espace-client.sfr.fr${pdf}`;
+    pdf = `${baseURL}${pdf}`;
 
     const bill = {
       date,
@@ -146,6 +168,7 @@ function parsePage(requiredFields, bills, data, next) {
     };
     bills.fetched.push(bill);
   });
+
   connector.logger.info('Successfully parsed the page');
   next();
 }
