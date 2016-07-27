@@ -99,11 +99,12 @@ function getHiddenInputs(requiredFields, bills, data, next) {
         obj.Password = requiredFields.password;
 
         data.inputs = obj;
-
         next();
       }
+      return true;
     });
   }
+  return true;
 }
 
 // Procedure to login
@@ -122,23 +123,28 @@ function logIn(requiredFields, bills, data, next) {
   connector.logger.info('Logging in on VentePrivee website...');
 
   request(options, (err, res, body) => {
-    log.debug(res.statusCode);
-    log.debug(res.headers);
+    let isLogged = true;
 
-    if ((err != null) || res.statusCode !== 200) {
+    if (err != null) {
+      log.error(err);
+      isLogged = false;
+    }
+    if (res.statusCode !== 200) {
+      log.debug('statusCode != 200');
+      isLogged = false;
+    }
+    if (body.search('authenticationForm') > 0) {
+      log.debug('body.search:authenticationForm');
+      isLogged = false;
+    }
+
+    if (isLogged) {
+      connector.logger.info('Successfully logged in.');
+    } else {
       log.error('Authentification error');
-      if (err != null) {
-        log.error(err);
-      }
-      if (requiredFields.password.length === 0) {
-        log.error('No password');
-      }
-      if (requiredFields.login.length === 0) {
-        log.error('No login');
-      }
-      if (res.statusCode !== 200) {
-        log.debug(body);
-      }
+      log.debug('options:', JSON.stringify(options, null, 4));
+      log.debug('headers:', JSON.stringify(res.headers, null, 4));
+      log.debug(body);
       return next('bad credentials');
     }
 
@@ -147,12 +153,14 @@ function logIn(requiredFields, bills, data, next) {
     connector.logger.info('Successfully logged in.');
     return next();
   });
+  return true;
 }
 
 function parsePage(requiredFields, bills, data, next) {
   bills.fetched = [];
   moment.locale('fr');
   const $ = cheerio.load(data.html);
+  let lastBill = null;
 
   $('#ordersTable tr').each(function a() {
     let orderId = null;
@@ -181,11 +189,14 @@ function parsePage(requiredFields, bills, data, next) {
         orderAmount = parseFloat(((orderAmount.match(/(\d+,\d+)/))[0])
                                               .replace(',', '.'));
       } catch (e) {
+        log.error('parseFloat error:', e);
         orderAmount = 0;
       }
 
       log.debug('orderDate:', orderDate);
       log.debug('orderAmount:', orderAmount);
+      log.debug('url:',
+        `${baseUrl}/memberaccount/order/invoice?orderId=${orderId}`);
 
       const bill = {
         date: moment(orderDate, 'DD/MM/YY'),
@@ -195,14 +206,49 @@ function parsePage(requiredFields, bills, data, next) {
         vendor: 'vente-privee.com',
       };
 
-      // saving bill
-      bills.fetched.push(bill);
+      if (lastBill == null) {
+        lastBill = Object.assign(bill);
+      } else if (bill.date > lastBill.date) {
+        lastBill = Object.assign(bill);
+      }
+      // saving current bill
+      // bills.fetched.push(bill);
     }
     return true;
   });
 
+  bills.fetched.push(lastBill);
+
+  log.debug('bills.fetched:', bills);
+
   connector.logger.info('Successfully parsed the page, bills found:',
-    bills.fetched.length);
+  bills.fetched.length);
+  return next();
+}
+
+function customFilterExisting(requiredFields, bills, data, next) {
+  log.debug('customFilterExisting');
+  filterExisting(log, Bill)(requiredFields, bills, data, next);
+  return next();
+}
+
+function customSaveDataAndFile(requiredFields, bills, data, next) {
+  log.debug('customSaveDataAndFile');
+  const fnsave = saveDataAndFile(
+    log, Bill, fileOptions, ['vente-privee', 'facture']);
+  fnsave(requiredFields, bills, data, next);
+  return next();
+}
+
+function buildNotifContent(requiredFields, bills, data, next) {
+  log.debug('buildNotifContent');
+  if (bills.filtered.length > 0) {
+    const localizationKey = 'notification vente_privee';
+    const options = {
+      smart_count: bills.filtered.length,
+    };
+    bills.notifContent = localization.t(localizationKey, options);
+  }
   return next();
 }
 
@@ -216,32 +262,10 @@ function logOut(requiredFields, bills, data, next) {
   request(options, (err) => {
     if (err) {
       log.error(err);
-      next(err);
-    } else {
-      next();
+      return next(err);
     }
+    return next();
   });
-}
-
-function customFilterExisting(requiredFields, bills, data, next) {
-  filterExisting(log, Bill)(requiredFields, bills, data, next);
-  next();
-}
-
-function customSaveDataAndFile(requiredFields, bills, data, next) {
-  const fnsave = saveDataAndFile(
-      log, Bill, fileOptions, ['vente-privee', 'facture']);
-  fnsave(requiredFields, bills, data, next);
-  next();
-}
-
-function buildNotifContent(requiredFields, bills, data, next) {
-  if (bills.filtered.length > 0) {
-    const localizationKey = 'notification vente_privee';
-    const options = {
-      smart_count: bills.filtered.length,
-    };
-    bills.notifContent = localization.t(localizationKey, options);
-  }
-  next();
+  connector.logger.info('Successfully logout');
+  return true;
 }
