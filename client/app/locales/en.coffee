@@ -128,6 +128,7 @@ module.exports =
     'konnector description vente_privee' : 'Downloads all your invoices from the vente-privee.com website. This konnector requires the Files application to store the invoices PDF files.'
     'konnector description uber' : 'Downloads all your invoices from the Uber website. This konnector requires the Files application to store the invoices PDF files.'
     'konnector description podcast': 'Download your favourite audio podcasts from a RSS feed. This import can take a while.'
+    'konnector description materiel_net': 'Import your last 10 Materiel.net bills. This konnector requires the Files application to store the bill PDF files.'
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name}:"
