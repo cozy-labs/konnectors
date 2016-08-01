@@ -90,7 +90,7 @@ function customFilterExisting(requiredFields, entries, data, next) {
 }
 
 function customSaveDataAndFile(requiredFields, entries, data, next) {
-  saveDataAndFile(logger, Bill, fileOptions, ['facture'])(
+  saveDataAndFile(logger, Bill, fileOptions, ['bill'])(
       requiredFields, entries, data, next);
 }
 
