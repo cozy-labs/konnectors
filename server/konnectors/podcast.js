@@ -214,7 +214,7 @@ function createFolderIfNotPresent(foldername, folderpath, callback) {
       name: foldername,
       path: folderpath,
     }, (err) => {
-      connector.info(`${foldername} folder created.`);
+      connector.logger.info(`${foldername} folder created.`);
       if (err) {
         log.error(err);
         callback(err);
