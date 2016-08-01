@@ -19,6 +19,11 @@ const logger = require('printit')({
 
 const baseURL = 'https://espaceclient.virginmobile.fr/';
 
+const fileOptions = {
+  vendor: 'Virgin mobile',
+  dateFormat: 'YYYYMMDD',
+};
+
 // Login layer
 function login(requiredFields, billInfos, data, next) {
   const signInOptions = {
@@ -67,9 +72,7 @@ function parsePage(requiredFields, bills, data, next) {
       const bill = {
         date: moment(inv.invoiceDate, 'DD/MM/YYYY'),
         amount: parseFloat(`${inv.amount.unite}.${inv.amount.centimes}`),
-        pdfurl: `${baseURL}api/getFacturePdf/${inv.invoiceNumber}`,
-        type: 'Mobile',
-        vendor: 'Virgin mobile'
+        pdfurl: `${baseURL}api/getFacturePdf/${inv.invoiceNumber}`
       };
 
       if (bill.date && bill.amount && bill.pdfurl) {
@@ -80,6 +83,15 @@ function parsePage(requiredFields, bills, data, next) {
 
   logger.info(`${bills.fetched.length} bill(s) retrieved`);
   next();
+}
+
+function customFilterExisting(requiredFields, entries, data, next) {
+  filterExisting(logger, Bill)(requiredFields, entries, data, next);
+}
+
+function customSaveDataAndFile(requiredFields, entries, data, next) {
+  saveDataAndFile(logger, Bill, fileOptions, ['bill'])(
+      requiredFields, entries, data, next);
 }
 
 function buildNotifContent(requiredFields, entries, data, next) {
@@ -93,8 +105,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
 }
 
 module.exports = factory.createNew({
-  name: 'Virgin Mobile',
-  slug: 'virginmobile',
+  name: 'virginmobile',
   description: 'konnector description virginmobile',
   vendorLink: 'https://www.virginmobile.fr/',
 
@@ -109,15 +120,15 @@ module.exports = factory.createNew({
   fetchOperations: [
     login,
     parsePage,
-    filterExisting,
-    saveDataAndFile,
+    customFilterExisting,
+    customSaveDataAndFile,
     linkBankOperation({
       log: logger,
       minDateDelta: 1,
       maxDateDelta: 1,
       model: Bill,
       amountDelta: 0.1,
-      identifier: ['virginmobile']
+      identifier: ['virgin mobile']
     }),
     buildNotifContent
   ]
