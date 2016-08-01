@@ -17,6 +17,11 @@ const logger = require('printit')({
   date: true
 });
 
+const fileOptions = {
+  vendor: 'Numéricable',
+  dateFormat: 'YYYYMMDD',
+};
+
 function login(requiredFields, entries, data, next) {
   const accountUrl = 'https://moncompte.numericable.fr';
   const connectionUrl = 'https://connexion.numericable.fr';
@@ -166,9 +171,7 @@ function parsePage(requiredFields, bills, data, next) {
   let bill = {
     date: moment(billDate.html(), 'DD/MM/YYYY'),
     amount: parseFloat(billTotal.html().replace(' €', '').replace(',', '.')),
-    pdfurl: baseURL + billLink.attr('href'),
-    type: 'internet',
-    vendor: 'Numéricable'
+    pdfurl: baseURL + billLink.attr('href')
   };
 
   if (bill.date && bill.amount && bill.pdfurl) {
@@ -176,34 +179,41 @@ function parsePage(requiredFields, bills, data, next) {
   }
 
   // Other bills
-  $('#facture > div[id!="firstFact"]').each(() => {
-    billDate = $(this).find('h3')
+  $('#facture > div[id!="firstFact"]').each((index, element) => {
+    billDate = $(element).find('h3')
               .html()
               .substr(3);
-    billTotal = $(this).find('p.right');
-    billLink = $(this).find('a.linkBtn');
+    billTotal = $(element).find('p.right');
+    billLink = $(element).find('a.linkBtn');
 
     // Add a new bill information object.
     bill = {
       date: moment(billDate, 'DD/MM/YYYY'),
       amount: parseFloat(billTotal.html().replace(' €', '').replace(',', '.')),
-      pdfurl: baseURL + billLink.attr('href'),
-      type: 'internet',
-      vendor: 'Numéricable'
+      pdfurl: baseURL + billLink.attr('href')
     };
 
     if (bill.date && bill.amount && bill.pdfurl) {
-      bills.fetched.puhs(bill);
+      bills.fetched.push(bill);
     }
   });
 
   logger.info(`${bills.fetched.length} bill(s) retrieved`);
 
   if (!bills.fetched.length) {
-    next('no bills retrieved');
-  } else {
-    next();
+    return next('no bills retrieved');
   }
+
+  next();
+}
+
+function customFilterExisting(requiredFields, entries, data, next) {
+  filterExisting(logger, Bill)(requiredFields, entries, data, next);
+}
+
+function customSaveDataAndFile(requiredFields, entries, data, next) {
+  saveDataAndFile(logger, Bill, fileOptions, ['bill'])(
+      requiredFields, entries, data, next);
 }
 
 function buildNotifContent(requiredFields, entries, data, next) {
@@ -218,7 +228,6 @@ function buildNotifContent(requiredFields, entries, data, next) {
 
 module.exports = factory.createNew({
   name: 'Numéricable',
-  slug: 'numericable',
   description: 'konnector description numericable',
   vendorLink: 'https://www.numericable.fr/',
 
@@ -233,8 +242,8 @@ module.exports = factory.createNew({
   fetchOperations: [
     login,
     parsePage,
-    filterExisting,
-    saveDataAndFile,
+    customFilterExisting,
+    customSaveDataAndFile,
     linkBankOperation({
       log: logger,
       minDateDelta: 1,
