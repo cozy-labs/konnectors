@@ -36,6 +36,7 @@ const fileOptions = {
 };
 
 const Bill = require('../models/bill');
+
 const baseUrl = 'https://secure.fr.vente-privee.com';
 
 // Konnector
