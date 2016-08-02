@@ -131,6 +131,7 @@ module.exports =
     'konnector description uber' : "Télécharge toutes vos factures depuis le site internet d'Uber. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description vente_privee' : 'Télécharge toutes vos factures depuis le site internet vente-privee.com. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l\'application Files soit installée sur votre Cozy.'
     'konnector description podcast': 'Téléchargez vos podcasts audios préférés depuis leurs flux RSS. Les importations peuvent prendre du temps.'
+    'konnector description materiel_net': "Téléchargez vos 10 dernières factures Materiel.net. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
 
     # Konnectors' notifications
     'notification prefix': "Konnector %{name} :"
