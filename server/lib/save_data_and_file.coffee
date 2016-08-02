@@ -20,6 +20,10 @@ module.exports = (log, model, options, tags) ->
 
         # For each entry...
         async.eachSeries entriesToSave, (entry, callback) ->
+            if (entry.date not instanceof moment)
+                log.info 'Bill creation aborted'
+                return callback('Moment instance expected for date field')
+
             entryLabel = entry.date.format 'MMYYYY'
             fileName = naming.getEntryFileName entry, options
 
@@ -47,9 +51,12 @@ module.exports = (log, model, options, tags) ->
                 # Only update the date format for the bills, to be able to
                 # match correctly the bill with operations.
                 if entry.pdfurl?
-                    entry.date = moment(entry.date).format 'YYYY-MM-DD'
-                    entry.date += "T00:00:00.000Z"
+                    dateWithoutTimezone = entry.date.format 'YYYY-MM-DD'
+                    dateWithoutTimezone += 'T00:00:00.000Z'
+                    entry.date = moment dateWithoutTimezone
 
+                # cozy-db will cast the moment instance into a date since
+                # moment.valueOf returns a timestamp that new Date() will parse
                 model.create entry, (err) ->
                     if err
                         log.raw err
@@ -69,7 +76,6 @@ module.exports = (log, model, options, tags) ->
                 saveEntry entry, entryLabel
 
         , (err) ->
-
             opts =
                 entries: entries.fetched
                 folderPath: path
@@ -86,7 +92,6 @@ module.exports = (log, model, options, tags) ->
 # from its url.
 checkForMissingFiles = (options, callback) ->
     {entries, folderPath, nameOptions, tags, model, log} = options
-
 
     async.eachSeries entries, (entry, done) ->
         fileName = naming.getEntryFileName entry, nameOptions
@@ -113,8 +118,8 @@ checkForMissingFiles = (options, callback) ->
 
                         # Then update links it from the current model to
                         # the file.
-                        date = moment(new Date entry.date).format 'YYYY-MM-DD'
-                        date += 'T00:00:00.000Z'
+                        date = "#{entry.date.format 'YYYY-MM-DD'}T00:00:00.000Z"
+                        date = moment date
 
                         model.request 'byDate', key: date, (err, entries) ->
                             if not(entries?) or entries.length is 0
@@ -131,4 +136,3 @@ checkForMissingFiles = (options, callback) ->
                                     done()
     , (err) ->
         callback()
-
