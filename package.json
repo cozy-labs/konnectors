@@ -25,7 +25,7 @@
     "lodash": "4.14.1",
     "mimetype": "0.0.8",
     "moment": "2.14.1",
-    "moment-timezone": "0.5.4",
+    "moment-timezone": "0.5.5",
     "nest-api": "0.0.5",
     "node-polyglot": "2.0.0",
     "ovh": "2.0.0",
