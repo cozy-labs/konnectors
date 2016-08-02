@@ -36,32 +36,54 @@ patch060 = (callback) ->
         , (err) ->
             callback()
 
+# Delete error messages of already deleted configurations (i.e.
+# no more credentials
+patch381 = (callback) ->
+    Konnector.request 'all', (err, konnectors) ->
+        async.eachSeries konnectors, (konnector, done) ->
+            if konnector.accounts.length is 0 and konnector.importErrorMessage
+                data =
+                    importErrorMessage : null
+
+                slug = konnector.slug
+                konnector.updateAttributes data, (err) ->
+                    if err
+                        log.info "An error occured cleaning konnector #{slug}"
+                        log.error err
+                    else
+                        log.info "Fields for konnector #{slug} are cleaned."
+                    done()
+            else
+                done()
+        , (err) ->
+            callback()
 
 # Ensure that all konnector modules have a proper module created and that their
 # isImporting flag is set to false.
 module.exports = (callback) ->
 
     patch060 ->
-        Konnector.all (err, konnectors) ->
-            if err
-                log.error err
-                callback err
+        patch381 ->
+            Konnector.all (err, konnectors) ->
+                if err
+                    log.error err
+                    callback err
 
-            else
-                konnectorHash = {}
-                async.eachSeries konnectors, (konnector, done) ->
-                    konnectorHash[konnector.slug] = konnector
-                    konnectorResetValue konnector, done
+                else
+                    konnectorHash = {}
+                    async.eachSeries konnectors, (konnector, done) ->
+                        konnectorHash[konnector.slug] = konnector
+                        konnectorResetValue konnector, done
 
-                , (err) ->
-                    log.error err if err
+                    , (err) ->
+                        log.error err if err
 
-                    konnectorsToCreate = getKonnectorsToCreate konnectorHash
+                        konnectorsToCreate = getKonnectorsToCreate konnectorHash
 
-                    if konnectorsToCreate.length is 0
-                        callback()
-                    else
-                        createKonnectors konnectorsToCreate, callback
+                        if konnectorsToCreate.length is 0
+                            callback()
+                        else
+                            createKonnectors konnectorsToCreate, callback
 
 
 # Reset konnector importing flags: isImporting flag is set to false if value
