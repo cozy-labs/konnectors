@@ -72,7 +72,7 @@ function login(requiredFields, entries, data, next) {
   request(options, (err) => {
     if (err) {
       logger.error(err);
-      next(err);
+      return next(err);
     }
 
     // Signin form
@@ -95,11 +95,11 @@ function login(requiredFields, entries, data, next) {
     client.post(signinPath, signinForm, (err, res, body) => {
       if (err) {
         logger.error(err);
-        next(err);
+        return next(err);
       }
 
       if (res.statusCode === 422) {
-        next('bad credentials');
+        return next('bad credentials');
       }
       // Retrieve token for json client
       const token = body.meta.token;
@@ -111,14 +111,14 @@ function login(requiredFields, entries, data, next) {
       client.get(`${baseUrl}api/v5/pnrs`, (err, res, body) => {
         if (err) {
           logger.error(err);
-          next(err);
+          return next(err);
         }
-        // We check their are bills
+        // We check there are bills
         if (body.proofs && body.proofs.length > 0) {
           saveMetadata(data, body);
           getNextMetaData(computeNextDate(body.pnrs), data, next);
         } else {
-          next();
+          return next();
         }
       });
     });
@@ -146,7 +146,7 @@ function getNextMetaData(startdate, data, callback) {
   client.get(`${baseUrl}api/v5/pnrs?date=${startdate}`, (err, res, body) => {
     if (err) {
       logger.error(err);
-      callback(err);
+      return callback(err);
     }
     if (body.proofs && body.proofs.length > 0) {
       saveMetadata(data, body);
