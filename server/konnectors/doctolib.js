@@ -171,7 +171,7 @@ function saveEvents(requiredFields, entries, data, next) {
         if (found.place !== icalEvent.place ||
             found.details !== icalEvent.details) {
           connector.logger.info('Updating event');
-          event.updateAttributes({
+          found.updateAttributes({
             place: icalEvent.place,
             details: icalEvent.details,
             rrule: icalEvent.rrule,

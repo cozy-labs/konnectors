@@ -33,6 +33,7 @@ const fileOptions = {
 };
 
 const Bill = require('../models/bill');
+
 const baseUrl = 'https://espaceclient.aprr.fr/aprr/Pages';
 
 // Konnector

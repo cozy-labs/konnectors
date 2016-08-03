@@ -91,7 +91,7 @@ function saveTokenInKonnector(requiredFields, entries, data, callback) {
   // Konnector.get(connector.slug, function(err, konnector) {
   Konnector.all((err, konnectors) => {
     if (err) {
-      connector.logger.error("Can't fetch konnector instances", + err.msg);
+      connector.logger.error(`Can't fetch konnector instances: ${err.msg}`);
       return callback(err);
     }
     let konnector = null;

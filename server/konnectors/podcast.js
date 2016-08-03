@@ -6,8 +6,9 @@ const async = require('async');
 const request = require('request');
 const xml = require('pixl-xml');
 const NotifHelper = require('cozy-notifications-helper');
-const notifHelper = new NotifHelper('konnectors');
 const localization = require('../lib/localization_manager');
+
+const notifHelper = new NotifHelper('konnectors');
 
 const log = require('printit')({
   prefix: 'podcast',
