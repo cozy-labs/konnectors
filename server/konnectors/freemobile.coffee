@@ -250,7 +250,7 @@ action=getFacture&format=dl&l="
     # - Import overall pdf with name YYYYMM_freemobile.pdf
 
     isMultiline = $('div[class="consommation"]').length > 1
-    $('div[class="factLigne hide "]').each ->
+    $('div.factLigne.is-hidden').each ->
         amount = $($(this).find('.montant')).text()
         amount = amount.replace '€', ''
         amount = parseFloat amount
