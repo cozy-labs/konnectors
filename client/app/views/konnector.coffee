@@ -386,6 +386,8 @@ target="_blank">
                 @model.set 'lastAutoImport', null
                 @model.set 'accounts', [{}]
                 @model.set 'password', '{}'
+                @model.set 'importErrorMessage', null
+
                 window.router.navigate '', trigger: true
 
 
