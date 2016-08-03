@@ -35,6 +35,7 @@ module.exports =
     'date format': 'LLL'
     'add an account': "Add an account"
     'remove last account': "Remove last account"
+    'vendorLink': "Website from which the data are imported: "
 
     'home headline': """
     With Konnectors you can retrieve many data and save them into your Cozy.
