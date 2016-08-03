@@ -1,6 +1,6 @@
 module.exports =
 
-    'bad credentials' : 'Mauvais identifiants'
+    'bad credentials': "Mauvais identifiants. Vérifiez les champs que vous avez renseignés."
     'no bills retrieved': 'Pas de factures trouvées'
     'key not found': 'Clé non trouvée'
     'last import:': 'Dernière importation :'
@@ -198,4 +198,3 @@ module.exports =
     "calendar": "Le calendrier dans lequel les événements seront importés"
     "url": "URL cible"
     "tag": "Tag"
-    "bad credentials": "Mauvais identifiants. Verifiez les champs que vous avez renseigné."

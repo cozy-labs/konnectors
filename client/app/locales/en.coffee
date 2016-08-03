@@ -1,6 +1,6 @@
 module.exports =
 
-    'bad credentials' : 'Bad Credentials'
+    'bad credentials' : 'Bad credentials. Check the konnector fields and run the import again.'
     'no bills retrieved': 'No bills retrieved'
     'key not found': 'Key not found'
     'last import:': 'Last import:'
@@ -197,4 +197,3 @@ module.exports =
     "calendar": "Calendar in which events will be imported"
     "url": "Target URL"
     "tag": "Tag"
-    "bad credentials": "Bad credentials. Check the konnector fields and run the import again."
