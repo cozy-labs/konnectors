@@ -22,6 +22,7 @@ Folder.all = (callback) ->
 
 Folder.allPath = (callback) ->
     Folder.all (err, folders) ->
+        return callback err if err
         folders = folders.map (folder) -> folder.getFullPath()
         callback err, folders
 
@@ -30,4 +31,3 @@ Folder.createNewFolder = (folder, callback) ->
     Folder.create folder, (err, newFolder) ->
         return callback err if err
         callback null, newFolder
-

@@ -36,7 +36,7 @@ File.byFullPath = (params, callback) ->
 # Tells if a file is already stored in the Cozy at the given path.
 File.isPresent = (fullPath, callback) ->
     File.request "byFullPath", key: fullPath, (err, files) ->
-        callback err if err
+        return callback err if err
         callback null, files? and files.length > 0
 
 
