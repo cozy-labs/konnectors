@@ -372,9 +372,19 @@ target="_blank">
             translatedCustomView = rawCustomView.replace /<%t ([^%]*)%>/g
             , (match, key) -> return t key.trim()
 
-            customViewElem = $ "<div class='customView'></div"
+            customViewElem = $ "<div class='customView'></div>"
             customViewElem.append translatedCustomView
             customViewElem.insertBefore @$('.fields')
+
+        if @model.has 'vendorLink'
+            link = @model.get 'vendorLink'
+            vendorLinkHtml = """
+<div class='vendorLink'>
+    <span>#{t 'vendorLink'}</span>
+    <a href="#{link}">#{link}</a>
+</div>"""
+            vendorLinkElem = $ vendorLinkHtml
+            @$('.description').append vendorLinkElem
 
 
     onDeleteClicked: ->

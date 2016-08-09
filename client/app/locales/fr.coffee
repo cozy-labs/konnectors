@@ -35,6 +35,8 @@ module.exports =
     'date format': 'DD/MM/YYYY [à] HH[h]mm'
     'add an account': "Ajouter un compte"
     'remove last account': "Supprimer le dernier compte"
+    'vendorLink': "Site d'où sont récupérées les données : "
+
 
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.
