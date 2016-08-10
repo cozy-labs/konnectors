@@ -40,8 +40,8 @@ Before opening any pull requests make sure that you follow these rules:
 * Numericable (Bill PDFs)
 * OVH (Bill PDFs) :x:
 * Online.net (Bill PDFs)
-* Orange (Bill PDFs) :x:
-* Sosh (Bill PDFs) :x:
+* Orange (Bill PDFs)
+* Sosh (Bill PDFs)
 * SFR (Bill PDFs)
 * Virgin Mobile (Bill PDFs)
 * Uber (Bill PDFs)
