@@ -100,15 +100,18 @@ function login(requiredFields, entries, data, next) {
 
       logger.info('Signing in');
       request(signInOptions, (err, res) => {
+        let redirectUrl = '';
+        if (res && res.headers) {
+          redirectUrl = res.headers.location;
+          // Numéricable returns a 302 even in case of errors
+          if (!redirectUrl || (redirectUrl === '/Oauth/connect/')) {
+            err = true;
+          }
+        }
+
         if (err) {
           logger.error('Signin failed');
           return next('bad credentials');
-        }
-
-        const redirectUrl = res.headers.location;
-
-        if (!redirectUrl) {
-          return next('Could not retrieve redirect URL');
         }
 
         redirectOptions.url += redirectUrl;
