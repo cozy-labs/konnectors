@@ -24,6 +24,8 @@ Before opening any pull requests make sure that you follow these rules:
 
 # Available connectors
 
+Ths connectors with :x: are known as currently broken.
+
 *Bills*
 
 * Ameli (Bill PDFs) :x:
