@@ -38,6 +38,7 @@ The connectors marked with :x: are known as currently broken.
 * Electrabel (Bill PDFs)
 * Free (Bill PDFs)
 * Free Mobile (Bill PDFs)
+* Github (Bill PDFs)
 * Materiel.net (Bill PDFs)
 * Numericable (Bill PDFs)
 * OVH (Bill PDFs) :x:
