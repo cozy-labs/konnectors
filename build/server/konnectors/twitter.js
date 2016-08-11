@@ -102,7 +102,7 @@ saveTweets = function(requiredFields, callback) {
         log.info("Import finished");
         notifContent = null;
         if (numItems > 0) {
-          localizationKey = 'notification twitter';
+          localizationKey = 'notification tweets';
           options = {
             smart_count: numItems
           };

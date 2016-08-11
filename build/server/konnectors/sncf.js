@@ -308,7 +308,7 @@ function saveEvents(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.bills.filtered.length > 0) {
-    var localizationKey = 'notification sncf bills';
+    var localizationKey = 'notification bills';
     var options = {
       smart_count: entries.bills.filtered.length
     };
@@ -316,7 +316,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
   }
 
   if (entries.events.nbCreations > 0) {
-    var _localizationKey = 'notification sncf events creation';
+    var _localizationKey = 'notification events created';
     var _options = {
       smart_count: entries.events.nbCreations
     };
@@ -328,7 +328,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
   }
 
   if (entries.nbUpdates > 0) {
-    var _localizationKey2 = 'notification sncf events update';
+    var _localizationKey2 = 'notification events updated';
     var _options2 = {
       smart_count: entries.events.nbUpdates
     };
@@ -357,6 +357,7 @@ function getPage(url, callback) {
 
 // ----------------------------------------------------------------------------
 // Functions to parse old SNCF pages
+
 
 // SNCF did not change the html pages for old orders, only for new ones
 function getEventsOld(orderInformations, events, callback) {

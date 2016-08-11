@@ -75,7 +75,7 @@ module.exports = {
       log.info("Import finished");
       notifContent = null;
       if ((entries != null) && (entries.numSteps > 0 || entries.numSleep > 0)) {
-        localizationKey = 'notification jawbone';
+        localizationKey = 'notification measures';
         options = {
           smart_count: entries.numSteps + entries.numSleep
         };

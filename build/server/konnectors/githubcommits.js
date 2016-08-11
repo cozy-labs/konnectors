@@ -48,7 +48,7 @@ module.exports = {
       log.info("Import finished");
       notifContent = null;
       if (commits && commits.numImportedCommits > 0) {
-        localizationKey = 'notification github commits';
+        localizationKey = 'notification commits';
         options = {
           smart_count: commits.numImportedCommits
         };

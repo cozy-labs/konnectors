@@ -63,8 +63,8 @@ function updateToken(requiredFields, entries, data, next) {
       connector.logger.error('Update token failed: ' + err.msg);
       // TODO : notification token is broken, "reconnect"
     } else {
-        data.accessToken = JSON.parse(body).access_token;
-      }
+      data.accessToken = JSON.parse(body).access_token;
+    }
     next(err);
   });
 }
@@ -81,7 +81,7 @@ function saveTokenInKonnector(requiredFields, entries, data, callback) {
   // Konnector.get(connector.slug, function(err, konnector) {
   Konnector.all(function (err, konnectors) {
     if (err) {
-      connector.logger.error("Can't fetch konnector instances", +err.msg);
+      connector.logger.error('Can\'t fetch konnector instances: ' + err.msg);
       return callback(err);
     }
     var konnector = null;
@@ -218,14 +218,14 @@ function saveEvents(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.nbCreations > 0) {
-    var localizationKey = 'notification facebook_events creation';
+    var localizationKey = 'notification events created';
     var options = {
       smart_count: entries.nbCreations
     };
     entries.notifContent = localization.t(localizationKey, options);
   }
   if (entries.nbUpdates > 0) {
-    var _localizationKey = 'notification facebook_events update';
+    var _localizationKey = 'notification events updated';
     var _options = {
       smart_count: entries.nbUpdates
     };

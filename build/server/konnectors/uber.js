@@ -182,7 +182,7 @@ function customSaveDataAndFile(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.filtered && entries.filtered.length > 0) {
-    var localizationKey = 'notification uber';
+    var localizationKey = 'notification bills';
     var options = {
       smart_count: entries.filtered.length
     };

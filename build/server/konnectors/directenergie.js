@@ -224,7 +224,7 @@ function customLinkBankOperation(requiredFields, bills, data, next) {
 
 function buildNotifContent(requiredFields, bills, data, next) {
   if (bills.filtered.length > 0) {
-    var localizationKey = 'notification direct energie';
+    var localizationKey = 'notification bills';
     var options = {
       smart_count: bills.filtered.length
     };

@@ -37,6 +37,7 @@ module.exports = {
     var data;
     data = {
       lastAutoImport: null,
+      importErrorMessage: null,
       accounts: [],
       password: '{}'
     };

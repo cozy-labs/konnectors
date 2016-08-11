@@ -435,7 +435,7 @@ saveBodyMeasures = function(measures, callback) {
           }
           notifContent = null;
           if (measuresToSave.length > 0) {
-            localizationKey = 'notification withings';
+            localizationKey = 'notification measures';
             options = {
               smart_count: measuresToSave.length
             };

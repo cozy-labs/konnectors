@@ -92,7 +92,7 @@ module.exports = {
       log.info("Import finished");
       notifContent = null;
       if ((entries != null ? (ref = entries.filtered) != null ? ref.length : void 0 : void 0) > 0) {
-        localizationKey = 'notification free mobile';
+        localizationKey = 'notification bills';
         options = {
           smart_count: entries.filtered.length
         };
@@ -266,7 +266,7 @@ parseBillPage = function(requiredFields, bills, data, next) {
   }
   $ = cheerio.load(data.html);
   isMultiline = $('div[class="consommation"]').length > 1;
-  $('div[class="factLigne hide "]').each(function() {
+  $('div.factLigne.is-hidden').each(function() {
     var amount, bill, data_fact_date, data_fact_id, data_fact_ligne, data_fact_login, data_fact_multi, date, pdfUrl;
     amount = $($(this).find('.montant')).text();
     amount = amount.replace('€', '');

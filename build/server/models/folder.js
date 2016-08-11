@@ -23,6 +23,9 @@ Folder.all = function(callback) {
 
 Folder.allPath = function(callback) {
   return Folder.all(function(err, folders) {
+    if (err) {
+      return callback(err);
+    }
     folders = folders.map(function(folder) {
       return folder.getFullPath();
     });

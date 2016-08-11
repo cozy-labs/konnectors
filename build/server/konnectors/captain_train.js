@@ -63,7 +63,7 @@ function login(requiredFields, entries, data, next) {
   request(options, function (err) {
     if (err) {
       logger.error(err);
-      next(err);
+      return next(err);
     }
 
     // Signin form
@@ -86,11 +86,11 @@ function login(requiredFields, entries, data, next) {
     client.post(signinPath, signinForm, function (err, res, body) {
       if (err) {
         logger.error(err);
-        next(err);
+        return next(err);
       }
 
       if (res.statusCode === 422) {
-        next('bad credentials');
+        return next('bad credentials');
       }
       // Retrieve token for json client
       var token = body.meta.token;
@@ -102,14 +102,14 @@ function login(requiredFields, entries, data, next) {
       client.get(baseUrl + 'api/v5/pnrs', function (err, res, body) {
         if (err) {
           logger.error(err);
-          next(err);
+          return next(err);
         }
-        // We check their are bills
+        // We check there are bills
         if (body.proofs && body.proofs.length > 0) {
           saveMetadata(data, body);
           getNextMetaData(computeNextDate(body.pnrs), data, next);
         } else {
-          next();
+          return next();
         }
       });
     });
@@ -135,7 +135,7 @@ function getNextMetaData(startdate, data, callback) {
   client.get(baseUrl + 'api/v5/pnrs?date=' + startdate, function (err, res, body) {
     if (err) {
       logger.error(err);
-      callback(err);
+      return callback(err);
     }
     if (body.proofs && body.proofs.length > 0) {
       saveMetadata(data, body);
@@ -364,7 +364,7 @@ function customSaveDataAndFile(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.filtered && entries.filtered.length > 0) {
-    var localizationKey = 'notification captain_train';
+    var localizationKey = 'notification bills';
     var options = {
       smart_count: entries.filtered.length
     };

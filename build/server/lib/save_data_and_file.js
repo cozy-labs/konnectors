@@ -16,6 +16,10 @@ module.exports = function(log, model, options, tags) {
     path = requiredFields.folderPath;
     return async.eachSeries(entriesToSave, function(entry, callback) {
       var createFileAndSaveData, entryLabel, fileName, onCreated, saveEntry;
+      if (!(entry.date instanceof moment)) {
+        log.info('Bill creation aborted');
+        return callback('Moment instance expected for date field');
+      }
       entryLabel = entry.date.format('MMYYYY');
       fileName = naming.getEntryFileName(entry, options);
       createFileAndSaveData = function(entry, entryLabel) {
@@ -36,14 +40,16 @@ module.exports = function(log, model, options, tags) {
         }
       };
       saveEntry = function(entry, entryLabel) {
+        var dateWithoutTimezone;
         if (entry.vendor == null) {
           if (options.vendor) {
             entry.vendor = options.vendor;
           }
         }
         if (entry.pdfurl != null) {
-          entry.date = moment(entry.date).format('YYYY-MM-DD');
-          entry.date += "T00:00:00.000Z";
+          dateWithoutTimezone = entry.date.format('YYYY-MM-DD');
+          dateWithoutTimezone += 'T00:00:00.000Z';
+          entry.date = moment(dateWithoutTimezone);
         }
         return model.create(entry, function(err) {
           if (err) {
@@ -99,8 +105,8 @@ checkForMissingFiles = function(options, callback) {
             log.error('An error occured while creating file');
             return log.raw(err);
           } else {
-            date = moment(new Date(entry.date)).format('YYYY-MM-DD');
-            date += 'T00:00:00.000Z';
+            date = (entry.date.format('YYYY-MM-DD')) + "T00:00:00.000Z";
+            date = moment(date);
             return model.request('byDate', {
               key: date
             }, function(err, entries) {

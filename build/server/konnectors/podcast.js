@@ -6,8 +6,9 @@ var async = require('async');
 var request = require('request');
 var xml = require('pixl-xml');
 var NotifHelper = require('cozy-notifications-helper');
-var notifHelper = new NotifHelper('konnectors');
 var localization = require('../lib/localization_manager');
+
+var notifHelper = new NotifHelper('konnectors');
 
 var log = require('printit')({
   prefix: 'podcast',
@@ -146,6 +147,7 @@ function notify(requiredFields, entries, data, next) {
 
 // All functions below are only used internaly by the connector's main functions
 
+
 // Requests a RSS feed and passes it as a string to the callback
 // feedUrl: String containing the URL to request
 // callback(err, rawFeed): Callback
@@ -239,7 +241,7 @@ function createFolderIfNotPresent(foldername, folderpath, callback) {
       name: foldername,
       path: folderpath
     }, function (err) {
-      connector.info(foldername + ' folder created.');
+      connector.logger.info(foldername + ' folder created.');
       if (err) {
         log.error(err);
         callback(err);

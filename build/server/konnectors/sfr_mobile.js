@@ -114,6 +114,26 @@ function parsePage(requiredFields, bills, data, next) {
   bills.fetched = [];
   moment.locale('fr');
   var $ = cheerio.load(data.html);
+  var baseURL = 'https://espace-client.sfr.fr';
+
+  var firstBill = $('#facture');
+  var firstBillUrl = $('#lien-telecharger-pdf').attr('href');
+  // The year is not provided, but we assume this is the current year or that
+  // it will be provided if different from the current year
+  var firstBillDate = firstBill.find('tr.header h3').text().substr(17);
+  firstBillDate = moment(firstBillDate, 'D MMM YYYY');
+
+  var price = firstBill.find('tr.total td.prix').text().replace('€', '').replace(',', '.');
+
+  var bill = {
+    date: firstBillDate,
+    type: 'Mobile',
+    amount: parseFloat(price),
+    pdfurl: '' + baseURL + firstBillUrl,
+    vendor: 'Sfr'
+  };
+
+  bills.fetched.push(bill);
 
   $('#tab tr').each(function each() {
     var date = $(this).find('.date').text();
@@ -124,7 +144,7 @@ function parsePage(requiredFields, bills, data, next) {
     date = date.join(' ');
     date = moment(date, 'D MMM YYYY');
     prix = parseFloat(prix);
-    pdf = 'https://espace-client.sfr.fr' + pdf;
+    pdf = '' + baseURL + pdf;
 
     var bill = {
       date: date,
@@ -135,6 +155,7 @@ function parsePage(requiredFields, bills, data, next) {
     };
     bills.fetched.push(bill);
   });
+
   connector.logger.info('Successfully parsed the page');
   next();
 }
@@ -150,7 +171,7 @@ function customSaveDataAndFile(requiredFields, bills, data, next) {
 
 function buildNotifContent(requiredFields, bills, data, next) {
   if (bills.filtered.length > 0) {
-    var localizationKey = 'notification sfr_mobile';
+    var localizationKey = 'notification bills';
     var options = {
       smart_count: bills.filtered.length
     };

@@ -48,7 +48,7 @@ File.isPresent = function(fullPath, callback) {
     key: fullPath
   }, function(err, files) {
     if (err) {
-      callback(err);
+      return callback(err);
     }
     return callback(null, (files != null) && files.length > 0);
   });

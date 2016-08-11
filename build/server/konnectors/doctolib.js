@@ -161,7 +161,7 @@ function saveEvents(requiredFields, entries, data, next) {
         var found = founds[0];
         if (found.place !== icalEvent.place || found.details !== icalEvent.details) {
           connector.logger.info('Updating event');
-          event.updateAttributes({
+          found.updateAttributes({
             place: icalEvent.place,
             details: icalEvent.details,
             rrule: icalEvent.rrule
@@ -212,14 +212,14 @@ function getTimeZone(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.nbCreations > 0) {
-    var localizationKey = 'notification doctolib creation';
+    var localizationKey = 'notification events created';
     var options = {
       smart_count: entries.nbCreations
     };
     entries.notifContent = localization.t(localizationKey, options);
   }
   if (entries.nbUpdates > 0) {
-    var _localizationKey = 'notification doctolib update';
+    var _localizationKey = 'notification events updated';
     var _options = {
       smart_count: entries.nbUpdates
     };

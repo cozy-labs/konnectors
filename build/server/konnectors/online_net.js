@@ -67,7 +67,7 @@ module.exports = {
       log.info("Import finished");
       notifContent = null;
       if ((entries != null ? (ref = entries.filtered) != null ? ref.length : void 0 : void 0) > 0) {
-        localizationKey = 'notification online_net';
+        localizationKey = 'notification bills';
         options = {
           smart_count: entries.filtered.length
         };
