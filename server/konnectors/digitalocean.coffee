@@ -62,7 +62,7 @@ module.exports =
 
                 notifContent = null
                 if entries?.filtered?.length > 0
-                    localizationKey = 'notification digital ocean'
+                    localizationKey = 'notification bills'
                     options = smart_count: entries.filtered.length
                     notifContent = localization.t localizationKey, options
 
@@ -155,4 +155,3 @@ parsePage = (requiredFields, bills, data, next) ->
     else
         log.info "Bill parsed: #{bills.fetched.length} found"
         next()
-

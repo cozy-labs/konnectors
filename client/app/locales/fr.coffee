@@ -37,7 +37,6 @@ module.exports =
     'remove last account': "Supprimer le dernier compte"
     'vendorLink': "Site d'où sont récupérées les données : "
 
-
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.
     De vos factures de téléphone aux données de votre balance connectée en passant par vos tweets. Configurez les connecteurs qui vous intéressent :
@@ -48,10 +47,6 @@ module.exports =
 
     'home more info': "Quelques informations supplémentaires :"
     'home help step 1': "Vous devez manuellement déclencher l'importation sauf si vous avez activé l'importation automatique"
-
-    'notification import error': "une erreur est survenue pendant l'importation des données"
-    'notification linkedin created': "%{smart_count} nouveau contact créé|||| %{smart_count} nouveaux contacts créés"
-    'notification linkedin updated': "%{smart_count} contact mis a jour|||| %{smart_count} contacts mis a jour"
 
     'error occurred during import.': 'Une erreur est survenue lors de la dernière importation.'
     'error occurred during import:': 'Une erreur est survenue lors de la dernière importation :'
@@ -136,47 +131,25 @@ module.exports =
     'konnector description materiel_net': "Téléchargez vos 10 dernières factures Materiel.net. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
 
     # Konnectors' notifications
+    'notification import error': "une erreur est survenue pendant l'importation des données"
     'notification prefix': "Konnector %{name} :"
-    'notification github commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés"
-    'notification twitter': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés"
-    'notification free': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification github': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification jawbone': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
+    'notification commits': "%{smart_count} nouveau commit importé |||| %{smart_count} nouveaux commits importés"
+    'notification bills': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
+    'notification tweets': "%{smart_count} nouveau tweet importé |||| %{smart_count} nouveaux tweets importés"
+    'notification contact created': "%{smart_count} nouveau contact importé |||| %{smart_count} nouveaux contacts importés"
+    'notification contact updated': "%{smart_count} nouveau contact mis à jour |||| %{smart_count} nouveaux contacts mis à jour"
+    'notification event created': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés."
+    'notification event updated': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
+    'notification measures': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
+
     'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées"
-    'notification withings': "%{smart_count} nouvelle mesure importée |||| %{smart_count} nouvelles mesures importées"
-    'notification free mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification digital ocean': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification sosh': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification electrabel': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification numericable': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification virginmobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification online_net': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification ical_feed creation': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés."
-    'notification ical_feed update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
     'notification birthdays creation': "%{smart_count} nouvel anniversaire créé. |||| %{smart_count} nouveaux anniversaires créés."
-    'notification ovh_eu': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification ovh_ca': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification runabove': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification kimsufi_eu': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification kimsufi_ca': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification soyoustart_eu': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification soyoustart_ca': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
     'notification ameli': "%{smart_count} nouveau remboursement importé |||| %{smart_count} nouveaux remboursement importés"
-    'notification sncf bills': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification sncf events creation': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés."
-    'notification sncf events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
-    'notification sfr_box': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification sfr_mobile': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification doctolib creation': "%{smart_count} nouveau rendez-vous importé |||| %{smart_count} nouveaux rendez-vous importés"
-    'notification doctolib update': "%{smart_count} rendez-vous mis à jour |||| %{smart_count} rendez-vous mis à jour"
-    'notification direct energie': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification captain_train': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification facebook_events creation': "%{smart_count} nouvel événement importé. |||| %{smart_count} nouveaux événements importés."
-    'notification facebook_events update': "%{smart_count} événement mis à jour. |||| %{smart_count} événements mis à jour."
-    'notification aprr': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification vente_privee': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification uber': "%{smart_count} nouvelle facture importée |||| %{smart_count} nouvelles factures importées"
-    'notification podcast': "%{smart_count} nouveau(x) podcast(s) importé(s) |||| %{smart_count} nouveau(x) podcast(s) importé(s)"
+    'notification podcast': "%{smart_count} nouveau podcast importé |||| %{smart_count} nouveaux podcasts importés"
+    'notification isen': "%{smart_count} nouveau support de cours importé |||| %{smart_count} nouveaux supports de cours importés"
+    'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}"
+    'notification isen date format': "DD/MM [à] HH:mm"
+    'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"
 
     "konnector birthdays birthday": "Anniversaire de"
 
@@ -193,10 +166,6 @@ module.exports =
     "konnector deleted": "La configuration de ce connecteur a bien été supprimée."
     "konnector deletion error": "Une erreur est survenue lors de la suppression de la configuration de ce connecteur."
 
-    'notification isen': "%{smart_count} nouveau support de cours importé |||| %{smart_count} nouveaux supports de cours importés"
-    'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}"
-    'notification isen date format': "DD/MM [à] HH:mm"
-    'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"
     "calendar": "Le calendrier dans lequel les événements seront importés"
     "url": "URL cible"
     "tag": "Tag"

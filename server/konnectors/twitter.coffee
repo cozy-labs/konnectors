@@ -91,7 +91,7 @@ saveTweets = (requiredFields, callback) ->
 
                 notifContent = null
                 if numItems > 0
-                    localizationKey = 'notification twitter'
+                    localizationKey = 'notification tweets'
                     options = smart_count: numItems
                     notifContent = localization.t localizationKey, options
 

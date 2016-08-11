@@ -94,7 +94,7 @@ module.exports =
 
                 notifContent = null
                 if entries?.filtered?.length > 0
-                    localizationKey = 'notification free mobile'
+                    localizationKey = 'notification bills'
                     options = smart_count: entries.filtered.length
                     notifContent = localization.t localizationKey, options
 
@@ -400,4 +400,3 @@ getSmallImage = (digit, callback) ->
             callback err
         #Timer is necessary otherwise the connection is not possible
         setTimeout callback, 600, null
-

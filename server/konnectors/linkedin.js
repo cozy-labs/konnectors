@@ -385,7 +385,7 @@ function createNotificationContent(requiredFields, entries, data, next) {
   ${stats.updated} contacts updated`);
 
   if (stats.created > 0) {
-    localizationkey = 'notification linkedin created';
+    localizationkey = 'notification contacts created';
     options = {
       smart_count: stats.created,
     };
@@ -393,7 +393,7 @@ function createNotificationContent(requiredFields, entries, data, next) {
   }
 
   if (stats.updated > 0) {
-    localizationkey = 'notification linkedin updated';
+    localizationkey = 'notification contacts updated';
     options = {
       smart_count: stats.updated,
     };

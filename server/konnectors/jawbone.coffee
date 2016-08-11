@@ -85,7 +85,7 @@ module.exports =
                 notifContent = null
 
                 if entries? and (entries.numSteps > 0 or entries.numSleep > 0)
-                    localizationKey = 'notification jawbone'
+                    localizationKey = 'notification measures'
                     options =
                         smart_count: entries.numSteps + entries.numSleep
                     notifContent = localization.t localizationKey, options
@@ -264,4 +264,3 @@ saveData = (requiredFields, entries, data, next) ->
             log.info "#{numSteps} data saved."
             log.info "#{numSleep} data saved."
             next()
-
