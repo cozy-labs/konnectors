@@ -409,5 +409,5 @@ target="_blank">
         errorMessage = model.get 'importErrorMessage'
 
         @model.set 'importErrorMessage', errorMessage
-        @showErrors errorMessage
+        @showErrors t errorMessage
 
