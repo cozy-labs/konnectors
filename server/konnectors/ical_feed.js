@@ -111,14 +111,14 @@ function saveEvents(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.nbCreations > 0) {
-    const localizationKey = 'notification ical_feed creation';
+    const localizationKey = 'notification events created';
     const options = {
       smart_count: entries.nbCreations,
     };
     entries.notifContent = localization.t(localizationKey, options);
   }
   if (entries.nbUpdates > 0) {
-    const localizationKey = 'notification ical_feed update';
+    const localizationKey = 'notification events updated';
     const options = {
       smart_count: entries.nbUpdates,
     };

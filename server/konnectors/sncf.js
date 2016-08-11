@@ -338,7 +338,7 @@ function saveEvents(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.bills.filtered.length > 0) {
-    const localizationKey = 'notification sncf bills';
+    const localizationKey = 'notification bills';
     const options = {
       smart_count: entries.bills.filtered.length,
     };
@@ -346,7 +346,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
   }
 
   if (entries.events.nbCreations > 0) {
-    const localizationKey = 'notification sncf events creation';
+    const localizationKey = 'notification events created';
     const options = {
       smart_count: entries.events.nbCreations,
     };
@@ -358,7 +358,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
   }
 
   if (entries.nbUpdates > 0) {
-    const localizationKey = 'notification sncf events update';
+    const localizationKey = 'notification events updated';
     const options = {
       smart_count: entries.events.nbUpdates,
     };

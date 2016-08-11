@@ -244,7 +244,7 @@ function customSaveDataAndFile(requiredFields, bills, data, next) {
 function buildNotifContent(requiredFields, bills, data, next) {
   log.debug('buildNotifContent');
   if (bills.filtered.length > 0) {
-    const localizationKey = 'notification vente_privee';
+    const localizationKey = 'notification bills';
     const options = {
       smart_count: bills.filtered.length,
     };

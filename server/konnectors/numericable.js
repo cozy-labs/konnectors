@@ -218,7 +218,7 @@ function customSaveDataAndFile(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.filtered && (entries.filtered.length > 0)) {
-    entries.notifContent = localization.t('notification numericable', {
+    entries.notifContent = localization.t('notification bills', {
       smart_count: entries.filtered.length
     });
   }

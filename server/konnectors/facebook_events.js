@@ -230,14 +230,14 @@ function saveEvents(requiredFields, entries, data, next) {
 
 function buildNotifContent(requiredFields, entries, data, next) {
   if (entries.nbCreations > 0) {
-    const localizationKey = 'notification facebook_events creation';
+    const localizationKey = 'notification events created';
     const options = {
       smart_count: entries.nbCreations,
     };
     entries.notifContent = localization.t(localizationKey, options);
   }
   if (entries.nbUpdates > 0) {
-    const localizationKey = 'notification facebook_events update';
+    const localizationKey = 'notification events updated';
     const options = {
       smart_count: entries.nbUpdates,
     };

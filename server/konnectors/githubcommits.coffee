@@ -50,7 +50,7 @@ module.exports =
                 log.info "Import finished"
                 notifContent = null
                 if commits and commits.numImportedCommits > 0
-                    localizationKey = 'notification github commits'
+                    localizationKey = 'notification commits'
                     options = smart_count: commits.numImportedCommits
                     notifContent = localization.t localizationKey, options
 
@@ -168,4 +168,3 @@ logCommits = (requiredFields, entries, data, next) ->
     , (err) ->
         entries.numImportedCommits = numImportedCommits
         next()
-

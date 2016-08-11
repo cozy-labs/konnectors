@@ -367,7 +367,7 @@ saveBodyMeasures = (measures, callback) ->
 
                     notifContent = null
                     if measuresToSave.length > 0
-                        localizationKey = 'notification withings'
+                        localizationKey = 'notification measures'
                         options = smart_count: measuresToSave.length
                         notifContent = localization.t localizationKey, options
                     callback null, notifContent
@@ -497,4 +497,3 @@ saveSleepMeasures = (measures, callback) ->
         , (err) ->
             log.info "#{sleepsToSave.length} new sleep measures saved."
             callback()
-

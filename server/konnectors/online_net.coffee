@@ -63,7 +63,7 @@ module.exports =
 
                 notifContent = null
                 if entries?.filtered?.length > 0
-                    localizationKey = 'notification online_net'
+                    localizationKey = 'notification bills'
                     options = smart_count: entries.filtered.length
                     notifContent = localization.t localizationKey, options
 
