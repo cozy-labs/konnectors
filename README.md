@@ -24,7 +24,7 @@ Before opening any pull requests make sure that you follow these rules:
 
 # Available connectors
 
-Ths connectors with :x: are known as currently broken.
+The connectors marked with :x: are known as currently broken.
 
 *Bills*
 
