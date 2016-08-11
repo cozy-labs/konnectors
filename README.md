@@ -17,8 +17,8 @@ Before opening any pull requests make sure that you follow these rules:
 * Do not include the build in your pull request.
 * For konnector addition, make sure that the following locale keys are present:
  * 'konnector description my_connector_name': explains what the connector does
- * Notification texts: if you connector pops up notifications on completed fetch,
-   it requires a localized text.
+ * Notification texts: if your connector pops up notifications on completed fetch,
+   it requires a localized text (use any of the existing docTypes notification or create your own key).
 * You have updated the connector list (if relevant)
 * Explain in the Pull Request which problem is solved and how you fixed it (plateform changes).
 
