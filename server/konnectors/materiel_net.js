@@ -19,10 +19,33 @@ const logger = require('printit')({
 
 const baseURL = 'https://www.materiel.net/';
 
+const billsTableSelector = '#client table.EpCmdList';
+
 const fileOptions = {
   vendor: 'Materiel.net',
   dateFormat: 'YYYYMMDD',
 };
+
+/**
+ * @param {string} html
+ * @return cheerio[]
+ */
+function extractBillsRows(html) {
+  const $ = cheerio.load(html);
+  const container = $(billsTableSelector);
+  return container.find('tr[class^="Line"]').toArray().map(r => $(r));
+}
+
+function fetchBillPageBillsList(options, cb) {
+  request(options, (err, res, body) => {
+    if (err) {
+      logger.info(`Could not fetch bills list from ${options.url}`);
+      return cb(null);
+    }
+
+    cb(extractBillsRows(body));
+  });
+}
 
 // Login layer
 function login(requiredFields, billInfos, data, next) {
@@ -57,10 +80,48 @@ function login(requiredFields, billInfos, data, next) {
         return next('no bills retrieved');
       }
 
-      // TODO: check the other pages
+      // Check if there are several pages
+      const $ = cheerio.load(body);
+      const otherPages = $(`${billsTableSelector} tr.EpListBLine td:first-child`).text();
+      const nbPagesPos = otherPages.lastIndexOf(' ') + 1;
+      let nbPages = 1;
+      if (nbPagesPos) {
+        nbPages = parseInt(otherPages.substr(nbPagesPos), 10);
+        if (isNaN(nbPages)) {
+          nbPages = 1;
+        }
+      }
 
-      data.html = body;
-      next();
+      // If there are are several pages, parse all the pages to retrieve all the
+      // bills
+      if (nbPages > 1) {
+        let totalPagesParsed = 0;
+        const billsList = $(billsTableSelector);
+        const _fetchPageFromIndex = idx => {
+          const pageOptions = Object.create(billsOptions);
+          pageOptions.url += `?page=${idx}`;
+          logger.info(`Fetching page ${idx} of ${nbPages}…`);
+          fetchBillPageBillsList(pageOptions, rows => {
+            // We now reinsert the rows in the first page's list
+            if (rows) {
+              billsList.append(rows);
+            }
+
+            if (++totalPagesParsed === (nbPages - 1)) {
+              logger.info('All bills pages fetched');
+              data.html = $.html();
+              next();
+            }
+          });
+        };
+
+        for (let pageIndex = 2; pageIndex <= nbPages; ++pageIndex) {
+          _fetchPageFromIndex(pageIndex);
+        }
+      } else {
+        data.html = body;
+        next();
+      }
     });
   });
 }
@@ -68,11 +129,9 @@ function login(requiredFields, billInfos, data, next) {
 function parsePage(requiredFields, bills, data, next) {
   bills.fetched = [];
 
-  const $ = cheerio.load(data.html);
-  const container = $('#client');
-
-  container.find('table.EpCmdList tr[class^="Line"]').each((idx, element) => {
-    const cells = $(element).find('td');
+  const rows = extractBillsRows(data.html);
+  for (const row of rows) {
+    const cells = row.find('td');
     const ref = cells.eq(0).text().trim();
     const date = cells.eq(1).text().trim();
     const price = cells.eq(2).text().trim()
@@ -91,7 +150,7 @@ function parsePage(requiredFields, bills, data, next) {
 
       bills.fetched.push(bill);
     }
-  });
+  }
 
   logger.info(`${bills.fetched.length} bill(s) retrieved`);
   next();
@@ -117,7 +176,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
 }
 
 module.exports = factory.createNew({
-  name: 'Materiel_net',
+  name: 'Materiel.net',
   description: 'konnector description materiel_net',
   vendorLink: baseURL,
 
