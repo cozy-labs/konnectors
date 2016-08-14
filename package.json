@@ -20,7 +20,7 @@
     "cozy-slug": "0.2.2",
     "cozydb": "0.1.13",
     "google-auth-library": "0.9.8",
-    "imagemagick-stream": "4.1.1",
+    "imagemagick-stream": "^3.0.0",
     "jade": "1.11.0",
     "lodash": "4.14.1",
     "mimetype": "0.0.8",
