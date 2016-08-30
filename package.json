@@ -28,7 +28,7 @@
     "moment-timezone": "0.5.5",
     "nest-api": "0.0.5",
     "node-polyglot": "2.0.0",
-    "ovh": "2.0.0",
+    "ovh": "2.0.1",
     "pixl-xml": "1.0.7",
     "pngjs-image": "0.11.6",
     "printit": "0.1.20",
