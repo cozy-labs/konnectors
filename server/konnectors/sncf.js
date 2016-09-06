@@ -75,11 +75,15 @@ function logIn(requiredFields, entries, data, next) {
   };
 
   request(loginOptions, (err, res, body) => {
-    if (err) return next(err);
+    if (err) {
+      connector.logger.info(err);
+      return next('bad credentials');
+    }
 
     const jsonRes = JSON.parse(body);
     if (jsonRes.error) {
-      return next(new Error(`${jsonRes.error.code}: ${jsonRes.error.libelle}`));
+      connector.logger.info(`${jsonRes.error.code}: ${jsonRes.error.libelle}`);
+      return next('bad credentials');
     }
 
     // We fetch bills and events
@@ -97,7 +101,10 @@ function getOrderPage(requiredFields, entries, data, next) {
 
   connector.logger.info('Download orders HTML page...');
   getPage(url, (err, res, body) => {
-    if (err) return next(err);
+    if (err) {
+      connector.logger.info(err);
+      return next('request error');
+    }
 
     data.html = body;
     connector.logger.info('Orders page downloaded.');
@@ -181,7 +188,10 @@ function getEvents(orderInformations, events, callback) {
   // Try to get the detail order
   const uri = `http://monvoyage.voyages-sncf.com/vsa/api/order/fr_FR/${orderInformations.owner}/${orderInformations.reference}`;
   getPage(uri, (err, res, body) => {
-    if (err) return callback(err);
+    if (err) {
+      connector.logger.info(err);
+      return callback('request error');
+    }
 
     const result = JSON.parse(body);
     // This order is in the old html page format
@@ -397,7 +407,10 @@ function getEventsOld(orderInformations, events, callback) {
 
   // Try to get the detail order
   getPage(uri, (err, res, body) => {
-    if (err) return callback(err);
+    if (err) {
+      connector.logger.info(err);
+      return callback('request error');
+    }
 
     const $ = cheerio.load(body);
     const $subOrders = $('.submit.button-primary.btn');
