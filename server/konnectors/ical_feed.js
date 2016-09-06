@@ -41,11 +41,12 @@ function downloadFile(requiredFields, entries, data, next) {
   request.get(requiredFields.url, (err, res, body) => {
     if (err) {
       connector.logger.error('Download failed.');
-    } else {
-      connector.logger.info('Download succeeded.');
-      data.ical = body;
+      return next('request error');
     }
-    next(err);
+
+    connector.logger.info('Download succeeded.');
+    data.ical = body;
+    next();
   });
 }
 
@@ -65,10 +66,12 @@ function parseFile(requiredFields, entries, data, next) {
       parser.parseString(data.ical, options, (err, result) => {
         if (err) {
           connector.logger.error('Parsing failed.');
-        } else {
-          data.result = result;
+          connector.logger.error(err);
+          return next('parsing error');
         }
-        next(err);
+
+        data.result = result;
+        next();
       });
     }
   });
@@ -104,7 +107,8 @@ function saveEvents(requiredFields, entries, data, next) {
     });
   }, (err) => {
     connector.logger.info('Events are saved.');
-    next(err);
+    connector.logger.info(err);
+    next('error occurred during import.');
   });
 }
 
