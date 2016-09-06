@@ -1,8 +1,11 @@
 module.exports =
 
-    'bad credentials' : 'Bad credentials. Check the konnector fields and run the import again.'
-    'no bills retrieved': 'No bills retrieved'
+    'bad credentials': 'Bad credentials. Check the konnector fields and run the import again.'
+    'token not found': 'The token could not be retrieved'
     'key not found': 'Key not found'
+    'request error': 'A request to the website failed, please see read the logs.'
+    'parsing error': 'The result could not be parsed.'
+    'no bills retrieved': 'No bills retrieved'
     'last import:': 'Last import:'
     'save and import': 'Import and save'
     'auto import': 'Automatic import'

@@ -1,8 +1,11 @@
 module.exports =
 
     'bad credentials': "Mauvais identifiants. Vérifiez les champs que vous avez renseignés."
-    'no bills retrieved': 'Pas de factures trouvées'
+    'token not found': "Le jeton n'a pas pu être récupéré'
     'key not found': 'Clé non trouvée'
+    'request error': 'A request to the website failed, please see read the logs.'
+    'parsing error': 'Le retour n'a pas pu être interprété.'
+    'no bills retrieved': 'Pas de factures trouvées'
     'last import:': 'Dernière importation :'
     'save and import': 'Importer et sauvegarder'
     'auto import': 'Importation automatique'
