@@ -26,59 +26,79 @@ Before opening any pull requests make sure that you follow these rules:
 
 The connectors marked with :x: are known as currently broken.
 
-*Bills*
+## Bills
 
-* Ameli (Bill PDFs) :x:
-* APRR (Bill PDFs)
-* Bouygues Telecom (Bill PDFs)
-* Bouygues Box (Bill PDFs)
-* Captain Train (Bill PDFs)
-* Digital Ocean (Bill PDFs)
-* Direct Energie (Bill PDFś)
-* Electrabel (Bill PDFs)
-* Free (Bill PDFs)
-* Free Mobile (Bill PDFs)
-* Github (Bill PDFs)
-* Materiel.net (Bill PDFs)
-* Numericable (Bill PDFs)
-* OVH (Bill PDFs) :x:
-* Online.net (Bill PDFs)
-* Orange (Bill PDFs)
-* Sosh (Bill PDFs)
-* SFR (Bill PDFs)
-* Virgin Mobile (Bill PDFs)
-* Uber (Bill PDFs)
-* Vente-Privee.com (Bill PDFs)
+| Website | Data | Maintainer | Status |
+| --- | --- | --- | --- |
+| Ameli | PDF | Gara64 | :x: |
+| APRR | PDF | SomeAverageDev | :white_check_mark: |
+| Bouygues Box | PDF | ? | :white_check_mark: |
+| Bouygues Telecom Mobile | PDF | ? | :white_check_mark: |
+| Captain Train | PDF | ZeHiro | :white_check_mark: |
+| Digital Ocean | PDF | Frank Rousseau | :white_check_mark: |
+| Direct Energie | PDF | bnjbvr | :white_check_mark: |
+| Electrabel | PDF | ZeHiro (looking for a maintainer with credentials) | :white_check_mark: |
+| Free | PDF | ZeHiro | :white_check_mark: |
+| Free Mobile | PDF | ZeHiro | :white_check_mark: |
+| Github | PDF | ? | :white_check_mark: |
+| Materiel.net | PDF | nicofrand | :white_check_mark: |
+| Numéricable | PDF | nicofrand | :white_check_mark: |
+| OVH CA | PDF | Chocobozzz | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/370)) |
+| OVH EU | PDF | Chocobozzz | :warning: ([issue on first import](https://github.com/cozy-labs/konnectors/issues/212)) |
+| SoYouStart CA | PDF | Chocobozzz | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/372)) |
+| SoYouStart EU | PDF | Chocobozzz | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/371)) |
+| Kimsufi CA | PDF | Chocobozzz | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/374)) |
+| Kimsufi EU | PDF | Chocobozzz | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/373)) |
+| Runabove | PDF | Chocobozzz | :x: ([does not appear in connectors list](https://github.com/cozy-labs/konnectors/issues/463)) |
+| Online.net | PDF | Chocobozzz | :white_check_mark: |
+| Orange | PDF | Frank Rousseau | :warning: ([only for individual account](https://github.com/cozy-labs/konnectors/issues/365)) |
+| Sosh | PDF | Frank Rousseau | :warning: ([only for individual account](https://github.com/cozy-labs/konnectors/issues/364)) |
+| SFR box | PDF | ? | :white_check_mark: |
+| SFR mobile | PDF | doubleface, nicofrand | :white_check_mark: |
+| Virgin mobile | PDF | nicofrand (looking for a maintainer with credentials) | :white_check_mark: |
+| Uber | PDF | Thomas Blarre | :white_check_mark: |
+| Vente-privée.com | PDF | SomeAverageDev | :warning: ([only the last bill](https://github.com/cozy-labs/konnectors/issues/351)) |
 
-*Internet Of Things*
+## Internet Of Things
 
-* Jawbone (Move and Sleep data)
-* Nest (temperatures)
-* Withings (Weight, Heartbeat and Blood Presure data)
+| Website | Data | Maintainer | Status |
+| --- | --- | --- | --- |
+| Jawbone | Move and Sleep data | ? | :white_check_mark: |
+| Nest | Temperatures | ? | :white_check_mark: |
+| Withings | Weight, Heartbeat and Blood Presure data | ? | :warning: ([#352](https://github.com/cozy-labs/konnectors/issues/352), [#260](https://github.com/cozy-labs/konnectors/issues/260)) |
 
-*Social*
+## Social
 
-* Github (commits)
-* Twitter (published tweets)
-* Linkedin (contact information) :x:
-* Google (contact information)
+| Website | Data | Maintainer | Status |
+| --- | --- | --- | --- |
+| Github | Commits | ? | :white_check_mark: |
+| Twitter | Published tweets | ? | :white_check_mark: |
+| Linkedin | contact information | Peltoche | :x: ([#396](https://github.com/cozy-labs/konnectors/issues/396))|
+| Google | contact information | jacquarg | :white_check_mark: |
 
-*Calendar*
+## Events
 
-* Ical Feed (events)
-* Contact Birthdays (events)
-* Doctolib (events)
-* Facebook (events)
-* SNCF (events)
-* Google (events)
+| Website | Data | Maintainer | Status |
+| --- | --- | --- | --- |
+| Ical Feed | Events | ? | :white_check_mark: |
+| Contact Birthdays | Events | Frank Rousseau | :white_check_mark: |
+| Doctolib | Events | ZeHiro | :white_check_mark: |
+| Facebook | Events | jacquarg | :warning: ([#420](https://github.com/cozy-labs/konnectors/issues/420)) |
+| SNCF | Events | Chocobozzz | :white_check_mark: |
+| Google | Events | ? | :white_check_mark: |
+| Isen | Events, lessons | Cozy | :white_check_mark: |
 
-*Productivity*
+## Productivity
 
-* RescueTime (activities)
+| Website | Data | Maintainer | Status |
+| --- | --- | --- | --- |
+| RescueTime | Activites | ? | :white_check_mark: |
 
-*Hobbies*
+## Hobbies
 
-* Podcasts (audio podcasts episodes)
+| Website | Data | Maintainer | Status |
+| --- | --- | --- | --- |
+| Podcasts | Audio podcasts episodes | Babolivier | :white_check_mark: |
 
 # Build
 
@@ -93,4 +113,4 @@ To run tests type the following command into the app folder:
 
     npm test
 
-In order to run the tests, you must only have the Data System started.
+In order to run the tests, you only need to have the Data System started.
