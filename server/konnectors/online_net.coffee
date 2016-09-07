@@ -74,7 +74,7 @@ module.exports =
 logIn = (requiredFields, bills, data, next) ->
 
     formUrl = 'https://console.online.net/en/login?o=1'
-    loginUrl = 'https://console.online.net/login_check'
+    loginUrl = 'https://console.online.net/en/login_check'
     billUrl = "https://console.online.net/en/bill/list"
     userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + \
                 'Gecko/20100101 Firefox/36.0'
