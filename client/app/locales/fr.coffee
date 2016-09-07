@@ -5,6 +5,7 @@ module.exports =
     'key not found': 'Clé non trouvée'
     'request error': 'A request to the website failed, please see read the logs.'
     'parsing error': 'Le retour n'a pas pu être interprété.'
+    'file error': 'Le fichier n'a pas pu être créé/modifié/supprimé'
     'no bills retrieved': 'Pas de factures trouvées'
     'last import:': 'Dernière importation :'
     'save and import': 'Importer et sauvegarder'
