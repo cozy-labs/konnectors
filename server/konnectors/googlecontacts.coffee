@@ -110,7 +110,9 @@ callback) ->
 
     if requiredFields.refreshToken? and requiredFields.authCode is 'connected'
         GoogleToken.refreshToken requiredFields.refreshToken, (err, tokens) ->
-            return callback err if err
+            if err
+                log.info err
+                return callback 'token not found'
             requiredFields.accessToken = tokens.access_token
 
             callback()
@@ -118,7 +120,9 @@ callback) ->
     else
         GoogleToken.generateRequestToken(
             requiredFields.authCode, (err, tokens) ->
-                return callback err if err
+                if err
+                    log.info err
+                    return callback 'token not found'
 
                 requiredFields.accessToken = tokens.access_token
                 requiredFields.refreshToken = tokens.refresh_token
@@ -140,7 +144,10 @@ fetchAccountName = (requiredFields, entries, data, callback) ->
 
     GoogleContactHelper.fetchAccountName requiredFields.accessToken
     , (err, accountName) ->
-        return callback err if err
+        if err
+            log.info err
+            return callback 'request error'
+
         requiredFields.accountName = accountName
         callback()
 
@@ -151,7 +158,10 @@ saveTokensInKonnector = (requiredFields, entries, data, callback) ->
 
     Konnector = require '../models/konnector'
     Konnector.all (err, konnectors) ->
-        return callback err if err
+        if err
+            log.info err
+            return callback 'request error'
+
         konnector = konnectors.filter((k) -> k.slug is'googlecontacts')[0]
 
         accounts = [
@@ -184,11 +194,14 @@ fetchGoogleChanges = (requiredFields, entries, data, callback) ->
             'Authorization': 'Bearer ' + requiredFields.accessToken
             'GData-Version': '3.0'
     , (err, res, body) ->
-        return callback err if err
+        if err
+            log.info err
+            return callback 'request error'
+
         if body.error
             log.info "Error while fetching google changes : "
             log.info body
-            return callback body
+            return callback 'request error'
 
         entries.googleChanges = body.feed?.entry or []
 
@@ -212,7 +225,10 @@ updateCozyContacts = (requiredFields, entries, data, callback) ->
             GoogleContactHelper.updateCozyContact gEntry, entries
             , requiredFields.accountName, requiredFields.accessToken, cb
     , (err, updated) ->
-        return callback err if err
+        if err
+            log.info err
+            return callback 'request error'
+
         if updated.some((contact) -> contact?)
             # Contact created or linked, with google tag, getOrCreate it
             Tag.getOrCreate { name: 'google', color: '#4285F4'}, callback
@@ -255,9 +271,13 @@ fetchAllGoogleContacts = (requiredFields, entries, data, callback) ->
             'Authorization': 'Bearer ' + requiredFields.accessToken
             'GData-Version': '3.0'
     , (err, res, body) ->
-        return callback err if err
+        if err
+            log.info err
+            return callback 'request error'
+
         if body.error?
-            return callback new Error body.error
+            log.info body.error
+            return callback 'request error'
 
         entries.googleContacts = body.feed?.entry or []
         entries.googleContactsById = {}
@@ -272,7 +292,10 @@ fetchAllGoogleContacts = (requiredFields, entries, data, callback) ->
 prepareCozyContacts = (requiredFields, entries, data, callback) ->
     log.debug 'prepareCozyContacts'
     Contact.all (err, contacts) ->
-        return callback err if err
+        if err
+            log.info err
+            return callback 'request error'
+
         entries.cozyContacts = contacts
         # Create a set
         entries.ofAccount = []
@@ -341,7 +364,10 @@ updateGoogleContact = (requiredFields, contact, gEntry, callback) ->
                 'GData-Version': '3.0'
                 'If-Match': '*'
         , (err, res, body) ->
-            return callback err if err
+            if err
+                log.info err
+                return callback 'request error'
+
             log.debug  body
             if body.error?
                 log.warn 'Error while uploading contact to google'
@@ -372,5 +398,8 @@ deleteInGoogle = (requiredFields, gId, callback) ->
             'If-Match': '*'
 
     , (err, res, body) ->
-        callback err
+        if err
+            log.info err
+            return callback 'request error'
 
+        callback()
