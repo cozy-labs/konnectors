@@ -96,24 +96,25 @@ module.exports =
             request options, (err, res, body) ->
 
                 if err?
-                    callback err
+                    log.error err
+                    callback 'request error'
                 else if res.statusCode is 503
-                    err = "server unavailable, please try again later"
-                    callback err
+                    log.error "server unavailable, please try again later"
+                    callback 'request error'
                 else if res.statusCode is 404
-                    err = "wrong first/lastname combination, user not found"
-                    callback err
+                    log.error "wrong first/lastname combination, user not found"
+                    callback 'bad credentials'
                 else if res.statusCode is 204
                     callback null, ''
                 else if res.statusCode is 500
-                    err = "the remote server responded with an error"
-                    callback err
+                    log.error "the remote server responded with an error"
+                    callback 'request error'
                 else
                     callback null, body
 
         else
-            err = 'Firstname and/or lastname not supplied'
-            callback err
+            log.info = 'Firstname and/or lastname not supplied'
+            callback 'bad credentials'
 
 
     parseIcs: (mainData, callback) ->
@@ -127,7 +128,7 @@ module.exports =
             parser.parseString mainData, (err, calendar) ->
                 if err?
                     log.error err
-                    callback err
+                    callback 'parsing error'
                 else
                     # extract boundaries of the events range
                     # needed later to detect events to be removed
@@ -236,7 +237,8 @@ module.exports =
                 endKey: boundaries.end
             Event.getInRange options, (err, events) =>
                 if err?
-                    callback err
+                    log.error err
+                    callback 'request error'
                 else
                     # we can use id to check for identical events because they
                     # are defined by the remote
@@ -334,7 +336,11 @@ module.exports =
 
         , (err, list) ->
             err = null if list.length is 0
-            callback err, list
+            if err
+                log.error err
+                return callback 'parsing error'
+
+            callback null, list
 
 
     processUrls: (list, callback) ->
@@ -365,7 +371,8 @@ module.exports =
             , (err) ->
                 # error are logged in the process and not raised to the loop
                 # but it's safer to pass it, if there is one at some point
-                callback err
+                log.error err
+                callback 'request error'
 
 
     fetchJson: (url, callback) ->
@@ -378,17 +385,19 @@ module.exports =
         log.info "Retrieving file: #{url}"
         request options, (err, res, body) ->
             if err?
-                callback err
+                log.error err
+                callback 'request error'
             else if body?.length is 0
-                err =  'Course file empty, the course may be not available ' + \
-                'for the moment'
-                callback err
+                log.error 'Course file empty, the course may be not ' + \
+                'available for the moment'
+                callback 'request error'
             else
                 # JSON.parse can throw if JSON string is invalid
                 try
                     courseData = JSON.parse body
                 catch error
-                    err = "JSON.parse error: #{error}"
+                    log.error "JSON.parse error: #{error}"
+                    err = 'parsing error'
 
                 callback err, courseData
 
@@ -400,8 +409,8 @@ module.exports =
         courseData['year']? and courseData['curriculum']?
             callback()
         else
-            err = 'Error: Missing course data in the file'
-            callback err
+            log.error 'Error: Missing course data in the file'
+            callback 'parsing error'
 
 
     processFolder: (courseData, callback) ->
@@ -429,7 +438,8 @@ module.exports =
 
             fullpath = "#{path}/#{name}"
             if err?
-                callback err
+                log.error err
+                callback 'file error'
             # if the folder exists
             else if fullpath in folders
                 callback()
@@ -444,9 +454,9 @@ module.exports =
                     class: 'document'
 
                 Folder.createNewFolder document, (err, newFolder) ->
-                    console.log err
                     if err?
-                        callback err
+                        log.error err
+                        callback 'file error'
                     else
                         log.info "Folder #{name} created"
                         callback()
@@ -465,15 +475,16 @@ module.exports =
             log.info "Import of course #{courseData['course']} finished"
             # there should never be an error, but we pass it to be warn in
             # case a breaking change occurs
-            callback err
+            log.error err
+            callback 'parsing error'
 
 
     checkFile: (file, courseData, callback) ->
 
         {dateLastModified, fileName, url} = file
         if not dateLastModified? or not fileName? or not url?
-            err = "Error: Missing data in #{fileName}"
-            return callback err
+            log.error "Error: Missing data in #{fileName}"
+            return callback 'file error'
 
         {year, curriculum, course} = courseData
         path = "/#{year}/#{curriculum}/#{course}"
@@ -482,7 +493,9 @@ module.exports =
         date = moment(dateLastModified, dateFormat).toISOString()
 
         File.byFullPath key: fullPath, (err, sameFiles) =>
-            return callback err if err?
+            if err
+                log.error err
+                return callback 'import server error'
 
             # there is already a file with the same name
             if sameFiles.length > 0
@@ -493,7 +506,8 @@ module.exports =
                     # destroy it
                     file.destroyWithBinary (err) =>
                         if err?
-                            callback err
+                            log.error
+                            callback 'file error'
                         else
                             log.debug "#{fileName} deleted"
                             @createFile fileName, path, date, url, [], callback
@@ -508,7 +522,8 @@ module.exports =
         @numItems++
         File.createNew fileName, path, url, tags, (err) ->
             if err?
-                callback err
+                log.error err
+                callback 'file error'
             else
                 log.info "#{fileName} imported"
                 callback()
@@ -521,7 +536,8 @@ module.exports =
         log.info "Check if there are files to delete"
         File.byFolder key: path, (err, files) ->
             if err?
-                callback err
+                log.error err
+                callback 'file error'
             else
                 referenceFiles = courseData['File(s)'] or []
                 referenceFilesName = referenceFiles.map (file) -> file.fileName
@@ -533,10 +549,9 @@ module.exports =
                         log.info "File #{file.name} not found in list..."
                         # error is not passed to prevent the loop from breaking
                         file.destroyWithBinary (err) ->
-                            log.eror err if err?
+                            log.error err if err?
                             log.info "...file #{file.name} destroyed"
                             next()
                     else
                         next()
                 , callback
-
