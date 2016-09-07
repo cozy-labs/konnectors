@@ -163,6 +163,8 @@ module.exports =
     "konnector sncf car": "car"
     "konnector sncf place": "place"
 
+    "konnector ovh connect first": 'You need to login to your OVH account first.'
+
     "konnector danger zone": "Danger zone"
     "konnector delete credentials": "Delete this configuration"
     "konnector deleted": "The konnector configuration was successfully deleted."
