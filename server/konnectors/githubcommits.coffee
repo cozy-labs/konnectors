@@ -96,7 +96,7 @@ buildCommitDateHash = (requiredFields, entries, data, next) ->
     Commit.all (err, commits) ->
         if err
             log.error err
-            next err
+            next 'request error'
         else
             for commit in commits
                 entries.commitHash[commit.sha] = true
@@ -136,7 +136,7 @@ logCommits = (requiredFields, entries, data, next) ->
                 else if commit.author.login isnt username
                     log.info "Commit #{commit.sha} not saved: " + \
                              "user is not author (#{commit.author.login})."
-                    callback()
+                    callback('bad credentials')
 
                 else
                     log.info "Saving commit #{commit.sha}..."
