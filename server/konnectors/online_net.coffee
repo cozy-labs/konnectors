@@ -89,11 +89,16 @@ logIn = (requiredFields, bills, data, next) ->
 
     log.info 'Logging in on Online.net...'
     request loginOptions, (err, res, body) ->
-        return next err if err
+        if err
+            log.error err
+            return next 'request error'
 
         # Extract hidden values
         $ = cheerio.load body
         crsfToken = $('input[name="_csrf_token"]').val()
+
+        if not crsfToken
+            return next 'token not found'
 
         # Second request to log in (post the form).
         form =
@@ -113,7 +118,9 @@ logIn = (requiredFields, bills, data, next) ->
                 'User-Agent': userAgent
 
         request loginOptions, (err, res, body) ->
-            return next err if err
+            if err
+                log.error err
+                return next 'bad credentials'
 
             log.info 'Download bill HTML page...'
 
@@ -125,7 +132,10 @@ logIn = (requiredFields, bills, data, next) ->
                     'User-Agent': userAgent
 
             request options, (err, res, body) ->
-                return next err if err
+                if err
+                    log.error err
+                    return next 'request error'
+
                 data.html = body
                 log.info 'Bill page downloaded.'
                 next()
