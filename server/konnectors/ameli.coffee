@@ -28,7 +28,7 @@ checkLogin = (requiredFields, billInfos, data, next) ->
 logIn = (requiredFields, billInfos, data, next) ->
 
     loginUrl = "https://assure.ameli.fr/PortailAS/appmanager/PortailAS/" + \
-    "assure?_nfpb=true&_pageLabel=as_login_page"
+    "assure?_somtc=true"
 
     submitUrl = "https://assure.ameli.fr/PortailAS/appmanager/PortailAS/" + \
     "assure?_nfpb=true&_windowLabel=connexioncompte_2&connexioncompte_2_" + \
@@ -36,7 +36,10 @@ logIn = (requiredFields, billInfos, data, next) ->
     "_pageLabel=as_login_page"
 
     reimbursementUrl = "https://assure.ameli.fr/PortailAS/appmanager/" + \
-    "PortailAS/assure?_nfpb=true&_pageLabel=as_dernier_paiement_page"
+    "PortailAS/assure?_nfpb=true&_pageLabel=as_paiements_page"
+
+    refererUrl = "https://assure.ameli.fr/PortailAS/appmanager/" + \
+    "PortailAS/assure?_nfpb=true&_pageLabel=as_login_page"
 
     form =
         "connexioncompte_2numSecuriteSociale": requiredFields.login
@@ -63,9 +66,7 @@ logIn = (requiredFields, billInfos, data, next) ->
             url: submitUrl
             headers:
                 'Cookie': res.headers['set-cookie']
-                'Referer': 'https://assure.ameli.fr/PortailAS/appmanager/' + \
-                           'PortailAS/assure?_nfpb=true&_pageLabel=' + \
-                           'as_login_page'
+                'Referer': refererUrl
 
         # Second request to authenticate
         request loginOptions, (err, res, body) ->
@@ -80,9 +81,12 @@ logIn = (requiredFields, billInfos, data, next) ->
                     method: 'GET'
                     jar: true
                     strictSSL: false
+                    headers:
+                        'Cookie': res.headers['set-cookie']
+                        'Referer': refererUrl
                     url: reimbursementUrl
 
-                # Last request to get the reimbursements
+                # Last request to get the reimbursements page
                 request reimbursementOptions, (err, res, body) ->
                     if err then next err
                     else
@@ -98,56 +102,55 @@ parsePage = (requiredFields, healthBills, data, next) ->
 
     $ = cheerio.load data.html
 
-    $('#tabDerniersPaiements tbody tr').each ->
-        date = $($(this).find('td').get(0)).text()
-        subtype = $($(this).find('td').get(1)).text()
+    # Get the start and end date to generate the bill's url
+    startDate = $('#paiements_1dateDebut').attr('value')
+    endDate = $('#paiements_1dateFin').attr('value')
 
-        amount = $($(this).find('td').get(2)).text()
-        amount = amount.replace(' euros', '').replace(',','.')
-        amount = parseFloat amount
+    billUrl = "https://assure.ameli.fr/PortailAS/paiements.do?actionEvt=" + \
+    "afficherPaiementsComplementaires&DateDebut="
+    billUrl += (startDate + "&DateFin=" + endDate)
+    billUrl += "&Beneficiaire=tout_selectionner&afficherReleves=false&" + \
+    "afficherIJ=false&afficherInva=false&afficherRentes=false&afficherRS=" + \
+    "false&indexPaiement=&idNotif="
 
-        # Get the details url
-        detailsUrl = $($(this).find('td a').get(1)).attr('href')
-        # Remove the unecessary port to avoid buggy request
-        detailsUrl = detailsUrl.replace(':443', '')
-
-        bill =
-            amount: amount
-            type: 'health'
-            subtype: subtype
-            date: moment date, 'DD/MM/YYYY'
-            vendor: 'Ameli'
-            detailsUrl: detailsUrl
-
-        healthBills.fetched.push bill if bill.amount?
-
-    # For each bill, get the pdf
-    async.each healthBills.fetched, getPdf, (err) ->
-        next err
-
-
-# Retrieve pdf url
-getPdf = (bill, callback) ->
-    detailsUrl = bill.detailsUrl
-
-    options =
-        method: 'GET'
+    billOptions =
         jar: true
         strictSSL: false
-        url: detailsUrl
+        url: billUrl
 
-    # Request to get the pdf url
-    request options, (err, res, body) ->
-        if err? or res.statusCode isnt 200
-            callback new Error 'Pdf not found'
+    # request the bill's url
+    request billOptions, (err, res, body) ->
+        if err then next err
         else
-            html = cheerio.load body
-            pdfUrl = "https://assure.ameli.fr"
-            pdfUrl += html('.r_lien_pdf').attr('href')
-            # Remove all the dirty escape characters...
-            pdfUrl = pdfUrl.replace(/(?:\r\n|\r|\n|\t)/g, '')
-            bill.pdfurl = pdfUrl
-            callback null
+            $ = cheerio.load body
+            $('.blocParMois').each ->
+                pdfUrl = $($(this).find('.downReleve').get(0)).attr('href')
+                if pdfUrl?
+                    pdfUrl = "https://assure.ameli.fr" + pdfUrl
+
+                    amount = $($(this).find('.col-montant').get(0)).text()
+                    amount = amount.replace(' €', '').replace(',','.')
+                    amount = parseFloat amount
+
+                    month = $($(this).find('.col-date .mois').get(0)).text()
+                    day = $($(this).find('.col-date .jour').get(0)).text()
+                    date = day + ' ' + month
+                    moment.locale 'fr'
+                    date = moment(date, 'Do MMMM YYYY')
+
+                    label = $($(this).find('.col-label').get(0)).text()
+
+                    bill =
+                        amount: amount
+                        type: 'health'
+                        subtype: label
+                        date: date
+                        vendor: 'Ameli'
+                        pdfurl: pdfUrl
+
+                    healthBills.fetched.push bill if bill.amount?
+
+            next()
 
 
 buildNotification = (requiredFields, healthBills, data, next) ->
@@ -160,10 +163,11 @@ buildNotification = (requiredFields, healthBills, data, next) ->
 
     next()
 
+
 customLinkBankOperation = (requiredFields, healthBills, data, next) ->
     identifier = 'C.P.A.M.'
-    if requiredFields.bank_identifier isnt ""
-        identifier = requiredFields.bank_identifier
+    bankIdentifier = requiredFields.bank_identifier
+    identifier = bankIdentifier if bankIdentifier? and bankIdentifier isnt ""
 
     linkBankOperation(
         log: log
