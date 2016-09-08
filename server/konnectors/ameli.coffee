@@ -56,42 +56,46 @@ logIn = (requiredFields, billInfos, data, next) ->
 
     # First request to get the cookie
     request options, (err, res, body) ->
-        return next err if err?
+        if err
+            log.error err
+            return next 'request error'
+        else
+            loginOptions =
+                method: 'POST'
+                form: form
+                jar: true
+                strictSSL: false
+                url: submitUrl
+                headers:
+                    'Cookie': res.headers['set-cookie']
+                    'Referer': refererUrl
 
-        loginOptions =
-            method: 'POST'
-            form: form
-            jar: true
-            strictSSL: false
-            url: submitUrl
-            headers:
-                'Cookie': res.headers['set-cookie']
-                'Referer': refererUrl
+            # Second request to authenticate
+            request loginOptions, (err, res, body) ->
+                if err
+                    log.error err
+                    next 'bad credentials'
+                else if body.indexOf('Connexion à mon compte') > -1
+                    log.error 'Authentication error'
+                    next 'bad credentials'
+                else
+                    reimbursementOptions =
+                        method: 'GET'
+                        jar: true
+                        strictSSL: false
+                        headers:
+                            'Cookie': res.headers['set-cookie']
+                            'Referer': refererUrl
+                        url: reimbursementUrl
 
-        # Second request to authenticate
-        request loginOptions, (err, res, body) ->
-
-            isNotLogedIn = body.indexOf('Connexion à mon compte') > -1
-
-            if err or isNotLogedIn
-                log.error "Authentification error"
-                next 'bad credentials'
-            else
-                reimbursementOptions =
-                    method: 'GET'
-                    jar: true
-                    strictSSL: false
-                    headers:
-                        'Cookie': res.headers['set-cookie']
-                        'Referer': refererUrl
-                    url: reimbursementUrl
-
-                # Last request to get the reimbursements page
-                request reimbursementOptions, (err, res, body) ->
-                    if err then next err
-                    else
-                        data.html = body
-                        next()
+                    # Last request to get the reimbursements page
+                    request reimbursementOptions, (err, res, body) ->
+                        if err
+                            log.error err
+                            return next 'request error'
+                        else
+                            data.html = body
+                            next()
 
 
 # Parse the fetched page to extract bill data.
@@ -120,7 +124,9 @@ parsePage = (requiredFields, healthBills, data, next) ->
 
     # request the bill's url
     request billOptions, (err, res, body) ->
-        if err then next err
+        if err
+            log.error err
+            return next 'request error'
         else
             $ = cheerio.load body
             $('.blocParMois').each ->
