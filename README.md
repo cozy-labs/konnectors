@@ -56,7 +56,7 @@ The connectors marked with :x: are known as currently broken.
 | SFR box | PDF | ? | :white_check_mark: |
 | SFR mobile | PDF | doubleface, nicofrand | :white_check_mark: |
 | Virgin mobile | PDF | nicofrand (looking for a maintainer with credentials) | :white_check_mark: |
-| Uber | PDF | Thomas Blarre | :white_check_mark: |
+| Uber | PDF | ZeHiro | :white_check_mark: |
 | Vente-privée.com | PDF | SomeAverageDev | :warning: ([only the last bill](https://github.com/cozy-labs/konnectors/issues/351)) |
 
 ## Internet Of Things
