@@ -88,16 +88,18 @@ module.exports =
 
         client.get path, (err, res, body) ->
             if err
-                callback err
+                log.error err
+                callback 'bad credentials'
             else if res.statusCode isnt 200
-                callback new Error body
+                log.error body
+                callback 'request error'
             else if body.error?
                 log.error body.error
-                callback body.messages
+                log.debug body.messages
+                callback 'request error'
             else if not body.rows?
-                callback new Error """
-Something went wrong while fetching rescue time data.
-"""
+                log.error 'Something went wrong while fetching rescue time data'
+                callback 'request error'
             else
                 async.eachSeries body.rows, (row, cb) ->
                     data =
@@ -111,7 +113,7 @@ Something went wrong while fetching rescue time data.
                         log.debug 'new activity imported'
                         log.debug JSON.stringify data
 
-                        cb err
+                        cb()
                 , (err) ->
 
                     notifContent = null
