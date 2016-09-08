@@ -32,15 +32,15 @@ The connectors marked with :x: are known as currently broken.
 | --- | --- | --- | --- |
 | Ameli | PDF | Gara64 | :x: |
 | APRR | PDF | SomeAverageDev | :white_check_mark: |
-| Bouygues Box | PDF | ? | :white_check_mark: |
-| Bouygues Telecom Mobile | PDF | ? | :white_check_mark: |
+| Bouygues Box | PDF | doubleface | :white_check_mark: |
+| Bouygues Telecom Mobile | PDF | doubleface | :white_check_mark: |
 | Captain Train | PDF | ZeHiro | :white_check_mark: |
 | Digital Ocean | PDF | Frank Rousseau | :white_check_mark: |
 | Direct Energie | PDF | bnjbvr | :white_check_mark: |
 | Electrabel | PDF | ZeHiro (looking for a maintainer with credentials) | :white_check_mark: |
 | Free | PDF | ZeHiro | :white_check_mark: |
 | Free Mobile | PDF | ZeHiro | :white_check_mark: |
-| Github | PDF | ? | :white_check_mark: |
+| Github | PDF | doubleface | :white_check_mark: |
 | Materiel.net | PDF | nicofrand | :white_check_mark: |
 | Numéricable | PDF | nicofrand | :white_check_mark: |
 | OVH CA | PDF | Chocobozzz | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/370)) |
@@ -53,8 +53,8 @@ The connectors marked with :x: are known as currently broken.
 | Online.net | PDF | Chocobozzz | :white_check_mark: |
 | Orange | PDF | Frank Rousseau | :warning: ([only for individual account](https://github.com/cozy-labs/konnectors/issues/365)) |
 | Sosh | PDF | Frank Rousseau | :warning: ([only for individual account](https://github.com/cozy-labs/konnectors/issues/364)) |
-| SFR box | PDF | ? | :white_check_mark: |
-| SFR mobile | PDF | doubleface, nicofrand | :white_check_mark: |
+| SFR box | PDF | creator:doubleface | :white_check_mark: |
+| SFR mobile | PDF | creator:doubleface, nicofrand | :white_check_mark: |
 | Virgin mobile | PDF | nicofrand (looking for a maintainer with credentials) | :white_check_mark: |
 | Uber | PDF | ZeHiro | :white_check_mark: |
 | Vente-privée.com | PDF | SomeAverageDev | :warning: ([only the last bill](https://github.com/cozy-labs/konnectors/issues/351)) |
@@ -71,8 +71,8 @@ The connectors marked with :x: are known as currently broken.
 
 | Website | Data | Maintainer | Status |
 | --- | --- | --- | --- |
-| Github | Commits | ? | :white_check_mark: |
-| Twitter | Published tweets | ? | :white_check_mark: |
+| Github | Commits | doubleface | :white_check_mark: |
+| Twitter | Published tweets | doubleface | :white_check_mark: |
 | Linkedin | contact information | Peltoche | :x: ([#396](https://github.com/cozy-labs/konnectors/issues/396))|
 | Google | contact information | jacquarg | :white_check_mark: |
 
