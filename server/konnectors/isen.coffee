@@ -478,7 +478,7 @@ module.exports =
         {year, curriculum, course} = courseData
         path = "/#{year}/#{curriculum}/#{course}"
         fullPath = "#{path}/#{fileName}"
-        dateFormat = 'YYYY-MM-DD hh:mm:ss'
+        dateFormat = 'YYYY-MM-DD HH:mm:ss'
         date = moment(dateLastModified, dateFormat).toISOString()
 
         File.byFullPath key: fullPath, (err, sameFiles) =>
