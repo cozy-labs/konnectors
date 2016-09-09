@@ -46,7 +46,7 @@ function downloadFile(requiredFields, entries, data, next) {
 
     connector.logger.info('Download succeeded.');
     data.ical = body;
-    next();
+    return next();
   });
 }
 
@@ -58,8 +58,10 @@ function parseFile(requiredFields, entries, data, next) {
     if (err || user === null) {
       connector.logger.error('Cannot retrieve Cozy user timezone.');
       connector.logger.error('Parsing cannot be performed.');
-      if (err === null) err = new Error('Cannot retrieve Cozy user timezone.');
-      next(err);
+      if (err === null)
+        connector.logger.error('Cannot retrieve Cozy user timezone.');
+        
+      return next('parsing error');
     } else {
       const parser = new ical.ICalParser();
       const options = { defaultTimezone: user.timezone };
@@ -71,7 +73,7 @@ function parseFile(requiredFields, entries, data, next) {
         }
 
         data.result = result;
-        next();
+        return next();
       });
     }
   });
@@ -80,7 +82,7 @@ function parseFile(requiredFields, entries, data, next) {
 
 function extractEvents(requiredFields, entries, data, next) {
   entries.events = Event.extractEvents(data.result, requiredFields.calendar);
-  next();
+  return next();
 }
 
 
@@ -102,13 +104,13 @@ function saveEvents(requiredFields, entries, data, next) {
       } else {
         if (changes.creation) entries.nbCreations++;
         if (changes.update) entries.nbUpdates++;
-        done();
+        return done();
       }
     });
   }, (err) => {
     connector.logger.info('Events are saved.');
     connector.logger.info(err);
-    next('error occurred during import.');
+    return next('error occurred during import.');
   });
 }
 
@@ -132,5 +134,5 @@ function buildNotifContent(requiredFields, entries, data, next) {
       entries.notifContent += ` ${localization.t(localizationKey, options)}`;
     }
   }
-  next();
+  return next();
 }
