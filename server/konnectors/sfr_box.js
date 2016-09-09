@@ -63,7 +63,10 @@ function getToken(requiredFields, bills, data, next) {
   connector.logger.info('Getting the token on Sfr Website...');
 
   request(options, (err, res, body) => {
-    if (err) return next(err);
+    if (err) {
+      connector.logger.info(err);
+      return next('token not found');
+    }
 
     const $ = cheerio.load(body);
     data.token = $('input[name=lt]').val();
@@ -91,7 +94,10 @@ function logIn(requiredFields, bills, data, next) {
   connector.logger.info('Logging in on Sfr website...');
 
   request(options, (err) => {
-    if (err) return next(err);
+    if (err) {
+      connector.logger.info(err);
+      return next('bad credentials');
+    }
 
     connector.logger.info('Successfully logged in.');
     return next();

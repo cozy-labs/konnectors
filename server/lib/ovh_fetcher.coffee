@@ -22,13 +22,16 @@ class OVHFetcher
             if (err == 401 || err == 403)
                 return @needToConnectFirst(requiredFields, next)
             else if (err)
-                return next(err)
+                @logger.info err
+                return next('bad credentials')
 
             # Fetch individually each bill and build an array.
             async.map ovhBills, (ovhBill, cb) =>
                 @ovh.request('GET', '/me/bill/' + ovhBill, cb)
             , (err, ovhBills) =>
-                return next err if err
+                if err
+                    @logger.info err
+                    return next('request error')
 
                 bills.fetched = []
 
@@ -56,7 +59,9 @@ class OVHFetcher
         @logger.info 'Request the login url...'
         @ovh.request 'POST', '/auth/credential', accessRules
         , (err, credential) ->
-            return callback err if err
+            if err
+                @logger.info err
+                return callback 'token not found'
 
             callback null, credential.validationUrl, credential.consumerKey
 
@@ -64,7 +69,9 @@ class OVHFetcher
     saveUrlAndToken: (url, token, callback) =>
         Konnector = require '../models/konnector'
         Konnector.all (err, konnectors) =>
-            return callback err if err
+            if err
+                return callback err
+
             ovhKonnector = (konnectors.filter (konnector) =>
                 konnector.slug is @slug)[0]
 
@@ -78,16 +85,17 @@ class OVHFetcher
     needToConnectFirst: (requiredFields, callback) =>
         @ovh.consumerKey = null
         @getLoginUrl (err, url, token) =>
-            return callback err if err
+            if err
+                @logger.info err
+                return callback 'request error'
 
             requiredFields.loginUrl = url
             requiredFields.token = token
             @saveUrlAndToken url, token, ->
-                callback(
-                    new Error 'You need to login to your OVH account first.')
+                @logger.info 'You need to login to your OVH account first.'
+                callback('konnector ovh connect first')
 
 
 module.exports =
     new: (ovhApi, slug, logger) ->
         new OVHFetcher ovhApi, slug, logger
-

@@ -98,7 +98,10 @@ logIn = (requiredFields, bills, data, next) ->
             'User-Agent': userAgent
 
     request loginOptions, (err, res, body) ->
-        return next err if err
+        if err
+            log.info 'Login infos could not be fetched'
+            log.info err
+            return next 'bad credentials'
 
         # Extract hidden values
         $ = cheerio.load body
@@ -122,7 +125,9 @@ logIn = (requiredFields, bills, data, next) ->
                 'User-Agent': userAgent
 
         request loginOptions, (err, res, body) ->
-            return next err if err
+            if err
+                log.info err
+                return next 'bad credentials'
 
             # Third request to build the links of the bills
             options =
@@ -131,8 +136,13 @@ logIn = (requiredFields, bills, data, next) ->
                 jar: true
                 headers:
                     'User-Agent': userAgent
+
+            log.info 'Fetching the bills…'
             request options, (err, res, body) ->
-                return next err if err
+                if err
+                    log.info err
+                    return next 'request error'
+
                 data.html = body
                 next()
 

@@ -94,31 +94,38 @@ logIn = (requiredFields, billInfos, data, next) ->
 
     # Get authenticity token from login form.
     request logInOptions, (err, res, body) ->
-        if err then next err
-        $ = cheerio.load body
-        token = $("input[name=authenticity_token]").val()
+        token = ""
+        if err
+            log.info err
+        else
+            $ = cheerio.load body
+            token = $("input[name=authenticity_token]").val()
+
+        if not token
+            return next 'token not found'
 
         # Log in digitalocean.com
         signInOptions.form.authenticity_token = token
         log.info 'Logging in'
         request signInOptions, (err, res, body) ->
             if err
-                log.error 'Login failed'
                 log.raw err
-            else
-                log.info 'Login succeeded'
+                log.info 'Login failed'
+                return next 'bad credentials'
 
-                # Download bill information page.
-                log.info 'Fetch bill info'
-                request billOptions, (err, res, body) ->
-                    if err
-                        log.error 'An error occured while fetching bills'
-                        console.log err
-                        next err
-                    else
-                        log.info 'Fetch bill info succeeded'
-                        data.html = body
-                        next()
+            log.info 'Login succeeded'
+
+            # Download bill information page.
+            log.info 'Fetch bill info'
+            request billOptions, (err, res, body) ->
+                if err
+                    log.error 'An error occured while fetching bills'
+                    console.log err
+                    return next 'import server error'
+
+                log.info 'Fetch bill info succeeded'
+                data.html = body
+                next()
 
 
 # Layer to parse the fetched page to extract bill data.

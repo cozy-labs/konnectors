@@ -1,8 +1,12 @@
 module.exports =
 
     'bad credentials': "Mauvais identifiants. Vérifiez les champs que vous avez renseignés."
-    'no bills retrieved': 'Pas de factures trouvées'
+    'token not found': "Le jeton n'a pas pu être récupéré'
     'key not found': 'Clé non trouvée'
+    'request error': 'A request to the website failed, please see read the logs.'
+    'parsing error': 'Le retour n'a pas pu être interprété.'
+    'file error': 'Le fichier n'a pas pu être créé/modifié/supprimé'
+    'no bills retrieved': 'Pas de factures trouvées'
     'last import:': 'Dernière importation :'
     'save and import': 'Importer et sauvegarder'
     'auto import': 'Importation automatique'
@@ -160,6 +164,8 @@ module.exports =
     "konnector sncf class": "Classe"
     "konnector sncf car": "voiture"
     "konnector sncf place": "place"
+
+    "konnector ovh connect first": 'You need to login to your OVH account first.'
 
     "konnector danger zone": "Zone dangereuse"
     "konnector delete credentials": "Supprimer cette configuration."
