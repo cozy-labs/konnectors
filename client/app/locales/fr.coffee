@@ -1,11 +1,11 @@
 module.exports =
 
     'bad credentials': "Mauvais identifiants. Vérifiez les champs que vous avez renseignés."
-    'token not found': "Le jeton n'a pas pu être récupéré'
+    'token not found': "Le jeton n'a pas pu être récupéré"
     'key not found': 'Clé non trouvée'
-    'request error': 'Une requête au site web a échoué, veuillez lire les journaux de l'application.'
-    'parsing error': 'Le retour n'a pas pu être interprété.'
-    'file error': 'Le fichier n'a pas pu être créé/modifié/supprimé'
+    'request error': "Une requête au site web a échoué, veuillez lire les journaux de l'application."
+    'parsing error': "Le retour n'a pas pu être interprété."
+    'file error': "Le fichier n'a pas pu être créé/modifié/supprimé"
     'no bills retrieved': 'Pas de factures trouvées'
     'last import:': 'Dernière importation :'
     'save and import': 'Importer et sauvegarder'
