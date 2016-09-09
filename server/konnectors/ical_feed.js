@@ -58,24 +58,25 @@ function parseFile(requiredFields, entries, data, next) {
     if (err || user === null) {
       connector.logger.error('Cannot retrieve Cozy user timezone.');
       connector.logger.error('Parsing cannot be performed.');
-      if (err === null)
+      if (err === null) {
         connector.logger.error('Cannot retrieve Cozy user timezone.');
-        
-      return next('parsing error');
-    } else {
-      const parser = new ical.ICalParser();
-      const options = { defaultTimezone: user.timezone };
-      parser.parseString(data.ical, options, (err, result) => {
-        if (err) {
-          connector.logger.error('Parsing failed.');
-          connector.logger.error(err);
-          return next('parsing error');
-        }
+      }
 
-        data.result = result;
-        return next();
-      });
+      return next('parsing error');
     }
+
+    const parser = new ical.ICalParser();
+    const options = { defaultTimezone: user.timezone };
+    parser.parseString(data.ical, options, (err, result) => {
+      if (err) {
+        connector.logger.error('Parsing failed.');
+        connector.logger.error(err);
+        return next('parsing error');
+      }
+
+      data.result = result;
+      return next();
+    });
   });
 }
 
