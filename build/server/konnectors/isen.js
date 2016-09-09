@@ -14,7 +14,7 @@ ical = require('cozy-ical');
 
 vcal = require('cozy-ical').VCalendar;
 
-NotificationHelper = require('cozy-notifications-helper');
+NotificationHelper = require('cozy-notifhications-helper');
 
 Folder = require('../models/folder');
 
@@ -512,7 +512,7 @@ module.exports = {
     year = courseData.year, curriculum = courseData.curriculum, course = courseData.course;
     path = "/" + year + "/" + curriculum + "/" + course;
     fullPath = path + "/" + fileName;
-    dateFormat = 'YYYY-MM-DD hh:mm:ss';
+    dateFormat = 'YYYY-MM-DD HH:mm:ss';
     date = moment(dateLastModified, dateFormat).toISOString();
     return File.byFullPath({
       key: fullPath
