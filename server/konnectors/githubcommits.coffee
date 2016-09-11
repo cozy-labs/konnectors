@@ -133,10 +133,11 @@ logCommits = (requiredFields, entries, data, next) ->
                         log.info "Commit #{commit.sha} not saved: no metadata."
                     callback()
 
-                else if commit.author.login isnt username
+                else if commit.author.login.toLowerCase() isnt
+                username.toLowerCase()
                     log.info "Commit #{commit.sha} not saved: " + \
                              "user is not author (#{commit.author.login})."
-                    callback('bad credentials')
+                    callback('parsing error')
 
                 else
                     log.info "Saving commit #{commit.sha}..."
