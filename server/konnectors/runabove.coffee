@@ -1,9 +1,10 @@
 baseOVHKonnector = require '../lib/base_ovh_konnector'
 
-name = 'RunAbove CA'
-slug = 'runabove_ca'
+name = 'Runabove'
+slug = 'runabove'
 
 api =
+    # Looks like the endpont is suffxied by -ca even for europe
     endpoint: 'runabove-ca'
     appKey: '6flmchEj8cORJnv9'
     appSecret: '6CzGLAmbfsFfrIIscN7QCgEQd3ka7t90'
