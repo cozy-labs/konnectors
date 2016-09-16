@@ -74,7 +74,7 @@ The connectors marked with :x: are known as currently broken.
 | Github   | Commits             | doubleface | :white_check_mark:                                               |
 | Twitter  | Published tweets    | doubleface | :white_check_mark:                                               |
 | Linkedin | contact information | Peltoche   | :x: ([#396](https://github.com/cozy-labs/konnectors/issues/396)) |
-| Google   | contact information | jacquarg   | :white_check_mark:                                               |
+| Google   | contact information | jacquarg   | :x:([#492](https://github.com/cozy-labs/konnectors/issues/482))  |
 
 ## Events
 
