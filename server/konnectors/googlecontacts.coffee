@@ -38,7 +38,7 @@ module.exports =
     title="<%t konnector customview googlecontacts 2 %>" class="btn"
        onclick="window.open('#{GoogleToken.getAuthUrl()}',
        'Google OAuth',
-       'toolbars=0,
+       toolbars=0,
        width=700,height=600,left=200,top=200,scrollbars=1,resizable=1');
        var input = $('#googlecontacts-authCode-input');
        input.parents('.field').toggleClass('hidden');
