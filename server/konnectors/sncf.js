@@ -34,7 +34,7 @@ const momentZone = 'Europe/Paris';
 
 const connector = module.exports = baseKonnector.createNew({
   name,
-
+  vendorLink: 'https://voyages-sncf.com',
   fields: {
     login: 'text',
     password: 'password',

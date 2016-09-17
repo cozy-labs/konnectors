@@ -378,10 +378,11 @@ target="_blank">
 
         if @model.has 'vendorLink'
             link = @model.get 'vendorLink'
+            link = "https://#{link}" if not link.match(/http[s]*:\/\//)
             vendorLinkHtml = """
 <div class='vendorLink'>
     <span>#{t 'vendorLink'}</span>
-    <a href="#{link}">#{link}</a>
+    <a href="#{link}" target="_blank">#{link}</a>
 </div>"""
             vendorLinkElem = $ vendorLinkHtml
             @$('.description').append vendorLinkElem
