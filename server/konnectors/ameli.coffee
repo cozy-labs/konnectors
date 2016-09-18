@@ -110,8 +110,9 @@ parsePage = (requiredFields, healthBills, data, next) ->
     startDate = $('#paiements_1dateDebut').attr('value')
     endDate = $('#paiements_1dateFin').attr('value')
 
-    billUrl = "https://assure.ameli.fr/PortailAS/paiements.do?actionEvt=" + \
-    "afficherPaiementsComplementaires&DateDebut="
+    baseUrl = "https://assure.ameli.fr/PortailAS/paiements.do?actionEvt="
+
+    billUrl = baseUrl + "afficherPaiementsComplementaires&DateDebut="
     billUrl += (startDate + "&DateFin=" + endDate)
     billUrl += "&Beneficiaire=tout_selectionner&afficherReleves=false&" + \
     "afficherIJ=false&afficherInva=false&afficherRentes=false&afficherRS=" + \
@@ -122,17 +123,18 @@ parsePage = (requiredFields, healthBills, data, next) ->
         strictSSL: false
         url: billUrl
 
-    # request the bill's url
     request billOptions, (err, res, body) ->
         if err
             log.error err
             return next 'request error'
         else
             $ = cheerio.load body
+            i = 0
+
+            # Each bloc represents a month that includes 0 to n reimbursement
             $('.blocParMois').each ->
-                pdfUrl = $($(this).find('.downReleve').get(0)).attr('href')
-                if pdfUrl?
-                    pdfUrl = "https://assure.ameli.fr" + pdfUrl
+
+                $('[id^=lignePaiement' + i++ + ']').each ->
 
                     amount = $($(this).find('.col-montant').get(0)).text()
                     amount = amount.replace(' €', '').replace(',','.')
@@ -146,17 +148,58 @@ parsePage = (requiredFields, healthBills, data, next) ->
 
                     label = $($(this).find('.col-label').get(0)).text()
 
+                    # Retrieve and extract the infos needed to generate the pdf
+                    attrInfos = $(this).attr('onclick')
+                    tokens = attrInfos.split("'")
+
+                    idPaiement = tokens[1]
+                    naturePaiement = tokens[3]
+                    indexGroupe = tokens[5]
+                    indexPaiement = tokens[7]
+
+                    detailsUrl =  baseUrl + "chargerDetailPaiements&"
+                    detailsUrl += "idPaiement=" + idPaiement  + "&"
+                    detailsUrl += "naturePaiement=" + naturePaiement + "&"
+                    detailsUrl += "indexGroupe=" + indexGroupe + "&"
+                    detailsUrl += "indexPaiement=" + indexPaiement
+
+                    lineId = indexGroupe + indexPaiement
+
                     bill =
                         amount: amount
                         type: 'health'
                         subtype: label
                         date: date
                         vendor: 'Ameli'
-                        pdfurl: pdfUrl
+                        lineId: lineId
+                        detailsUrl: detailsUrl
 
                     healthBills.fetched.push bill if bill.amount?
 
-            next()
+            async.each healthBills.fetched, getPdf, (err) ->
+                next err
+
+
+getPdf = (bill, callback) ->
+
+    # Request the generated url to get the detailed pdf
+    detailsOptions =
+        jar: true
+        strictSSL: false
+        url: bill.detailsUrl
+
+    request detailsOptions, (err, res, body) ->
+        if err
+            log.error err
+            return callback 'request error'
+        else
+            $ = cheerio.load body
+
+            pdfUrl = $('[id=liendowndecompte' + bill.lineId + ']').attr('href')
+            if pdfUrl
+                pdfUrl = "https://assure.ameli.fr" + pdfUrl
+                bill.pdfurl = pdfUrl
+                callback null
 
 
 buildNotification = (requiredFields, healthBills, data, next) ->
