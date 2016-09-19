@@ -24,6 +24,7 @@ const fileOptions = {
 
 module.exports = baseKonnector.createNew({
   name: 'Uber',
+  vendorLink: 'https://uber.com',
   fields: {
     login: 'text',
     password: 'password',

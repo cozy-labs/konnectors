@@ -15,6 +15,7 @@ const Bill = require('../models/bill');
 
 const connector = module.exports = factory.createNew({
   name: 'DirectEnergie',
+  vendorLink: 'particuliers.direct-energie.com/mon-espace-client/',
   fields: {
     login: 'text',
     password: 'password',

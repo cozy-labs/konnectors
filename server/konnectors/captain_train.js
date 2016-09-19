@@ -21,7 +21,7 @@ const logger = require('printit')({
 
 module.exports = baseKonnector.createNew({
   name: 'Captain Train',
-
+  vendorLink: 'www.captaintrain.com',
   fields: {
     login: 'email',
     password: 'password',

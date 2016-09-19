@@ -27,6 +27,7 @@ const Bill = require('../models/bill');
 // Konnector
 const connector = module.exports = baseKonnector.createNew({
   name: 'SFR Mobile',
+  vendorLink: 'espace-client.sfr.fr/facture-mobile/consultation',
   fields: {
     login: 'text',
     password: 'password',

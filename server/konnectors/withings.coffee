@@ -72,7 +72,7 @@ module.exports =
     name: "Withings"
     slug: "withings"
     description: 'konnector description withings'
-    vendorLink: "https://www.withings.com/"
+    vendorLink: "www.withings.com/"
 
     fields:
         email: "text"
