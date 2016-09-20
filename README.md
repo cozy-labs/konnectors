@@ -29,8 +29,8 @@ The connectors marked with :x: are known as currently broken.
 ## Bills
 
 | Website                 | Data | Maintainer                                            | Status                                                                                        |
-|:------------------------|:-----|:------------------------------------------------------|:----------------------------------------------------------------------------------------------|
-| Ameli                   | PDF  | Gara64                                                | :x:                                                                                           |
+|:------------------------|:-----|:------------------------------------------------------|:--------------------------|
+| Ameli                   | PDF  | Gara64                                                | :white_check_mark:                                                                            |
 | APRR                    | PDF  | SomeAverageDev                                        | :white_check_mark:                                                                            |
 | Bouygues Box            | PDF  | doubleface                                            | :white_check_mark:                                                                            |
 | Bouygues Telecom Mobile | PDF  | doubleface                                            | :white_check_mark:                                                                            |
