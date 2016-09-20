@@ -28,7 +28,7 @@ checkLogin = (requiredFields, billInfos, data, next) ->
 logIn = (requiredFields, billInfos, data, next) ->
 
     loginUrl = "https://assure.ameli.fr/PortailAS/appmanager/PortailAS/" + \
-    "assure?_nfpb=true&_pageLabel=as_login_page"
+    "assure?_somtc=true"
 
     submitUrl = "https://assure.ameli.fr/PortailAS/appmanager/PortailAS/" + \
     "assure?_nfpb=true&_windowLabel=connexioncompte_2&connexioncompte_2_" + \
@@ -36,7 +36,10 @@ logIn = (requiredFields, billInfos, data, next) ->
     "_pageLabel=as_login_page"
 
     reimbursementUrl = "https://assure.ameli.fr/PortailAS/appmanager/" + \
-    "PortailAS/assure?_nfpb=true&_pageLabel=as_dernier_paiement_page"
+    "PortailAS/assure?_nfpb=true&_pageLabel=as_paiements_page"
+
+    refererUrl = "https://assure.ameli.fr/PortailAS/appmanager/" + \
+    "PortailAS/assure?_nfpb=true&_pageLabel=as_login_page"
 
     form =
         "connexioncompte_2numSecuriteSociale": requiredFields.login
@@ -53,41 +56,46 @@ logIn = (requiredFields, billInfos, data, next) ->
 
     # First request to get the cookie
     request options, (err, res, body) ->
-        return next err if err?
+        if err
+            log.error err
+            return next 'request error'
+        else
+            loginOptions =
+                method: 'POST'
+                form: form
+                jar: true
+                strictSSL: false
+                url: submitUrl
+                headers:
+                    'Cookie': res.headers['set-cookie']
+                    'Referer': refererUrl
 
-        loginOptions =
-            method: 'POST'
-            form: form
-            jar: true
-            strictSSL: false
-            url: submitUrl
-            headers:
-                'Cookie': res.headers['set-cookie']
-                'Referer': 'https://assure.ameli.fr/PortailAS/appmanager/' + \
-                           'PortailAS/assure?_nfpb=true&_pageLabel=' + \
-                           'as_login_page'
+            # Second request to authenticate
+            request loginOptions, (err, res, body) ->
+                if err
+                    log.error err
+                    next 'bad credentials'
+                else if body.indexOf('Connexion à mon compte') > -1
+                    log.error 'Authentication error'
+                    next 'bad credentials'
+                else
+                    reimbursementOptions =
+                        method: 'GET'
+                        jar: true
+                        strictSSL: false
+                        headers:
+                            'Cookie': res.headers['set-cookie']
+                            'Referer': refererUrl
+                        url: reimbursementUrl
 
-        # Second request to authenticate
-        request loginOptions, (err, res, body) ->
-
-            isNotLogedIn = body.indexOf('Connexion à mon compte') > -1
-
-            if err or isNotLogedIn
-                log.error "Authentification error"
-                next 'bad credentials'
-            else
-                reimbursementOptions =
-                    method: 'GET'
-                    jar: true
-                    strictSSL: false
-                    url: reimbursementUrl
-
-                # Last request to get the reimbursements
-                request reimbursementOptions, (err, res, body) ->
-                    if err then next err
-                    else
-                        data.html = body
-                        next()
+                    # Last request to get the reimbursements page
+                    request reimbursementOptions, (err, res, body) ->
+                        if err
+                            log.error err
+                            return next 'request error'
+                        else
+                            data.html = body
+                            next()
 
 
 # Parse the fetched page to extract bill data.
@@ -98,56 +106,100 @@ parsePage = (requiredFields, healthBills, data, next) ->
 
     $ = cheerio.load data.html
 
-    $('#tabDerniersPaiements tbody tr').each ->
-        date = $($(this).find('td').get(0)).text()
-        subtype = $($(this).find('td').get(1)).text()
+    # Get the start and end date to generate the bill's url
+    startDate = $('#paiements_1dateDebut').attr('value')
+    endDate = $('#paiements_1dateFin').attr('value')
 
-        amount = $($(this).find('td').get(2)).text()
-        amount = amount.replace(' euros', '').replace(',','.')
-        amount = parseFloat amount
+    baseUrl = "https://assure.ameli.fr/PortailAS/paiements.do?actionEvt="
 
-        # Get the details url
-        detailsUrl = $($(this).find('td a').get(1)).attr('href')
-        # Remove the unecessary port to avoid buggy request
-        detailsUrl = detailsUrl.replace(':443', '')
+    billUrl = baseUrl + "afficherPaiementsComplementaires&DateDebut="
+    billUrl += (startDate + "&DateFin=" + endDate)
+    billUrl += "&Beneficiaire=tout_selectionner&afficherReleves=false&" + \
+    "afficherIJ=false&afficherInva=false&afficherRentes=false&afficherRS=" + \
+    "false&indexPaiement=&idNotif="
 
-        bill =
-            amount: amount
-            type: 'health'
-            subtype: subtype
-            date: moment date, 'DD/MM/YYYY'
-            vendor: 'Ameli'
-            detailsUrl: detailsUrl
-
-        healthBills.fetched.push bill if bill.amount?
-
-    # For each bill, get the pdf
-    async.each healthBills.fetched, getPdf, (err) ->
-        next err
-
-
-# Retrieve pdf url
-getPdf = (bill, callback) ->
-    detailsUrl = bill.detailsUrl
-
-    options =
-        method: 'GET'
+    billOptions =
         jar: true
         strictSSL: false
-        url: detailsUrl
+        url: billUrl
 
-    # Request to get the pdf url
-    request options, (err, res, body) ->
-        if err? or res.statusCode isnt 200
-            callback new Error 'Pdf not found'
+    request billOptions, (err, res, body) ->
+        if err
+            log.error err
+            return next 'request error'
         else
-            html = cheerio.load body
-            pdfUrl = "https://assure.ameli.fr"
-            pdfUrl += html('.r_lien_pdf').attr('href')
-            # Remove all the dirty escape characters...
-            pdfUrl = pdfUrl.replace(/(?:\r\n|\r|\n|\t)/g, '')
-            bill.pdfurl = pdfUrl
-            callback null
+            $ = cheerio.load body
+            i = 0
+
+            # Each bloc represents a month that includes 0 to n reimbursement
+            $('.blocParMois').each ->
+
+                $('[id^=lignePaiement' + i++ + ']').each ->
+
+                    amount = $($(this).find('.col-montant').get(0)).text()
+                    amount = amount.replace(' €', '').replace(',','.')
+                    amount = parseFloat amount
+
+                    month = $($(this).find('.col-date .mois').get(0)).text()
+                    day = $($(this).find('.col-date .jour').get(0)).text()
+                    date = day + ' ' + month
+                    moment.locale 'fr'
+                    date = moment(date, 'Do MMMM YYYY')
+
+                    label = $($(this).find('.col-label').get(0)).text()
+
+                    # Retrieve and extract the infos needed to generate the pdf
+                    attrInfos = $(this).attr('onclick')
+                    tokens = attrInfos.split("'")
+
+                    idPaiement = tokens[1]
+                    naturePaiement = tokens[3]
+                    indexGroupe = tokens[5]
+                    indexPaiement = tokens[7]
+
+                    detailsUrl =  baseUrl + "chargerDetailPaiements&"
+                    detailsUrl += "idPaiement=" + idPaiement  + "&"
+                    detailsUrl += "naturePaiement=" + naturePaiement + "&"
+                    detailsUrl += "indexGroupe=" + indexGroupe + "&"
+                    detailsUrl += "indexPaiement=" + indexPaiement
+
+                    lineId = indexGroupe + indexPaiement
+
+                    bill =
+                        amount: amount
+                        type: 'health'
+                        subtype: label
+                        date: date
+                        vendor: 'Ameli'
+                        lineId: lineId
+                        detailsUrl: detailsUrl
+
+                    healthBills.fetched.push bill if bill.amount?
+
+            async.each healthBills.fetched, getPdf, (err) ->
+                next err
+
+
+getPdf = (bill, callback) ->
+
+    # Request the generated url to get the detailed pdf
+    detailsOptions =
+        jar: true
+        strictSSL: false
+        url: bill.detailsUrl
+
+    request detailsOptions, (err, res, body) ->
+        if err
+            log.error err
+            return callback 'request error'
+        else
+            $ = cheerio.load body
+
+            pdfUrl = $('[id=liendowndecompte' + bill.lineId + ']').attr('href')
+            if pdfUrl
+                pdfUrl = "https://assure.ameli.fr" + pdfUrl
+                bill.pdfurl = pdfUrl
+                callback null
 
 
 buildNotification = (requiredFields, healthBills, data, next) ->
@@ -160,10 +212,11 @@ buildNotification = (requiredFields, healthBills, data, next) ->
 
     next()
 
+
 customLinkBankOperation = (requiredFields, healthBills, data, next) ->
     identifier = 'C.P.A.M.'
-    if requiredFields.bank_identifier isnt ""
-        identifier = requiredFields.bank_identifier
+    bankIdentifier = requiredFields.bank_identifier
+    identifier = bankIdentifier if bankIdentifier? and bankIdentifier isnt ""
 
     linkBankOperation(
         log: log
