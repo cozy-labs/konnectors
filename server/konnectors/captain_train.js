@@ -41,7 +41,7 @@ module.exports = baseKonnector.createNew({
       maxDateDelta: 1,
       model: Bill,
       amountDelta: 0.1,
-      identifier: ['CAPITAINE TRAIN', 'CAPTAIN TRAIN', 'OUIGO'],
+      identifier: ['CAPITAINE TRAIN', 'CAPTAIN TRAIN', 'OUIGO', 'TRAINLINE'],
     }),
     buildNotifContent,
   ],
