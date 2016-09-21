@@ -15,7 +15,7 @@ const Bill = require('../models/bill');
 const Event = require('../models/event');
 
 
-const name = 'SNCF';
+const name = 'Voyages SNCF';
 
 const logger = require('printit')({
   prefix: name,
@@ -127,7 +127,7 @@ function parseOrderPage(requiredFields, entries, data, next) {
     const bill = {
       date: moment(orderInformations.date, 'DD/MM/YY'),
       amount: orderInformations.amount,
-      vendor: 'SNCF',
+      vendor: 'VOYAGES SNCF',
       type: 'transport',
       content: `${orderInformations.label} - ${orderInformations.reference}`,
     };
@@ -211,9 +211,9 @@ function getEvents(orderInformations, events, callback) {
       folder.travels.forEach((travel) => {
         let travelType;
         if (travel.type === 'OUTWARD') {
-          travelType = localization.t('konnector sncf outward');
+          travelType = localization.t('konnector voyages_sncf outward');
         } else {
-          travelType = localization.t('konnector sncf inward');
+          travelType = localization.t('konnector voyages_sncf inward');
         }
 
         // Each travel can be composed of several segments
@@ -260,10 +260,10 @@ function getEvents(orderInformations, events, callback) {
           const description = `${travelType}: ${departureCity}/${arrivalCity}`;
 
           let details = `${departureStation} -> ${arrivalStation}\n`;
-          details += localization.t('konnector sncf reference');
+          details += localization.t('konnector voyages_sncf reference');
           details += `: ${orderInformations.reference}\n`;
           details += `${trainType} ${trainNumber}\n`;
-          details += localization.t('konnector sncf class');
+          details += localization.t('konnector voyages_sncf class');
           details += `: ${trainClass}\n\n`;
 
           Object.keys(segmentPassengers).forEach((passengerId) => {
@@ -273,9 +273,9 @@ function getEvents(orderInformations, events, callback) {
             if (segmentPassenger) {
               let passengerPlace = '';
               if (segmentPassenger.placement !== undefined) {
-                passengerPlace = localization.t('konnector sncf car');
+                passengerPlace = localization.t('konnector voyages_sncf car');
                 passengerPlace += ` ${segmentPassenger.placement.car} `;
-                passengerPlace += localization.t('konnector sncf place');
+                passengerPlace += localization.t('konnector voyages_sncf place');
                 passengerPlace += ` ${segmentPassenger.placement.seat}`;
               }
 
@@ -496,9 +496,9 @@ function getEventsOld(orderInformations, events, callback) {
         const description = `${travelType}: ${label}`;
 
         let details = `${beginStation} -> ${arrivalStation}\n`;
-        details += localization.t('konnector sncf reference');
+        details += localization.t('konnector voyages_sncf reference');
         details += `: ${reference}\n`;
-        details += localization.t('konnector sncf ticket choice');
+        details += localization.t('konnector voyages_sncf ticket choice');
         details += `: ${ticketChoice}\n`;
         details += `${trainType} ${trainNumber} - ${trainInfo}\n\n`;
 

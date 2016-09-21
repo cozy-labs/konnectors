@@ -119,7 +119,7 @@ module.exports =
     'konnector description ical_feed': "Téléchargez et importez un fichier iCal disponible en ligne (.ics)."
     'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts (seulement les contacts taggés avec le tag donné seront pris en compte."
     'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy. L'identifiant doit être constitué des 13 premiers chiffres de votre numéro de sécurité sociale."
-    'konnector description sncf': "Importez vos factures et événements SNCF dans votre Cozy."
+    'konnector description voyages_sncf': "Importez vos factures et événements Voyages-SNCF dans votre Cozy."
     'konnector description doctolib': "Importez vos rendez-vous Doctolib dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
@@ -157,13 +157,13 @@ module.exports =
 
     "konnector birthdays birthday": "Anniversaire de"
 
-    "konnector sncf reference": "Référence"
-    "konnector sncf ticket choice": "Choix du billet"
-    "konnector sncf outward": "Aller"
-    "konnector sncf inward": "Retour"
-    "konnector sncf class": "Classe"
-    "konnector sncf car": "voiture"
-    "konnector sncf place": "place"
+    "konnector voyages_sncf reference": "Référence"
+    "konnector voyages_sncf ticket choice": "Choix du billet"
+    "konnector voyages_sncf outward": "Aller"
+    "konnector voyages_sncf inward": "Retour"
+    "konnector voyages_sncf class": "Classe"
+    "konnector voyages_sncf car": "voiture"
+    "konnector voyages_sncf place": "place"
 
     "konnector ovh connect first": 'You need to login to your OVH account first.'
 

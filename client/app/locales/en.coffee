@@ -118,7 +118,7 @@ module.exports =
     'konnector description googlecontacts': "Import your google contacts into your Cozy through google's API."
     'konnector description linkedin': "Import your Linkedin contacts in your Cozy."
     'konnector description ameli': "Import your Ameli reimbursements in your Cozy. The login here is only the 13 first digits."
-    'konnector description sncf': "Import your SNCF bills and events in your Cozy."
+    'konnector description voyages_sncf': "Import your Voyages-SNCF bills and events in your Cozy."
     'konnector description doctolib': "Import you Doctolib appointments in you Cozy."
     'konnector customview googlecontacts 4': "Initialize or reset this konnector"
     'konnector customview googlecontacts 1': "1. Press \"connect your google account\" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step."
@@ -156,13 +156,13 @@ module.exports =
 
     "konnector birthdays birthday": "Birthday of"
 
-    "konnector sncf reference": "Reference"
-    "konnector sncf ticket choice": "Ticket choice"
-    "konnector sncf outward": "Outward"
-    "konnector sncf inward": "Inward"
-    "konnector sncf class": "Class"
-    "konnector sncf car": "car"
-    "konnector sncf place": "place"
+    "konnector voyages_sncf reference": "Reference"
+    "konnector voyages_sncf ticket choice": "Ticket choice"
+    "konnector voyages_sncf outward": "Outward"
+    "konnector voyages_sncf inward": "Inward"
+    "konnector voyages_sncf class": "Class"
+    "konnector voyages_sncf car": "car"
+    "konnector voyages_sncf place": "place"
 
     "konnector ovh connect first": 'You need to login to your OVH account first.'
 
