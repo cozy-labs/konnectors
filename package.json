@@ -10,6 +10,9 @@
     "url": "https://github.com/cozy-labs/konnectors.git"
   },
   "main": "/build/server.js",
+  "engines": {
+      "node": ">=4.0.0"
+  },
   "dependencies": {
     "americano": "0.4.5",
     "async": "2.0.1",
