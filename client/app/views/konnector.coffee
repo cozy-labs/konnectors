@@ -250,6 +250,7 @@ module.exports = class KonnectorView extends BaseView
                 # Add a widget to select given folder.
                 fieldHtml += """
 <div><select id="#{slug}-#{name}#{index}-input" class="folder"">
+    <option selected value="/">/</option>
 """
                 selectedPath = path: '', id: ''
                 pathName = values[name]
@@ -411,4 +412,3 @@ target="_blank">
 
         @model.set 'importErrorMessage', errorMessage
         @showErrors t errorMessage
-
