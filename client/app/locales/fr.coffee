@@ -40,6 +40,8 @@ module.exports =
     'add an account': "Ajouter un compte"
     'remove last account': "Supprimer le dernier compte"
     'vendorLink': "Site d'où sont récupérées les données : "
+    'loginUrl': "URL d'authentification"
+    'token': "Token"
 
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.

@@ -58,7 +58,7 @@ class OVHFetcher
 
         @logger.info 'Request the login url...'
         @ovh.request 'POST', '/auth/credential', accessRules
-        , (err, credential) ->
+        , (err, credential) =>
             if err
                 @logger.info err
                 return callback 'token not found'
@@ -91,7 +91,7 @@ class OVHFetcher
 
             requiredFields.loginUrl = url
             requiredFields.token = token
-            @saveUrlAndToken url, token, ->
+            @saveUrlAndToken url, token, =>
                 @logger.info 'You need to login to your OVH account first.'
                 callback('konnector ovh connect first')
 
