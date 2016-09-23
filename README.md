@@ -63,9 +63,9 @@ The connectors marked with :x: are known as currently broken.
 
 | Website  | Data                                     | Maintainer | Status                                                                                                                             |
 |:---------|:-----------------------------------------|:-----------|:-----------------------------------------------------------------------------------------------------------------------------------|
-| Jawbone  | Move and Sleep data                      | ?          | :white_check_mark:                                                                                                                 |
-| Nest     | Temperatures                             | ?          | :white_check_mark:                                                                                                                 |
-| Withings | Weight, Heartbeat and Blood Presure data | ?          | :warning: ([#352](https://github.com/cozy-labs/konnectors/issues/352), [#260](https://github.com/cozy-labs/konnectors/issues/260)) |
+| Jawbone  | Move and Sleep data                      | looking for a maintainer with credentials          | :white_check_mark:                                                                                                                 |
+| Nest     | Temperatures                             | looking for a maintainer with credentials          | :white_check_mark:                                                                                                                 |
+| Withings | Weight, Heartbeat and Blood Presure data | looking for a maintainer with credentials          | :warning: ([#352](https://github.com/cozy-labs/konnectors/issues/352), [#260](https://github.com/cozy-labs/konnectors/issues/260)) |
 
 ## Social
 
@@ -80,19 +80,19 @@ The connectors marked with :x: are known as currently broken.
 
 | Website           | Data            | Maintainer     | Status                                                                 |
 |:------------------|:----------------|:---------------|:-----------------------------------------------------------------------|
-| Ical Feed         | Events          | ?              | :white_check_mark:                                                     |
+| Ical Feed         | Events          | Cozy              | :white_check_mark:                                                     |
 | Contact Birthdays | Events          | Frank Rousseau | :white_check_mark:                                                     |
 | Doctolib          | Events          | ZeHiro         | :white_check_mark:                                                     |
 | Facebook          | Events          | jacquarg       | :warning: ([#420](https://github.com/cozy-labs/konnectors/issues/420)) |
 | SNCF              | Events          | Chocobozzz     | :white_check_mark:                                                     |
-| Google            | Events          | ?              | :white_check_mark:                                                     |
+| Google            | Events          | Cozy              | :white_check_mark:                                                     |
 | Isen              | Events, lessons | Cozy           | :white_check_mark:                                                     |
 
 ## Productivity
 
 | Website    | Data      | Maintainer | Status             |
 |:-----------|:----------|:-----------|:-------------------|
-| RescueTime | Activites | ?          | :white_check_mark: |
+| RescueTime | Activites | looking for a maintainer with credentials          | :white_check_mark: |
 
 ## Hobbies
 
