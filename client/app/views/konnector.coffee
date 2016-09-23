@@ -87,14 +87,16 @@ module.exports = class KonnectorView extends BaseView
 
     # Enable Import button.
     enableImportButton: ->
-        @$('#import-button').attr 'aria-busy', false
-        @$('#import-button').attr 'aria-disabled', false
+        @$('#import-button').attr('aria-busy', false)
+                            .attr('aria-disabled', false)
+                            .attr('disabled', false)
 
 
     # Diable Import button.
     disableImportButton: ->
-        @$('#import-button').attr 'aria-busy', true
-        @$('#import-button').attr 'aria-disabled', true
+        @$('#import-button').attr('aria-busy', true)
+                            .attr('aria-disabled', true)
+                            .attr('disabled', true)
 
 
     # Show error widget and fill it with given message.
