@@ -199,7 +199,11 @@ function getEvents(orderInformations, events, callback) {
       return getEventsOld(orderInformations, events, callback);
     }
 
-    const folders = result.order.folders;
+    let folders = result.order.folders;
+    // If folder is an object, convert it into an array
+    if (folders && !Array.isArray(folders)) {
+      folders = Object.keys(folders).map(ref => folders[ref]);
+    }
     folders.forEach((folder) => {
       // Create our passengers (id associated to their name)
       const passengers = {};
