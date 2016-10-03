@@ -32,8 +32,8 @@ The connectors marked with :x: are known as currently broken.
 |:------------------------|:-----|:------------------------------------------------------|:--------------------------|
 | Ameli                   | PDF  | Gara64                                                | :white_check_mark:                                                                            |
 | APRR                    | PDF  | SomeAverageDev                                        | :white_check_mark:                                                                            |
-| Bouygues Box            | PDF  | doubleface                                            | :white_check_mark:                                                                            |
-| Bouygues Telecom Mobile | PDF  | doubleface                                            | :white_check_mark:                                                                            |
+| Bouygues Box            | PDF  | doubleface                                            | :x: ([#498](https://github.com/cozy-labs/konnectors/issues/498))                                                                            |
+| Bouygues Telecom Mobile | PDF  | doubleface                                            | :x: ([#498](https://github.com/cozy-labs/konnectors/issues/498)                                                                          |
 | Captain Train           | PDF  | ZeHiro                                                | :white_check_mark:                                                                            |
 | Digital Ocean           | PDF  | Frank Rousseau                                        | :white_check_mark:                                                                            |
 | Direct Energie          | PDF  | bnjbvr                                                | :white_check_mark:                                                                            |
