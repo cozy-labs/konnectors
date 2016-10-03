@@ -22,15 +22,13 @@ module.exports = Konnector = cozydb.getModel 'Konnector',
     importInterval: type: String, default: 'none'
     errorMessage: type: String, default: null
     importErrorMessage: type: String, default: null
+    _passwordStillEncrypted: Boolean
 
 
 # Retrieve all konnectors. Make sure that encrypted fields are decrypted before
 # being sent.
 Konnector.all = (callback) ->
     Konnector.request 'all', (err, konnectors) ->
-        konnectors ?= []
-        for konnector in konnectors
-            konnector.injectEncryptedFields()
         callback err, konnectors
 
 
@@ -51,7 +49,12 @@ Konnector::getFields = ->
 
 
 # Unencrypt password fields and set them as normal fields.
-Konnector::injectEncryptedFields = ->
+Konnector::injectEncryptedFields = (callback) ->
+    # Try to unencrypt the passord fields only if we are sure it is
+    # not still encrypted by the data-system
+    if @_passwordStillEncrypted? and @_passwordStillEncrypted
+        log.error "The passwords are still encrypted"
+        callback 'encrypted fields'
     try
         parsedPasswords = JSON.parse @password
         @cleanFieldValues()
@@ -110,6 +113,8 @@ Konnector::updateFieldValues = (data, callback) ->
 # whole connector with errors.
 Konnector::import = (callback) ->
 
+    @injectEncryptedFields(callback)
+
     @cleanFieldValues()
 
     @updateAttributes isImporting: true, (err) =>
@@ -148,7 +153,8 @@ Konnector::runImport = (values, callback) ->
     else
         konnectorModule = konnectorHash[@slug]
 
-        @injectEncryptedFields()
+        @injectEncryptedFields(callback)
+
         values.lastSuccess = @lastSuccess
         konnectorModule.fetch values, (importErr, notifContent) =>
             fields = @getFields()
