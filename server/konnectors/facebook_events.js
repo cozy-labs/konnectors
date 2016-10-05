@@ -25,10 +25,10 @@ const scope = 'user_events';
 const connector = module.exports = baseKonnector.createNew({
   name: 'Facebook Events',
   slug: 'facebook_events',
-  customView: `<a href=${getOAuthProxyUrl()} target="_blank" >Connect</a>`,
+  connectUrl: getOAuthProxyUrl(),
 
   fields: {
-    accessToken: 'text',
+    accessToken: 'hidden',
     calendar: 'text',
   },
 
@@ -50,10 +50,10 @@ function getOAuthProxyUrl() {
   const params = {
     appId,
     scope,
-    redirect: 'display',
+    redirect: 'url',
   };
 
-  return `${baseUri}?${toQueryString(params)}`;
+  return `${baseUri}?${toQueryString(params)}&redirect_url=`;
 }
 
 

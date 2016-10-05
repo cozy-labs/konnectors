@@ -36,6 +36,9 @@ module.exports =
                 if konnectorModule.customView?
                     konnector.customView = konnectorModule.customView
 
+                if konnectorModule.connectUrl?
+                    konnector.connectUrl = konnectorModule.connectUrl
+
                 req.konnector = konnector
                 next()
 
@@ -95,3 +98,18 @@ module.exports =
                             else
                                 handleNotification req.konnector, notifContent
                     res.status(200).send success: true
+
+    redirect: (req, res, next) ->
+        req.konnector.updateFieldValues { accounts: [req.query] }, (err) ->
+            return next err if err
+
+            #poller = require "../lib/poller"
+            #poller.add date, req.konnector
+
+            req.konnector.import (err, notifContent) ->
+                if err?
+                    log.error err
+                else
+                    handleNotification req.konnector, notifContent
+
+            res.redirect '/#konnector/' + req.konnector.slug

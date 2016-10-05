@@ -25,7 +25,6 @@ module.exports = class KonnectorView extends BaseView
 
     # Build fields
     afterRender: =>
-
         slug = @model.get 'slug'
 
         if not @values? or @values.length is @model.get('accounts').length
@@ -395,6 +394,21 @@ target="_blank">
 </div>"""
             vendorLinkElem = $ vendorLinkHtml
             @$('.description').append vendorLinkElem
+
+        if @model.has 'connectUrl'
+            connectUrl = @model.get 'connectUrl'
+            if connectUrl.indexOf 'redirect_url' isnt -1
+                redirectUrl = "#{document.location.origin}\
+                    /#{@model.url()}/redirect"
+                redirectUrl = encodeURIComponent redirectUrl
+                connectUrl += redirectUrl
+
+            connectButtonHtml = """
+<div class='connectButton'>
+    <a href='#{connectUrl}' target='_blank'><button>#{t 'Connect'}</button></a>
+</div>"""
+            connectButtonElem = $ connectButtonHtml
+            @$('.description').append connectButtonElem
 
 
     onDeleteClicked: ->
