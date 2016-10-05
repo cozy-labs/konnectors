@@ -67,10 +67,10 @@ function getOAuthProxyUrl () { // eslint-disable-line
   const params = {
     appId,
     scope,
-    redirect: 'display'
+    redirect: 'url'
   }
 
-  return `${baseUri}?${toQueryString(params)}`
+  return `${baseUri}?${toQueryString(params)}&redirect_url=`
 }
 
 function updateToken (requiredFields, entries, data, next) {

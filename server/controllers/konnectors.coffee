@@ -17,16 +17,15 @@ module.exports =
             else if not konnector?
                 res.sendStatus 404
             else
-<<<<<<< HEAD
+
                 konnector.injectEncryptedFields()
                 konnector.appendConfigData()
                 konnector.checkProperties()
-=======
+
                 if konnector.shallRaiseEncryptedFieldsError()
                     konnector.importErrorMessage = 'encrypted fields'
                 else
                     konnector.injectEncryptedFields()
->>>>>>> 9fe27e1... Warn the user that the password cannot be decrypted. Fixes #503 (#538)
 
                 # Add customView field
                 konnectorModule = require(
@@ -41,6 +40,9 @@ module.exports =
 
                 if konnectorModule.customView?
                     konnector.customView = konnectorModule.customView
+
+                if konnectorModule.connectUrl?
+                    konnector.connectUrl = konnectorModule.connectUrl
 
                 req.konnector = konnector
                 next()
@@ -119,6 +121,12 @@ module.exports =
 
         req.konnector.updateFieldValues { accounts: accounts }, (err) ->
             return next err if err
+
+            req.konnector.import (err, notifContent) ->
+                if err?
+                    log.error err
+                else
+                    handleNotification req.konnector, notifContent
 
             res.redirect '../../..' + \
               "/#/category/#{req.konnector.category}/#{req.konnector.slug}"
