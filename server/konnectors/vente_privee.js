@@ -5,6 +5,8 @@
 */
 'use strict';
 
+const saveOnlyLastBill = false;
+
 const request = require('request').defaults({
   jar: true,
   rejectUnauthorized: false,
@@ -36,7 +38,6 @@ const fileOptions = {
 };
 
 const Bill = require('../models/bill');
-
 const baseUrl = 'https://secure.fr.vente-privee.com';
 
 // Konnector
@@ -58,7 +59,7 @@ const connector = module.exports = baseKonnector.createNew({
     linkBankOperation({
       log,
       model: Bill,
-      identifier: 'VENTE PRIVEE.C',
+      identifier: 'VENTE PRIVEE.COM',
       minDateDelta: 4,
       maxDateDelta: 20,
       amountDelta: 0.1,
@@ -212,25 +213,30 @@ function parsePage(requiredFields, bills, data, next) {
       } else if (bill.date > lastBill.date) {
         lastBill = Object.assign(bill);
       }
-      // saving current bill
-      // bills.fetched.push(bill);
+
+      if (!saveOnlyLastBill) {
+        // saving current bill
+        bills.fetched.push(bill);
+      }
     }
     return true;
   });
 
-  bills.fetched.push(lastBill);
+  if (saveOnlyLastBill) {
+    bills.fetched.push(lastBill);
+  }
 
   log.debug('bills.fetched:', bills);
 
   connector.logger.info('Successfully parsed the page, bills found:',
-  bills.fetched.length);
+    bills.fetched.length);
   return next();
 }
 
 function customFilterExisting(requiredFields, bills, data, next) {
   log.debug('customFilterExisting');
   filterExisting(log, Bill)(requiredFields, bills, data, next);
-  return next();
+  return true;
 }
 
 function customSaveDataAndFile(requiredFields, bills, data, next) {
@@ -238,13 +244,13 @@ function customSaveDataAndFile(requiredFields, bills, data, next) {
   const fnsave = saveDataAndFile(
     log, Bill, fileOptions, ['vente-privee', 'facture']);
   fnsave(requiredFields, bills, data, next);
-  return next();
+  return true;
 }
 
 function buildNotifContent(requiredFields, bills, data, next) {
   log.debug('buildNotifContent');
   if (bills.filtered.length > 0) {
-    const localizationKey = 'notification bills';
+    const localizationKey = 'notification vente_privee';
     const options = {
       smart_count: bills.filtered.length,
     };
