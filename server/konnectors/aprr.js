@@ -33,7 +33,6 @@ const fileOptions = {
 };
 
 const Bill = require('../models/bill');
-
 const baseUrl = 'https://espaceclient.aprr.fr/aprr/Pages';
 
 // Konnector
@@ -220,18 +219,18 @@ function parsePage(requiredFields, bills, data, next) {
 
 function customFilterExisting(requiredFields, bills, data, next) {
   filterExisting(log, Bill)(requiredFields, bills, data, next);
-  return next();
+  return true;
 }
 
 function customSaveDataAndFile(requiredFields, bills, data, next) {
   const fnsave = saveDataAndFile(log, Bill, fileOptions, ['peage', 'facture']);
   fnsave(requiredFields, bills, data, next);
-  return next();
+  return true;
 }
 
 function buildNotifContent(requiredFields, bills, data, next) {
   if (bills.filtered.length > 0) {
-    const localizationKey = 'notification bills';
+    const localizationKey = 'notification aprr';
     const options = {
       smart_count: bills.filtered.length,
     };
