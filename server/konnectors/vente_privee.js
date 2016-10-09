@@ -26,7 +26,7 @@ const filterExisting = require('../lib/filter_existing');
 const localization = require('../lib/localization_manager');
 const saveDataAndFile = require('../lib/save_data_and_file');
 const linkBankOperation = require('../lib/link_bank_operation');
-
+const Bill = require('../models/bill');
 const log = require('printit')({
   prefix: 'vente-privee',
   date: true,
@@ -37,7 +37,6 @@ const fileOptions = {
   dateFormat: 'YYYYMMDD',
 };
 
-const Bill = require('../models/bill');
 const baseUrl = 'https://secure.fr.vente-privee.com';
 
 // Konnector
@@ -229,28 +228,26 @@ function parsePage(requiredFields, bills, data, next) {
   log.debug('bills.fetched:', bills);
 
   connector.logger.info('Successfully parsed the page, bills found:',
-    bills.fetched.length);
+  bills.fetched.length);
   return next();
 }
 
 function customFilterExisting(requiredFields, bills, data, next) {
   log.debug('customFilterExisting');
-  filterExisting(log, Bill)(requiredFields, bills, data, next);
-  return true;
+  return filterExisting(log, Bill)(requiredFields, bills, data, next);
 }
 
 function customSaveDataAndFile(requiredFields, bills, data, next) {
   log.debug('customSaveDataAndFile');
   const fnsave = saveDataAndFile(
     log, Bill, fileOptions, ['vente-privee', 'facture']);
-  fnsave(requiredFields, bills, data, next);
-  return true;
+  return fnsave(requiredFields, bills, data, next);
 }
 
 function buildNotifContent(requiredFields, bills, data, next) {
   log.debug('buildNotifContent');
   if (bills.filtered.length > 0) {
-    const localizationKey = 'notification vente_privee';
+    const localizationKey = 'notification bills';
     const options = {
       smart_count: bills.filtered.length,
     };
