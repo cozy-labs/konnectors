@@ -3,8 +3,8 @@
 echo "Build server files..."
 ./node_modules/.bin/coffee -cb --output build/server server
 ./node_modules/.bin/coffee -cb --output build/ server.coffee
-babel ./server/konnectors -d build/server/konnectors
-babel ./server/lib -d build/server/lib
+./node_modules/.bin/babel ./server/konnectors -d build/server/konnectors
+./node_modules/.bin/babel ./server/lib -d build/server/lib
 echo "Server built."
 
 echo "Clean previous client build..."
