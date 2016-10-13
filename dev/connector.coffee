@@ -8,20 +8,17 @@ log = require('printit')
 # Display most important fields of a konnector. It hides the password
 # in case some are stored in the field values of the connector.
 displayKonnector = (konnector) ->
-    if konnector?
-        konnector.removeEncryptedFields()
-        log.raw
-            slug: konnector.slug
-            accounts: konnector.accounts
-            fields: konnector.fields
-            lastSuccess: konnector.lastSuccess
-            lastImport: konnector.lastImport
-            isImporting: konnector.isImporting
-            importInterval: konnector.importInterval
-            importErrorMessage: konnector.importErrorMessage
-    else
-        log.error "Can't find konnector #{konnector}."
 
+    konnector.removeEncryptedFields()
+    log.raw
+        slug: konnector.slug
+        accounts: konnector.accounts
+        fields: konnector.fields
+        lastSuccess: konnector.lastSuccess
+        lastImport: konnector.lastImport
+        isImporting: konnector.isImporting
+        importInterval: konnector.importInterval
+        importErrorMessage: konnector.importErrorMessage
     log.lineBreak()
 
 module.exports =
@@ -87,7 +84,10 @@ module.exports =
             if konnectorName
                 konnector = konnectors.find (konnector) ->
                     konnector.slug is konnectorName
-                displayKonnector konnector
+                if konnector
+                    displayKonnector konnector
+                else
+                    log.error "Can't find konnector #{konnectorName}."
             else
                 displayKonnector konnector for konnector in konnectors
             callback()
