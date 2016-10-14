@@ -10,10 +10,17 @@ log = require('printit')
 displayKonnector = (konnector) ->
 
     konnector.removeEncryptedFields()
+    # The fields are in the konnector file
+    konnectorConfig = {}
+    try
+        konnectorConfig = require "../server/konnectors/#{konnector.slug}"
+    catch
+        log.error "Konnector file name and konnector slug do not match.\
+                    Slug is: #{konnector.slug}"
     log.raw
         slug: konnector.slug
         accounts: konnector.accounts
-        fields: konnector.fields
+        fields: konnectorConfig.fields
         lastSuccess: konnector.lastSuccess
         lastImport: konnector.lastImport
         isImporting: konnector.isImporting
@@ -89,6 +96,13 @@ module.exports =
                 else
                     log.error "Can't find konnector #{konnectorName}."
             else
+                konnectors.sort (a, b) ->
+                    if a.slug?
+                        a.slug.localeCompare b.slug
+                    else if a.date?
+                        a.date > b.date
+                    else
+                        a.id > b.id
                 displayKonnector konnector for konnector in konnectors
             callback()
 

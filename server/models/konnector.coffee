@@ -70,7 +70,7 @@ Konnector::injectEncryptedFields = ->
 Konnector::removeEncryptedFields = (fields) ->
 
     if not fields?
-        log.warn "Fields variable undefined, use curren one instead."
+        log.warn "Fields variable undefined, use current one instead."
         fields = @getFields()
 
     @cleanFieldValues()
