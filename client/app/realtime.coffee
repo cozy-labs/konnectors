@@ -1,5 +1,5 @@
-Konnector = require '../models/konnector'
-Folder = require '../models/folder'
+Konnector = require './models/konnector'
+Folder = require './models/folder'
 
 
 # Listen to two kinds of update:
