@@ -1,16 +1,16 @@
-# See documentation on https://github.com/frankrousseau/americano-cozy/#requests
+# See documentation on https://github.com/cozy/cozy-db
 
-americano = require 'americano'
+cozydb = require 'cozydb'
 
 module.exports =
     bill:
-        byDate: americano.defaultRequests.by 'date'
+        byDate: cozydb.defaultRequests.by 'date'
 
     konnector:
-        all: americano.defaultRequests.all
+        all: cozydb.defaultRequests.all
 
     bankoperation:
-        byDate: americano.defaultRequests.by 'date'
+        byDate: cozydb.defaultRequests.by 'date'
 
     folder:
         byFullPath: (doc) -> emit "#{doc.path}/#{doc.name}", doc
@@ -19,17 +19,17 @@ module.exports =
         byFullPath: (doc) -> emit "#{doc.path}/#{doc.name}", doc
 
     steps:
-        byDate: americano.defaultRequests.by 'date'
+        byDate: cozydb.defaultRequests.by 'date'
 
     sleep:
-        byDate: americano.defaultRequests.by 'date'
+        byDate: cozydb.defaultRequests.by 'date'
 
     commit:
-        byDate: americano.defaultRequests.by 'date'
+        byDate: cozydb.defaultRequests.by 'date'
 
     event:
-        all: americano.defaultRequests.all
-        bycaldavuri: americano.defaultRequests.by 'caldavuri'
+        all: cozydb.defaultRequests.all
+        bycaldavuri: cozydb.defaultRequests.by 'caldavuri'
         allLike: (doc) -> emit({
             start: doc.start,
             end: doc.end,
@@ -41,4 +41,4 @@ module.exports =
         byName: (doc) -> emit doc.name, doc
 
     track:
-        all: americano.defaultRequests.all
+        all: cozydb.defaultRequests.all
