@@ -2,12 +2,16 @@ path = require 'path'
 fs = require 'fs'
 async = require 'async'
 log = require('printit')
-    prefix: null
+    prefix: 'init'
     date: true
 
 Konnector = require '../models/konnector'
 konnectorModules = require '../lib/konnector_hash'
 
+
+konnectorsToMigrate = [
+    oldSlug: 'virginmobile', newSlug: 'virgin_mobile'
+]
 
 # Ensure that model fields are properly configured for 0.6.0 version.
 # It means that account information are stored in the accounts field and
@@ -58,12 +62,18 @@ patch381 = (callback) ->
         , (err) ->
             callback()
 
+
+patches = (callback) ->
+    patch060 ->
+        patch381 ->
+            callback()
+
 # Ensure that all konnector modules have a proper module created and that their
 # isImporting flag is set to false.
 module.exports = (callback) ->
 
-    patch060 ->
-        patch381 ->
+    patches ->
+        migrateKonnectors ->
             Konnector.all (err, konnectors) ->
                 if err
                     log.error err
@@ -130,6 +140,9 @@ createKonnectors = (konnectorsToCreate, callback) ->
         initializeKonnector konnector, done
 
     , (err) ->
+        if err
+            log.err err
+            callback err
         log.info 'All konnectors created'
         callback()
 
@@ -153,3 +166,32 @@ initializeKonnector = (konnector, callback) ->
             log.error err if err
             callback err
 
+
+# Migrate a konnector to a new name/slug to keep the credentials (ie the
+# migration is transparent to the user).
+migrateKonnector = (oldSlug, newSlug, callback) ->
+
+    Konnector.request 'bySlug', key: oldSlug, (err, konnectors) ->
+        return callback err if err
+        if konnectors.length
+            konnectors[0].updateAttributes slug: newSlug, (err) ->
+                if err
+                    log.error err
+                    return callback err
+
+                log.info "Konnector with slug #{oldSlug} successfully migrated \
+                         to #{newSlug}"
+                return callback()
+        else
+            callback()
+
+migrateKonnectors = (callback) ->
+    async.eachSeries konnectorsToMigrate, (slugs, done) ->
+        migrateKonnector slugs.oldSlug, slugs.newSlug, done
+    , (err) ->
+        if err
+            log.error err
+            return callback err
+
+        log.info "All konnectors successfully migrated"
+        callback()

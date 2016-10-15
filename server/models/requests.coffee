@@ -8,6 +8,7 @@ module.exports =
 
     konnector:
         all: cozydb.defaultRequests.all
+        bySlug: cozydb.defaultRequests.by 'slug'
 
     bankoperation:
         byDate: cozydb.defaultRequests.by 'date'
