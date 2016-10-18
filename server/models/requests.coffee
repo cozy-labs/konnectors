@@ -5,11 +5,9 @@ cozydb = require 'cozydb'
 module.exports =
     bill:
         byDate: cozydb.defaultRequests.by 'date'
-        byVendor: cozydb.defaultRequests.by 'vendor'
 
     konnector:
         all: cozydb.defaultRequests.all
-        bySlug: cozydb.defaultRequests.by 'slug'
 
     bankoperation:
         byDate: cozydb.defaultRequests.by 'date'
