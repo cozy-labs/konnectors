@@ -40,7 +40,6 @@ describe 'Check locale files:', ->
                 for key of localeObject
                     do (key) ->
                         key = key.replace(/\./g, '\\.')
-                        console.log key
                         matches = file.match( new RegExp("['\"]" + key + "[\\]*['\"][ ]*\:", 'g')) || []
                         it "'#{key}' should be only once in the file", ->
                             matches.should.have.length 1
