@@ -1,7 +1,7 @@
 request = require './lib/request'
 KonnectorListener = require './realtime'
-KonnectorCollection = require '../collections/konnectors'
-FolderCollection = require '../collections/folders'
+KonnectorCollection = require './collections/konnectors'
+FolderCollection = require './collections/folders'
 AppView = require './views/app_view'
 Router = require './router'
 

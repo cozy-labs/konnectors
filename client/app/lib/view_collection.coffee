@@ -1,4 +1,4 @@
-BaseView = require 'lib/base_view'
+BaseView = require './base_view'
 
 # View that display a collection of subitems
 # used to DRY views
