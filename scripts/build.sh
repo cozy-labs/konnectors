@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echo "Clean previous server"
+rm -rf build/server && mkdir -p build/server
+echo "Previous server cleaned."
+
 echo "Build server files..."
 ./node_modules/.bin/coffee -cb --output build/server server
 ./node_modules/.bin/coffee -cb --output build/ server.coffee
