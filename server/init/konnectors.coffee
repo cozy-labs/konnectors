@@ -76,11 +76,39 @@ patch381 = (callback) ->
         , (err) ->
             callback()
 
+# This patch is to migrate user's account due to a change in the
+# konnector interface. The field 'username' is replaced by the
+# field 'login' to harmonize with other konnectors.
+
+patchOnlineNet = (callback) ->
+    Konnector.request 'bySlug', key: 'online_net', (err, konnectors) ->
+        return callback err if err
+
+        konnector = konnectors[0]
+        accounts = konnector.accounts
+        if accounts[0]? && accounts[0].username
+            log.info "Starting migration for online.net konnector"
+            newAccounts = []
+            for account in accounts
+                account.login = account.username
+                delete account.username
+                newAccounts.push(account)
+            
+            konnector.updateAttributes accounts: newAccounts, (err) ->
+                return callback err if err
+
+                log.info "Successfully updated online.net konnector"
+                callback()
+
+        else
+            callback()
+
 # Applies all the migrations due to patches
 patches = (callback) ->
     patch060 ->
         patch381 ->
-            callback()
+            patchOnlineNet ->
+                callback()
 
 # Applies all the migrations due to evolution in the konnector name or vendor
 migrations = (callback) ->
