@@ -42,8 +42,14 @@ describe 'Check all konnectors', ->
                         konnector.slug.replace(/(-|\.)/g, '_').should.equal name
 
                 do (konnector) ->
-                    describe "description should be translated in", ->
-                        listOfLocales.forEach (locale) ->
-                            it "#{locale}", ->
-                                translation = require path.resolve localesDirectory, locale
+                    for locale in listOfLocales
+                        translation = require path.resolve localesDirectory, locale
+                        describe "translations should be done in #{locale}", ->
+                            it "konnector description should be translated", ->
                                 should.exist translation[konnector.description]
+                            do (translation, locale, konnector) ->
+                                describe "each field of the konnector should be translated", ->
+                                    for field of konnector.fields
+                                        do(translation, field) ->
+                                            it "#{field}", ->
+                                                should.exist translation[field]

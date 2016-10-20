@@ -42,6 +42,8 @@ module.exports =
     'vendorLink': "Site d'où sont récupérées les données : "
     'loginUrl': "URL d'authentification"
     'token': "Token"
+    'refreshToken': "Mettre à jour le token"
+
 
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.

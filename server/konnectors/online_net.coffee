@@ -29,7 +29,7 @@ module.exports =
     vendorLink: "https://www.online.net/"
 
     fields:
-        username: "text"
+        login: "text"
         password: "password"
         folderPath: "folder"
     models:
@@ -104,7 +104,7 @@ logIn = (requiredFields, bills, data, next) ->
         form =
             "_target_path": "https://console.online.net/en/account/home"
             "_submit": "Sign+in"
-            "_username": requiredFields.username
+            "_username": requiredFields.login
             "_password": requiredFields.password
             "_csrf_token": crsfToken
 

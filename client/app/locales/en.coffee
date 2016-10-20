@@ -42,6 +42,7 @@ module.exports =
     'vendorLink': "Website from which the data are imported: "
     'loginUrl': "Login URL"
     'token': "Token"
+    'refreshToken': "Refresh Token"
 
     'home headline': """
     With Konnectors you can retrieve many data and save them into your Cozy.
