@@ -44,7 +44,6 @@ module.exports =
     'token': "Token"
     'refreshToken': "Mettre à jour le token"
 
-
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.
     De vos factures de téléphone aux données de votre balance connectée en passant par vos tweets. Configurez les connecteurs qui vous intéressent :
