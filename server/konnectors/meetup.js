@@ -1,7 +1,14 @@
 const request = require('request').defaults({ jar: true });
 const cheerio = require('cheerio');
 const ical = require('./ical_feed');
+const localization = require('../lib/localization_manager');
 
+const logger = require('printit')({
+  prefix: 'Meetup',
+  date: true,
+});
+
+const REQUEST_ERROR_KEY = 'request error';
 const baseKonnector = require('../lib/base_konnector');
 
 /**
@@ -13,7 +20,8 @@ module.exports = baseKonnector.createNew({
 
   fields: {
     login: 'text',
-    password: 'password'
+    password: 'password',
+    calendar: 'text'
   },
 
   models: [],
@@ -24,7 +32,11 @@ module.exports = baseKonnector.createNew({
 
 function login(requiredFields, billInfos, data, next) {
   request('https://secure.meetup.com/login/', (err, res, body) => {
-    if (err) return next(new Error(`Cannot get login page: ${err}`));
+    if (err) {
+      logger.error(err);
+      return next(localization.t(REQUEST_ERROR_KEY));
+    }
+
     const token = cheerio.load(body)('input[name=token]').val();
     const opts = {
       method: 'POST',
@@ -44,22 +56,27 @@ function login(requiredFields, billInfos, data, next) {
       }
     };
     request(opts, (err, res, body) => {
-      if (err) return next(new Error(`Cannot login into account: ${err}`));
-      // Didn't redirect till the end
-      else if (res.statusCode >= 300 && res.statusCode < 400) {
+      if (err) {
+        logger.error(err);
+        return next(localization.t(REQUEST_ERROR_KEY));
+      } else if (res.statusCode === 200) {
+        // 200 if credentials are incorrect
+        return next(localization.t('bad credentials'));
+      } else if (res.statusCode >= 300 && res.statusCode < 400) {
+        // Didn't redirect till the end
         request(res.headers.location, (err, res, body) => {
-          sendToICalKonnector(body, next);
+          sendToICalKonnector(body, requiredFields.calendar, next);
         });
       } else {
         // Already connected
-        sendToICalKonnector(body, next);
+        sendToICalKonnector(body, requiredFields.calendar, next);
       }
     });
   });
 }
 
 
-function sendToICalKonnector(body, next) {
+function sendToICalKonnector(body, calendar, next) {
   const icalUrl = cheerio.load(body)('li.ical-supported > a.export-feed-option').attr('href');
-  ical.fetch({ url: icalUrl, calendar: 'meetup' }, next);
+  ical.fetch({ url: icalUrl, calendar: calendar }, next);
 }

@@ -136,6 +136,7 @@ module.exports =
     'konnector description vente_privee' : 'Télécharge toutes vos factures depuis le site internet vente-privee.com. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l\'application Files soit installée sur votre Cozy.'
     'konnector description podcast': 'Téléchargez vos podcasts audios préférés depuis leurs flux RSS. Les importations peuvent prendre du temps.'
     'konnector description materiel_net': "Télécharge vos factures Materiel.net. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
+    'konnector description meetup': "Synchronise votre calendrier Meetup sur votre Cozy. Ce connecteur requiert l'application Calendrier."
 
     # Konnectors' notifications
     'notification import error': "une erreur est survenue pendant l'importation des données"
