@@ -2,6 +2,7 @@ const request = require('request').defaults({ jar: true });
 const cheerio = require('cheerio');
 const ical = require('./ical_feed');
 const localization = require('../lib/localization_manager');
+const Event = require('../models/event');
 
 const logger = require('printit')({
   prefix: 'Meetup',
@@ -24,7 +25,7 @@ module.exports = baseKonnector.createNew({
     calendar: 'text'
   },
 
-  models: [],
+  models: [Event],
   fetchOperations: [
     login
   ]
