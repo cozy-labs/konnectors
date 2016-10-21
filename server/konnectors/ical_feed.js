@@ -109,9 +109,12 @@ function saveEvents(requiredFields, entries, data, next) {
       }
     });
   }, (err) => {
+    if (err) {
+      connector.logger.info(err);
+      return next('error occurred during import.');
+    }
     connector.logger.info('Events are saved.');
-    connector.logger.info(err);
-    return next('error occurred during import.');
+    return next();
   });
 }
 
