@@ -1,7 +1,6 @@
 const request = require('request').defaults({ jar: true });
 const cheerio = require('cheerio');
 const ical = require('./ical_feed');
-const localization = require('../lib/localization_manager');
 const Event = require('../models/event');
 
 const logger = require('printit')({
@@ -35,7 +34,7 @@ function login(requiredFields, billInfos, data, next) {
   request('https://secure.meetup.com/login/', (err, res, body) => {
     if (err) {
       logger.error(err);
-      return next(localization.t(REQUEST_ERROR_KEY));
+      return next(REQUEST_ERROR_KEY);
     }
 
     const token = cheerio.load(body)('input[name=token]').val();
@@ -59,10 +58,10 @@ function login(requiredFields, billInfos, data, next) {
     request(opts, (err, res, body) => {
       if (err) {
         logger.error(err);
-        return next(localization.t(REQUEST_ERROR_KEY));
+        return next(REQUEST_ERROR_KEY);
       } else if (res.statusCode === 200) {
         // 200 if credentials are incorrect
-        return next(localization.t('bad credentials'));
+        return next('bad credentials');
       } else if (res.statusCode >= 300 && res.statusCode < 400) {
         // Didn't redirect till the end
         request(res.headers.location, (err, res, body) => {
