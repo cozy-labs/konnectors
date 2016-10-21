@@ -87,6 +87,7 @@ The connectors marked with :x: are known as currently broken.
 | SNCF              | Events          | Chocobozzz     | :white_check_mark:                                                     |
 | Google            | Events          | Cozy              | :white_check_mark:                                                     |
 | Isen              | Events, lessons | Cozy           | :white_check_mark:                                                     |
+| Meetup            | Events          | JbIPS          | :white_check_mark:                                                     |
 
 ## Productivity
 
