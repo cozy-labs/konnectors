@@ -17,13 +17,16 @@ module.exports =
             else if not konnector?
                 res.sendStatus 404
             else
-                konnector.injectEncryptedFields()
+                if konnector.shallRaiseEncryptedFieldsError()
+                    konnector.importErrorMessage = 'encrypted fields'
+                else
+                    konnector.injectEncryptedFields()
 
                 # Add customView field
-                konnectorModule = require "../konnectors/#{konnector.slug}"
+                    konnectorModule = require "../konnectors/#{konnector.slug}"
 
-                if konnectorModule.customView?
-                    konnector.customView = konnectorModule.customView
+                    if konnectorModule.customView?
+                        konnector.customView = konnectorModule.customView
 
                 req.konnector = konnector
                 next()
