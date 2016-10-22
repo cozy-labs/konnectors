@@ -1,6 +1,7 @@
 module.exports =
 
     'bad credentials': 'Bad credentials. Check the konnector fields and run the import again.'
+    'encrypted fields': 'The password(s) could not be decrypted. Please restart the application. If the problem persists, please contact the Konnectors maintener team' 
     'token not found': 'The token could not be retrieved'
     'key not found': 'Key not found'
     'request error': 'A request to the website failed, please see read the logs.'

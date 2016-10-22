@@ -1,6 +1,7 @@
 module.exports =
 
     'bad credentials': "Mauvais identifiants. Vérifiez les champs que vous avez renseignés."
+    'encrypted fields': "Le(s) mot(s) de passe n'a/ont pu être déchiffré(s). Veuillez redémarrer l'application. Si le problème persiste, veuillez contacter un mainteneur de Konnector"
     'token not found': "Le jeton n'a pas pu être récupéré"
     'key not found': 'Clé non trouvée'
     'request error': "Une requête au site web a échoué, veuillez lire les journaux de l'application."

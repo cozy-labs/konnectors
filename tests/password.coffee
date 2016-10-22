@@ -62,6 +62,16 @@ describe 'Injecting/Removing encrypted fields', ->
                 for name, value of @fields
                     accountKeys.should.containEql name
 
+    describe 'Still encrypted fields', ->
+        it 'when I call injectEncryptedFields on a konnector with still encrypted fields' , ->
+            @konnector = new Konnector
+                slug: 'test'
+                accounts: [username: "test"]
+                _passwordStillEncrypted: true
+
+        it 'the callback shall be called with "encrypted fields" as a parameter', ->
+            @konnector.injectEncryptedFields((message) => @result = message)
+            @result.should.equal 'encrypted fields'
 
     describe 'Removing fields', ->
 
@@ -156,4 +166,3 @@ describe 'Injecting/Removing encrypted fields', ->
         it 'and the password field should not be empty', ->
             expected = '[{}]'
             @konnector.password.should.equal expected
-
