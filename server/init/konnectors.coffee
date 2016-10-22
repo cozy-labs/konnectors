@@ -83,7 +83,8 @@ patch381 = (callback) ->
 patchOnlineNet = (callback) ->
     Konnector.request 'bySlug', key: 'online_net', (err, konnectors) ->
         return callback err if err
-
+        if not konnectors.length
+            callback()
         konnector = konnectors[0]
         accounts = konnector.accounts
         if accounts[0]? && accounts[0].username
