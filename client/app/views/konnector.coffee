@@ -23,12 +23,14 @@ module.exports = class KonnectorView extends BaseView
         @paths = options.paths or [ path: '/', id: '']
         @listenTo @model, 'change', @render
 
-
     # Build fields
     afterRender: =>
 
         slug = @model.get 'slug'
-        @values ?= @model.get('accounts') or [{}]
+
+        if not @values? or @values.length is @model.get('accounts').length
+            @values = @model.get('accounts') or [{}]
+
         errorMessage = @model.get 'importErrorMessage'
 
         @$el.addClass "konnector-#{slug}"
@@ -120,8 +122,8 @@ module.exports = class KonnectorView extends BaseView
         for i in [0..(@values.length - 1)]
             values.push @getFieldValues i
         values.push {}
-        @values = values
 
+        @values = values
         @render()
         @$('#add-button').hide() if @values.length > 4
 
@@ -148,14 +150,18 @@ module.exports = class KonnectorView extends BaseView
 
         for name, val of @model.get 'fields'
 
+            id = "##{slug}-#{name}#{index}-input"
             # For folder fields, it requires to convert the value (a folder
             # id) to a folder path.
             if val is 'folder'
                 fieldValues[name] = @getFolderPath slug, name, index
-
+            else if val is 'link'
+                fieldValues[name] = $(id).attr 'href'
+            else if val is 'label'
+                fieldValues[name] = $(id).text()
             # For simple fields, just get the value of the field.
             else
-                fieldValues[name] = $("##{slug}-#{name}#{index}-input").val()
+                fieldValues[name] = $(id).val()
         fieldValues
 
 
