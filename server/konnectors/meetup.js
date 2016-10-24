@@ -78,5 +78,5 @@ function login(requiredFields, billInfos, data, next) {
 
 function sendToICalKonnector(body, calendar, next) {
   const icalUrl = cheerio.load(body)('li.ical-supported > a.export-feed-option').attr('href');
-  ical.fetch({ url: icalUrl, calendar: calendar }, next);
+  ical.fetch({ url: icalUrl, calendar }, next);
 }
