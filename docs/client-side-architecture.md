@@ -4,6 +4,7 @@ Cozy Konnectors client-side app architecture
 Current state
 -------------
 
+- CoffeeScript codebase
 - Backbone app
 - Simple structure
 - Oignon architecture
@@ -54,7 +55,7 @@ The konnector client-side app should provides the following features:
 
 ### Technical recommendation
 
-We suggest to build the new version of Konnector client-side app using _Vue.js_ with _vue-router_ and _vue-resource_ for the app logics, and Webpack for the packaging tool along the Vue-loader webpack's loader.
+We suggest to build the new version of Konnector client-side app in ES6, using _Vue.js_ with _vue-router_ and _vue-resource_ for the app logics, and Webpack for the packaging tool along the Vue-loader webpack's loader.
 
 Vue.js is a frontend reactive framework useful to build good shaped interfaces and is built with design in mind. It doesn't need any complicated source logics (such as immutables sources, stores, etc) and instead keep focused on how to design components efficiently. Vue-router is its attached routing library, which makes URL based Ui really simple to develop.
 
@@ -62,10 +63,10 @@ The Components approch of Vue.js, and its native filtering capabilities makes it
 
 - Main collection views (wizard, categories, configured konnectors…)
 - Ui components (input fields, secured fields, directory-selectors, interval-timer…)
-- Information subview (what does this konnector do?)
-- Configuration subview, which can be a dedicated one of the default built-in version
+- Informational subview (what does this konnector do?)
+- Configuration subview, which can be fully configured from the server side, or us a default template if none is provided
 
-A clever approach furbished by Vue.js ecosystem is the Vue-loader webpack's loader: it allows to  wrap in a single file all the needs to a dedicated component: template (markup), styles, and JS logics. This will allow community developers that need to create a custom view for their konnectors to wrap in one place all their behaviors, which will simplify contribution and maintenance, and will bring much more flexibility when we want to add features.
+A clever approach furbished by Vue.js ecosystem is the Vue-loader webpack's loader: it allows to  wrap in a single file all the needs to a dedicated component: template (markup), styles, and JS logics. This will allow community developers that need to create a custom component to wrap in one place all their behaviors, which will simplify contribution and maintenance, and will bring much more flexibility when we want to add features.
 
 
 ### Core API
@@ -101,6 +102,8 @@ The core should provide a set of components ready to be used by konnectors:
 - password field
 - directory selector
 - interval timer selector
+- configurable selector
+- date picker
 
 
 ### Default konnector view
@@ -111,6 +114,13 @@ The default konnector view, which can be used by any konnector which doesn't nee
 - password
 - directory
 - timer
+
+
+### Custom views
+
+If the konnector developer need a more customized template, it can be configured inside the konnector itself and served by the stack behind an endpoint, in JSON configuration format.
+
+On the client-side, it means a konnector view is a generic view which loop on configured fields as served from the endpoint, and then build dynamically the template, using the reserved `<component :is="username" />` element syntax.
 
 
 ### Collections views
