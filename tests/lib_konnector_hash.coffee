@@ -9,6 +9,8 @@ describe 'Konnector Hash', ->
 
     konnectorPath = path.join __dirname, '..', 'server', 'konnectors'
     moduleFiles = fs.readdirSync konnectorPath
+      # Remove hidden files (a.k.a. thoses starting with '.')
+      .filter (filename) -> filename.charAt(0) != '.'
 
     it 'gives the konnector modules', ->
         expectedLength = moduleFiles.length

@@ -10,7 +10,9 @@ describe 'Check all konnectors', ->
     listOfKonnectors = fs.readdirSync konnectorsDirectory
     listOfLocales = fs.readdirSync localesDirectory
 
-    listOfKonnectors.forEach (filename) ->
+    # Remove hidden files (a.k.a. thoses starting with '.')
+    listOfKonnectors.filter (filename) -> filename.charAt(0) != '.'
+    .forEach (filename) ->
         subString = filename.split('.')
         name = subString[0]
         describe name, ->
