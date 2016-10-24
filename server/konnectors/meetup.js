@@ -26,7 +26,8 @@ module.exports = baseKonnector.createNew({
 
   models: [Event],
   fetchOperations: [
-    login
+    login,
+    logout
   ]
 });
 
@@ -79,4 +80,16 @@ function login(requiredFields, billInfos, data, next) {
 function sendToICalKonnector(body, calendar, next) {
   const icalUrl = cheerio.load(body)('li.ical-supported > a.export-feed-option').attr('href');
   ical.fetch({ url: icalUrl, calendar }, next);
+}
+
+function logout(requiredFields, billInfos, data, next) {
+  request('https://www.meetup.com/fr-FR/logout/', (err, res) => {
+    if (err) {
+      return next(err);
+    }
+    if (res.statusCode === 302) {
+      logger.info('Discnonected');
+    }
+    return next();
+  });
 }
