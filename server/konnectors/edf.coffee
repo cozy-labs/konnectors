@@ -3,6 +3,7 @@ request = require 'request'
 async = require 'async'
 moment = require 'moment'
 cozydb = require 'cozydb'
+
 localization = require '../lib/localization_manager'
 
 updateOrCreate = require '../lib/update_or_create'
@@ -22,7 +23,6 @@ logger = require('printit') {
     prefix: 'EDF'
     date: true
 }
-
 
 # Requests
 
@@ -48,7 +48,6 @@ getEDFToken = (requiredFields, entries, data, callback) ->
             ]
 
     edfRequestPost path, body, (err, result) ->
-        console.log('edfRequestPost.success', err, result)
         return callback err if err
 
         token = getF result['ns:msgReponse'], 'ns:corpsSortie', 'ns:jeton'
@@ -187,7 +186,7 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
                     OFFRE_TPN: 'TPN'
                 , getF(offreSouscriteObj, 'tns:NomOffre')
 
-                contract.troubleshootingPhone = getF offreSouscriteObj
+                contract.numeroDepannage = getF offreSouscriteObj
                 , 'tns:NumeroDepannageContrat'
 
                 switch contract.energie
@@ -1176,7 +1175,6 @@ K = module.exports = require('../lib/base_konnector').createNew
 
     fetchOperations: [
         prepareEntries
-
         getEDFToken
         fetchListerContratClientParticulier
         fetchVisualiserPartenaire
