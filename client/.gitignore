@@ -5,3 +5,7 @@ node_modules/
 # Locales
 locales/
 !locales/en.json
+
+
+# Default
+!.gitkeep
