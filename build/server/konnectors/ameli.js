@@ -42,10 +42,11 @@ checkLogin = function(requiredFields, billInfos, data, next) {
 };
 
 logIn = function(requiredFields, billInfos, data, next) {
-  var form, loginUrl, options, reimbursementUrl, submitUrl;
-  loginUrl = "https://assure.ameli.fr/PortailAS/appmanager/PortailAS/" + "assure?_nfpb=true&_pageLabel=as_login_page";
+  var form, loginUrl, options, refererUrl, reimbursementUrl, submitUrl;
+  loginUrl = "https://assure.ameli.fr/PortailAS/appmanager/PortailAS/" + "assure?_somtc=true";
   submitUrl = "https://assure.ameli.fr/PortailAS/appmanager/PortailAS/" + "assure?_nfpb=true&_windowLabel=connexioncompte_2&connexioncompte_2_" + "actionOverride=/portlets/connexioncompte/validationconnexioncompte&" + "_pageLabel=as_login_page";
-  reimbursementUrl = "https://assure.ameli.fr/PortailAS/appmanager/" + "PortailAS/assure?_nfpb=true&_pageLabel=as_dernier_paiement_page";
+  reimbursementUrl = "https://assure.ameli.fr/PortailAS/appmanager/" + "PortailAS/assure?_nfpb=true&_pageLabel=as_paiements_page";
+  refererUrl = "https://assure.ameli.fr/PortailAS/appmanager/" + "PortailAS/assure?_nfpb=true&_pageLabel=as_login_page";
   form = {
     "connexioncompte_2numSecuriteSociale": requiredFields.login,
     "connexioncompte_2codeConfidentiel": requiredFields.password,
@@ -60,99 +61,146 @@ logIn = function(requiredFields, billInfos, data, next) {
   };
   return request(options, function(err, res, body) {
     var loginOptions;
-    if (err != null) {
-      return next(err);
+    if (err) {
+      log.error(err);
+      return next('request error');
+    } else {
+      loginOptions = {
+        method: 'POST',
+        form: form,
+        jar: true,
+        strictSSL: false,
+        url: submitUrl,
+        headers: {
+          'Cookie': res.headers['set-cookie'],
+          'Referer': refererUrl
+        }
+      };
+      return request(loginOptions, function(err, res, body) {
+        var reimbursementOptions;
+        if (err) {
+          log.error(err);
+          return next('bad credentials');
+        } else if (body.indexOf('Connexion à mon compte') > -1) {
+          log.error('Authentication error');
+          return next('bad credentials');
+        } else {
+          reimbursementOptions = {
+            method: 'GET',
+            jar: true,
+            strictSSL: false,
+            headers: {
+              'Cookie': res.headers['set-cookie'],
+              'Referer': refererUrl
+            },
+            url: reimbursementUrl
+          };
+          return request(reimbursementOptions, function(err, res, body) {
+            if (err) {
+              log.error(err);
+              return next('request error');
+            } else {
+              data.html = body;
+              return next();
+            }
+          });
+        }
+      });
     }
-    loginOptions = {
-      method: 'POST',
-      form: form,
-      jar: true,
-      strictSSL: false,
-      url: submitUrl,
-      headers: {
-        'Cookie': res.headers['set-cookie'],
-        'Referer': 'https://assure.ameli.fr/PortailAS/appmanager/' + 'PortailAS/assure?_nfpb=true&_pageLabel=' + 'as_login_page'
-      }
-    };
-    return request(loginOptions, function(err, res, body) {
-      var isNotLogedIn, reimbursementOptions;
-      isNotLogedIn = body.indexOf('Connexion à mon compte') > -1;
-      if (err || isNotLogedIn) {
-        log.error("Authentification error");
-        return next('bad credentials');
-      } else {
-        reimbursementOptions = {
-          method: 'GET',
-          jar: true,
-          strictSSL: false,
-          url: reimbursementUrl
-        };
-        return request(reimbursementOptions, function(err, res, body) {
-          if (err) {
-            return next(err);
-          } else {
-            data.html = body;
-            return next();
-          }
-        });
-      }
-    });
   });
 };
 
 parsePage = function(requiredFields, healthBills, data, next) {
-  var $;
+  var $, baseUrl, billOptions, billUrl, endDate, startDate;
   healthBills.fetched = [];
   if (data.html == null) {
     return next();
   }
   $ = cheerio.load(data.html);
-  $('#tabDerniersPaiements tbody tr').each(function() {
-    var amount, bill, date, detailsUrl, subtype;
-    date = $($(this).find('td').get(0)).text();
-    subtype = $($(this).find('td').get(1)).text();
-    amount = $($(this).find('td').get(2)).text();
-    amount = amount.replace(' euros', '').replace(',', '.');
-    amount = parseFloat(amount);
-    detailsUrl = $($(this).find('td a').get(1)).attr('href');
-    detailsUrl = detailsUrl.replace(':443', '');
-    bill = {
-      amount: amount,
-      type: 'health',
-      subtype: subtype,
-      date: moment(date, 'DD/MM/YYYY'),
-      vendor: 'Ameli',
-      detailsUrl: detailsUrl
-    };
-    if (bill.amount != null) {
-      return healthBills.fetched.push(bill);
+  startDate = $('#paiements_1dateDebut').attr('value');
+  endDate = $('#paiements_1dateFin').attr('value');
+  baseUrl = "https://assure.ameli.fr/PortailAS/paiements.do?actionEvt=";
+  billUrl = baseUrl + "afficherPaiementsComplementaires&DateDebut=";
+  billUrl += startDate + "&DateFin=" + endDate;
+  billUrl += "&Beneficiaire=tout_selectionner&afficherReleves=false&" + "afficherIJ=false&afficherInva=false&afficherRentes=false&afficherRS=" + "false&indexPaiement=&idNotif=";
+  billOptions = {
+    jar: true,
+    strictSSL: false,
+    url: billUrl
+  };
+  return request(billOptions, function(err, res, body) {
+    var i;
+    if (err) {
+      log.error(err);
+      return next('request error');
+    } else {
+      $ = cheerio.load(body);
+      i = 0;
+      $('.blocParMois').each(function() {
+        return $('[id^=lignePaiement' + i++ + ']').each(function() {
+          var amount, attrInfos, bill, date, day, detailsUrl, idPaiement, indexGroupe, indexPaiement, label, lineId, month, naturePaiement, tokens;
+          amount = $($(this).find('.col-montant').get(0)).text();
+          amount = amount.replace(' €', '').replace(',', '.');
+          amount = parseFloat(amount);
+          month = $($(this).find('.col-date .mois').get(0)).text();
+          day = $($(this).find('.col-date .jour').get(0)).text();
+          date = day + ' ' + month;
+          moment.locale('fr');
+          date = moment(date, 'Do MMMM YYYY');
+          label = $($(this).find('.col-label').get(0)).text();
+          attrInfos = $(this).attr('onclick');
+          tokens = attrInfos.split("'");
+          idPaiement = tokens[1];
+          naturePaiement = tokens[3];
+          indexGroupe = tokens[5];
+          indexPaiement = tokens[7];
+          detailsUrl = baseUrl + "chargerDetailPaiements&";
+          detailsUrl += "idPaiement=" + idPaiement + "&";
+          detailsUrl += "naturePaiement=" + naturePaiement + "&";
+          detailsUrl += "indexGroupe=" + indexGroupe + "&";
+          detailsUrl += "indexPaiement=" + indexPaiement;
+          lineId = indexGroupe + indexPaiement;
+          bill = {
+            amount: amount,
+            type: 'health',
+            subtype: label,
+            date: date,
+            vendor: 'Ameli',
+            lineId: lineId,
+            detailsUrl: detailsUrl
+          };
+          if (bill.amount != null) {
+            return healthBills.fetched.push(bill);
+          }
+        });
+      });
+      return async.each(healthBills.fetched, getPdf, function(err) {
+        return next(err);
+      });
     }
-  });
-  return async.each(healthBills.fetched, getPdf, function(err) {
-    return next(err);
   });
 };
 
 getPdf = function(bill, callback) {
-  var detailsUrl, options;
-  detailsUrl = bill.detailsUrl;
-  options = {
-    method: 'GET',
+  var detailsOptions;
+  detailsOptions = {
     jar: true,
     strictSSL: false,
-    url: detailsUrl
+    url: bill.detailsUrl
   };
-  return request(options, function(err, res, body) {
-    var html, pdfUrl;
-    if ((err != null) || res.statusCode !== 200) {
-      return callback(new Error('Pdf not found'));
+  return request(detailsOptions, function(err, res, body) {
+    var $, pdfUrl;
+    if (err) {
+      log.error(err);
+      return callback('request error');
     } else {
-      html = cheerio.load(body);
-      pdfUrl = "https://assure.ameli.fr";
-      pdfUrl += html('.r_lien_pdf').attr('href');
-      pdfUrl = pdfUrl.replace(/(?:\r\n|\r|\n|\t)/g, '');
-      bill.pdfurl = pdfUrl;
-      return callback(null);
+      $ = cheerio.load(body);
+      pdfUrl = $('[id=liendowndecompte' + bill.lineId + ']').attr('href');
+      if (pdfUrl) {
+        pdfUrl = "https://assure.ameli.fr" + pdfUrl;
+        bill.pdfurl = pdfUrl;
+        return callback(null);
+      }
     }
   });
 };
@@ -172,10 +220,11 @@ buildNotification = function(requiredFields, healthBills, data, next) {
 };
 
 customLinkBankOperation = function(requiredFields, healthBills, data, next) {
-  var identifier;
+  var bankIdentifier, identifier;
   identifier = 'C.P.A.M.';
-  if (requiredFields.bank_identifier !== "") {
-    identifier = requiredFields.bank_identifier;
+  bankIdentifier = requiredFields.bank_identifier;
+  if ((bankIdentifier != null) && bankIdentifier !== "") {
+    identifier = bankIdentifier;
   }
   return linkBankOperation({
     log: log,

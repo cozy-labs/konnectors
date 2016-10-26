@@ -36,7 +36,7 @@ module.exports = {
   description: 'konnector description online_net',
   vendorLink: "https://www.online.net/",
   fields: {
-    username: "text",
+    login: "text",
     password: "password",
     folderPath: "folder"
   },
@@ -81,7 +81,7 @@ module.exports = {
 logIn = function(requiredFields, bills, data, next) {
   var billUrl, formUrl, loginOptions, loginUrl, userAgent;
   formUrl = 'https://console.online.net/en/login?o=1';
-  loginUrl = 'https://console.online.net/login_check';
+  loginUrl = 'https://console.online.net/en/login_check';
   billUrl = "https://console.online.net/en/bill/list";
   userAgent = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + 'Gecko/20100101 Firefox/36.0';
   loginOptions = {
@@ -96,14 +96,18 @@ logIn = function(requiredFields, bills, data, next) {
   return request(loginOptions, function(err, res, body) {
     var $, crsfToken, form;
     if (err) {
-      return next(err);
+      log.error(err);
+      return next('request error');
     }
     $ = cheerio.load(body);
     crsfToken = $('input[name="_csrf_token"]').val();
+    if (!crsfToken) {
+      return next('token not found');
+    }
     form = {
       "_target_path": "https://console.online.net/en/account/home",
       "_submit": "Sign+in",
-      "_username": requiredFields.username,
+      "_username": requiredFields.login,
       "_password": requiredFields.password,
       "_csrf_token": crsfToken
     };
@@ -120,7 +124,8 @@ logIn = function(requiredFields, bills, data, next) {
     return request(loginOptions, function(err, res, body) {
       var options;
       if (err) {
-        return next(err);
+        log.error(err);
+        return next('bad credentials');
       }
       log.info('Download bill HTML page...');
       options = {
@@ -133,7 +138,8 @@ logIn = function(requiredFields, bills, data, next) {
       };
       return request(options, function(err, res, body) {
         if (err) {
-          return next(err);
+          log.error(err);
+          return next('request error');
         }
         data.html = body;
         log.info('Bill page downloaded.');

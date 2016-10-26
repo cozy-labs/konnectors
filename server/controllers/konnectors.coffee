@@ -23,10 +23,17 @@ module.exports =
                     konnector.injectEncryptedFields()
 
                 # Add customView field
-                    konnectorModule = require "../konnectors/#{konnector.slug}"
+                konnectorModule = require(
+                    path.join(
+                        "../konnectors/",
+                        konnector.slug
+                    )
+                )
+                if konnectorModule.default?
+                    konnectorModule = konnectorModule.default
 
-                    if konnectorModule.customView?
-                        konnector.customView = konnectorModule.customView
+                if konnectorModule.customView?
+                    konnector.customView = konnectorModule.customView
 
                 req.konnector = konnector
                 next()

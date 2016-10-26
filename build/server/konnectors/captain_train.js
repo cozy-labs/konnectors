@@ -20,7 +20,7 @@ var logger = require('printit')({
 
 module.exports = baseKonnector.createNew({
   name: 'Captain Train',
-
+  vendorLink: 'www.captaintrain.com',
   fields: {
     login: 'email',
     password: 'password',
@@ -35,7 +35,7 @@ module.exports = baseKonnector.createNew({
     maxDateDelta: 1,
     model: Bill,
     amountDelta: 0.1,
-    identifier: ['CAPITAINE TRAIN', 'CAPTAIN TRAIN', 'OUIGO']
+    identifier: ['CAPITAINE TRAIN', 'CAPTAIN TRAIN', 'OUIGO', 'TRAINLINE']
   }), buildNotifContent]
 
 });

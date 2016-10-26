@@ -4,12 +4,7 @@ echo "Clean previous server"
 rm -rf build/server && mkdir -p build/server
 echo "Previous server cleaned."
 
-echo "Build server files..."
-./node_modules/.bin/coffee -cb --output build/server server
-./node_modules/.bin/coffee -cb --output build/ server.coffee
-./node_modules/.bin/babel ./server/konnectors -d build/server/konnectors
-./node_modules/.bin/babel ./server/lib -d build/server/lib
-echo "Server built."
+./scripts/build_server.sh
 
 echo "Clean previous client build..."
 rm -rf build/client && mkdir -p build/client/app

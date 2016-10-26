@@ -59,11 +59,13 @@
   },
   "scripts": {
     "build": "sh scripts/build.sh",
+    "build:server": "sh scripts/build_server.sh",
     "test": "sh scripts/lint.sh && sh scripts/tests.sh",
     "test:server": "sh scripts/tests.sh",
     "lint": "sh scripts/lint.sh",
     "start": "node build/server.js",
-    "prebuild": "npm install && cd client && npm install"
+    "prebuild": "npm install && cd client && npm install",
+    "dev_tools": "./node_modules/.bin/babel-node dev_tools.js"
   },
   "contributors": [
     "Alexandre Kalatzis",

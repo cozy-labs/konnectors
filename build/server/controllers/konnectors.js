@@ -20,8 +20,15 @@ module.exports = {
       } else if (konnector == null) {
         return res.sendStatus(404);
       } else {
-        konnector.injectEncryptedFields();
-        konnectorModule = require("../konnectors/" + konnector.slug);
+        if (konnector.shallRaiseEncryptedFieldsError()) {
+          konnector.importErrorMessage = 'encrypted fields';
+        } else {
+          konnector.injectEncryptedFields();
+        }
+        konnectorModule = require(path.join("../konnectors/", konnector.slug));
+        if (konnectorModule["default"] != null) {
+          konnectorModule = konnectorModule["default"];
+        }
         if (konnectorModule.customView != null) {
           konnector.customView = konnectorModule.customView;
         }

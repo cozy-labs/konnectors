@@ -90,32 +90,36 @@ logIn = function(requiredFields, billInfos, data, next) {
   };
   return request(logInOptions, function(err, res, body) {
     var $, token;
+    token = "";
     if (err) {
-      next(err);
+      log.info(err);
+    } else {
+      $ = cheerio.load(body);
+      token = $("input[name=authenticity_token]").val();
     }
-    $ = cheerio.load(body);
-    token = $("input[name=authenticity_token]").val();
+    if (!token) {
+      return next('token not found');
+    }
     signInOptions.form.authenticity_token = token;
     log.info('Logging in');
     return request(signInOptions, function(err, res, body) {
       if (err) {
-        log.error('Login failed');
-        return log.raw(err);
-      } else {
-        log.info('Login succeeded');
-        log.info('Fetch bill info');
-        return request(billOptions, function(err, res, body) {
-          if (err) {
-            log.error('An error occured while fetching bills');
-            console.log(err);
-            return next(err);
-          } else {
-            log.info('Fetch bill info succeeded');
-            data.html = body;
-            return next();
-          }
-        });
+        log.raw(err);
+        log.info('Login failed');
+        return next('bad credentials');
       }
+      log.info('Login succeeded');
+      log.info('Fetch bill info');
+      return request(billOptions, function(err, res, body) {
+        if (err) {
+          log.error('An error occured while fetching bills');
+          console.log(err);
+          return next('import server error');
+        }
+        log.info('Fetch bill info succeeded');
+        data.html = body;
+        return next();
+      });
     });
   });
 };

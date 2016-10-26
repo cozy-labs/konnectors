@@ -105,7 +105,7 @@ buildCommitDateHash = function(requiredFields, entries, data, next) {
     var commit, i, len;
     if (err) {
       log.error(err);
-      return next(err);
+      return next('request error');
     } else {
       for (i = 0, len = commits.length; i < len; i++) {
         commit = commits[i];
@@ -142,9 +142,9 @@ logCommits = function(requiredFields, entries, data, next) {
             log.info("Commit " + commit.sha + " not saved: no metadata.");
           }
           return callback();
-        } else if (commit.author.login !== username) {
+        } else if (commit.author.login.toLowerCase() !== username.toLowerCase()) {
           log.info(("Commit " + commit.sha + " not saved: ") + ("user is not author (" + commit.author.login + ")."));
-          return callback();
+          return callback('parsing error');
         } else {
           log.info("Saving commit " + commit.sha + "...");
           parent = null;
