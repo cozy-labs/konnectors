@@ -55,7 +55,7 @@ The konnector client-side app should provides the following features:
 
 ### Technical recommendation
 
-We suggest to build the new version of Konnector client-side app in ES6, using _Vue.js_ with _vue-router_ and _vue-resource_ for the app logics, and Webpack for the packaging tool along the Vue-loader webpack's loader.
+We suggest to build the new version of Konnector client-side app in [ES2015 (ES6)](https://babeljs.io/docs/learn-es2015/), using [_Vue.js_](https://vuejs.org/guide/) with [_vue-router_](https://router.vuejs.org/en/index.html) and [_vue-resource_](https://github.com/vuejs/vue-resource) for the app logics, and [Webpack](https://webpack.github.io/docs/) for the packaging tool along the [_vue-loader_](http://vue-loader.vuejs.org/en/index.html) webpack's loader.
 
 Vue.js is a frontend reactive framework useful to build good shaped interfaces and is built with design in mind. It doesn't need any complicated source logics (such as immutables sources, stores, etc) and instead keep focused on how to design components efficiently. Vue-router is its attached routing library, which makes URL based Ui really simple to develop.
 
@@ -66,7 +66,7 @@ The Components approch of Vue.js, and its native filtering capabilities makes it
 - Informational subview (what does this konnector do?)
 - Configuration subview, which can be fully configured from the server side, or us a default template if none is provided
 
-A clever approach furbished by Vue.js ecosystem is the Vue-loader webpack's loader: it allows to  wrap in a single file all the needs to a dedicated component: template (markup), styles, and JS logics. This will allow community developers that need to create a custom component to wrap in one place all their behaviors, which will simplify contribution and maintenance, and will bring much more flexibility when we want to add features.
+A clever approach furbished by Vue.js ecosystem is the _vue-loader_ webpack's loader: it allows to  wrap in a single file all the needs to a dedicated component: template (markup), styles, and JS logics. This will allow community developers that need to create a custom component to wrap in one place all their behaviors, which will simplify contribution and maintenance, and will bring much more flexibility when we want to add features.
 
 
 ### Core API
