@@ -1,0 +1,3 @@
+[submodule "server/konnectors/weboob/cozyweboob"]
+	path = server/konnectors/weboob/cozyweboob
+	url = https://github.com/Phyks/cozyweboob
