@@ -1,0 +1,136 @@
+/*
+    CONTAINER
+*/
+.container
+    margin-left     14em
+    padding         2em 4em
+
+    .default
+        max-width 50em
+        font-size 1.1em
+
+        // circle on top of the box
+        $header-size = 306px
+        header
+            height              $header-size
+            width               $header-size
+            margin              1em auto
+            background-image    url('../images/illustrations/illustrations-konnectors.svg')
+            background-position center center
+            background-repeat   no-repeat
+
+    .konnector
+        margin-bottom 30px
+        padding-bottom 10px
+        text-align left
+
+        h2
+            margin 0
+
+        h2.name
+            margin-bottom 0.2em
+
+        div.description
+            margin    1em 0 4em 0
+            font-size 1em
+            color #666
+            max-width 500px
+
+        div.vendorLink
+            margin    1em 0 4em 0
+            font-size 1em
+            color #666
+            max-width 500px
+
+        button
+            max-width 500px
+            margin-bottom 0.5em
+
+        .field
+            margin 15px 0
+
+        .autoimport
+            min-width 200px
+            max-width 500px
+
+        .separator
+            margin-bottom 1em
+
+        .error
+            color red
+            font-weight bold
+            max-width 500px
+
+        .buttons
+            margin 4em 0 10px 0
+            button
+                outline none
+                &[aria-disabled=true]
+                    background #666
+                    color #bbb
+                &[aria-busy=true]
+                    cursor wait
+
+        .infos div
+            margin 5px 0
+
+        .folder-link
+            margin-top 5px
+            font-size 12px
+            color blue
+
+            &:hover
+                color blue - 10%
+
+        // Generated inputs styles
+        input
+        textarea
+        select
+            border 2px solid transparent
+            border-radius 2px
+            background #EAEEF2
+            width 100%
+            max-width 500px
+            padding 10px
+            font-size 15px
+            outline none
+            transition all 0.3s ease
+
+        input:hover
+        textarea:hover
+            border-color #ACB8C5
+
+        input:focus
+        textarea:focus
+            border-color blue
+            background white
+
+        .small
+            padding 0.5em
+            font-size 0.6em
+
+        #import-button
+            width 100%
+            max-width 500px
+
+    .danger-zone
+        h3
+            margin-top 3em
+            margin-bottom 1em
+            font-size 20px
+            text-transform uppercase
+            color #999
+
+        button
+            background transparent
+            color red
+            text-transform none
+            padding 0
+
+            &:hover
+                text-decoration underline
+
+            &:active
+            &:focus
+               box-shadow none
+

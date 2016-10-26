@@ -1,0 +1,37 @@
+<!-- .konnector -->
+
+h2.name
+    #menu-toggler
+        .fa.fa-bars
+    span.service-icon
+    span #{model.name}
+
+.description!= t(model.description)
+.vendorLink
+.fields
+div.add-buttons
+    button.small#add-button #{t('add an account')}
+    button.small#remove-button #{t('remove last account')}
+.buttons.config
+    button#import-button #{t('save and import')}
+
+if model.importErrorMessage && !model.isImporting
+    .error
+        span.error=t('error occurred during import:') + ' '
+            span.message=t(model.importErrorMessage)
+
+.status #{status}
+.infos
+    .date
+        span.label #{t('last import:')}&nbsp;
+        span.last-import
+    .datas
+        | #{t('imported data:')}&nbsp;
+        for name in model.modelNames
+            a(href="/apps/databrowser/#search/all/#{name}", target="_blank")
+                  |#{name}&nbsp;
+
+.danger-zone
+    h3= t('konnector danger zone')
+    button#delete-button= t('konnector delete credentials')
+

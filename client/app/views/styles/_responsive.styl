@@ -1,0 +1,74 @@
+// Landscape phones and down
+@media (max-width: 480px)
+
+    // nothing
+
+
+// Landscape phone to portrait tablet
+@media (max-width: 767px)
+
+    body
+        text-rendering optimizeSpeed
+        overflow hidden
+
+    #menu-toggler
+        display inline-block
+
+    #menu
+    .container
+        transition transform .25s ease-in-out
+        position absolute
+        top 0
+
+    #menu
+        transform translateX(-100%)
+        width 80%
+
+        &.active
+            transform translateX(0)
+
+    #menu.active ~ .container
+        transform translateX(80%)
+
+    .container
+        position absolute
+        width 100%
+        margin-left 0
+        padding 0
+
+        .description
+            font-size 1em
+
+        #default
+        .konnector
+            padding 0 25px
+
+        .service-icon
+            display none
+
+        h2
+            font-size 1.6rem
+
+            .fa
+                font-size 1.8rem
+
+        button
+            width 100%
+
+
+// Portrait tablet to landscape and desktop
+@media (min-width: 768px) and (max-width: 979px)
+    // nothing
+
+
+// Large desktop
+@media (min-width: 1200px)
+    // nothing
+
+// XLarge desktop
+@media (min-width: 1600px)
+    .container
+        margin-left 20em
+
+    .menu
+        width 20em

@@ -1,0 +1,64 @@
+/*
+    MENU
+*/
+.menu
+    width      14em
+    float      left
+    background #EAEEF2
+    height     100%
+    position   fixed
+    overflow   auto
+
+    ul
+        margin          0.4em 0
+        padding         0
+        list-style-type none
+
+        li
+            display     block
+            font-family regular
+            font-weight normal
+            position    relative
+
+            &.configured a
+                color #333
+
+            a
+                display         flex
+                align-items     center
+                outline         none
+                width           100%
+                height          100%
+                border-right    1px solid #f2f2f2
+                padding         0.8em 1em
+                text-decoration none
+                color           #999
+
+                &:hover
+                    background #e5e5e5
+
+                .last-import
+                    display     block
+                    width       100%
+                    height      100%
+                    font-size   0.7em
+                    line-height 1.3em
+                    color       #777
+
+                .fa-warning
+                .spinholder
+                    position absolute
+                    right    20px
+
+                .spinholder
+                    top 8px
+
+                .fa-warning
+                    top   15px
+                    color red
+
+            &.selected a
+                background   #fff
+                color        #111
+                font-weight  bold
+
