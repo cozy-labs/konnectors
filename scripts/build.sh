@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 
+export PATH="./node_modules/.bin:$PATH"
+export OPTIMIZE=true
+
+
 echo "Clean previous server"
 rm -rf build/server && mkdir -p build/server
 echo "Previous server cleaned."
 
 echo "Build server files..."
-./node_modules/.bin/coffee -cb --output build/server server
-./node_modules/.bin/coffee -cb --output build/ server.coffee
-./node_modules/.bin/babel ./server/konnectors -d build/server/konnectors
-./node_modules/.bin/babel ./server/lib -d build/server/lib
+coffee -cb --output build/server server
+coffee -cb --output build/ server.coffee
+babel ./server/konnectors -d build/server/konnectors
+babel ./server/lib -d build/server/lib
 echo "Server built."
 
 echo "Clean previous client build..."
@@ -16,17 +20,19 @@ rm -rf build/client && mkdir -p build/client/app
 echo "Previous client cleaned."
 
 echo "Build entry point..."
-./node_modules/.bin/jade ./client/index.jade -c --out ./build/client/
+mkdir -p ./build/server/views
+jade --client --no-debug --hierarchy --out ./build/server ./server
 echo "var jade = require('jade/runtime');module.exports=" | \
-    cat - ./build/client/index.js > ./build/client/index.js.tmp
-mv ./build/client/index.js.tmp ./build/client/index.js
+    cat - ./build/server/views/index.js > ./build/server/views/index.js.tmp
+mv ./build/server/views/index.js.tmp ./build/server/views/index.js
 echo "Entry point built."
 
 echo "Build locales..."
-./node_modules/.bin/coffee -cb --output build/client/app/locales ./client/app/locales
+cp -r ./client/app/locales ./build/client/app/
 echo "Locales built."
 
 echo "Build client..."
-cd client/ && npm i && ./node_modules/.bin/brunch build --production && cd ..
-cp -R client/public build/client/
+cd ./client
+npm install
+webpack
 echo "Client built."
