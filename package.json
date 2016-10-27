@@ -64,6 +64,7 @@
     "test": "sh scripts/lint.sh && sh scripts/tests.sh",
     "test:server": "sh scripts/tests.sh",
     "lint": "sh scripts/lint.sh",
+    "prewatch:client": "cd client && npm install",
     "start": "node build/server.js",
     "watch": "npm-run-all --parallel 'watch:*'",
     "watch:client": "cd client && webpack --display-modules --display-chunks --watch",
