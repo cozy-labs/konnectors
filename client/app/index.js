@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import VuePolyglot from './plugins/vue-polyglot'
 
 import app from './app'
 
@@ -7,6 +8,7 @@ import foo from './components/examples/foo'
 import bar from './components/examples/bar'
 
 Vue.use(VueRouter)
+Vue.use(VuePolyglot)
 
 
 const routes = [
