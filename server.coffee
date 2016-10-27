@@ -31,7 +31,14 @@ application = module.exports = (callback) ->
                 log.info 'Import poller started.'
                 callback(app, server) if callback?
 
+        # Try to get assets definitions from root
+        # (only valid in build, not on watch mode)
+        try
+            hash = ".#{require('./assets').hash}"
+        catch
+            hash = ''
+        app.locals.hash = hash
+
 
 if not module.parent
     application()
-
