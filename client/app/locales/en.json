@@ -132,5 +132,11 @@
   "konnector deletion error": "An error occured while deleting this konnector configuration.",
   "calendar": "Calendar in which events will be imported",
   "url": "Target URL",
-  "tag": "Tag"
+  "tag": "Tag",
+
+  "my_accounts title": "My accounts",
+  "my_accounts category title": "Categories",
+  "my_accounts discovery title": "Discovery",
+  "my_accounts connected title": "Connected",
+  "my_accounts coming_soon": "Coming soon!"
 }
