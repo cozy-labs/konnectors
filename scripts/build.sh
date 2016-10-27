@@ -8,6 +8,10 @@ echo "Clean previous server"
 rm -rf build/server && mkdir -p build/server
 echo "Previous server cleaned."
 
+echo "Pull locales from Transifex"
+tx pull -a
+echo "Locales updated."
+
 echo "Build server files..."
 coffee -cb --output build/server server
 coffee -cb --output build/ server.coffee
