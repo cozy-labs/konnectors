@@ -54,6 +54,7 @@
     "minimist": "1.2.0",
     "mocha": "3.0.2",
     "nock": "8.0.0",
+    "nodemon": "1.11.0",
     "npm-run-all": "3.1.1",
     "should": "11.1.0",
     "sinon": "1.17.5",
@@ -68,7 +69,7 @@
     "start": "node build/server.js",
     "watch": "npm-run-all --parallel 'watch:*'",
     "watch:client": "cd client && webpack --display-modules --display-chunks --watch",
-    "watch:server": "coffee server.coffee"
+    "watch:server": "nodemon --debug --ignore client/ server.coffee"
   },
   "contributors": [
     "Alexandre Kalatzis",
