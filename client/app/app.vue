@@ -1,8 +1,7 @@
 <template lang="pug">
     div(role="application")
-        h1 {{ 'my_accounts title' | t }}
-
         nav(role="navigation")
+            h4 {{ 'my_accounts title' | t }}
             ul
                 li
                     router-link(to="/discovery")
@@ -22,4 +21,5 @@
 
 <style lang="stylus">
 @import "../node_modules/normalize.css/normalize.css";
+@import "styles/layout.styl"
 </style>
