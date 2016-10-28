@@ -71,7 +71,7 @@ let loaders = [
 let plugins = [
     new ExtractTextPlugin(optimize? 'app.[hash].css' : 'app.css'),
     new CopyPlugin([
-        { from: 'vendor/assets' }
+        { from: 'vendor/assets', ignore: ['.gitkeep'] }
     ])
 ];
 
