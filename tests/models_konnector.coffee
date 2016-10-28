@@ -29,23 +29,26 @@ describe 'Konnector model', ->
                 emit doc._id, doc
                 return
             Konnector.defineRequest 'all', map, ->
+                map = (doc) ->
+                    emit doc.slug, doc
+                    return
+                Konnector.defineRequest 'bySlug', map, ->
+                    createKonnectors ->
+                        konnectorHash['test'] =
+                            name: 'Test'
+                            slug: 'test'
+                            fields:
+                                login: 'text'
+                                password: 'password'
+                            fetch: (values, callback) ->
+                                importDone++
+                                callback()
+                            models:
+                                bills: Bill
+                                commits: Commit
+                            init: ->
 
-                createKonnectors ->
-                    konnectorHash['test'] =
-                        name: 'Test'
-                        slug: 'test'
-                        fields:
-                            login: 'text'
-                            password: 'password'
-                        fetch: (values, callback) ->
-                            importDone++
-                            callback()
-                        models:
-                            bills: Bill
-                            commits: Commit
-                        init: ->
-
-                    done()
+                        done()
 
 
     after (done) ->
@@ -140,9 +143,8 @@ describe 'Konnector model', ->
         konnector.accounts.push
             login: 'login3'
 
-        konnector.import ->
+        konnector.import (err) ->
             importDone.should.equal 6
             should.exist konnector.lastImport
             konnector.isImporting.should.equal false
             done()
-
