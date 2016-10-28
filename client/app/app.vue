@@ -1,6 +1,10 @@
 <template lang="pug">
     div(role="application")
-        h1 Hello World
+        ul
+            li: router-link(to="/foo") foo
+            li: router-link(to="/bar") bar
+
+        router-view
 </template>
 
 
