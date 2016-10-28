@@ -5,15 +5,15 @@ html(lang=locale)
   meta(name="viewport", content="width=device-width, initial-scale=1")
 
   title Cozy - Konnectors
-  
+
   link(rel="stylesheet" href="/fonts/fonts.css")
-  link(rel="stylesheet" href="app#{hash}.css")
+  link(rel="stylesheet" href=`app${hash}.css`)
 
   if imports
     script.
       window.initKonnectors = !{JSON.stringify(imports.konnectors)}
       window.initFolders = !{JSON.stringify(imports.folders)}
-  script(src="app#{hash}.js" defer=true)
+  script(src=`app${hash}.js` defer=true)
 
   div(role="application")
-    
+

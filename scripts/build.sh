@@ -25,9 +25,9 @@ echo "Previous client cleaned."
 
 echo "Build entry point..."
 mkdir -p ./build/server/views
-jade --client --no-debug --hierarchy --out ./build/server ./server
-echo "var jade = require('jade/runtime');module.exports=" | \
-    cat - ./build/server/views/index.js > ./build/server/views/index.js.tmp
+pug --client --no-debug --out ./build/server ./server
+echo "; module.exports = template" | \
+    cat ./build/server/views/index.js - > ./build/server/views/index.js.tmp
 mv ./build/server/views/index.js.tmp ./build/server/views/index.js
 echo "Entry point built."
 
