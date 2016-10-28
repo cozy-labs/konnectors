@@ -128,6 +128,8 @@ $ npm run watch
 
 and point your browser to http://localhost:9358.
 
+For more information about how to build konnectors, just take a look at our [wiki].
+
 
 ### Run it inside the VM
 
@@ -194,7 +196,7 @@ Localization and translations are handled by [Transifex][tx], which is used by a
 
 As a _translator_, you can login to [Transifex][tx-signin] (using your Github account) and claim an access to the [app repository][tx-app]. Locales are pulled when app is build before publishing.
 
-As a _developer_, you must [configure the transifex client][tx-client], and claim an access as _maintainer_ is the [app repository][tx-app]. Then please **only update** the source locale file (usually `en.json` in client and/or server parts), and push it to Transifex repository using the `tx push` command.
+As a _developer_, you must [configure the transifex client][tx-client], and claim an access as _maintainer_ is the [app repository][tx-app]. Then please **only update** the source locale file (usually `en.json` in client and/or server parts), and push it to Transifex repository using the `tx push -s` command.
 
 
 ### Maintainer
@@ -212,7 +214,7 @@ You can reach the Cozy Community by:
 - Say Hi! on [Twitter]
 
 
-Licence
+License
 -------
 
 Cozy MyAccounts is developed by Cozy Cloud and distributed under the [AGPL v3 license][agpl-3.0].
@@ -221,6 +223,7 @@ Cozy MyAccounts is developed by Cozy Cloud and distributed under the [AGPL v3 li
 
 [cozy]: https://cozy.io "Cozy Cloud"
 [setup]: https://dev.cozy.io/#set-up-the-development-environment "Cozy dev docs: Set up the Development Environment"
+[wiki]: https://github.com/cozy-labs/konnectors/wiki#steps-to-write-a-new-konnector
 [doctypes]: https://dev.cozy.io/#main-document-types
 [bill-doctype]: https://github.com/cozy-labs/konnectors/blob/master/server/models/bill.coffee
 [konnector-doctype]: https://github.com/cozy-labs/konnectors/blob/master/server/models/konnector.coffee
