@@ -3,6 +3,7 @@
 // creation : 11/06/2016
 // creator : https://github.com/SomeAverageDev
 */
+
 'use strict';
 
 const saveOnlyLastBill = false;

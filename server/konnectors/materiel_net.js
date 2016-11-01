@@ -97,11 +97,11 @@ function login(requiredFields, billInfos, data, next) {
       if (nbPages > 1) {
         let totalPagesParsed = 0;
         const billsList = $(billsTableSelector);
-        const _fetchPageFromIndex = idx => {
+        const _fetchPageFromIndex = (idx) => {
           const pageOptions = Object.create(billsOptions);
           pageOptions.url += `?page=${idx}`;
           logger.info(`Fetching page ${idx} of ${nbPages}…`);
-          fetchBillPageBillsList(pageOptions, rows => {
+          fetchBillPageBillsList(pageOptions, (rows) => {
             // We now reinsert the rows in the first page's list
             if (rows) {
               billsList.append(rows);
