@@ -42,6 +42,7 @@ const weboobKonnector = baseKonnector.createNew({
         parseData,
         customFilterExisting,
         customSaveDataAndFile,
+        cleanCozyWeboob,
         closeConversation,
         buildNotificationContent,
     ],
@@ -72,7 +73,7 @@ function fetchData(requiredFields, entries, data, next) {
     // Attach to error event
     data.client.on('error', function (err) {
         weboobKonnector.logger.error('An error occurred while fetching data.');
-        weboobKonnector.logger.raw(err);
+        weboobKonnector.logger.raw(err.stack);
     });
 
     // Send the fetch command
@@ -105,9 +106,10 @@ function parseData(requiredFields, entries, data, next) {
                 return;
             }
             let fieldData = moduleData[weboobType];
+            let downloaded_documents = moduleData.downloaded;
             // Convert all the available entries and store them in parsed
             // entries
-            let { cozyModel, parsedData } = Converters[weboobType](fieldData, moduleName);
+            let { cozyModel, parsedData } = Converters[weboobType](fieldData, moduleName, downloaded_documents);
             if (cozyModel !== undefined && parsedData !== undefined) {
                 data.parsedEntries[cozyModel] = [].concat(
                     data.parsedEntries[cozyModel] || [],
@@ -156,7 +158,7 @@ function customSaveDataAndFile(requiredFields, entries, data, next) {
         weboobKonnector.logger,
         Bill,
         fileOptions,
-        ['bill']
+        ['bill']  // TODO
     ) (
         requiredFields,
         entries,
@@ -170,20 +172,41 @@ function customSaveDataAndFile(requiredFields, entries, data, next) {
 
 
 /**
+ * cleanCozyWeboob
+ *
+ * Clean temporary files downloaded by CozyWeboob.
+ */
+function cleanCozyWeboob(requiredFields, entries, data, next) {
+    weboobKonnector.logger.info('Start cleaning temporary files from cozyweboob...');
+
+    // Send the clean command
+    data.client.send('POST /clean');
+
+    // Attach to first message event
+    data.client.once('message', function (message) {
+        // Store fetched entries
+        weboobKonnector.logger.info('Done cleaning temporary files from cozyweboob:');
+        weboobKonnector.logger.raw(message);
+        next();
+    });
+}
+
+
+/**
  * closeConversation
  *
  * Close the conversation channel with the cozyweboob Python script.
  */
 function closeConversation(requiredFields, entries, data, next) {
-    weboobKonnector.logger.info('Closing conversation with cozyweboob...');
+    weboobKonnector.logger.info('Start closing conversation with cozyweboob...');
     // Remove all error listeners at this point, error are treated directly in the end function.
     data.client.removeAllListeners('error');
     data.client.end(function (message) {
         if (message.exitCode != 0) {
-            weboobKonnector.logger.error('Error when closing the conversation with cozyweboob.');
+            weboobKonnector.logger.error('Error while closing the conversation with cozyweboob:');
             weboobKonnector.logger.raw(err);
         }
-        weboobKonnector.logger.info('Conversation with cozyweboob closed.');
+        weboobKonnector.logger.info('Done closing conversation with cozyweboob!');
         next();
     });
 }

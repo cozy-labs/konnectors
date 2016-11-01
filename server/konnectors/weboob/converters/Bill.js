@@ -14,18 +14,29 @@ import Bill from '../../../models/bill';
 
 const BillConverters = {
     // Conversion functions for CapDocument items to Bill
-    'subscriptions': function (data, moduleName) {  // Weboob type: Subscription
+    'subscriptions': function (data, moduleName, downloaded_documents={}) {  // Weboob type: Subscription
         // Do nothing for subscriptions
         return {
             cozyModel: undefined,
             parsedData: undefined,
         };
     },
-    'bills': function (data, moduleName) {  // Weboob type: Bill
+    'documents': function (data, moduleName, downloaded_documents={}) {  // Weboob type: Document
+        // Do nothing for subscriptions
+        return {
+            cozyModel: undefined,
+            parsedData: undefined,
+        };
+    },
+    'bills': function (data, moduleName, downloaded_documents={}) {  // Weboob type: Bill
         var parsedBills = [];
         Object.keys(data).forEach(function (subscriptionID) {
             data[subscriptionID].forEach(function (bill) {
                 // TODO: Label not mapped
+                let pdfUrl = null;
+                if (downloaded_documents[bill.id]) {
+                    pdfUrl = downloaded_documents[bill.id];
+                }
                 parsedBills.push({
                     type: '',  // TODO: What is it?
                     subtype: '',  // TODO: What is it?
@@ -35,7 +46,7 @@ const BillConverters = {
                     vat: bill.vat ? parseFloat(bill.vat) : null,
                     currency: bill.currency,
                     plan: '',  // TODO: What is it?
-                    pdfurl: bill.url,
+                    pdfurl: null,  // Do not fill in pdfurl at this point, fill with downloaded
                     content: '',  // TODO: What is it?
                     duedate: bill.duedate ? moment(bill.duedate) : null,
                     startdate: bill.startdate ? moment(bill.startdate) : null,
@@ -48,11 +59,15 @@ const BillConverters = {
             parsedData: parsedBills,
         };
     },
-    'history_bills': function (data, moduleName) {  // Weboob type: Details
+    'history_bills': function (data, moduleName, downloaded_documents={}) {  // Weboob type: Details
         var parsedHistoryBills = [];
         Object.keys(data).forEach(function (subscriptionID) {
             data[subscriptionID].forEach(function (historyBill) {
                 // TODO: Infos / label / quantity / unit not mapped
+                let pdfUrl = null;
+                if (downloaded_documents[historyBill.id]) {
+                    pdfUrl = downloaded_documents[historyBill.id];
+                }
                 parsedHistoryBills.push({
                     type: '',  // TODO: What is it?
                     subtype: '',  // TODO: What is it?
@@ -62,7 +77,7 @@ const BillConverters = {
                     vat: historyBill.vat ? parseFloat(historyBill.vat) : null,
                     currency: historyBill.currency,
                     plan: '',  // TODO: What is it?
-                    pdfurl: historyBill.url,
+                    pdfurl: null,  // Do not fill in pdfurl at this point, fill with downloaded
                     content: '',  // TODO: What is it?
                 });
             });
@@ -72,10 +87,14 @@ const BillConverters = {
             parsedData: parsedHistoryBills
         };
     },
-    'detailed_bills': function (data, moduleName) {  // Weboob type: Details
+    'detailed_bills': function (data, moduleName, downloaded_documents={}) {  // Weboob type: Details
         var parsedDetailedBills = [];
         Object.keys(data).forEach(function (subscriptionID) {
             data[subscriptionID].forEach(function (detailedBill) {
+                let pdfUrl = null;
+                if (downloaded_documents[detailedBill.id]) {
+                    pdfUrl = downloaded_documents[detailedBill.id];
+                }
                 parsedDetailedBills.push({
                     // TODO: Infos / label / quantity / unit not mapped
                     type: '',  // TODO: What is it?
@@ -86,7 +105,7 @@ const BillConverters = {
                     vat: detailedBill.vat ? parseFloat(detailedBill.vat) : null,
                     currency: detailedBill.currency,
                     plan: '',  // TODO: What is it?
-                    pdfurl: detailedBill.url,
+                    pdfurl: null,  // Do not fill in pdfurl at this point, fill with downloaded
                     content: '',  // TODO: What is it?
                 });
             });
