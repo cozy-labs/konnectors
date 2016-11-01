@@ -33,6 +33,7 @@ const weboobKonnector = baseKonnector.createNew({
     vendorLink: 'https://github.com/Phyks/cozyweboob',
     fields: {
         JSONModulesDescription: 'text',
+        folderPath: 'folder',
     },
     models: [
         Bill

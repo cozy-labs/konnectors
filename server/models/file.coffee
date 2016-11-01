@@ -46,6 +46,7 @@ File.isPresent = (fullPath, callback) ->
 File.createNew = (fileName, path, url, tags, callback) ->
     now = moment().toISOString()
     filePath = "/tmp/#{fileName}"
+
     mime = mimetype.lookup(fileName) || 'application/pdf'
 
     # Returns a file calss depending of the mime type. It's useful to render
@@ -81,34 +82,45 @@ File.createNew = (fileName, path, url, tags, callback) ->
                     File.find newFile.id, (err, file) ->
                         callback err, file
 
-    # Save file in a tmp folder while attachBinary supports stream.
-    options =
-        uri: url
-        method: 'GET'
-        jar: true
-
-    log.info "Downloading file at #{url}..."
-    stream = request options, (err, res, body) ->
-        if res?.statusCode is 200
-            # Once done create file metadata then attach binary to file.
-            try
-                stats = fs.statSync filePath
-                data.size = stats["size"]
-                log.info "File at #{url} downloaded."
-                File.create data, (err, newFile) ->
-                    if err
-                        log.error err
-                        callback err
-                    else
-                        attachBinary newFile
-            catch err
+    if url[0] == '/'  # Local file
+        stats = fs.statSync url
+        data.size = stats["size"]
+        File.create data, (err, newFile) ->
+            if err
+                log.error err
                 callback err
-        else
-            if res?
-                log.error res.statusCode, res.body
-            callback new Error 'Cannot download file, wrong url'
+            else
+                attachBinary newFile
+        fs.createReadStream(url).pipe(fs.createWriteStream(filePath))
+    else
+        # Save file in a tmp folder while attachBinary supports stream.
+        options =
+            uri: url
+            method: 'GET'
+            jar: true
 
-    stream.pipe fs.createWriteStream filePath
+        log.info "Downloading file at #{url}..."
+        stream = request options, (err, res, body) ->
+            if res?.statusCode is 200
+                # Once done create file metadata then attach binary to file.
+                try
+                    stats = fs.statSync filePath
+                    data.size = stats["size"]
+                    log.info "File at #{url} downloaded."
+                    File.create data, (err, newFile) ->
+                        if err
+                            log.error err
+                            callback err
+                        else
+                            attachBinary newFile
+                catch err
+                    callback err
+            else
+                if res?
+                    log.error res.statusCode, res.body
+                callback new Error 'Cannot download file, wrong url'
+
+        stream.pipe fs.createWriteStream filePath
 
 
 File::destroyWithBinary = (callback) ->

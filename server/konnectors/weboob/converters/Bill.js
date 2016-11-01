@@ -46,7 +46,7 @@ const BillConverters = {
                     vat: bill.vat ? parseFloat(bill.vat) : null,
                     currency: bill.currency,
                     plan: '',  // TODO: What is it?
-                    pdfurl: null,  // Do not fill in pdfurl at this point, fill with downloaded
+                    pdfurl: pdfUrl,  // Do not fill in pdfurl at this point, fill with downloaded
                     content: '',  // TODO: What is it?
                     duedate: bill.duedate ? moment(bill.duedate) : null,
                     startdate: bill.startdate ? moment(bill.startdate) : null,
@@ -77,7 +77,7 @@ const BillConverters = {
                     vat: historyBill.vat ? parseFloat(historyBill.vat) : null,
                     currency: historyBill.currency,
                     plan: '',  // TODO: What is it?
-                    pdfurl: null,  // Do not fill in pdfurl at this point, fill with downloaded
+                    pdfurl: pdfUrl,  // Do not fill in pdfurl at this point, fill with downloaded
                     content: '',  // TODO: What is it?
                 });
             });
@@ -105,7 +105,7 @@ const BillConverters = {
                     vat: detailedBill.vat ? parseFloat(detailedBill.vat) : null,
                     currency: detailedBill.currency,
                     plan: '',  // TODO: What is it?
-                    pdfurl: null,  // Do not fill in pdfurl at this point, fill with downloaded
+                    pdfurl: pdfUrl,  // Do not fill in pdfurl at this point, fill with downloaded
                     content: '',  // TODO: What is it?
                 });
             });
