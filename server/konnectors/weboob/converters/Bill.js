@@ -29,10 +29,10 @@ const BillConverters = {
                 parsedBills.push({
                     type: '',  // TODO: What is it?
                     subtype: '',  // TODO: What is it?
-                    date: moment(bill.date),
+                    date: bill.date ? moment(bill.date) : null,
                     vendor: moduleName,
-                    amount: parseFloat(bill.price),
-                    vat: parseFloat(bill.vat),
+                    amount: bill.price ? parseFloat(bill.price) : null,
+                    vat: bill.vat ? parseFloat(bill.vat) : null,
                     currency: bill.currency,
                     plan: '',  // TODO: What is it?
                     pdfurl: bill.url,
@@ -56,10 +56,10 @@ const BillConverters = {
                 parsedHistoryBills.push({
                     type: '',  // TODO: What is it?
                     subtype: '',  // TODO: What is it?
-                    date: moment(historyBill.datetime),
+                    date: historyBill.datetime ? moment(historyBill.datetime) : null,
                     vendor: moduleName,
-                    amount: parseFloat(historyBill.price),
-                    vat: parseFloat(historyBill.vat),
+                    amount: historyBill.price ? parseFloat(historyBill.price) : null,
+                    vat: historyBill.vat ? parseFloat(historyBill.vat) : null,
                     currency: historyBill.currency,
                     plan: '',  // TODO: What is it?
                     pdfurl: historyBill.url,
@@ -80,10 +80,10 @@ const BillConverters = {
                     // TODO: Infos / label / quantity / unit not mapped
                     type: '',  // TODO: What is it?
                     subtype: '',  // TODO: What is it?
-                    date: moment(detailedBill.datetime),
+                    date: detailedBill.datetime ? moment(detailedBill.datetime) : null,
                     vendor: moduleName,
-                    amount: parseFloat(detailedBill.price),
-                    vat: parseFloat(detailedBill.vat),
+                    amount: detailedBill.price ? parseFloat(detailedBill.price) : null,
+                    vat: detailedBill.vat ? parseFloat(detailedBill.vat) : null,
                     currency: detailedBill.currency,
                     plan: '',  // TODO: What is it?
                     pdfurl: detailedBill.url,

@@ -14,6 +14,7 @@ import requestJson from 'request-json';
 
 // Konnectors imports
 import baseKonnector from '../../lib/base_konnector';
+import filterExisting from '../../lib/filter_existing';
 import saveDataAndFile from '../../lib/save_data_and_file';
 
 // Models imports
@@ -31,7 +32,6 @@ const weboobKonnector = baseKonnector.createNew({
     name: 'Weboob',
     vendorLink: 'https://github.com/Phyks/cozyweboob',
     fields: {
-        weboobURL: 'text',
         JSONModulesDescription: 'text',
     },
     models: [
@@ -40,6 +40,7 @@ const weboobKonnector = baseKonnector.createNew({
     fetchOperations: [
         fetchData,
         parseData,
+        customFilterExisting,
         customSaveDataAndFile,
         closeConversation,
         buildNotificationContent,
@@ -115,8 +116,28 @@ function parseData(requiredFields, entries, data, next) {
             }
         });
     });
-    weboobKonnector.logger.info('Done converting data from weboob types to cozy models...');
+    weboobKonnector.logger.info('Done converting data from weboob types to cozy models!');
     next();
+}
+
+
+/**
+ * customFilterExisting
+ *
+ * Custom wrapper around filterExisting layer, to use the connector own logger.
+ */
+function customFilterExisting(requiredFields, entries, data, next) {
+    weboobKonnector.logger.info('Start filtering existing data...');
+    entries.fetched = data.parsedEntries[Bill];
+    filterExisting(weboobKonnector.logger, Bill) (
+        requiredFields,
+        entries,
+        data,
+        function () {
+            weboobKonnector.logger.info('Done filtering existing data!');
+            next();
+        }
+    );
 }
 
 
@@ -131,23 +152,20 @@ function customSaveDataAndFile(requiredFields, entries, data, next) {
         dateFormat: 'YYYYMMDD',
     };
     weboobKonnector.logger.info('Saving data...');
-    entries.fetched = data.parsedEntries[Bill];
-    if (entries.fetched !== undefined) {
-        saveDataAndFile(
-            weboobKonnector.logger,
-            Bill,
-            fileOptions,
-            ['bill']
-        ) (
-            requiredFields,
-            entries,
-            data,
-            function () {
-                weboobKonnector.logger.info('All data imported successfully!');
-                next();
-            }
-        );
-    }
+    saveDataAndFile(
+        weboobKonnector.logger,
+        Bill,
+        fileOptions,
+        ['bill']
+    ) (
+        requiredFields,
+        entries,
+        data,
+        function () {
+            weboobKonnector.logger.info('All data imported successfully!');
+            next();
+        }
+    );
 }
 
 
@@ -158,8 +176,10 @@ function customSaveDataAndFile(requiredFields, entries, data, next) {
  */
 function closeConversation(requiredFields, entries, data, next) {
     weboobKonnector.logger.info('Closing conversation with cozyweboob...');
-    data.client.end(function (err) {
-        if (err) {
+    // Remove all error listeners at this point, error are treated directly in the end function.
+    data.client.removeAllListeners('error');
+    data.client.end(function (message) {
+        if (message.exitCode != 0) {
             weboobKonnector.logger.error('Error when closing the conversation with cozyweboob.');
             weboobKonnector.logger.raw(err);
         }
