@@ -1,7 +1,7 @@
 ![Travis build status shield](https://img.shields.io/travis/cozy-labs/konnectors.svg)
-![NPM release version shield](https://img.shields.io/npm/v/konnectorsh.svg)
-![Github Release version shield](https://img.shields.io/github/release/cozy-labs/konnectors.svg)
-![NPM Licence shield](https://img.shields.io/npm/l/konnectorsh.svg)
+![NPM release version shield](https://img.shields.io/npm/v/konnectors.svg)
+![Github Release version shield](https://img.shields.io/github/tag/cozy-labs/konnectors.svg)
+![NPM Licence shield](https://img.shields.io/npm/l/konnectors.svg)
 
 
 [Cozy][cozy] MyAccounts
