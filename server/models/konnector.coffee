@@ -1,6 +1,7 @@
 cozydb = require 'cozydb'
 async = require 'async'
 konnectorHash = require '../lib/konnector_hash'
+authorizedCategories = require '../config/authorized_categories'
 
 log = require('printit')
     prefix: null
@@ -211,6 +212,7 @@ Konnector.getKonnectorsToDisplay = (callback) ->
                         return konnectorHash[konnector.slug]?
                     .map (konnector) ->
                         konnector.appendConfigData()
+                        konnector.checkProperties()
                         return konnector
 
                 callback null, konnectorsToDisplay
@@ -234,3 +236,26 @@ Konnector::cleanFieldValues = ->
         password = JSON.parse @password
         @password = JSON.stringify [password]
 
+
+# Authorized Categories for konnectors
+Konnector::checkProperties = ->
+    # check if category is correctly defined
+    # if not -> fallback to default
+    if not @category or typeof @category isnt 'string'
+        @category = 'others'
+    else
+        if not authorizedCategories[@category]
+            @category = 'others'
+
+    # check if color is correctly defined
+    # if not -> fallback to default
+    if not @color
+        @color = {
+            hexColor: '#A7B5C6'
+            cssProperty: '#A7B5C6'
+        }
+    else
+        if not @color.hex
+            @color.hexColor = '#A7B5C6'
+        if not @color.css
+            @color.cssProperty = '#A7B5C6'

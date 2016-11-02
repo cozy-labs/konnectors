@@ -20,33 +20,10 @@ module.exports =
             else
                 konnector.injectEncryptedFields()
 
+                konnector.checkProperties()
+
                 # Add customView field
                 konnectorModule = require "../konnectors/#{konnector.slug}"
-
-                # check if category is correctly defined
-                # if not -> fallback to default
-                category = konnectorModule.category
-                if not category or typeof category isnt 'string'
-                    konnectorModule.category = 'others'
-                else
-                    if not authorizedCategories[category]
-                        konnectorModule.category = 'others'
-                konnector.category = konnectorModule.category
-
-                # check if color is correctly defined
-                # if not -> fallback to default
-                color = konnectorModule.color
-                if not color
-                    konnectorModule.color = {
-                        hexColor: '#A7B5C6'
-                        cssProperty: '#A7B5C6'
-                    }
-                else
-                    if not color.hexColor
-                        konnectorModule.color.hexColor = '#A7B5C6'
-                    if not color.cssProperty
-                        konnectorModule.color.cssProperty = '#A7B5C6'
-                konnector.color = konnectorModule.color
 
                 if konnectorModule.customView?
                     konnector.customView = konnectorModule.customView
