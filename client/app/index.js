@@ -15,11 +15,11 @@ Vue.use(VuePolyglot)
 const routes = [
   {
     path: '/category',
-    alias: '/',
     component: CategoryList
   },
   {
     path: '/discovery',
+    alias: '/',
     component: DiscoveryList
   },
   {
