@@ -1,6 +1,6 @@
 <template lang="pug">
     div(role="application")
-        nav(role="navigation")
+        aside(role="navigation")
             h4 {{ 'my_accounts title' | t }}
             ul
                 li
@@ -23,6 +23,55 @@
 
 
 <style lang="stylus">
-@import "../node_modules/normalize.css/normalize.css";
-@import "styles/app.styl"
+    @import '../node_modules/normalize.css/normalize.css'
+    @import './styles/base/_normalize'
+    @import './styles/base/_colors'
+    @import 'cozy-ui'
+
+    [role=application]
+        @extend $app-2panes-toolbar
+        background-color: $grey-01-alpha
+
+        main
+            padding: 2.5em 3em
+
+        h1
+            font-size: 2em
+            margin: 0 0 1em
+
+        h4
+            font-weight: normal
+            font-size: 1.5em
+            padding: 1em 1.5em
+            margin: 0
+
+
+      [role="navigation"]
+          background-color: $grey-01
+          box-shadow: inset -1px 0 0 0 $grey-01-alpha
+
+          li
+              display: flex
+              flex-direction: row
+
+          a
+              text-decoration: none
+              color: $red
+              flex: 1
+              padding: 1em 1.5em
+              margin: 0.25em 0
+
+              &:hover
+                  background-color: $grey-01-alpha
+
+              &.router-link-active
+                  background-color: $red
+                  color: white
+
+              svg
+                  width: 1.5em
+                  height: 1.5em
+                  margin-right: 0.5em
+                  display: inline-block
+                  vertical-align: middle
 </style>
