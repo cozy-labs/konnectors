@@ -29,6 +29,11 @@ module.exports =
     description: 'konnector description isen'
     vendorLink: "https://www.isen.fr/"
 
+    category: 'others'
+    color:
+        hex: '#E21910'
+        css: '#E21910'
+
     fields:
         email: "text"
     models:

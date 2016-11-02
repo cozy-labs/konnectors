@@ -29,6 +29,11 @@ module.exports =
     description: 'konnector description orange'
     vendorLink: "https://www.orange.fr/"
 
+    category: 'telecom'
+    color:
+        hex: '#FF6122'
+        css: '#FF6122'
+
     fields:
         login: "text"
         password: "password"

@@ -40,6 +40,11 @@ module.exports =
     description: 'konnector description github'
     vendorLink: "https://www.github.com/"
 
+    category: 'others'
+    color:
+        hex: '#161615'
+        css: '#161615'
+
     fields:
         login: "text"
         password: "password"

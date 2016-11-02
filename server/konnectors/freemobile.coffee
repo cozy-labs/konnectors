@@ -52,6 +52,11 @@ module.exports =
     description: 'konnector description free mobile'
     vendorLink: "https://mobile.free.fr/"
 
+    category: 'telecom'
+    color:
+        hex: '#CD1E25'
+        css: '#CD1E25'
+
     fields:
         login: "text"
         password: "password"

@@ -35,6 +35,11 @@ module.exports =
     description: 'konnector description rescuetime'
     vendorLink: "https://www.rescuetime.com/"
 
+    category: 'productivity'
+    color:
+        hex: '#C23C2F'
+        css: '#C23C2F'
+
     fields:
         apikey: "text"
     models:

@@ -109,6 +109,12 @@ module.exports = factory.createNew({
   description: 'konnector description virginmobile',
   vendorLink: 'https://www.virginmobile.fr/',
 
+  category: 'telecom',
+  color: {
+    hex: '#D72938',
+    css: '#D72938',
+  },
+
   fields: {
     login: 'text',
     password: 'password',

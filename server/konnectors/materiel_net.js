@@ -180,6 +180,12 @@ module.exports = factory.createNew({
   description: 'konnector description materiel_net',
   vendorLink: baseURL,
 
+  category: 'others',
+  color: {
+    hex: '#D2312D',
+    css: '#D2312D',
+  },
+
   fields: {
     login: 'text',
     password: 'password',

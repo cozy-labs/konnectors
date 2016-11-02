@@ -34,6 +34,11 @@ module.exports =
     description: 'konnector description twitter'
     vendorLink: "https://twitter.com/"
 
+    category: 'social'
+    color:
+        hex: '#54ACEE'
+        css: '#54ACEE'
+
     fields:
         consumerKey: "text"
         consumerSecret: "password"

@@ -38,6 +38,11 @@ module.exports =
     description: 'konnector description bouygues box'
     vendorLink: "https://www.bouyguestelecom.fr/"
 
+    category: 'isp'
+    color:
+        hex: '#009DCC'
+        css: '#009DCC'
+
     fields:
         email: "text"
         password: "password"

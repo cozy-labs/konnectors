@@ -20,8 +20,15 @@ const logger = require('printit')({
 
 
 module.exports = baseKonnector.createNew({
-  name: 'Captain Train',
+  name: 'Trainline (Captain Train)',
   vendorLink: 'www.captaintrain.com',
+
+  category: 'transport',
+  color: {
+    hex: '#48D5B5',
+    css: '#48D5B5',
+  },
+
   fields: {
     login: 'email',
     password: 'password',

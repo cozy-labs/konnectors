@@ -16,6 +16,11 @@ const Bill = require('../models/bill');
 const connector = module.exports = factory.createNew({
   name: 'DirectEnergie',
   vendorLink: 'particuliers.direct-energie.com/mon-espace-client/',
+  category: 'energy',
+  color: {
+    hex: '#FFDF00',
+    css: 'linear-gradient(-180deg, #FFE600 0%, #FFDF00 51%, #FFD400 98%)',
+  },
   fields: {
     login: 'text',
     password: 'password',

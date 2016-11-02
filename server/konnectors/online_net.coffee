@@ -28,6 +28,11 @@ module.exports =
     description: 'konnector description online_net'
     vendorLink: "https://www.online.net/"
 
+    category: 'host_provider'
+    color:
+        hex: '#E92F7C'
+        css: '#E92F7C'
+
     fields:
         login: "text"
         password: "password"

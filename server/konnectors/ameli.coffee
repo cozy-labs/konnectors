@@ -236,6 +236,11 @@ module.exports = baseKonnector.createNew
     name: "Ameli"
     vendorLink: "http://www.ameli.fr/"
 
+    category: 'health'
+    color:
+        hex: '#0062AE'
+        css: '#0062AE'
+
     fields:
         login: "text"
         password: "password"
@@ -253,4 +258,3 @@ module.exports = baseKonnector.createNew
         customLinkBankOperation,
         buildNotification
     ]
-

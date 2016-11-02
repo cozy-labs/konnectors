@@ -38,6 +38,12 @@ let alreadyExists = 0;
 const connector = module.exports = baseKonnector.createNew({
   name: 'Podcast',
 
+  category: 'others',
+  color: {
+    hex: '#40DE8E',
+    css: '#40DE8E',
+  },
+
   models: [Track],
 
   fields: {

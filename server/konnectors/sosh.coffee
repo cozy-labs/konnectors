@@ -29,6 +29,11 @@ module.exports =
     description: 'konnector description sosh'
     vendorLink: "https://www.sosh.fr/"
 
+    category: 'telecom'
+    color:
+        hex: '#03A0AA'
+        css: '#03A0AA'
+
     fields:
         login: "text"
         password: "password"

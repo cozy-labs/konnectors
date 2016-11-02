@@ -18,6 +18,12 @@ const Event = require('../models/event');
 const connector = module.exports = baseKonnector.createNew({
   name: 'Ical Feed',
 
+  category: 'social',
+  color: {
+    hex: '#A75BCB',
+    css: '#A75BCB',
+  },
+
   fields: {
     url: 'text',
     calendar: 'text',

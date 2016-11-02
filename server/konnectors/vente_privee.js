@@ -43,6 +43,11 @@ const baseUrl = 'https://secure.fr.vente-privee.com';
 const connector = module.exports = baseKonnector.createNew({
   name: 'Vente-Privée',
   vendorLink: baseUrl,
+  category: 'others',
+  color: {
+    hex: '#E8308A',
+    css: '#E8308A',
+  },
   fields: {
     login: 'text',
     password: 'password',
