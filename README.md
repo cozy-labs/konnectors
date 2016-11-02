@@ -1,6 +1,6 @@
 # Konnectors
 
-[![Build Status](https://travis-ci.org/cozy-labs/konnectors.svg)](https://travis-ci.org/cozy-labs/konnectors)
+[![Build Status](https://api.travis-ci.org/cozy-labs/konnectors.svg?branch=master)](https://travis-ci.org/cozy-labs/konnectors)
 
 Collection of connectors to fetch data from different websites and save them
 into your Cozy.
