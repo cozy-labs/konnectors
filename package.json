@@ -57,12 +57,9 @@
     "should": "11.1.0",
     "sinon": "1.17.5",
     "webpack": "1.13.2",
-    "jade": "1.11.0",
 
     "chai": "3.5.0",
     "mocha": "3.0.2",
-    "jsdom": "9.6.0",
-    "jsdom-global": "2.1.0",
     "sinon": "1.17.4"
   },
   "scripts": {
