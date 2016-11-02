@@ -3,6 +3,7 @@
 ![Github Release version shield](https://img.shields.io/github/tag/cozy-labs/konnectors.svg)
 ![NPM Licence shield](https://img.shields.io/npm/l/konnectors.svg)
 
+[![Build Status](https://api.travis-ci.org/cozy-labs/konnectors.svg?branch=master)](https://travis-ci.org/cozy-labs/konnectors)
 
 [Cozy][cozy] MyAccounts
 =======================
