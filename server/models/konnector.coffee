@@ -251,11 +251,11 @@ Konnector::checkProperties = ->
     # if not -> fallback to default
     if not @color
         @color = {
-            hexColor: '#A7B5C6'
-            cssProperty: '#A7B5C6'
+            hex: '#A7B5C6'
+            css: '#A7B5C6'
         }
     else
         if not @color.hex
-            @color.hexColor = '#A7B5C6'
+            @color.hex = '#A7B5C6'
         if not @color.css
-            @color.cssProperty = '#A7B5C6'
+            @color.css = '#A7B5C6'
