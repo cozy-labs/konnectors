@@ -56,9 +56,13 @@ function getContacts (requiredFields, entries, data, next) {
     if (err) {
       connector.logger.error('Cannot retrieve contacts from database')
     } else {
-      data.contacts = contacts.filter((contact) =>
-        _.includes(contact.tags, requiredFields.tag)
-      )
+      if (requiredFields.tag && requiredFields.tag !== '') {
+        data.contacts = contacts.filter((contact) =>
+          _.includes(contact.tags, requiredFields.tag)
+        )
+      } else {
+        data.contacts = contacts
+      }
       connector.logger.info('Contacts retrieved.')
     }
     next(err)
