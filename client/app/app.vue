@@ -21,5 +21,5 @@
 
 <style lang="stylus">
 @import "../node_modules/normalize.css/normalize.css";
-@import "styles/layout.styl"
+@import "styles/app.styl"
 </style>
