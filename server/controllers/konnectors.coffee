@@ -1,6 +1,7 @@
 Konnector = require '../models/konnector'
 konnectorHash = require '../lib/konnector_hash'
 handleNotification = require '../lib/notification_handler'
+authorizedCategories = require '../config/authorized_categories'
 
 log = require('printit')
     prefix: 'konnector controller'
@@ -21,6 +22,29 @@ module.exports =
 
                 # Add customView field
                 konnectorModule = require "../konnectors/#{konnector.slug}"
+
+                # check if category is correctly defined
+                # if not -> fallback to default
+                category = konnectorModule.category
+                if not category or typeof category isnt 'string'
+                    konnectorModule.category = 'others'
+                else
+                    if not authorizedCategories[category]
+                        konnectorModule.category = 'others'
+
+                # check if color is correctly defined
+                # if not -> fallback to default
+                color = konnectorModule.color
+                if not color
+                    konnectorModule.color = {
+                        hexColor: '#A7B5C6'
+                        cssProperty: '#A7B5C6'
+                    }
+                else
+                    if not color.hexColor
+                        konnectorModule.color.hexColor = '#A7B5C6'
+                    if not color.cssProperty
+                        konnectorModule.color.cssProperty = '#A7B5C6'
 
                 if konnectorModule.customView?
                     konnector.customView = konnectorModule.customView
