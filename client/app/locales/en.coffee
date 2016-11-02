@@ -118,7 +118,7 @@ module.exports =
     """
     'konnector description isen': "Students from ISEN engineer school can import their course materials and calendar."
     'konnector description ical_feed': "Download and import a remote Ical file (.ics)."
-    'konnector description birthdays': "Create events in your calendar for each birhday of your contacts (only contacts that match given tag will be selected)."
+    'konnector description birthdays': "Create events in your calendar for each birthday of your contacts. If a tag is provided, only contacts who match it will be taken into account."
     'konnector description googlecontacts': "Import your google contacts into your Cozy through google's API."
     'konnector description linkedin': "Import your Linkedin contacts in your Cozy."
     'konnector description ameli': "Import your Ameli reimbursements in your Cozy. The login here is only the 13 first digits."
