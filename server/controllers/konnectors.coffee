@@ -31,6 +31,7 @@ module.exports =
                 else
                     if not authorizedCategories[category]
                         konnectorModule.category = 'others'
+                konnector.category = konnectorModule.category
 
                 # check if color is correctly defined
                 # if not -> fallback to default
@@ -45,6 +46,7 @@ module.exports =
                         konnectorModule.color.hexColor = '#A7B5C6'
                     if not color.cssProperty
                         konnectorModule.color.cssProperty = '#A7B5C6'
+                konnector.color = konnectorModule.color
 
                 if konnectorModule.customView?
                     konnector.customView = konnectorModule.customView
