@@ -26,7 +26,7 @@ const routes = [
     path: '/connected',
     component: ConnectedList
   }
-];
+]
 
 const router = new VueRouter({ routes })
 
@@ -36,4 +36,4 @@ document.addEventListener('DOMContentLoaded', function initialize () {
     router,
     render: h => h(app)
   }).$mount('[role=application]')
-});
+})
