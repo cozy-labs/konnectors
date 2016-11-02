@@ -8,7 +8,7 @@ import foo from './components/examples/foo'
 import bar from './components/examples/bar'
 
 Vue.use(VueRouter)
-Vue.use(VuePolyglot)
+Vue.use(VuePolyglot, { context: window.context || 'cozy' })
 
 
 const routes = [

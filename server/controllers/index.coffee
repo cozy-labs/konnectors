@@ -25,3 +25,6 @@ module.exports.main = (req, res) ->
           imports:
             konnectors: konnectors
             folders: folders
+            # Should be override to load a specific context in client app.
+            # Defaults to `cozy`
+            context: 'cozy'
