@@ -65,7 +65,8 @@
     "mocha": "3.0.2",
     "sinon": "1.17.4",
     "jsdom": "9.6.0",
-    "jsdom-global": "2.1.0"
+    "jsdom-global": "2.1.0",
+    "mockery": "2.0.0"
   },
   "scripts": {
     "build": "sh scripts/build.sh",

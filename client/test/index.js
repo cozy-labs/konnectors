@@ -1,33 +1,92 @@
 "use strict";
 
+import sinon from 'sinon'
+import { assert } from 'chai';
+
+import mockery from 'mockery'
+
 import jsdomGlobal from 'jsdom-global'
 let jsdom = jsdomGlobal()
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import VuePolyglot from '../app/plugins/vue-polyglot'
-
 Vue.use(VueRouter)
-Vue.use(VuePolyglot)
-
-import App from '../app/app.vue'
 
 
 describe('Routes', () => {
 
-  describe('Discovery', () => {
-    it('Should be default route', () => { })
-    it('Should be into markup', () => { })
-    it('Should redirect to `/discovery`', () => { })
+  let routes;
+
+
+  before(() => {
+    mockery.enable({
+      warnOnReplace: false,
+      warnOnUnregistered: false
+    })
+
+    // Components are useless here
+    mockery.registerMock('./components/discovery_list', {})
+    mockery.registerMock('./components/category_list', {})
+    mockery.registerMock('./components/connected_list', {})
+
+    routes = require('../app/routes').default
   })
+
+
+  after(() => {
+    mockery.disable()
+  })
+
+
+  describe('Discovery', () => {
+    let route;
+
+    before(() => {
+      route = routes.find((obj) => { return '/discovery' === obj.path })
+    })
+
+
+    it('Should exist', () => {
+      assert(route)
+      assert.deepEqual({}, route.component)
+    })
+
+    it('Should be `default` route', () => {
+      assert.deepEqual('/', route.alias)
+    })
+
+  })
+
 
   describe('Categories', () => {
-    it('Should be into markup', () => { })
-    it('Should redirect to `/category`', () => { })
+    let route;
+
+    before(() => {
+      route = routes.find((obj) => { return '/category' === obj.path })
+    })
+
+
+    it('Should exist', () => {
+      assert(route)
+      assert.deepEqual({}, route.component)
+    })
+
   })
 
+
   describe('Connected', () => {
-    it('Should be into markup', () => { })
-    it('Should redirect to `/connected`', () => { })
+    let route;
+
+    before(() => {
+      route = routes.find((obj) => { return '/connected' === obj.path })
+    })
+
+
+    it('Should exist', () => {
+      assert(route)
+      assert.deepEqual({}, route.component)
+    })
+
   })
+
 })
