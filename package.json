@@ -70,7 +70,7 @@
   },
   "scripts": {
     "build": "sh scripts/build.sh",
-    "test": "sh scripts/lint.sh && sh scripts/tests.sh",
+    "test": "sh scripts/lint.sh && npm-run-all test:*",
     "test:server": "sh scripts/tests.sh",
     "test:client": "mocha --require babel-register client/test/**.**",
     "lint": "sh scripts/lint.sh",
