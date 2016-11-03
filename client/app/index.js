@@ -3,34 +3,16 @@ import VueRouter from 'vue-router'
 import VuePolyglot from './plugins/vue-polyglot'
 
 import app from './app'
+import routes from './routes'
 
-import DiscoveryList from './components/discovery_list'
-import CategoryList from './components/category_list'
-import ConnectedList from './components/connected_list'
-
+// Initialize Vue
 Vue.use(VueRouter)
 Vue.use(VuePolyglot)
 
-
-const routes = [
-  {
-    path: '/category',
-    component: CategoryList
-  },
-  {
-    path: '/discovery',
-    alias: '/',
-    component: DiscoveryList
-  },
-  {
-    path: '/connected',
-    component: ConnectedList
-  }
-]
-
+// Initialize Vue-router
 const router = new VueRouter({ routes })
 
-
+// Initialize Application
 document.addEventListener('DOMContentLoaded', function initialize () {
   new Vue({
     router,
