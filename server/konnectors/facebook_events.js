@@ -27,6 +27,12 @@ const connector = module.exports = baseKonnector.createNew({
   slug: 'facebook_events',
   customView: `<a href=${getOAuthProxyUrl()} target="_blank" >Connect</a>`,
 
+  category: 'social',
+  color: {
+    hex: '#395185',
+    css: '#395185',
+  },
+
   fields: {
     accessToken: 'text',
     calendar: 'text',

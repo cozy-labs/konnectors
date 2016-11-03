@@ -51,6 +51,11 @@ module.exports =
     description: 'konnector description nest'
     vendorLink: "https://nest.com/"
 
+    category: 'energy'
+    color:
+        hex: '#8C979B'
+        css: '#8C979B'
+
     fields:
         email: "text"
         password: "password"
@@ -77,4 +82,3 @@ module.exports =
 
                 notifContent = null
                 callback err, notifContent
-

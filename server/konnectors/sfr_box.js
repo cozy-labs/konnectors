@@ -28,6 +28,11 @@ const Bill = require('../models/bill');
 const connector = module.exports = baseKonnector.createNew({
   name: 'SFR Box',
   vendorLink: 'espace-client.sfr.fr/facture-fixe/consultation',
+  category: 'isp',
+  color: {
+    hex: '#9E0017',
+    css: 'linear-gradient(90deg, #EF0001 0%, #9E0017 100%)',
+  },
   fields: {
     login: 'text',
     password: 'password',

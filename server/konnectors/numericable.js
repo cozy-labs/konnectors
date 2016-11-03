@@ -234,6 +234,12 @@ module.exports = factory.createNew({
   description: 'konnector description numericable',
   vendorLink: 'https://www.numericable.fr/',
 
+  category: 'isp',
+  color: {
+    hex: '#53BB0F',
+    css: '#53BB0F',
+  },
+
   fields: {
     login: 'text',
     password: 'password',

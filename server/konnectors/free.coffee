@@ -37,6 +37,11 @@ module.exports =
     description: 'konnector description free'
     vendorLink: "https://www.free.fr/"
 
+    category: 'isp'
+    color:
+        hex: '#CD1E25'
+        css: '#CD1E25'
+
     fields:
         login: "text"
         password: "password"

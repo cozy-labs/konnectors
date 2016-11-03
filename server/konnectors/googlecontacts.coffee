@@ -31,6 +31,11 @@ module.exports =
     description: 'konnector description googlecontacts'
     vendorLink: "https://www.google.com/contacts/"
 
+    category: 'social'
+    color:
+        hex: '#0D7DC0'
+        css: '#0D7DC0'
+
     customView: """
     <h6><%t konnector customview googlecontacts 4 %></h6>
     <p><%t konnector customview googlecontacts 1 %></p>

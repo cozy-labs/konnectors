@@ -29,6 +29,11 @@ module.exports =
     description: 'konnector description digital ocean'
     vendorLink: "https://www.digitalocean.com/"
 
+    category: 'host_provider'
+    color:
+        hex: '#0069FF'
+        css: '#0069FF'
+
     fields:
         login: "text"
         password: "password"

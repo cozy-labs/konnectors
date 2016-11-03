@@ -50,6 +50,11 @@ module.exports =
     description: 'konnector description jawbone'
     vendorLink: "https://jawbone.com/up"
 
+    category: 'health'
+    color:
+        hex: '#1A1919'
+        css: '#1A1919'
+
     fields:
         login: "text"
         password: "password"

@@ -74,6 +74,11 @@ module.exports =
     description: 'konnector description withings'
     vendorLink: "www.withings.com/"
 
+    category: 'health'
+    color:
+        hex: '#0D9EE3'
+        css: '#0D9EE3'
+
     fields:
         email: "text"
         password: "password"

@@ -38,6 +38,11 @@ const baseUrl = 'https://espaceclient.aprr.fr/aprr/Pages';
 const connector = module.exports = baseKonnector.createNew({
   name: 'APRR',
   vendorLink: baseUrl,
+  category: 'transport',
+  color: {
+    hex: '#FF0000',
+    css: '#FF0000',
+  },
   fields: {
     login: 'text',
     password: 'password',
