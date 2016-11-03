@@ -140,5 +140,8 @@ module.exports = {
             require('autoprefixer')(['last 2 versions']),
             require('css-mqpacker')
         ]
+    },
+    stylus: {
+        use: [require('cozy-ui/lib/stylus')()]
     }
 };
