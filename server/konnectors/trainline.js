@@ -254,7 +254,7 @@ function fetchBills (requiredFields, entries, data, next) {
 
     // For some unknown reason, some users don't have system set for the pnr.
     // By default we set it to sncf
-    linkedPNR = linkedPNR.map(pnr => {
+    linkedPNR = linkedPNR.map((pnr) => {
       if (typeof pnr.system === 'undefined') {
         pnr.system = 'sncf'
       }

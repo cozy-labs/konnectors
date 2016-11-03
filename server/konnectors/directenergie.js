@@ -142,7 +142,7 @@ function selectActiveAccount (requiredFields, bills, data, next) {
       url: `https://clients.direct-energie.com${href}`
     }
 
-    request(options, err => {
+    request(options, (err) => {
       if (err) {
         logErr("Unable to reach the account's page.")
         next(err)
