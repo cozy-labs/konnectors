@@ -6,6 +6,7 @@
 // this konnector works for customers having an automatic toll payment system
 // also called "badge telepeage"
 */
+
 'use strict';
 
 const request = require('request').defaults({

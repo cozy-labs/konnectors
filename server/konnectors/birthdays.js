@@ -44,12 +44,15 @@ function getContacts(requiredFields, entries, data, next) {
       connector.logger.error('Cannot retrieve contacts from database');
     } else {
       if (requiredFields.tag && requiredFields.tag !== '') {
-        data.contacts = contacts.filter((contact) =>
+        data.contacts = contacts.filter(contact =>
           _.includes(contact.tags, requiredFields.tag)
         );
       } else {
         data.contacts = contacts;
       }
+      data.contacts = contacts.filter(contact =>
+        _.includes(contact.tags, requiredFields.tag)
+      );
       connector.logger.info('Contacts retrieved.');
     }
     next(err);
