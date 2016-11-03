@@ -1,16 +1,8 @@
-"use strict";
+'use strict'
 
-import sinon from 'sinon'
 import { assert } from 'chai';
 
 import mockery from 'mockery'
-
-import jsdomGlobal from 'jsdom-global'
-let jsdom = jsdomGlobal()
-
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-Vue.use(VueRouter)
 
 
 describe('Routes', () => {
