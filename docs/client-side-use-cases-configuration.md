@@ -16,17 +16,17 @@ This document describes the context of using _use-cases_ in MyAccounts app, how 
 What are use-cases?
 -------------------
 
-A **use-case** is a way to sort and filter konnectors by an arbitrary denominator (e.g. _all konnectors that concerns billing_). It allow a user to browse available konnectors in a different way than browsing by categories. I allow the user to discover some konnectors by selecting first a _use-case_ (aka a scenario) that cover usages, and see what konnectors can be suggested.
+A **use-case** is a way to sort and filter konnectors by an arbitrary denominator (e.g. _all konnectors that concerns billing_). It allows a user to browse available konnectors in a different way than browsing by categories. The user can discover some konnectors by selecting first a _use-case_ (aka a scenario) that cover usages, and see what konnectors can be suggested.
 
-_MyAccounts_ can provides many _use-cases_, that can be configured, which mean a hoster can offer a different way to discover available konnectors (aka present different _use-cases_).
+_MyAccounts_ can provide many _use-cases_, that can be configured, which means that an hoster can offer a different way to discover available konnectors (aka present different _use-cases_).
 
 
 How to define a use-case?
 -------------------------
 
-All _use-cases_ are declared in a manifest, built-in the client app, at `client/app/contexts/<context>/index.json`. Its architecture is defined ine the _Architecture of the manifest_ section below.
+All _use-cases_ are declared in a manifest, built-in the client app, at `client/app/contexts/<context>/index.json`. Its architecture is defined in the _Architecture of the manifest_ section below.
 
-The `context` value is the one defines in which context _MyAccounts_ app run. There must be a `cozy` context, which is the default one available. Later, all partners can defines their own _use-cases_ by adding a new context, with a dedicated manifest and locales (see _Localization_ section below about translations).
+The `context` value is the one that defines in which context _MyAccounts_ app run. There must be a `cozy` context, which is the default one available. Later, all partners can define their own _use-cases_ by adding a new context, with a dedicated manifest and locales (see _Localization_ section below about translations).
 
 Adding a _use-case_ simply mean adding a new object into the _use-cases_ array, that provides the following keys (see the _Architecture_ section below for a complete list and informations):
 
@@ -51,11 +51,11 @@ it defines if this _use-case_ is the default one. When we access the _use-cases_
 
 Sometimes, we need to directly open a _use-case_ screen without passing by the `/discover` view (this is the case when user access to _MyAccounts_ from the onboarding). In this case, this is the default _use-case_ which is displayed.
 
-⚠️ if the _use-cases_ array contains more than one _use-case_ with a default key set to `true`, then only the first one find in the array is considered as the default one.
+⚠️ if the _use-cases_ array contains more than one _use-case_ with a default key set to `true`, then only the first one found in the array is considered as the default one.
 
 ### The `incentive`
 
-When displaying a _use-case_ screen, a konnector can be highlighted first to incitate the user to first configure this one. Into the `konnectors` array, the _Konnector Object_ can define a `default` key at `true` to declares it as the _incentive_ one.
+When displaying a _use-case_ screen, a konnector can be highlighted first to incitate the user to first configure this one. Into the `konnectors` array, the _Konnector Object_ can define a `default` key at `true` to declare it as the _incentive_ one.
 
 ⚠️ as for the _use-cases_ array, if more than one konnector has a `default` key set to true, only the first one in the array is considered as the _incentive_ one.
 
