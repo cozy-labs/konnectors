@@ -40,40 +40,44 @@
             margin: 0 0 1em
 
 
-      aside
-          background-color: $grey-01
-          box-shadow: inset -1px 0 0 0 $grey-01-alpha
+    aside
+        background-color: $grey-01
+        box-shadow: inset -1px 0 0 0 $grey-01-alpha
 
-          h4
-              font-weight: normal
-              font-size: 1.5em
-              padding: 1em 1.5em
-              margin: 0
+        h4
+            font-weight: normal
+            font-size: 1.5em
+            padding: 1em 1.5em
+            margin: 0
 
 
-      [role="navigation"]
-          li
-              display: flex
-              flex-direction: row
+    [role="navigation"]
+        li
+            display: flex
+            flex-direction: row
 
-          a
-              text-decoration: none
-              color: $red
-              flex: 1
-              padding: 1em 1.5em
-              margin: 0.25em 0
+        a
+            text-decoration: none
+            color: $red
+            flex: 1
+            padding: 1em 1.5em
+            margin: 0.25em 0
 
-              &:hover
-                  background-color: $grey-01-alpha
+            &:hover:not(.router-link-active)
+                background-color: $grey-01-alpha
 
-              &.router-link-active
-                  background-color: $red
-                  color: white
+        .router-link-active
+            background-color: $red
+            color: white
 
-              svg
-                  width: 1.5em
-                  height: 1.5em
-                  margin-right: 0.5em
-                  display: inline-block
-                  vertical-align: middle
+            svg
+                path
+                    fill: white
+
+        svg
+            width: 1.5em
+            height: 1.5em
+            margin-right: 0.5em
+            display: inline-block
+            vertical-align: middle
 </style>
