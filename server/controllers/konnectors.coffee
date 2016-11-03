@@ -1,7 +1,6 @@
 Konnector = require '../models/konnector'
 konnectorHash = require '../lib/konnector_hash'
 handleNotification = require '../lib/notification_handler'
-authorizedCategories = require '../config/authorized_categories'
 
 log = require('printit')
     prefix: 'konnector controller'

@@ -1,7 +1,7 @@
 cozydb = require 'cozydb'
 async = require 'async'
 konnectorHash = require '../lib/konnector_hash'
-authorizedCategories = require '../config/authorized_categories'
+appConfig = require '../config/appConfig'
 
 log = require('printit')
     prefix: null
@@ -244,7 +244,7 @@ Konnector::checkProperties = ->
     if not @category or typeof @category isnt 'string'
         @category = 'others'
     else
-        if not authorizedCategories[@category]
+        if not (@category in appConfig.authorizedCategories)
             @category = 'others'
 
     # check if color is correctly defined
