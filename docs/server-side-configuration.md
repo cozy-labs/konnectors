@@ -12,15 +12,16 @@ Instead, they need to be configured on the served side, in a simple way, from a 
 ```javascript
 {
     authorizedCategories:
-        {
-            'insurance': 1,
-            'communication': 1,
-            'energy': 1,
-            'productivity': 1,
-            'health': 1,
-            'travel': 1,
-            'life': 1
-        }
+        [
+            'telecom',
+            'isp',
+            'energy',
+            'host_provider',
+            'productivity',
+            'health',
+            'social',
+            'transport'
+        ]
 }
 ```
 
