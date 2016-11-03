@@ -45,11 +45,11 @@ For a 'complex' color account connector:
     ...
 ```
 
-If a color property is not defined by the account connector, that will fallback to the default ```hex``` and ```css``` value which is ```#A7B5C6```.
+If a color property is not defined by the account connector, that will fallback to the default `hex` and `css` value which is `#A7B5C6`.
 
 ## Category
 
-An account connector can define a category to be listed in. This category is single because a connected can not be listed in many different categories. Here is the connector category definition:
+An account connector can define a category to be listed in. This category is single because a connector can not be listed in many different categories. Here is the connector category definition:
 
 ```javascript
 // my_connector.js
@@ -68,4 +68,4 @@ __⚠️ Important notes:__
 
 The defined category must be authorized by the MyAccounts application in order to be listed in. You can see more about the authorized categories in the [MyAccounts server side configuration documentation](server-side-configuration.md).
 
-If the account connector define a category which is authorized, it will be used. Otherwise, (if not 'valid' or not defined as well) that will fallback to the default name, which is ```others```.
+If the account connector define a category which is authorized, it will be used. Otherwise, (if not 'valid' or not defined as well) that will fallback to the default name, which is `others`.

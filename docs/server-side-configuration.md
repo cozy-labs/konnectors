@@ -34,4 +34,4 @@ In an account connector's file, the category will just be defined like:
     ...
 ```
 
-If the account connector define a category available in the ```authorizedCategories ``` object, it will be used. Otherwise, (if not 'valid' or not defined) that will fallback to the default category name which is ```others```.
+If the account connector define a category available in the `authorizedCategories` object, it will be used. Otherwise, (if not 'valid' or not defined) that will fallback to the default category name which is `others`.
