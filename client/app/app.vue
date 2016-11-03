@@ -1,8 +1,8 @@
 <template lang="pug">
     div(role="application")
-        aside(role="navigation")
+        aside
             h4 {{ 'my_accounts title' | t }}
-            ul
+            ul(role="navigation")
                 li
                     router-link(to="/discovery")
                         svg: use(:xlink:href="require('./assets/sprites/icon-discovery.svg')")
@@ -39,17 +39,19 @@
             font-size: 2em
             margin: 0 0 1em
 
-        h4
-            font-weight: normal
-            font-size: 1.5em
-            padding: 1em 1.5em
-            margin: 0
 
-
-      [role="navigation"]
+      aside
           background-color: $grey-01
           box-shadow: inset -1px 0 0 0 $grey-01-alpha
 
+          h4
+              font-weight: normal
+              font-size: 1.5em
+              padding: 1em 1.5em
+              margin: 0
+
+
+      [role="navigation"]
           li
               display: flex
               flex-direction: row
