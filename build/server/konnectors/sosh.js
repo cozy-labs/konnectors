@@ -90,27 +90,28 @@ logIn = function(requiredFields, billInfos, data, next) {
   log.info('Get login form');
   return request(logInOptions, function(err, res, body) {
     if (err) {
-      log.info(err);
-      return next('request error');
+      next(err);
     }
     log.info('Logging in');
     return request(signInOptions, function(err, res, body) {
       if (err) {
         log.error('Login failed');
-        log.raw(err);
-        return next('bad credentials');
+        return log.raw(err);
+      } else {
+        log.info('Login succeeded');
+        log.info('Fetch bill info');
+        return request(billOptions, function(err, res, body) {
+          if (err) {
+            log.error('An error occured while fetching bills');
+            console.log(err);
+            return next(err);
+          } else {
+            log.info('Fetch bill info succeeded');
+            data.html = body;
+            return next();
+          }
+        });
       }
-      log.info('Fetch bill info');
-      return request(billOptions, function(err, res, body) {
-        if (err) {
-          log.error('An error occured while fetching bills');
-          console.log(err);
-          return next('request error');
-        }
-        log.info('Fetch bill info succeeded');
-        data.html = body;
-        return next();
-      });
     });
   });
 };

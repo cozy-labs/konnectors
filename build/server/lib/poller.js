@@ -139,11 +139,7 @@ KonnectorPoller = (function() {
       delete this.timeouts[konnector.slug];
     }
     if (konnector.importInterval !== 'none') {
-      if (konnector.shallRaiseEncryptedFieldsError()) {
-        konnector.importErrorMessage = 'encrypted fields';
-      } else {
-        konnector.injectEncryptedFields();
-      }
+      konnector.injectEncryptedFields();
       if (startDate != null) {
         data = {
           lastAutoImport: moment(startDate, 'DD-MM-YYYY').toDate(),

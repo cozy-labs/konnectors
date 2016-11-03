@@ -33,12 +33,11 @@ function downloadFile(requiredFields, entries, data, next) {
   request.get(requiredFields.url, function (err, res, body) {
     if (err) {
       connector.logger.error('Download failed.');
-      return next('request error');
+    } else {
+      connector.logger.info('Download succeeded.');
+      data.ical = body;
     }
-
-    connector.logger.info('Download succeeded.');
-    data.ical = body;
-    return next();
+    next(err);
   });
 }
 
@@ -49,31 +48,26 @@ function parseFile(requiredFields, entries, data, next) {
     if (err || user === null) {
       connector.logger.error('Cannot retrieve Cozy user timezone.');
       connector.logger.error('Parsing cannot be performed.');
-      if (err === null) {
-        connector.logger.error('Cannot retrieve Cozy user timezone.');
-      }
-
-      return next('parsing error');
+      if (err === null) err = new Error('Cannot retrieve Cozy user timezone.');
+      next(err);
+    } else {
+      var parser = new ical.ICalParser();
+      var options = { defaultTimezone: user.timezone };
+      parser.parseString(data.ical, options, function (err, result) {
+        if (err) {
+          connector.logger.error('Parsing failed.');
+        } else {
+          data.result = result;
+        }
+        next(err);
+      });
     }
-
-    var parser = new ical.ICalParser();
-    var options = { defaultTimezone: user.timezone };
-    parser.parseString(data.ical, options, function (err, result) {
-      if (err) {
-        connector.logger.error('Parsing failed.');
-        connector.logger.error(err);
-        return next('parsing error');
-      }
-
-      data.result = result;
-      return next();
-    });
   });
 }
 
 function extractEvents(requiredFields, entries, data, next) {
   entries.events = Event.extractEvents(data.result, requiredFields.calendar);
-  return next();
+  next();
 }
 
 function saveEvents(requiredFields, entries, data, next) {
@@ -93,16 +87,12 @@ function saveEvents(requiredFields, entries, data, next) {
       } else {
         if (changes.creation) entries.nbCreations++;
         if (changes.update) entries.nbUpdates++;
-        return done();
+        done();
       }
     });
   }, function (err) {
-    if (err) {
-      connector.logger.info(err);
-      return next('error occurred during import.');
-    }
     connector.logger.info('Events are saved.');
-    return next();
+    next(err);
   });
 }
 
@@ -125,5 +115,5 @@ function buildNotifContent(requiredFields, entries, data, next) {
       entries.notifContent += ' ' + localization.t(_localizationKey, _options);
     }
   }
-  return next();
+  next();
 }

@@ -391,7 +391,6 @@ module.exports = {
   name: 'Linkedin',
   slug: 'linkedin',
   description: 'konnector description linkedin',
-  vendorLink: 'www.linkedin.com',
 
   fields: {
     login: 'text',

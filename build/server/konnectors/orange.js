@@ -90,34 +90,35 @@ logIn = function(requiredFields, billInfos, data, next) {
   log.info('Get login form');
   return request(logInOptions, function(err, res, body) {
     if (err) {
-      log.info(err);
-      return next('request error');
+      next(err);
     }
     log.info('Logging in');
     return request(signInOptions, function(err, res, body) {
       var error, response;
       if (err) {
         log.error('Login failed');
-        log.raw(err);
-        return next('request error');
-      }
-      response = JSON.parse(body);
-      if ((response.credential != null) || (response.password != null)) {
-        error = response.credential != null ? response.credential : response.password;
-        log.info(error);
-        next('bad credentials');
-      }
-      log.info('Fetch bill info');
-      return request(billOptions, function(err, res, body) {
-        if (err) {
-          log.error('An error occured while fetching bills');
-          console.log(err);
-          return next('request error');
+        return log.raw(err);
+      } else {
+        log.info('Login succeeded');
+        response = JSON.parse(body);
+        if ((response.credential != null) && (response.password != null)) {
+          error = response.credential != null ? response.credential : response.password;
+          return next(new Error(error));
+        } else {
+          log.info('Fetch bill info');
+          return request(billOptions, function(err, res, body) {
+            if (err) {
+              log.error('An error occured while fetching bills');
+              console.log(err);
+              return next(err);
+            } else {
+              log.info('Fetch bill info succeeded');
+              data.html = body;
+              return next();
+            }
+          });
         }
-        log.info('Fetch bill info succeeded');
-        data.html = body;
-        return next();
-      });
+      }
     });
   });
 };

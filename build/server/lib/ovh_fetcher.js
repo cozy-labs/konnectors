@@ -30,15 +30,13 @@ OVHFetcher = (function() {
         if (err === 401 || err === 403) {
           return _this.needToConnectFirst(requiredFields, next);
         } else if (err) {
-          _this.logger.info(err);
-          return next('bad credentials');
+          return next(err);
         }
         return async.map(ovhBills, function(ovhBill, cb) {
           return _this.ovh.request('GET', '/me/bill/' + ovhBill, cb);
         }, function(err, ovhBills) {
           if (err) {
-            _this.logger.info(err);
-            return next('request error');
+            return next(err);
           }
           bills.fetched = [];
           ovhBills.forEach(function(ovhBill) {
@@ -70,15 +68,12 @@ OVHFetcher = (function() {
       ]
     };
     this.logger.info('Request the login url...');
-    return this.ovh.request('POST', '/auth/credential', accessRules, (function(_this) {
-      return function(err, credential) {
-        if (err) {
-          _this.logger.info(err);
-          return callback('token not found');
-        }
-        return callback(null, credential.validationUrl, credential.consumerKey);
-      };
-    })(this));
+    return this.ovh.request('POST', '/auth/credential', accessRules, function(err, credential) {
+      if (err) {
+        return callback(err);
+      }
+      return callback(null, credential.validationUrl, credential.consumerKey);
+    });
   };
 
   OVHFetcher.prototype.saveUrlAndToken = function(url, token, callback) {
@@ -111,14 +106,12 @@ OVHFetcher = (function() {
     return this.getLoginUrl((function(_this) {
       return function(err, url, token) {
         if (err) {
-          _this.logger.info(err);
-          return callback('request error');
+          return callback(err);
         }
         requiredFields.loginUrl = url;
         requiredFields.token = token;
         return _this.saveUrlAndToken(url, token, function() {
-          _this.logger.info('You need to login to your OVH account first.');
-          return callback('konnector ovh connect first');
+          return callback(new Error('You need to login to your OVH account first.'));
         });
       };
     })(this));

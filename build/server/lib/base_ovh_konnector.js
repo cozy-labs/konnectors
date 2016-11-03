@@ -14,7 +14,7 @@ baseKonnector = require('../lib/base_konnector');
 Bill = require('../models/bill');
 
 module.exports = {
-  createNew: function(ovhApi, name, slug, vendorLink) {
+  createNew: function(ovhApi, name, slug) {
     var connector, fetchBills, fileOptions, logger, ovhFetcherInstance;
     fileOptions = {
       vendor: slug,
@@ -30,7 +30,6 @@ module.exports = {
     };
     return connector = baseKonnector.createNew({
       name: name,
-      vendorLink: vendorLink,
       fields: {
         loginUrl: "link",
         token: "hidden",

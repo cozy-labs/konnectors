@@ -25,7 +25,8 @@ module.exports =
                 # Add customView field
                 konnectorModule = require(
                     path.join(
-                        "../konnectors/",
+                        '..',
+                        'konnectors',
                         konnector.slug
                     )
                 )

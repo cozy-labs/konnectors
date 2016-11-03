@@ -110,9 +110,7 @@ logIn = function(requiredFields, bills, data, next) {
   return request(loginOptions, function(err, res, body) {
     var $, execution, form, lt;
     if (err) {
-      log.info('Login infos could not be fetched');
-      log.info(err);
-      return next('bad credentials');
+      return next(err);
     }
     $ = cheerio.load(body);
     lt = $('input[name="lt"]').val();
@@ -137,8 +135,7 @@ logIn = function(requiredFields, bills, data, next) {
     return request(loginOptions, function(err, res, body) {
       var options;
       if (err) {
-        log.info(err);
-        return next('bad credentials');
+        return next(err);
       }
       log.info('Download bill HTML page...');
       options = {
@@ -151,8 +148,7 @@ logIn = function(requiredFields, bills, data, next) {
       };
       return request(options, function(err, res, body) {
         if (err) {
-          log.info(err);
-          return next('request error');
+          return next(err);
         }
         data.html = body;
         log.info('Bill page downloaded.');

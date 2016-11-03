@@ -22,7 +22,8 @@ module.exports = (konnector, callback) ->
         log.info "Run import for #{konnector.slug}."
         model = require(
             path.join(
-                "../konnectors/",
+                '..',
+                'konnectors',
                 konnector.slug
             )
         )

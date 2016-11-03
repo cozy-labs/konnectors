@@ -112,7 +112,7 @@ export default {
             let konnector = konnectors.find(konnector => konnector.slug === konnectorName);
             let konnectorMetaData = konnectorMap[konnector.slug];
 
-            if (__guard__(konnector.accounts, x => x.length) > 0) {
+            if (konnector.accounts && konnector.accounts.length > 0) {
                 var { accounts } = konnector;
                 for (key in account) {
                     let fields = konnector.getFields();
@@ -214,8 +214,3 @@ export default {
         });
     }
 };
-
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}

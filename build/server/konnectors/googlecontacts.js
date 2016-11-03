@@ -35,7 +35,7 @@ module.exports = {
   slug: "googlecontacts",
   description: 'konnector description googlecontacts',
   vendorLink: "https://www.google.com/contacts/",
-  customView: "<h6><%t konnector customview googlecontacts 4 %></h6>\n<p><%t konnector customview googlecontacts 1 %></p>\n<button id=\"connect-google\"\ntitle=\"<%t konnector customview googlecontacts 2 %>\" class=\"btn\"\n   onclick=\"window.open('" + (GoogleToken.getAuthUrl()) + "',\n   'Google OAuth',\n   'toolbars=0,width=700,height=600,left=200,top=200,scrollbars=1,resizable=1');\n   var input = $('#googlecontacts-authCode0-input');\n   input.parents('.field').toggleClass('hidden');\n   input.attr('type', 'text');\n   input.val('');\n   $('#googlecontacts-accountName-input').text('--');\n   return false;\"\n   ><%t konnector customview googlecontacts 2 %></button>\n<p><%t konnector customview googlecontacts 3 %></p>",
+  customView: "<h6><%t konnector customview googlecontacts 4 %></h6>\n<p><%t konnector customview googlecontacts 1 %></p>\n<button id=\"connect-google\"\ntitle=\"<%t konnector customview googlecontacts 2 %>\" class=\"btn\"\n   onclick=\"window.open('" + (GoogleToken.getAuthUrl()) + "',\n   'Google OAuth',\n   'toolbars=0,\n   width=700,height=600,left=200,top=200,scrollbars=1,resizable=1');\n   var input = $('#googlecontacts-authCode-input');\n   input.parents('.field').toggleClass('hidden');\n   input.attr('type', 'text');\n   input.val('');\n   $('#googlecontacts-accountName-input').text('--');\n   return false;\"\n   ><%t konnector customview googlecontacts 2 %></button>\n<p><%t konnector customview googlecontacts 3 %></p>",
   fields: {
     authCode: "hidden",
     accountName: "label",
@@ -65,8 +65,7 @@ module.exports.updateToken = updateToken = function(requiredFields, entries, dat
   if ((requiredFields.refreshToken != null) && requiredFields.authCode === 'connected') {
     return GoogleToken.refreshToken(requiredFields.refreshToken, function(err, tokens) {
       if (err) {
-        log.info(err);
-        return callback('token not found');
+        return callback(err);
       }
       requiredFields.accessToken = tokens.access_token;
       return callback();
@@ -74,8 +73,7 @@ module.exports.updateToken = updateToken = function(requiredFields, entries, dat
   } else {
     return GoogleToken.generateRequestToken(requiredFields.authCode, function(err, tokens) {
       if (err) {
-        log.info(err);
-        return callback('token not found');
+        return callback(err);
       }
       requiredFields.accessToken = tokens.access_token;
       requiredFields.refreshToken = tokens.refresh_token;
@@ -94,8 +92,7 @@ fetchAccountName = function(requiredFields, entries, data, callback) {
   }
   return GoogleContactHelper.fetchAccountName(requiredFields.accessToken, function(err, accountName) {
     if (err) {
-      log.info(err);
-      return callback('request error');
+      return callback(err);
     }
     requiredFields.accountName = accountName;
     return callback();
@@ -109,8 +106,7 @@ saveTokensInKonnector = function(requiredFields, entries, data, callback) {
   return Konnector.all(function(err, konnectors) {
     var accounts, konnector;
     if (err) {
-      log.info(err);
-      return callback('request error');
+      return callback(err);
     }
     konnector = konnectors.filter(function(k) {
       return k.slug === 'googlecontacts';
@@ -150,13 +146,12 @@ fetchGoogleChanges = function(requiredFields, entries, data, callback) {
   }, function(err, res, body) {
     var ref;
     if (err) {
-      log.info(err);
-      return callback('request error');
+      return callback(err);
     }
     if (body.error) {
       log.info("Error while fetching google changes : ");
       log.info(body);
-      return callback('request error');
+      return callback(body);
     }
     entries.googleChanges = ((ref = body.feed) != null ? ref.entry : void 0) || [];
     return callback();
@@ -173,8 +168,7 @@ updateCozyContacts = function(requiredFields, entries, data, callback) {
     }
   }, function(err, updated) {
     if (err) {
-      log.info(err);
-      return callback('request error');
+      return callback(err);
     }
     if (updated.some(function(contact) {
       return contact != null;
@@ -229,12 +223,10 @@ fetchAllGoogleContacts = function(requiredFields, entries, data, callback) {
   }, function(err, res, body) {
     var gEntry, i, id, len, ref, ref1;
     if (err) {
-      log.info(err);
-      return callback('request error');
+      return callback(err);
     }
     if (body.error != null) {
-      log.info(body.error);
-      return callback('request error');
+      return callback(new Error(body.error));
     }
     entries.googleContacts = ((ref = body.feed) != null ? ref.entry : void 0) || [];
     entries.googleContactsById = {};
@@ -253,8 +245,7 @@ prepareCozyContacts = function(requiredFields, entries, data, callback) {
   return Contact.all(function(err, contacts) {
     var account, contact, i, len;
     if (err) {
-      log.info(err);
-      return callback('request error');
+      return callback(err);
     }
     entries.cozyContacts = contacts;
     entries.ofAccount = [];
@@ -325,8 +316,7 @@ updateGoogleContact = function(requiredFields, contact, gEntry, callback) {
       }
     }, function(err, res, body) {
       if (err) {
-        log.info(err);
-        return callback('request error');
+        return callback(err);
       }
       log.debug(body);
       if (body.error != null) {
@@ -356,10 +346,6 @@ deleteInGoogle = function(requiredFields, gId, callback) {
       'If-Match': '*'
     }
   }, function(err, res, body) {
-    if (err) {
-      log.info(err);
-      return callback('request error');
-    }
-    return callback();
+    return callback(err);
   });
 };

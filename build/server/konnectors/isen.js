@@ -107,7 +107,7 @@ module.exports = {
     })(this));
   },
   fetchIcs: function(requiredFields, callback) {
-    var baseMainUrl, error, error1, fetchUrl, firstPart, firstname, lastname, options, ref, ref1, secondPart;
+    var baseMainUrl, err, error, error1, fetchUrl, firstPart, firstname, lastname, options, ref, ref1, secondPart;
     try {
       ref = requiredFields.email.split('@'), firstPart = ref[0], secondPart = ref[1];
       ref1 = firstPart.split('.'), firstname = ref1[0], lastname = ref1[1];
@@ -128,26 +128,25 @@ module.exports = {
       };
       return request(options, function(err, res, body) {
         if (err != null) {
-          log.error(err);
-          return callback('request error');
+          return callback(err);
         } else if (res.statusCode === 503) {
-          log.error("server unavailable, please try again later");
-          return callback('request error');
+          err = "server unavailable, please try again later";
+          return callback(err);
         } else if (res.statusCode === 404) {
-          log.error("wrong first/lastname combination, user not found");
-          return callback('bad credentials');
+          err = "wrong first/lastname combination, user not found";
+          return callback(err);
         } else if (res.statusCode === 204) {
           return callback(null, '');
         } else if (res.statusCode === 500) {
-          log.error("the remote server responded with an error");
-          return callback('request error');
+          err = "the remote server responded with an error";
+          return callback(err);
         } else {
           return callback(null, body);
         }
       });
     } else {
-      log.info = 'Firstname and/or lastname not supplied';
-      return callback('bad credentials');
+      err = 'Firstname and/or lastname not supplied';
+      return callback(err);
     }
   },
   parseIcs: function(mainData, callback) {
@@ -164,7 +163,7 @@ module.exports = {
         var boundaries, calendarName, events, firstEvent, parts;
         if (err != null) {
           log.error(err);
-          return callback('parsing error');
+          return callback(err);
         } else {
           calendarName = calendar.model.name;
           parts = calendarName.split('/');
@@ -272,8 +271,7 @@ module.exports = {
         return function(err, events) {
           var eventsReferenceId, removed;
           if (err != null) {
-            log.error(err);
-            return callback('request error');
+            return callback(err);
           } else {
             eventsReferenceId = eventsReference.map(function(event) {
               return event.id;
@@ -363,11 +361,7 @@ module.exports = {
       if (list.length === 0) {
         err = null;
       }
-      if (err) {
-        log.error(err);
-        return callback('parsing error');
-      }
-      return callback(null, list);
+      return callback(err, list);
     });
   },
   processUrls: function(list, callback) {
@@ -400,8 +394,7 @@ module.exports = {
           });
         };
       })(this), function(err) {
-        log.error(err);
-        return callback('request error');
+        return callback(err);
       });
     }
   },
@@ -416,29 +409,28 @@ module.exports = {
     return request(options, function(err, res, body) {
       var courseData, error, error1;
       if (err != null) {
-        log.error(err);
-        return callback('request error');
+        return callback(err);
       } else if ((body != null ? body.length : void 0) === 0) {
-        log.error('Course file empty, the course may be not ' + 'available for the moment');
-        return callback('request error');
+        err = 'Course file empty, the course may be not available ' + 'for the moment';
+        return callback(err);
       } else {
         try {
           courseData = JSON.parse(body);
         } catch (error1) {
           error = error1;
-          log.error("JSON.parse error: " + error);
-          err = 'parsing error';
+          err = "JSON.parse error: " + error;
         }
         return callback(err, courseData);
       }
     });
   },
   checkKeys: function(courseData, callback) {
+    var err;
     if ((courseData['File(s)'] != null) && (courseData['course'] != null) && (courseData['year'] != null) && (courseData['curriculum'] != null)) {
       return callback();
     } else {
-      log.error('Error: Missing course data in the file');
-      return callback('parsing error');
+      err = 'Error: Missing course data in the file';
+      return callback(err);
     }
   },
   processFolder: function(courseData, callback) {
@@ -471,8 +463,7 @@ module.exports = {
       var document, fullpath, now;
       fullpath = path + "/" + name;
       if (err != null) {
-        log.error(err);
-        return callback('file error');
+        return callback(err);
       } else if (indexOf.call(folders, fullpath) >= 0) {
         return callback();
       } else {
@@ -485,9 +476,9 @@ module.exports = {
           "class": 'document'
         };
         return Folder.createNewFolder(document, function(err, newFolder) {
+          console.log(err);
           if (err != null) {
-            log.error(err);
-            return callback('file error');
+            return callback(err);
           } else {
             log.info("Folder " + name + " created");
             return callback();
@@ -508,37 +499,34 @@ module.exports = {
       };
     })(this), function(err) {
       log.info("Import of course " + courseData['course'] + " finished");
-      log.error(err);
-      return callback('parsing error');
+      return callback(err);
     });
   },
   checkFile: function(file, courseData, callback) {
-    var course, curriculum, date, dateFormat, dateLastModified, fileName, fullPath, path, url, year;
+    var course, curriculum, date, dateFormat, dateLastModified, err, fileName, fullPath, path, url, year;
     dateLastModified = file.dateLastModified, fileName = file.fileName, url = file.url;
     if ((dateLastModified == null) || (fileName == null) || (url == null)) {
-      log.error("Error: Missing data in " + fileName);
-      return callback('file error');
+      err = "Error: Missing data in " + fileName;
+      return callback(err);
     }
     year = courseData.year, curriculum = courseData.curriculum, course = courseData.course;
     path = "/" + year + "/" + curriculum + "/" + course;
     fullPath = path + "/" + fileName;
-    dateFormat = 'YYYY-MM-DD HH:mm:ss';
+    dateFormat = 'YYYY-MM-DD hh:mm:ss';
     date = moment(dateLastModified, dateFormat).toISOString();
     return File.byFullPath({
       key: fullPath
     }, (function(_this) {
       return function(err, sameFiles) {
-        if (err) {
-          log.error(err);
-          return callback('import server error');
+        if (err != null) {
+          return callback(err);
         }
         if (sameFiles.length > 0) {
           file = sameFiles[0];
           if (file.lastModification < date) {
             return file.destroyWithBinary(function(err) {
               if (err != null) {
-                log.error;
-                return callback('file error');
+                return callback(err);
               } else {
                 log.debug(fileName + " deleted");
                 return _this.createFile(fileName, path, date, url, [], callback);
@@ -558,8 +546,7 @@ module.exports = {
     this.numItems++;
     return File.createNew(fileName, path, url, tags, function(err) {
       if (err != null) {
-        log.error(err);
-        return callback('file error');
+        return callback(err);
       } else {
         log.info(fileName + " imported");
         return callback();
@@ -576,8 +563,7 @@ module.exports = {
     }, function(err, files) {
       var referenceFiles, referenceFilesName;
       if (err != null) {
-        log.error(err);
-        return callback('file error');
+        return callback(err);
       } else {
         referenceFiles = courseData['File(s)'] || [];
         referenceFilesName = referenceFiles.map(function(file) {
@@ -589,7 +575,7 @@ module.exports = {
             log.info("File " + file.name + " not found in list...");
             return file.destroyWithBinary(function(err) {
               if (err != null) {
-                log.error(err);
+                log.eror(err);
               }
               log.info("...file " + file.name + " destroyed");
               return next();

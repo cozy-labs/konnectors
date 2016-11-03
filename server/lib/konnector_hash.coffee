@@ -2,7 +2,7 @@ fs = require 'fs'
 path = require 'path'
 
 currentPath = path.dirname fs.realpathSync __filename
-modulesPath = path.join currentPath, '../konnectors'
+modulesPath = path.join currentPath, '..', 'konnectors'
 
 
 # Tell if filename is Javascript file or is a Coffeescript file. Detection

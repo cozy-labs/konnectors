@@ -108,18 +108,14 @@ module.exports = {
     });
     return client.get(path, function(err, res, body) {
       if (err) {
-        log.error(err);
-        return callback('bad credentials');
+        return callback(err);
       } else if (res.statusCode !== 200) {
-        log.error(body);
-        return callback('request error');
+        return callback(new Error(body));
       } else if (body.error != null) {
         log.error(body.error);
-        log.debug(body.messages);
-        return callback('request error');
+        return callback(body.messages);
       } else if (body.rows == null) {
-        log.error('Something went wrong while fetching rescue time data');
-        return callback('request error');
+        return callback(new Error("Something went wrong while fetching rescue time data."));
       } else {
         return async.eachSeries(body.rows, function(row, cb) {
           var data;
@@ -134,7 +130,7 @@ module.exports = {
           return RescueTimeActivity.create(data, function(err) {
             log.debug('new activity imported');
             log.debug(JSON.stringify(data));
-            return cb();
+            return cb(err);
           });
         }, function(err) {
           var localizationKey, notifContent, options, ref;
