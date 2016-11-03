@@ -53,7 +53,7 @@ Sometimes, we need to directly open a _use-case_ screen without passing by the `
 
 ⚠️ if the _use-cases_ array contains more than one _use-case_ with a default key set to `true`, then only the first one found in the array is considered as the default one.
 
-### The `incentive`
+### The _incentive_
 
 When displaying a _use-case_ screen, a konnector can be highlighted first to incitate the user to first configure this one. Into the `konnectors` array, the _Konnector Object_ can define a `default` key at `true` to declare it as the _incentive_ one.
 
