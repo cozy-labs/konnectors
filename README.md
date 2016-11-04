@@ -13,6 +13,7 @@ Before opening any pull requests make sure that you follow these rules:
 
 * Make your pull requests on the master branch.
 * Follow the [Cozy Guidelines](https://github.com/cozy/cozy-guidelines).
+* Use Javascript ES2015 to write your konnector.
 * Make sure that `npm run lint` doesn't return any errors.
 * Do not include the build in your pull request.
 * For konnector addition, make sure that the following locale keys are present:

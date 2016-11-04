@@ -97,15 +97,8 @@ ConsumptionStatement = cozydb.getModel 'ConsumptionStatement',
     releve: [Object]
     docTypeVersion: String
 
-Bill = cozydb.getModel 'Bill',
-    clientId: String
-    vendor: String
-    date: String
-    number: String
-    amount: Number
-    fileId: String
-    binaryId: String
-    docTypeVersion: String
+Bill = require '../models/bill'
+
 
 # TODO : Temorary hack to hide identification.
 BASIC_AUTH_EDF = null
@@ -170,7 +163,7 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
         try
             client =
                 vendor: 'EDF'
-                docTypeVersion: getDocTypeVersion()
+                docTypeVersion: K.docTypeVersion
 
             resBody = getF result["tns:msgReponse"], \
                       "tns:CorpsSortie", 'tns:AccordCo'
@@ -230,7 +223,7 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
                 contract =
                     vendor: 'EDF'
                     clientId: client.clientId
-                    docTypeVersion: getDocTypeVersion()
+                    docTypeVersion: K.docTypeVersion
 
                 contract.number = getF contratElem, 'tns:Numero'
                 contract.pdl = getF contratElem, 'tns:NumeroPDL'
@@ -471,7 +464,7 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
             paymentTerms =
                 vendor: 'EDF'
                 clientId: entries.client.clientId
-                docTypeVersion: getDocTypeVersion()
+                docTypeVersion: K.docTypeVersion
 
             paymentTerms.bankDetails =
                 iban: getF(acoElem, 'ns:banque', 'ns:iban')
@@ -625,7 +618,7 @@ fetchRecupereDocumentContractuelListx = (reqFields, entries, data, callback) ->
                 bill =
                     vendor: 'EDF'
                     clientId: entries.client.clientId
-                    docTypeVersion: getDocTypeVersion()
+                    docTypeVersion: K.docTypeVersion
 
                 date = moment getF(elem, 'ns:datecre'), 'YYYYMMDD'
                 bill.date = date.format 'YYYY-MM-DD'
@@ -696,7 +689,7 @@ fetchVisualiserHistoConso = (requiredFields, entries, data, callback) ->
                         statementType: getF consoElem, 'ns:typeReleve'
                         statementCategory: getF consoElem, 'ns:categorieReleve'
                         statementReason: getF consoElem, 'ns:motifReleve'
-                        docTypeVersion: getDocTypeVersion()
+                        docTypeVersion: K.docTypeVersion
 
                     return doc
 
@@ -814,7 +807,7 @@ fetchEdeliaProfile = (requiredFields, entries, data, callback) ->
                 occupantsCount: obj.noOfOccupants
                 principalHeatingSystemType: obj.principalHeatingSystemType
                 sanitoryHotWaterType: obj.sanitoryHotWaterType
-                docTypeVersion: getDocTypeVersion()
+                docTypeVersion: K.docTypeVersion
 
             entries.homes.push doc
             K.logger.info 'Fetched fetchEdeliaProfile'
@@ -857,7 +850,7 @@ requiredFields, entries, data, callback) ->
 
             statements = statements.concat obj.monthlyElecEnergies.map (mee) ->
                 doc =
-                    docTypeVersion: getDocTypeVersion()
+                    docTypeVersion: K.docTypeVersion
                     contractNumber: data.contract.number
                     start: mee.beginDay
                     end: mee.endDay
@@ -880,7 +873,7 @@ requiredFields, entries, data, callback) ->
 
             statements = statements.concat obj.yearlyElecEnergies.map (yee) ->
                 doc =
-                    docTypeVersion: getDocTypeVersion()
+                    docTypeVersion: K.docTypeVersion
                     contractNumber: data.contract.number
                     start: yee.beginDay
                     end: yee.endDay
@@ -1013,7 +1006,7 @@ fetchEdeliaMonthlyGasConsumptions = (requiredFields, entries, data, callback) ->
 
             statements = obj.monthlyGasEnergies?.map (mee) ->
                 doc =
-                    docTypeVersion: getDocTypeVersion()
+                    docTypeVersion: K.docTypeVersion
                     contractNumber: data.contract.number
                     start: mee.beginDay
                     end: mee.endDay
@@ -1035,7 +1028,7 @@ fetchEdeliaMonthlyGasConsumptions = (requiredFields, entries, data, callback) ->
 
             statements = statements.concat obj.yearlyGasEnergies.map (yee) ->
                 doc =
-                    docTypeVersion: getDocTypeVersion()
+                    docTypeVersion: K.docTypeVersion
                     contractNumber: data.contract.number
                     start: yee.beginDay
                     end: yee.endDay
@@ -1264,7 +1257,8 @@ K = module.exports = require('../lib/base_konnector').createNew
 
     # Define model requests !
     init: (callback) ->
-        async.each @models, (docType, cb) ->
+        async.each [Client, Contract, PaymentTerms, Home, ConsumptionStatement]
+        , (docType, cb) ->
             docType.defineRequest 'all', cozydb.defaultRequests.all, cb
         , (err) ->
             if err
@@ -1351,8 +1345,3 @@ getEdelia = (accessToken, path, callback) ->
         auth: bearer: accessToken
         json: true
     , callback
-
-
-getDocTypeVersion = ->
-    pkg = require '../../package.json'
-    return pkg.name + '_' + K.slug + '-' + pkg.version

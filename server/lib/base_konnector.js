@@ -2,6 +2,7 @@ const _ = require('lodash')
 const printit = require('printit')
 const slugify = require('cozy-slug')
 const fetcher = require('./fetcher')
+const package = require('../../package.json')
 
 module.exports = {
 
@@ -23,6 +24,7 @@ module.exports = {
       prefix: konnector.name,
       date: true
     });
+    var docTypeVersion = `${package.name}_${slug}-${package.version}`;
     var modelsObj = {}
     konnector.models.forEach((model) => {
       modelsObj[model.displayName.toLowerCase()] = model
@@ -32,6 +34,7 @@ module.exports = {
       slug: slug,
       description: `konnector description ${slug}`,
       logger: logger,
+      docTypeVersion: docTypeVersion,
       models: modelsObj,
 
       fetch: function (requiredFields, callback) {
