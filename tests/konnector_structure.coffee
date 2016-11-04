@@ -38,7 +38,7 @@ describe 'Check all konnectors', ->
                     it "and fetch function", ->
                         should.exist konnector.fetch
 
-                    it.skip "slug should equal the filename", ->
+                    it "slug should equal the filename", ->
                         konnector.slug.replace(/(-|\.)/g, '_').should.equal name
 
                 do (konnector) ->
