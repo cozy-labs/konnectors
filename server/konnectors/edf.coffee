@@ -15,86 +15,88 @@ builder = new xml2js.Builder headless: true
 
 # Models
 Client = cozydb.getModel 'Client',
-    clientId: String
-    vendor: String
-    numeroAcc: String
-    address: Object
-    name: Object
-    email: String
-    telMobile: String
-    telHome: String
-    loginEmail: String
-    coHolder: Object
-    commercialContact: Object
+    clientId: String # Client Id in EDF.
+    vendor: String # EDF
+    numeroAcc: String # Another client Id from EDF.
+    address: Object # Client postal address
+    name: Object # CLiet name
+    email: String # client Email
+    cellPhone: String # Client cell phone number
+    homePhone: String # Client home phone number
+    loginEmail: String # Client email used as login
+    coHolder: Object # Name of the co-holder of the contract
+    commercialContact: Object # Commercial contact information.
     docTypeVersion: String
 
 Contract = cozydb.getModel 'Contract',
-    clientId: String
-    vendor: String
-    number: String
-    start: String
-    end: String
-    status: String
-    terminationGrounds: String
-    pdl: String
-    energie: String
-    nomOffre: String
-    numeroDepannage: String
-    puissance: String
-    structureTarifaire: String
-    optionPrix: String
-    compteur: Object
-    consommationAnnuelle: Number
-    horrairesHeureCreuses: String
-    releve: Object
-    services: [Object]
+    clientId: String # Client Id in EDF
+    vendor: String # EDF
+    number: String # Contract number
+    name: String # Name of the commercial offer
+    start: String # Start date of the contract
+    end: String # End date of the contract (if contract ended.)
+    status: String # Current state of the contract
+    terminationGrounds: String # if the contract is ended
+    services: [Object] # Additionnal services with the contract.
+
+    pdl: String # "Point de livraison" : id of the electric counter
+    energie: String # Type of energy
+    troubleshootingPhone: String # Phone number to get help from edf.
+    power: String # Power contracted.
+    contractSubcategory1: String # Sub category of the contract
+    contractSubcategory2: String # Sub category of the contract
+    counter: Object # Data about energy counter.
+    annualConsumption: Number # The previous annual energy consumption.
+    peakHours: String # For some offers, time of rpice shift.
+    statement: Object # Details about counter reading.
     docTypeVersion: String
 
 PaymentTerms = cozydb.getModel 'PaymentTerms',
-    vendor: String
-    clientId: String
-    bankDetails: Object
-    solde: Number
-    typeEncaissement: String
-    modifIbanAutorisee: Boolean
-    dernierReglement: Object
-    periodiciteFacture: String
-    dateProchaineFacture: String
-    idPayeur: String
-    payeurDivergent: Boolean
-    paymentSchedules: [Object]
+    vendor: String # EDF
+    clientId: String # Client Id in EDF
+    bankDetails: Object #  IBAN, ...
+    balance: Number # Amount due to EDF.
+    paymentMeans: String # Way of paiement.
+    lastPayment: Object # Last payment occured.
+    billFrequency: String # Duration between each bills.
+    nextBillDate: String # Date of the next bill.
+    paymentSchedules: [Object] # Accounts payment agenda.
+    modifBankDetailsAllowed: Boolean # Is client allowed to change the
+                                     # bankdetails.
+    idPayer: String # Client Id of the client which pay the bills.
+    payerDivergent: Boolean # True if clientId isent idPayer.
     docTypeVersion: String
 
 Home = cozydb.getModel 'Home',
-    pdl: String
-    beginTs: String
-    isProfileValidated: Boolean
-    housingType: String
-    residenceType: String
-    occupationType: String
-    constructionDate: String
-    isBBC: Boolean
-    surface: Number
-    occupantsCount: Number
-    principalHeatingSystemType: String
-    sanitoryHotWaterType: String
+    pdl: String # "Point de livraison" : id of the electric counter
+    beginTs: String # Creation of the profil.
+    isProfileValidated: Boolean # If the user as re-read and validated this.
+    housingType: String # Flat, house, ...
+    residenceType: String # first, secondary ...
+    occupationType: String # Rent, owned
+    constructionDate: String # Date of construction of the building.
+    isBBC: Boolean # Low consumption building.
+    surface: Number # Living surface.
+    occupantsCount: Number # How much people leaves in.
+    principalHeatingSystemType: String # What kind of heating system.
+    sanitoryHotWaterType: String # What king of water heating system.
     docTypeVersion: String
 
 ConsumptionStatement = cozydb.getModel 'ConsumptionStatement',
-    contractNumber: String
-    billNumber: String
-    start: String
-    end: String
-    value: Number
-    statementType: String
-    statementCategory: String
-    statementReason: String
-    period: String
-    cost: Number
-    costsByCategory: Object
-    valuesByCatergory: Object
-    similarHomes: Object
-    releve: [Object]
+    contractNumber: String # Contract linked to this consumption
+    billNumber: String # bill linked to this consumption.
+    start: String # start date of the statement period.
+    end: String # end date of the statement period.
+    value: Number # Consumption value.
+    statementType: String # Readed, estimated, ...
+    statementCategory: String # Statemet subcategory
+    statementReason: String # Statemet subcategory
+    period: String # Simple designation of the temporal period of statement.
+    cost: Number # Cost
+    costsByCategory: Object # Details on costs
+    valuesByCatergory: Object # Details on values
+    similarHomes: Object # Similar home consumption comparisons.
+    statements: [Object] # List of statement occured in this period.
     docTypeVersion: String
 
 Bill = require '../models/bill'
@@ -213,7 +215,7 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
             client.coHolder = coHolder
 
             client.email = getF bpObject, 'tns:Coordonnees', 'tns:Email'
-            client.telMobile = getF bpObject, 'tns:Coordonnees'
+            client.cellPhone = getF bpObject, 'tns:Coordonnees'
                                         , 'tns:NumTelMobile'
 
             # Contracts
@@ -242,7 +244,7 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
                     GAZ: 'Gaz'
                 , getF(offreSouscriteObj, 'tns:Energie')
 
-                contract.nomOffre = translate
+                contract.name = translate
                     GN_2: 'Offre Gaz naturel'
                     MCGN_2: 'Mon Contrat gaz naturel'
                     MCGN_PRIX_FIXE_1: 'Mon Contrat Gaz Naturel a prix fixe'
@@ -266,12 +268,12 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
                     OFFRE_TPN: 'TPN'
                 , getF(offreSouscriteObj, 'tns:NomOffre')
 
-                contract.numeroDepannage = getF offreSouscriteObj
+                contract.troubleshootingPhone = getF offreSouscriteObj
                 , 'tns:NumeroDepannageContrat'
 
                 switch contract.energie
                     when 'Électricité'
-                        contract.puissance = translate
+                        contract.power = translate
                             PUI00: '0 kVA'
                             PUI03: '3 kVA'
                             PUI06: '6 kVA'
@@ -283,52 +285,52 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
                             PUI30: '30 kVA'
                             PUI36: '36 kVA'
                         , getF(offreSouscriteObj, 'tns:Puissance')
-                        contract.structureTarifaire = getF offreSouscriteObj
+                        contract.contractSubcategory1 = getF offreSouscriteObj
                         , 'tns:StructureTarifaire'
 
                     when 'Gaz'
-                        contract.optionPrix = getF offreSouscriteObj
+                        contract.contractSubcategory2 = getF offreSouscriteObj
                                                     , 'tns:OptionPrix'
 
                 cadranElem = getF contratElem, 'tns:ListeCadran'
                 if cadranElem
-                    compteur = {}
-                    compteur.comptage = getF cadranElem, 'tns:Type'
-                    compteur.nombreRoues = getF cadranElem, 'tns:NombreRoues'
-                    compteur.dernierIndex = getF cadranElem, 'tns:DernierIndex'
+                    counter = {}
+                    counter.comptage = getF cadranElem, 'tns:Type'
+                    counter.nombreRoues = getF cadranElem, 'tns:NombreRoues'
+                    counter.dernierIndex = getF cadranElem, 'tns:DernierIndex'
 
-                    compteur.type = getF contratElem, 'tns:DonneesTechniques'
+                    counter.type = getF contratElem, 'tns:DonneesTechniques'
                                             , 'tns:TypeCompteur'
 
-                    contract.compteur = compteur
+                    contract.counter = counter
 
-                    contract.consommationAnnuelle = getF cadranElem
+                    contract.annualConsumption = getF cadranElem
                     , 'tns:ConsommationAnnuelle'
 
-                contract.horrairesHeureCreuses = getF contratElem
+                contract.peakHours = getF contratElem
                 , 'tns:DonneesTechniques', 'tns:HorrairesHC'
 
                 releveElem = getF contratElem, 'tns:Releve'
 
                 if releveElem
-                    releve = {}
-                    releve.prochaineReleve = getF releveElem
+                    statement = {}
+                    statement.prochaineReleve = getF releveElem
                     , 'tns:ProchaineDateReleveReelle'
-                    releve.saisieReleveConfiance = getF releveElem
+                    statement.saisieReleveConfiance = getF releveElem
                         , 'tns:SaisieRC'
-                    releve.dateFermetureReleveConfiance = getF releveElem
+                    statement.dateFermetureReleveConfiance = getF releveElem
                     , 'tns:DateFermetureRC'
-                    releve.prochaineDateOuvertureReleveConfiance = getF(
+                    statement.prochaineDateOuvertureReleveConfiance = getF(
                         releveElem, 'tns:ProchaineDateOuvertureRC')
-                    releve.prochaineDateFermetureReleveConfiance = getF(
+                    statement.prochaineDateFermetureReleveConfiance = getF(
                         releveElem, 'tns:ProchaineDateFermetureRC')
-                    releve.prochaineDateFermetureReelle = getF releveElem
+                    statement.prochaineDateFermetureReelle = getF releveElem
                     , 'tns:ProchaineDateFermetureReelle'
-                    releve.saisieSuiviConso = getF releveElem, 'tns:SaisieSC'
-                    releve.prochaineDateOuvertureSaisieConso = getF(
+                    statement.saisieSuiviConso = getF releveElem, 'tns:SaisieSC'
+                    statement.prochaineDateOuvertureSaisieConso = getF(
                         releveElem, 'tns:ProchaineDateOuvertureSC')
 
-                    contract.releve = releve
+                    contract.statement = statement
 
                 contract.services = []
                 if contratElem['tns:ServicesSouscrits']
@@ -396,8 +398,8 @@ fetchVisualiserPartenaire = (requiredFields, entries, data, callback) ->
                         "ns:corpsSortie", "ns:partenaire"
             client = {}
             coordonneesElem = getF partenaireElem, 'ns:coordonnees'
-            client.telMobile = getF coordonneesElem, 'ns:NumTelMobile'
-            client.telHome = getF coordonneesElem, 'ns:NumTelFixe'
+            client.cellPhone = getF coordonneesElem, 'ns:NumTelMobile'
+            client.homePhone = getF coordonneesElem, 'ns:NumTelFixe'
             client.email = getF coordonneesElem, 'ns:Email'
             client.loginEmail = getF coordonneesElem, 'ns:EmailAEL'
 
@@ -481,23 +483,23 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
                 "\n#{bankAddress.city} #{bankAddress.country}"
             paymentTerms.bankDetails.bankAddress = bankAddress
 
-            paymentTerms.solde = getF acoElem, 'ns:detail', 'ns:solde'
-            paymentTerms.typeEncaissement = getF acoElem, 'ns:detail'
+            paymentTerms.balance = getF acoElem, 'ns:detail', 'ns:solde'
+            paymentTerms.paymentMeans = getF acoElem, 'ns:detail'
             , 'ns:modeEncaissement'
-            paymentTerms.modifIbanAutorisee = getF acoElem, 'ns:detail'
+            paymentTerms.modifBankDetailsAllowed = getF acoElem, 'ns:detail'
             , 'ns:modifIbanAutorisee'
             #accountNumber: getF acoElem, 'ns:detail', 'ns:numeroEtendu'
             paymentTerms.dernierReglement =
                     date: getF acoElem, 'ns:dernierReglement', 'ns:date'
-                    montant: getF acoElem, 'ns:dernierReglement', 'ns:montant'
+                    amount: getF acoElem, 'ns:dernierReglement', 'ns:montant'
                     type: getF acoElem, 'ns:dernierReglement', 'ns:type'
-            paymentTerms.periodiciteFacture = getF acoElem, 'ns:facturation', \
+            paymentTerms.billFrequency = getF acoElem, 'ns:facturation', \
                                     'ns:periodicite'
-            paymentTerms.dateProchaineFacture = getF acoElem
+            paymentTerms.nextBillDate = getF acoElem
                 , 'ns:facturation', 'ns:dateProchaineFacture'
 
-            paymentTerms.idPayeur = getF acoElem, 'ns:numeroPayeur'
-            paymentTerms.payeurDivergent = getF acoElem, 'ns:payeurDivergent'
+            paymentTerms.idPayer = getF acoElem, 'ns:numeroPayeur'
+            paymentTerms.payerDivergent = getF acoElem, 'ns:payeurDivergent'
 
             servicesElem = acoElem['ns:services']
             services = servicesElem.map (serviceElem) ->
@@ -964,8 +966,8 @@ fetchEdeliaElecIndexes = (requiredFields, entries, data, callback) ->
                 statement = data
                     .consumptionStatementByMonth[obj.date.slice(0, 7)]
 
-                statement.releve = statement.releve || []
-                statement.releve.push obj
+                statement.statements = statement.statements || []
+                statement.statements.push obj
 
             K.logger.info 'Fetched fetchEdeliaElecIndexes'
         catch e
@@ -1117,8 +1119,8 @@ fetchEdeliaGasIndexes = (requiredFields, entries, data, callback) ->
                 statement = data
                     .consumptionStatementByMonth[obj.date.slice(0, 7)]
 
-                statement.releve = statement.releve || []
-                statement.releve.push obj
+                statement.statements = statement.statements || []
+                statement.statements.push obj
 
             K.logger.info 'Fetched fetchEdeliaGasIndexes'
         catch e
