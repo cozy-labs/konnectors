@@ -34,7 +34,7 @@ mock = nock('https://www.rescuetime.com')
         ]
 
 
-describe "When I fetch rescuetime data", ->
+describe.skip "When I fetch rescuetime data", ->
 
     before (done) ->
         connector.init (err) =>
@@ -68,4 +68,3 @@ describe "When I fetch rescuetime data", ->
                 should.not.exist err
                 activities.length.should.equal 4
                 done()
-

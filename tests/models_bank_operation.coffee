@@ -26,7 +26,7 @@ describe 'Bank Operation model', ->
     before (done) ->
         loadFixtures done
 
-    it 'grabs binary references of a file from its id', (done) ->
+    it.skip 'grabs binary references of a file from its id', (done) ->
 
         File.all (err, files) ->
             file = files[0]
@@ -39,4 +39,3 @@ describe 'Bank Operation model', ->
                     operation.binary.fileName.should.equal file.name
                     operation.binary.fileMime.should.equal file.mime
                     done()
-

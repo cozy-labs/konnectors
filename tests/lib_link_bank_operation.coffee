@@ -33,7 +33,7 @@ loadFixtures = (callback) ->
                         callback: callback
 
 
-describe 'Running link_operation', ->
+describe.skip 'Running link_operation', ->
 
     operations = []
     linker = linkBankOperation
@@ -220,4 +220,3 @@ describe 'Running link_operation', ->
                         should.not.exist operations[0].binary
                         should.not.exist operations[1].binary
                         done()
-
