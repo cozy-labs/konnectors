@@ -15,7 +15,7 @@ service doctolib.fr */
 
 var connector = module.exports = baseKonnector.createNew({
   name: 'Doctolib',
-
+  vendorLink: 'www.doctolib.fr/',
   fields: {
     login: 'text',
     password: 'password',

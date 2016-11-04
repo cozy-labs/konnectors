@@ -36,6 +36,13 @@ function getContacts(requiredFields, entries, data, next) {
     if (err) {
       connector.logger.error('Cannot retrieve contacts from database');
     } else {
+      if (requiredFields.tag && requiredFields.tag !== '') {
+        data.contacts = contacts.filter(function (contact) {
+          return _.includes(contact.tags, requiredFields.tag);
+        });
+      } else {
+        data.contacts = contacts;
+      }
       data.contacts = contacts.filter(function (contact) {
         return _.includes(contact.tags, requiredFields.tag);
       });

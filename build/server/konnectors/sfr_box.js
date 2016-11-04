@@ -27,6 +27,7 @@ var Bill = require('../models/bill');
 // Konnector
 var connector = module.exports = baseKonnector.createNew({
   name: 'SFR Box',
+  vendorLink: 'espace-client.sfr.fr/facture-fixe/consultation',
   fields: {
     login: 'text',
     password: 'password',
@@ -54,7 +55,10 @@ function getToken(requiredFields, bills, data, next) {
   connector.logger.info('Getting the token on Sfr Website...');
 
   request(options, function (err, res, body) {
-    if (err) return next(err);
+    if (err) {
+      connector.logger.info(err);
+      return next('token not found');
+    }
 
     var $ = cheerio.load(body);
     data.token = $('input[name=lt]').val();
@@ -82,7 +86,10 @@ function logIn(requiredFields, bills, data, next) {
   connector.logger.info('Logging in on Sfr website...');
 
   request(options, function (err) {
-    if (err) return next(err);
+    if (err) {
+      connector.logger.info(err);
+      return next('bad credentials');
+    }
 
     connector.logger.info('Successfully logged in.');
     return next();

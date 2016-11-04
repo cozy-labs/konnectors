@@ -1,6 +1,6 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var async = require('async');
 var cheerio = require('cheerio');
@@ -16,7 +16,7 @@ var saveDataAndFile = require('../lib/save_data_and_file');
 var Bill = require('../models/bill');
 var Event = require('../models/event');
 
-var name = 'SNCF';
+var name = 'Voyages SNCF';
 
 var logger = require('printit')({
   prefix: name,
@@ -34,7 +34,7 @@ var momentZone = 'Europe/Paris';
 
 var connector = module.exports = baseKonnector.createNew({
   name: name,
-
+  vendorLink: 'https://voyages-sncf.com',
   fields: {
     login: 'text',
     password: 'password',
@@ -66,11 +66,15 @@ function logIn(requiredFields, entries, data, next) {
   };
 
   request(loginOptions, function (err, res, body) {
-    if (err) return next(err);
+    if (err) {
+      connector.logger.info(err);
+      return next('bad credentials');
+    }
 
     var jsonRes = JSON.parse(body);
     if (jsonRes.error) {
-      return next(new Error(jsonRes.error.code + ': ' + jsonRes.error.libelle));
+      connector.logger.info(jsonRes.error.code + ': ' + jsonRes.error.libelle);
+      return next('bad credentials');
     }
 
     // We fetch bills and events
@@ -88,7 +92,10 @@ function getOrderPage(requiredFields, entries, data, next) {
 
   connector.logger.info('Download orders HTML page...');
   getPage(url, function (err, res, body) {
-    if (err) return next(err);
+    if (err) {
+      connector.logger.info(err);
+      return next('request error');
+    }
 
     data.html = body;
     connector.logger.info('Orders page downloaded.');
@@ -110,7 +117,7 @@ function parseOrderPage(requiredFields, entries, data, next) {
     var bill = {
       date: moment(orderInformations.date, 'DD/MM/YY'),
       amount: orderInformations.amount,
-      vendor: 'SNCF',
+      vendor: 'VOYAGES SNCF',
       type: 'transport',
       content: orderInformations.label + ' - ' + orderInformations.reference
     };
@@ -158,7 +165,10 @@ function getEvents(orderInformations, events, callback) {
   // Try to get the detail order
   var uri = 'http://monvoyage.voyages-sncf.com/vsa/api/order/fr_FR/' + orderInformations.owner + '/' + orderInformations.reference;
   getPage(uri, function (err, res, body) {
-    if (err) return callback(err);
+    if (err) {
+      connector.logger.info(err);
+      return callback('request error');
+    }
 
     var result = JSON.parse(body);
     // This order is in the old html page format
@@ -167,6 +177,12 @@ function getEvents(orderInformations, events, callback) {
     }
 
     var folders = result.order.folders;
+    // If folder is an object, convert it into an array
+    if (folders && !Array.isArray(folders)) {
+      folders = Object.keys(folders).map(function (ref) {
+        return folders[ref];
+      });
+    }
     folders.forEach(function (folder) {
       // Create our passengers (id associated to their name)
       var passengers = {};
@@ -178,9 +194,9 @@ function getEvents(orderInformations, events, callback) {
       folder.travels.forEach(function (travel) {
         var travelType = void 0;
         if (travel.type === 'OUTWARD') {
-          travelType = localization.t('konnector sncf outward');
+          travelType = localization.t('konnector voyages_sncf outward');
         } else {
-          travelType = localization.t('konnector sncf inward');
+          travelType = localization.t('konnector voyages_sncf inward');
         }
 
         // Each travel can be composed of several segments
@@ -227,10 +243,10 @@ function getEvents(orderInformations, events, callback) {
           var description = travelType + ': ' + departureCity + '/' + arrivalCity;
 
           var details = departureStation + ' -> ' + arrivalStation + '\n';
-          details += localization.t('konnector sncf reference');
+          details += localization.t('konnector voyages_sncf reference');
           details += ': ' + orderInformations.reference + '\n';
           details += trainType + ' ' + trainNumber + '\n';
-          details += localization.t('konnector sncf class');
+          details += localization.t('konnector voyages_sncf class');
           details += ': ' + trainClass + '\n\n';
 
           Object.keys(segmentPassengers).forEach(function (passengerId) {
@@ -240,9 +256,9 @@ function getEvents(orderInformations, events, callback) {
             if (segmentPassenger) {
               var passengerPlace = '';
               if (segmentPassenger.placement !== undefined) {
-                passengerPlace = localization.t('konnector sncf car');
+                passengerPlace = localization.t('konnector voyages_sncf car');
                 passengerPlace += ' ' + segmentPassenger.placement.car + ' ';
-                passengerPlace += localization.t('konnector sncf place');
+                passengerPlace += localization.t('konnector voyages_sncf place');
                 passengerPlace += ' ' + segmentPassenger.placement.seat;
               }
 
@@ -365,7 +381,10 @@ function getEventsOld(orderInformations, events, callback) {
 
   // Try to get the detail order
   getPage(uri, function (err, res, body) {
-    if (err) return callback(err);
+    if (err) {
+      connector.logger.info(err);
+      return callback('request error');
+    }
 
     var $ = cheerio.load(body);
     var $subOrders = $('.submit.button-primary.btn');
@@ -435,9 +454,9 @@ function getEventsOld(orderInformations, events, callback) {
         var description = travelType + ': ' + label;
 
         var details = beginStation + ' -> ' + arrivalStation + '\n';
-        details += localization.t('konnector sncf reference');
+        details += localization.t('konnector voyages_sncf reference');
         details += ': ' + reference + '\n';
-        details += localization.t('konnector sncf ticket choice');
+        details += localization.t('konnector voyages_sncf ticket choice');
         details += ': ' + ticketChoice + '\n';
         details += trainType + ' ' + trainNumber + ' - ' + trainInfo + '\n\n';
 

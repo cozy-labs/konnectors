@@ -6,6 +6,7 @@
 // this konnector works for customers having an automatic toll payment system
 // also called "badge telepeage"
 */
+
 'use strict';
 
 var request = require('request').defaults({
@@ -21,7 +22,7 @@ var filterExisting = require('../lib/filter_existing');
 var localization = require('../lib/localization_manager');
 var saveDataAndFile = require('../lib/save_data_and_file');
 var linkBankOperation = require('../lib/link_bank_operation');
-
+var Bill = require('../models/bill');
 var log = require('printit')({
   prefix: 'APRR',
   date: true
@@ -31,8 +32,6 @@ var fileOptions = {
   vendor: 'APRR',
   dateFormat: 'YYYYMMDD'
 };
-
-var Bill = require('../models/bill');
 
 var baseUrl = 'https://espaceclient.aprr.fr/aprr/Pages';
 
@@ -203,14 +202,12 @@ function parsePage(requiredFields, bills, data, next) {
 }
 
 function customFilterExisting(requiredFields, bills, data, next) {
-  filterExisting(log, Bill)(requiredFields, bills, data, next);
-  return next();
+  return filterExisting(log, Bill)(requiredFields, bills, data, next);
 }
 
 function customSaveDataAndFile(requiredFields, bills, data, next) {
   var fnsave = saveDataAndFile(log, Bill, fileOptions, ['peage', 'facture']);
-  fnsave(requiredFields, bills, data, next);
-  return next();
+  return fnsave(requiredFields, bills, data, next);
 }
 
 function buildNotifContent(requiredFields, bills, data, next) {

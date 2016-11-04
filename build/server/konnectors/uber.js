@@ -1,3 +1,4 @@
+
 'use strict';
 
 var request = require('request');
@@ -25,6 +26,7 @@ var fileOptions = {
 
 module.exports = baseKonnector.createNew({
   name: 'Uber',
+  vendorLink: 'https://uber.com',
   fields: {
     login: 'text',
     password: 'password',

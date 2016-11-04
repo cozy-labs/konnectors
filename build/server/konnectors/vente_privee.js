@@ -3,7 +3,10 @@
 // creation : 11/06/2016
 // creator : https://github.com/SomeAverageDev
 */
+
 'use strict';
+
+var saveOnlyLastBill = false;
 
 var request = require('request').defaults({
   jar: true,
@@ -23,7 +26,7 @@ var filterExisting = require('../lib/filter_existing');
 var localization = require('../lib/localization_manager');
 var saveDataAndFile = require('../lib/save_data_and_file');
 var linkBankOperation = require('../lib/link_bank_operation');
-
+var Bill = require('../models/bill');
 var log = require('printit')({
   prefix: 'vente-privee',
   date: true
@@ -33,8 +36,6 @@ var fileOptions = {
   vendor: 'vente-privee',
   dateFormat: 'YYYYMMDD'
 };
-
-var Bill = require('../models/bill');
 
 var baseUrl = 'https://secure.fr.vente-privee.com';
 
@@ -51,7 +52,7 @@ var connector = module.exports = baseKonnector.createNew({
   fetchOperations: [getHiddenInputs, logIn, parsePage, customFilterExisting, customSaveDataAndFile, linkBankOperation({
     log: log,
     model: Bill,
-    identifier: 'VENTE PRIVEE.C',
+    identifier: 'VENTE PRIVEE.COM',
     minDateDelta: 4,
     maxDateDelta: 20,
     amountDelta: 0.1
@@ -198,13 +199,18 @@ function parsePage(requiredFields, bills, data, next) {
       } else if (bill.date > lastBill.date) {
         lastBill = Object.assign(bill);
       }
-      // saving current bill
-      // bills.fetched.push(bill);
+
+      if (!saveOnlyLastBill) {
+        // saving current bill
+        bills.fetched.push(bill);
+      }
     }
     return true;
   });
 
-  bills.fetched.push(lastBill);
+  if (saveOnlyLastBill) {
+    bills.fetched.push(lastBill);
+  }
 
   log.debug('bills.fetched:', bills);
 
@@ -214,15 +220,13 @@ function parsePage(requiredFields, bills, data, next) {
 
 function customFilterExisting(requiredFields, bills, data, next) {
   log.debug('customFilterExisting');
-  filterExisting(log, Bill)(requiredFields, bills, data, next);
-  return next();
+  return filterExisting(log, Bill)(requiredFields, bills, data, next);
 }
 
 function customSaveDataAndFile(requiredFields, bills, data, next) {
   log.debug('customSaveDataAndFile');
   var fnsave = saveDataAndFile(log, Bill, fileOptions, ['vente-privee', 'facture']);
-  fnsave(requiredFields, bills, data, next);
-  return next();
+  return fnsave(requiredFields, bills, data, next);
 }
 
 function buildNotifContent(requiredFields, bills, data, next) {

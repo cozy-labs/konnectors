@@ -19,10 +19,35 @@ var logger = require('printit')({
 
 var baseURL = 'https://www.materiel.net/';
 
+var billsTableSelector = '#client table.EpCmdList';
+
 var fileOptions = {
   vendor: 'Materiel.net',
   dateFormat: 'YYYYMMDD'
 };
+
+/**
+ * @param {string} html
+ * @return cheerio[]
+ */
+function extractBillsRows(html) {
+  var $ = cheerio.load(html);
+  var container = $(billsTableSelector);
+  return container.find('tr[class^="Line"]').toArray().map(function (r) {
+    return $(r);
+  });
+}
+
+function fetchBillPageBillsList(options, cb) {
+  request(options, function (err, res, body) {
+    if (err) {
+      logger.info('Could not fetch bills list from ' + options.url);
+      return cb(null);
+    }
+
+    cb(extractBillsRows(body));
+  });
+}
 
 // Login layer
 function login(requiredFields, billInfos, data, next) {
@@ -57,10 +82,50 @@ function login(requiredFields, billInfos, data, next) {
         return next('no bills retrieved');
       }
 
-      // TODO: check the other pages
+      // Check if there are several pages
+      var $ = cheerio.load(body);
+      var otherPages = $(billsTableSelector + ' tr.EpListBLine td:first-child').text();
+      var nbPagesPos = otherPages.lastIndexOf(' ') + 1;
+      var nbPages = 1;
+      if (nbPagesPos) {
+        nbPages = parseInt(otherPages.substr(nbPagesPos), 10);
+        if (isNaN(nbPages)) {
+          nbPages = 1;
+        }
+      }
 
-      data.html = body;
-      next();
+      // If there are are several pages, parse all the pages to retrieve all the
+      // bills
+      if (nbPages > 1) {
+        (function () {
+          var totalPagesParsed = 0;
+          var billsList = $(billsTableSelector);
+          var _fetchPageFromIndex = function _fetchPageFromIndex(idx) {
+            var pageOptions = Object.create(billsOptions);
+            pageOptions.url += '?page=' + idx;
+            logger.info('Fetching page ' + idx + ' of ' + nbPages + '\u2026');
+            fetchBillPageBillsList(pageOptions, function (rows) {
+              // We now reinsert the rows in the first page's list
+              if (rows) {
+                billsList.append(rows);
+              }
+
+              if (++totalPagesParsed === nbPages - 1) {
+                logger.info('All bills pages fetched');
+                data.html = $.html();
+                next();
+              }
+            });
+          };
+
+          for (var pageIndex = 2; pageIndex <= nbPages; ++pageIndex) {
+            _fetchPageFromIndex(pageIndex);
+          }
+        })();
+      } else {
+        data.html = body;
+        next();
+      }
     });
   });
 }
@@ -68,26 +133,45 @@ function login(requiredFields, billInfos, data, next) {
 function parsePage(requiredFields, bills, data, next) {
   bills.fetched = [];
 
-  var $ = cheerio.load(data.html);
-  var container = $('#client');
+  var rows = extractBillsRows(data.html);
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
 
-  container.find('table.EpCmdList tr[class^="Line"]').each(function (idx, element) {
-    var cells = $(element).find('td');
-    var ref = cells.eq(0).text().trim();
-    var date = cells.eq(1).text().trim();
-    var price = cells.eq(2).text().trim().replace(' €', '').replace(',', '.');
-    var status = cells.eq(3).text().trim().toLowerCase();
+  try {
+    for (var _iterator = rows[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var row = _step.value;
 
-    if (status === 'terminée' || status === 'commande expédiée') {
-      var bill = {
-        date: moment(date, 'DD/MM/YYYY'),
-        amount: parseFloat(price),
-        pdfurl: baseURL + 'pm/client/facture.nt.html?ref=' + ref
-      };
+      var cells = row.find('td');
+      var ref = cells.eq(0).text().trim();
+      var date = cells.eq(1).text().trim();
+      var price = cells.eq(2).text().trim().replace(' €', '').replace(',', '.');
+      var status = cells.eq(3).text().trim().toLowerCase();
 
-      bills.fetched.push(bill);
+      if (status === 'terminée' || status === 'commande expédiée') {
+        var bill = {
+          date: moment(date, 'DD/MM/YYYY'),
+          amount: parseFloat(price),
+          pdfurl: baseURL + 'pm/client/facture.nt.html?ref=' + ref
+        };
+
+        bills.fetched.push(bill);
+      }
     }
-  });
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
 
   logger.info(bills.fetched.length + ' bill(s) retrieved');
   next();
@@ -112,7 +196,7 @@ function buildNotifContent(requiredFields, entries, data, next) {
 }
 
 module.exports = factory.createNew({
-  name: 'Materiel_net',
+  name: 'Materiel.net',
   description: 'konnector description materiel_net',
   vendorLink: baseURL,
 

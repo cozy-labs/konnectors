@@ -20,7 +20,7 @@ var logger = require('printit')({
 
 module.exports = baseKonnector.createNew({
   name: 'Captain Train',
-
+  vendorLink: 'www.captaintrain.com',
   fields: {
     login: 'email',
     password: 'password',
@@ -35,7 +35,7 @@ module.exports = baseKonnector.createNew({
     maxDateDelta: 1,
     model: Bill,
     amountDelta: 0.1,
-    identifier: ['CAPITAINE TRAIN', 'CAPTAIN TRAIN', 'OUIGO']
+    identifier: ['CAPITAINE TRAIN', 'CAPTAIN TRAIN', 'OUIGO', 'TRAINLINE']
   }), buildNotifContent]
 
 });
@@ -286,7 +286,7 @@ function fetchBills(requiredFields, entries, data, next) {
           if (proof.type === 'purchase') {
             // Compute the sum of refunds for the current bill
             var reinboursedAmount = listRefund.reduce(function (sum, rb) {
-              return sum - rb.added_cents + rb.refunded_cents;
+              return sum - (rb.added_cents - rb.refunded_cents);
             }, 0);
             // We compute the amount of not reimbursed trips.
             var paidAmount = linkedPNR.filter(function (pnr) {
