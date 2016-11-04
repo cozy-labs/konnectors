@@ -33,7 +33,7 @@ loadFixtures = (callback) ->
                         callback: callback
 
 
-describe.skip 'Running link_operation', ->
+describe 'Running link_operation', ->
 
     operations = []
     linker = linkBankOperation

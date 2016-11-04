@@ -21,7 +21,7 @@ loadFixtures = (callback) ->
         callback: callback
 
 
-describe.skip 'Filter Existing Layer', ->
+describe 'Filter Existing Layer', ->
 
     entries =
             fetched: [

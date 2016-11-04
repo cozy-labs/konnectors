@@ -5,7 +5,7 @@ patch = require '../server/init/patch_commits'
 Commit = require '../server/models/commit'
 
 
-describe.skip 'Patch: remove duplicated github commits', ->
+describe 'Patch: remove duplicated github commits', ->
 
 
     before (done) ->

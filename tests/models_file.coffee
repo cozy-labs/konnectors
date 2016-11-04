@@ -25,7 +25,7 @@ describe 'File model', ->
         else
             done()
 
-    it.skip 'Can create a Cozy File from a given pdf url', (done) ->
+    it 'Can create a Cozy File from a given pdf url', (done) ->
         @timeout 5000
 
         fileName = 'bill.pdf'
@@ -51,7 +51,7 @@ describe 'File model', ->
             stream.pipe fs.createWriteStream '/tmp/test-bill.pdf'
 
 
-    it.skip 'Can tell if a file is present in Cozy Files', (done) ->
+    it 'Can tell if a file is present in Cozy Files', (done) ->
 
         File.isPresent '/bills/bill.pdf', (err, isPresent) ->
             should.not.exist err

@@ -15,7 +15,7 @@ saveDataAndFile = require '../server/lib/save_data_and_file'
 
 
 
-describe.skip 'Save Data and File layer', ->
+describe 'Save Data and File layer', ->
 
     createdFile = null
     server = null
@@ -85,7 +85,7 @@ describe.skip 'Save Data and File layer', ->
 
                 done()
 
-    it.skip 'Save bill models', (done) ->
+    it 'Save bill models', (done) ->
         Bill.all (err, bills) =>
             should.exist bills
             bills.length.should.equal 2
@@ -98,7 +98,7 @@ describe.skip 'Save Data and File layer', ->
 
             done()
 
-    it.skip 'Download file if entry is there but file is missing', (done) ->
+    it 'Download file if entry is there but file is missing', (done) ->
         entries.filtered = []
         @files[0].destroy ->
             layer folderPath: 'bills', entries, {}, =>
