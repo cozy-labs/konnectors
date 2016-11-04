@@ -186,7 +186,7 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
                     OFFRE_TPN: 'TPN'
                 , getF(offreSouscriteObj, 'tns:NomOffre')
 
-                contract.numeroDepannage = getF offreSouscriteObj
+                contract.troubleshootingPhone = getF offreSouscriteObj
                 , 'tns:NumeroDepannageContrat'
 
                 switch contract.energie
@@ -315,7 +315,7 @@ fetchVisualiserPartenaire = (requiredFields, entries, data, callback) ->
             partnerElem = getF result["ns:msgReponse"], \
                         "ns:corpsSortie", "ns:partenaire"
             client = {}
-            coordonneesElem = getF partnerElem, 'ns:coordonnees'
+            coordonneesElem = getF partenaireElem, 'ns:coordonnees'
             client.cellPhone = getF coordonneesElem, 'ns:NumTelMobile'
             client.homePhone = getF coordonneesElem, 'ns:NumTelFixe'
             client.email = getF coordonneesElem, 'ns:Email'
