@@ -13,6 +13,10 @@ module.exports = Bill = cozydb.getModel 'Bill',
     fileId: String
     content: String
     isRefund: Boolean
+    clientId: String # Client number in vendor CRM
+    number: String # Bill Id, in vendor CRM
+    docTypeVersion: String # Document traceability : appName_Konnector-version
+
 
 
 Bill.all = (callback) ->
