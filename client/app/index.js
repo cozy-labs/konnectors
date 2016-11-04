@@ -7,7 +7,7 @@ import routes from './routes'
 
 // Initialize Vue
 Vue.use(VueRouter)
-Vue.use(VuePolyglot)
+Vue.use(VuePolyglot, { context: window.context || 'cozy' })
 
 // Initialize Vue-router
 const router = new VueRouter({ routes })

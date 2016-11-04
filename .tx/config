@@ -6,3 +6,9 @@ file_filter = client/app/locales/<lang>.json
 source_file = client/app/locales/en.json
 source_lang = en
 type = KEYVALUEJSON
+
+[myaccounts.context-cozy]
+file_filter = client/app/contexts/cozy/locales/<lang>.json
+source_file = client/app/contexts/cozy/locales/en.json
+source_lang = en
+type = KEYVALUEJSON

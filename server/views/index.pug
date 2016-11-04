@@ -24,6 +24,7 @@ html(lang=locale)
     script.
       window.initKonnectors = !{JSON.stringify(imports.konnectors)}
       window.initFolders = !{JSON.stringify(imports.folders)}
+      window.context = '!{imports.context}'
   script(src=`app${hash}.js` defer=true)
 
   div(role="application")

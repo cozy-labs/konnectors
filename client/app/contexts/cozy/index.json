@@ -1,0 +1,21 @@
+{
+  "use-cases":[{
+    "slug": "phone-bills",
+    "konnectors": [{
+      "slug": "virgin_mobile"
+    }, {
+      "slug": "sfr_mobile"
+    }, {
+      "slug": "orange"
+    }, {
+      "slug": "sosh"
+    }, {
+      "slug": "bouyguestelecom"
+    }, {
+      "slug": "free"
+    }],
+    "figure": "facture-telephonique-lg.jpg",
+    "color": {"css": "#1FA8F1"},
+    "important": true
+  }]
+}
