@@ -50,14 +50,14 @@ describe.skip 'Filter Existing Layer', ->
         map = (doc) ->
             emit doc.date, doc
             return
-        Bill.defineRequest 'bydate', map, ->
+        Bill.defineRequest 'byDate', map, ->
             Bill.requestDestroy 'byDate', ->
                 loadFixtures done
 
     after (done) ->
         Bill.requestDestroy 'byDate', done
 
-    it.skip 'removes existing entries without vendor ', (done) ->
+    it 'removes existing entries without vendor ', (done) ->
         layer = filterExisting log, Bill
 
         layer {}, entries, {}, ->
@@ -65,7 +65,7 @@ describe.skip 'Filter Existing Layer', ->
             entries.filtered.length.should.equal 1
             done()
 
-    it.skip 'removes existing entries with a vendor ', (done) ->
+    it 'removes existing entries with a vendor ', (done) ->
         layer = filterExisting log, Bill
         for entry in entries.fetched
             entry.vendor = 'test'
