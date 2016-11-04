@@ -21,10 +21,10 @@ module.exports.main = (req, res) ->
         {konnectors, instance, folders} = results
 
         res.render 'index',
-          locale: instance?.locale or 'en'
-          imports:
-            konnectors: konnectors
-            folders: folders
-            # Should be override to load a specific context in client app.
-            # Defaults to `cozy`
-            context: 'cozy'
+            locale: instance?.locale or 'en'
+            imports:
+                konnectors: konnectors
+                folders: folders
+                # Should be override to load a specific context in client app.
+                # Defaults to `cozy`
+                context: 'cozy'
