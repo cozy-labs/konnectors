@@ -29,10 +29,18 @@ module.exports =
 >>>>>>> 9fe27e1... Warn the user that the password cannot be decrypted. Fixes #503 (#538)
 
                 # Add customView field
-                    konnectorModule = require "../konnectors/#{konnector.slug}"
+                konnectorModule = require(
+                    path.join(
+                        '..',
+                        'konnectors',
+                        konnector.slug
+                    )
+                )
+                if konnectorModule.default?
+                    konnectorModule = konnectorModule.default
 
-                    if konnectorModule.customView?
-                        konnector.customView = konnectorModule.customView
+                if konnectorModule.customView?
+                    konnector.customView = konnectorModule.customView
 
                 req.konnector = konnector
                 next()

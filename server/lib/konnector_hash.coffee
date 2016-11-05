@@ -20,10 +20,13 @@ getKonnectorModules = ->
     moduleFiles = fs.readdirSync modulesPath
 
     for moduleFile in moduleFiles
-        if isCoffeeOrJsFile moduleFile
-            name = moduleFile.split('.')[0]
-            modulePath = "../konnectors/#{name}"
-            modules[name] = require modulePath
+        if (fs.lstatSync(path.join modulesPath, moduleFile).isDirectory() or
+            isCoffeeOrJsFile moduleFile)
+                name = moduleFile.split('.')[0]
+                modulePath = path.join modulesPath, name
+                modules[name] = require modulePath
+                if modules[name].default?
+                    modules[name] = modules[name].default
 
     return modules
 

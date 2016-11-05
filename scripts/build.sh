@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+PATH="./node_modules/.bin:$PATH"
 
 export PATH="./node_modules/.bin:$PATH"
 export OPTIMIZE=true
@@ -24,6 +25,7 @@ rm -rf build/client && mkdir -p build/client/app
 echo "Previous client cleaned."
 
 echo "Build entry point..."
+
 mkdir -p ./build/server/views
 pug --client --no-debug --out ./build/server ./server
 echo "; module.exports = template" | \
