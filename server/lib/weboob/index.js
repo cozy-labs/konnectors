@@ -165,12 +165,14 @@ const WeboobFetcher = (function (logger) {
         // Remove all error listeners at this point, error are treated directly in the end function.
         client.removeAllListeners('error');
         client.end(function (message) {
-            if (message.exitCode != 0) {
+            if (message && message.exitCode != 0) {
                 logger.error('Error while closing the conversation with cozyweboob:');
                 logger.raw(err);
             }
             logger.info('Conversation with cozyweboob successfully closed!');
-            return callback();
+            if (callback) {
+                return callback();
+            }
         });
     }
 
@@ -186,7 +188,7 @@ const WeboobFetcher = (function (logger) {
             let builtKonnectors = []
 
             Object.keys(modules).forEach(weboobType => {
-                builtKonnectors = Converters.Konnector[weboobType](modules[weboobType])
+                builtKonnectors = Converters.Konnector[weboobType](modules[weboobType]).parsedData
             })
 
             if (callback) {
@@ -196,7 +198,8 @@ const WeboobFetcher = (function (logger) {
         return _connect(() => {
             _list(data => {
                 buildKonnectors(data, data => {
-                    console.log(data)
+                    console.log(JSON.stringify(data.slice(0, 9), null, 2))
+                    _exit(callback)
                 })
             })
         })
