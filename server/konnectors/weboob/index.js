@@ -10,7 +10,6 @@
 import fs from 'fs';
 import path from 'path';
 import PythonShell from 'python-shell';
-import requestJson from 'request-json';
 
 // Konnectors imports
 import baseKonnector from '../../lib/base_konnector';
