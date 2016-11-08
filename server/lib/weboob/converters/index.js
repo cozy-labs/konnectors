@@ -7,12 +7,13 @@
 
 // Import converters
 import BillConverters from './Bill'
-import KonnectorConverters from './Konnector'
+
+// NOTE: We voluntarily keep Konnector converter out of this export, to avoid
+// circular dependency
 
 // Export global converters object
 const Converters = {
-    'Bill': BillConverters,
-    'Konnector': KonnectorConverters
+    'Bill': BillConverters
 };
 
 export default Converters;
