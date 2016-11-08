@@ -5,11 +5,11 @@
         include ../../templates/category_list.pug
 
     block dialog
-        .dialogs(aria-hidden='false')
+        div(aria-hidden='false', role='dialog')
             div(role='separator', v-on:click="closeWindow")
             .wrapper
                 div(role='contentinfo')
-                    button(v-on:click="closeWindow") close
+                    a(v-on:click="closeWindow", title='close') Fermer
                     p hello
         </div>
 </template>

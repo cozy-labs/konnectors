@@ -26,7 +26,9 @@
     @import '../node_modules/normalize.css/normalize.css'
     @import './styles/base/_normalize'
     @import './styles/base/_colors'
+
     @import 'cozy-ui'
+    @import './styles/base/_dialog'
 
     [role=application]
         @extend $app-2panes-toolbar
