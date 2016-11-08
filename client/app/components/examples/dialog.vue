@@ -13,3 +13,14 @@
                     p hello
         </div>
 </template>
+
+
+<script>
+    export default {
+        methods: {
+            closeWindow () {
+                this.$router.push({ name: 'categoryList'})
+            }
+        }
+    }
+</script>
