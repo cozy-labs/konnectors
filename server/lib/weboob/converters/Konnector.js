@@ -8,6 +8,8 @@
 // Local imports
 import Converters from './index'
 import WeboobFetcher from '../WeboobFetcher'
+import filterExisting from '../../filter_existing'
+import saveDataAndFile from '../../save_data_and_file'
 
 // Konnectors imports
 import baseKonnector from '../../base_konnector'
@@ -91,10 +93,22 @@ const KonnectorConverters = {
         let parsedData = []
 
         data.forEach((module) => {
+            let konnectorData = baseKonnector.createNew({
+                name: module.name,
+                vendorLink: module.website,
+                fields: configConversion(module.config),
+                models: capabilitiesToModels(module.capabilities),
+                fetchOperations: [
+                    // Filled right afterwards
+                ]
+            })
+
             /**
              * Build description of modules to run for Cozyweboob
              */
-            const _buildModulesDescription = function (requiredFields, entries, data, next) {
+            konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
+                konnectorData.logger.info('Building modules description...')
+                // Store the modules description in data field
                 data.modulesDescription = {
                     // We call a single time each module, so name is a valid id
                     id: module.name,
@@ -108,28 +122,42 @@ const KonnectorConverters = {
                     }
                 }
                 Object.keys(requiredFields).forEach(field => {
+                    // Fill in fields
                     data.modulesDescription[field] = requiredFields[field]
                 })
+                konnectorData.logger.info('Done building modules description!')
                 return next()
-            }
+            })
+
             /**
              * Fetch data using CozyWeboob
              */
-            const _fetchData = function (requiredFields, entries, data, next) {
+            konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
+                konnectorData.logger.info('Fetching data...')
+                // Fetch using weboob fetcher
                 data.client = WeboobFetcher()
                 return data.client.fetch(
                     JSON.stringify(data.modulesDescription),
-                    (response) => { data.rawEntries = response; return next() }
+                    (response) => {
+                        // Store fetched data in data field
+                        konnectorData.logger.info('Done fetching data!')
+                        data.rawEntries = response;
+                        return next()
+                    }
                 )
-            }
+            })
             /**
              * Parse the returned data and create matching Cozy models
              */
-            const _parseData = function (requiredFields, entries, data, next) {
+            konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
+                konnectorData.logger.info('Parsing data...')
                 data.parsedEntries = {};
+                // This follows the structure of the output JSON from cozyweboob
                 Object.keys(data.rawEntries).forEach(function (moduleName) {
                     let moduleData = data.rawEntries[moduleName];
                     Object.keys(moduleData).forEach(function (weboobType) {
+                        // Try to call a matching Converter to convert from
+                        // cozyweboob (weboob) types and cozy models
                         if (Converters[weboobType] === undefined) {
                             return;
                         }
@@ -150,50 +178,102 @@ const KonnectorConverters = {
                         }
                     });
                 });
+                konnectorData.logger.info('Done parsing data!')
                 return next()
-            }
-            const _customFilterExisting = function (requiredFields, entries, data, next) {
-                // TODO
-                return next()
-            }
-            const _customSaveDataAndFile = function (requiredFields, entries, data, next) {
-                // TODO
-                return next()
-            }
+            })
+            /**
+             * Filter out pre-existing entries
+             *
+             * Note: filterExisting only operates on a given Cozy model, so we
+             * have to loop on all supported Cozy models and create a
+             * specialized layer for each of them
+             */
+            Object.keys(Converters).forEach((model) => {
+                konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
+                    konnectorData.logger.info(`Filtering out existing ${model}...`)
+                    // Ensure data.filterExisting exists
+                    if (!data.filterExisting) {
+                        data.filterExisting = {}
+                    }
+                    // Prepare a fake entries variable for filterExisting to
+                    // operate on
+                    let filterExistingInput = {
+                        fetched: data.parsedEntries[model]
+                    }
+                    // Call filterExisting
+                    return filterExisting(konnectorData.logger, model) (
+                        requiredFields,
+                        filterExistingInput,
+                        data,
+                        () => {
+                            konnectorData.logger.info(`Done filtering out existing ${model}!`)
+                            // Store filtered entities in data field
+                            data.filteredEntities[model] = {}  // TODO
+                            return next()
+                        }
+                    )
+                })
+            })
+            /**
+             * Save data and associated files
+             *
+             * Note: saveDataAndFile only operates on a given Cozy model, so we
+             * have to loop on all supported Cozy models and create a
+             * specialized layer for each of them
+             */
+            Object.keys(Converters).forEach((model) => {
+                konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
+                    konnectorData.logger.info('Saving all data and associated files...')
+                    // Prepare a fake entries variable for saveDataAndFile to
+                    // operate on
+                    let saveDataAndFileInput = {
+                        filtered: data.filteredEntities[model]
+                    }
+                    // Call saveDataAndFile
+                    const options = {}  // TODO
+                    const tags = []  // TODO
+                    return saveDataAndFile(konnectorData.logger, model, options, tags) (
+                        requiredFields,
+                        saveDataAndFileInput,
+                        data,
+                        () => {
+                            konnectorData.logger.info('Done saving all data and associated files!')
+                            return next()
+                        }
+                    )
+                })
+            })
             /**
              * Clean temporary created files
              */
-            const _clean = function (requiredFields, entries, data, next) {
+            konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
+                konnectorData.logger.info('Cleaning all temporary files from cozyweboob...')
                 // TODO: Should not be ran while another Weboob-based konnector is running!
-                return data.client.clean(next)
-            }
+                return data.client.clean(() => {
+                    konnectorData.logger.info('Done cleaning all temporary files from cozyweboob!')
+                    return next()
+                })
+            })
             /**
              * Close conversation with CozyWeboob
              */
-            const _close = function (requiredFields, entries, data, next) {
-                return data.client.exit(next)
-            }
-            const _buildNotificationContent = function (requiredFields, entries, data, next) {
+            konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
+                konnectorData.logger.info('Closing communication with cozyweboob...')
+                return data.client.exit(() => {
+                    konnectorData.logger.info('Communication with cozyweboob closed!')
+                    return next()
+                })
+            })
+            /**
+             * Build notifications
+             */
+            konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
                 // TODO
                 return next()
-            }
-            let konnectorData = {
-                name: module.name,
-                vendorLink: module.website,
-                fields: configConversion(module.config),
-                models: capabilitiesToModels(module.capabilities),
-                fetchOperations: [
-                    _buildModulesDescription,
-                    _fetchData,
-                    _parseData,
-                    _customFilterExisting,
-                    _customSaveDataAndFile,
-                    _clean,
-                    _close,
-                    _buildNotificationContent
-                ]
-            }
-            parsedData.push(baseKonnector.createNew(konnectorData))
+            })
+
+            // Restore this created Konnector
+            parsedData.push(konnectorData)
         })
         return {
             cozyModel: Konnector,
