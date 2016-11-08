@@ -1,5 +1,9 @@
 main
-    div(role='contentinfo')
-        block content
+    block notification
+        div(aria-hidden='true', role='alert')
 
     block dialog
+        div(aria-hidden='true', role='dialog')
+
+    div(role='contentinfo')
+        block content
