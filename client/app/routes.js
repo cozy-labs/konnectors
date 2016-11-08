@@ -16,5 +16,5 @@ export default [{
 },
 {
   path: '/',
-  redirect: 'discovery'
+  redirect: '/discovery'
 }]
