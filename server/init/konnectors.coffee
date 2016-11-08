@@ -11,6 +11,7 @@ Bill = require '../models/bill'
 
 # List of konnectors for which the slug has changed
 konnectorsToMigrate = [
+    { oldSlug: 'captain_train', newSlug: 'trainline' },
     { oldSlug: 'virginmobile', newSlug: 'virgin_mobile' },
     { oldSlug: 'sncf', newSlug: 'voyages_sncf' }
 ]

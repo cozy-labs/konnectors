@@ -116,4 +116,3 @@ describe 'Save Data and File layer', ->
                         binaryId = files[1].binary.file.id
                         bills[0].binaryId.should.equal binaryId
                         done()
-

@@ -1,13 +1,12 @@
 'use strict'
 
-import { assert } from 'chai';
-
+import { assert } from 'chai'
 import mockery from 'mockery'
 
 
 describe('Routes', () => {
 
-  let routes;
+  let routes
 
 
   before(() => {
@@ -31,7 +30,7 @@ describe('Routes', () => {
 
 
   describe('Discovery', () => {
-    let route;
+    let route
 
     before(() => {
       route = routes.find((obj) => { return '/discovery' === obj.path })
@@ -39,19 +38,13 @@ describe('Routes', () => {
 
 
     it('Should exist', () => {
-      assert(route)
-      assert.deepEqual({}, route.component)
+      assert.isOk(route)
     })
-
-    it('Should be `default` route', () => {
-      assert.deepEqual('/', route.alias)
-    })
-
   })
 
 
   describe('Categories', () => {
-    let route;
+    let route
 
     before(() => {
       route = routes.find((obj) => { return '/category' === obj.path })
@@ -59,15 +52,13 @@ describe('Routes', () => {
 
 
     it('Should exist', () => {
-      assert(route)
-      assert.deepEqual({}, route.component)
+      assert.isOk(route)
     })
-
   })
 
 
   describe('Connected', () => {
-    let route;
+    let route
 
     before(() => {
       route = routes.find((obj) => { return '/connected' === obj.path })
@@ -75,10 +66,21 @@ describe('Routes', () => {
 
 
     it('Should exist', () => {
-      assert(route)
-      assert.deepEqual({}, route.component)
+      assert.isOk(route)
     })
-
   })
 
+
+  describe('Root redirection', () => {
+    let route
+
+    before(() => {
+      route = routes.find((obj) => { return '/' === obj.path })
+    })
+
+    it('Should redirect to /discover', () => {
+      assert.isOk(route)
+      assert.equal(route.redirect, '/discovery')
+    })
+  })
 })

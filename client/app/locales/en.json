@@ -61,6 +61,7 @@
   "error occurred during import:": "An error occurred during the last import:",
   "import server error": "Server error occured while importing.",
   "open selected folder": "Open selected folder",
+  "konnector description trainline": "Download your train vouchers from Trainline. This konnector requires the Files application to store the bill PDF files.",
   "konnector description free": "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files.",
   "konnector description free mobile": "Download all your phone bills from Free Mobile. This konnector requires the Files application to store the bill PDF files.",
   "konnector description bouygues": "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files.",

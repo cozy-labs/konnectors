@@ -50,4 +50,3 @@ describe 'Patch: remove duplicated github commits', ->
                     commits[1].sha.should.equal '123'
 
                     done()
-

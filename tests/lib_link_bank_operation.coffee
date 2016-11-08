@@ -220,4 +220,3 @@ describe 'Running link_operation', ->
                         should.not.exist operations[0].binary
                         should.not.exist operations[1].binary
                         done()
-

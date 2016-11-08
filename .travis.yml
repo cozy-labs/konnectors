@@ -1,29 +1,33 @@
 language: node_js
 node_js:
-    - 4
+- 4
 services:
-    - couchdb
+- couchdb
 env:
-    global:
-        - NODE_ENV=test
+  global:
+  - NAME=konnectors
+  - TOKEN=apptoken
+  - NODE_ENV=test
+  - secure: bEgRXNhjX/Rq3hM97lHL7AztEt7SHKW08XYwDnjwzTfcrolqD840yZPifo8X9VLX/FvlGNh7CvvAQYqlW0MhIKqWFomByRo7SvpYajxucg3gYMPheNGOqT50mqHhgn98hM4X/cE+yn+yMLotza+i307OMsc/lBD+BgspMiRsi64=
+addons:
+  apt:
+    sources:
+    - deadsnakes
+    packages:
+    - python3.5
 before_install:
-    - git clone git://github.com/mycozycloud/cozy-data-system.git
-    - cd cozy-data-system
-    - npm install forever coffee-script -g
-    - npm install
-    - pwd
-    - NAME=data-system TOKEN=token forever start -o forever-ds.log build/server.js
-    - ps aux | grep server.js
-    - sudo netstat -plunt
-    - sleep 5
-    - cat forever-ds.log
-    - curl http://localhost:9101/
-    - coffee commands.coffee test-install konnectors
-    - cd ..
-    - export NAME=konnectors
-    - export TOKEN=apptoken
-    - mkdir log
-
+- curl -fsSL https://bootstrap.pypa.io/get-pip.py | python3.5 - --user
+- travis_retry pip3.5 install --user transifex-client
+- install -m0644 .transifexrc.tpl ~/.transifexrc
+- echo "password = $TX_PASSWD" >> ~/.transifexrc
+- git clone git://github.com/mycozycloud/cozy-data-system.git
+- cd cozy-data-system
+- npm install forever coffee-script -g
+- npm install
+- NAME=data-system TOKEN=token forever start -o forever-ds.log build/server.js
+- sleep 5
+- coffee commands.coffee test-install konnectors
+- cd ../
 after_failure:
-    - cat cozy-data-system/forever-ds.log
-    - cat cozy-data-system/log/test.log
+- cat cozy-data-system/forever-ds.log
+- cat cozy-data-system/log/test.log

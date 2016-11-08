@@ -8,27 +8,27 @@ listOfLocales = fs.readdirSync localesDirectory
 describe 'Check locale files:', ->
 
     # en is the default language
-    localesToCheck = listOfLocales.filter((l) -> l isnt 'en.coffee')
-    english = require path.resolve localesDirectory, 'en.coffee'
+    localesToCheck = listOfLocales.filter((l) -> l isnt 'en.json')
+    english = require path.resolve localesDirectory, 'en.json'
 
     localesToCheck.forEach (localeName) ->
 
         locale = require path.resolve localesDirectory, localeName
 
         keys = []
-        describe "ensure all the element in en.coffee are translated in #{localeName}.", ->
+        describe "ensure all the element in en.json are translated in #{localeName}.", ->
             for key of english
                 do (key) ->
                     keys.push key
                     it "'#{key}' should be translated in #{localeName}", ->
                         should.exist locale[key]
 
-        describe "ensure all the element in #{localeName} are translated in en.coffee", ->
+        describe "ensure all the element in #{localeName} are translated in en.json", ->
 
             for key of locale
                 do (key) ->
                     if keys.indexOf(key) is -1
-                        it "'#{key}' should be translated in en.coffee", ->
+                        it "'#{key}' should be translated in en.json", ->
                             should.exist english[key]
 
     describe "ensure a key is defined only once in the files", ->
