@@ -72,6 +72,7 @@
     "test:server": "sh scripts/tests.sh",
     "test:client": "mocha --require babel-register client/test/**/*.js",
     "lint": "sh scripts/lint.sh",
+    "pretest": "tx pull -a || true",
     "prewatch:client": "cd client && npm install",
     "start": "node build/server.js",
     "watch": "npm-run-all --parallel 'watch:*'",
