@@ -16,7 +16,7 @@ module.exports =
         put: konnectors.import
         delete: konnectors.remove
 
-    'konnectors/:konnectorId/redirect':
+    'konnectors/:konnectorId/:accountId/redirect':
         get: konnectors.redirect
 
     'folders':

@@ -100,16 +100,16 @@ module.exports =
                     res.status(200).send success: true
 
     redirect: (req, res, next) ->
-        req.konnector.updateFieldValues { accounts: [req.query] }, (err) ->
+        try
+            accounts = req.konnector.accounts or []
+            account = accounts[req.params.accountId] or {}
+            for k, v of req.query
+                account[k] = v
+
+            accounts[req.params.accountId] = account
+        catch e then return next e
+
+        req.konnector.updateFieldValues { accounts: accounts }, (err) ->
             return next err if err
-
-            #poller = require "../lib/poller"
-            #poller.add date, req.konnector
-
-            req.konnector.import (err, notifContent) ->
-                if err?
-                    log.error err
-                else
-                    handleNotification req.konnector, notifContent
 
             res.redirect '/#konnector/' + req.konnector.slug

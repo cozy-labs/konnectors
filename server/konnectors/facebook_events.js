@@ -136,7 +136,6 @@ function downloadData(requiredFields, entries, data, next) {
 }
 
 
-/* Parse file, based on timezone set at user level. */
 function parseData(requiredFields, entries, data, next) {
   connector.logger.info('Parsing raw Events Data...');
 

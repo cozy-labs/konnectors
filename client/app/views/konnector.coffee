@@ -54,6 +54,9 @@ module.exports = class KonnectorView extends BaseView
 
 
     renderValues: (values, slug, index) =>
+        if @model.has 'connectUrl'
+            @addConnectButton index
+
         for name, val of @model.get 'fields'
             values[name] ?= ""
 
@@ -304,6 +307,22 @@ target="_blank">
         @$('.fields').append fieldHtml
 
 
+    addConnectButton: (index) ->
+        connectUrl = @model.get 'connectUrl'
+        if connectUrl.indexOf 'redirect_url' isnt -1
+            redirectUrl = "#{document.location.origin}\
+                /#{@model.url()}/#{index}/redirect"
+            redirectUrl = encodeURIComponent redirectUrl
+            connectUrl += redirectUrl
+
+        connectButtonHtml = """
+<div class='connectButton'>
+<a href='#{connectUrl}' ><button>#{t 'Connect'}</button></a>
+</div>"""
+        connectButtonElem = $ connectButtonHtml
+        @$('.fields').append connectButtonElem
+
+
     addIntervalWidget: (slug) ->
         lastAutoImport = @model.get 'lastAutoImport'
 
@@ -394,21 +413,6 @@ target="_blank">
 </div>"""
             vendorLinkElem = $ vendorLinkHtml
             @$('.description').append vendorLinkElem
-
-        if @model.has 'connectUrl'
-            connectUrl = @model.get 'connectUrl'
-            if connectUrl.indexOf 'redirect_url' isnt -1
-                redirectUrl = "#{document.location.origin}\
-                    /#{@model.url()}/redirect"
-                redirectUrl = encodeURIComponent redirectUrl
-                connectUrl += redirectUrl
-
-            connectButtonHtml = """
-<div class='connectButton'>
-    <a href='#{connectUrl}' target='_blank'><button>#{t 'Connect'}</button></a>
-</div>"""
-            connectButtonElem = $ connectButtonHtml
-            @$('.description').append connectButtonElem
 
 
     onDeleteClicked: ->
