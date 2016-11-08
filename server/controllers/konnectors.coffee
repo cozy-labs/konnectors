@@ -122,11 +122,5 @@ module.exports =
         req.konnector.updateFieldValues { accounts: accounts }, (err) ->
             return next err if err
 
-            req.konnector.import (err, notifContent) ->
-                if err?
-                    log.error err
-                else
-                    handleNotification req.konnector, notifContent
-
             res.redirect '../../..' + \
               "/#/category/#{req.konnector.category}/#{req.konnector.slug}"
