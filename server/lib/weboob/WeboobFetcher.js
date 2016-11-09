@@ -1,4 +1,6 @@
 // NPM imports
+import fs from 'fs'
+import path from 'path'
 import printit from 'printit'
 import PythonShell from 'python-shell'
 
