@@ -20,6 +20,10 @@ describe('Routes', () => {
     mockery.registerMock('./components/category_list', {})
     mockery.registerMock('./components/connected_list', {})
 
+    mockery.registerMock('./components/examples/dialog', {})
+    mockery.registerMock('./components/examples/dialog_success', {})
+    mockery.registerMock('./components/examples/dialog_error', {})
+
     routes = require('../app/routes').default
   })
 
