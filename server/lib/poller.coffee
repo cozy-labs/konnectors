@@ -167,30 +167,32 @@ class KonnectorPoller
                 data =
                     lastAutoImport: moment(startDate, 'DD-MM-YYYY').toDate()
                     importInterval: konnector.importInterval
-                fields = konnectorHash[konnector.slug]
-                konnector.removeEncryptedFields fields
+                konnectorHash (modules) =>
+                    fields = modules[konnector.slug]
+                    konnector.removeEncryptedFields fields
 
-                konnector.updateAttributes data, (err, body) =>
-                    log.error err if err
+                    konnector.updateAttributes data, (err, body) =>
+                        log.error err if err
 
-                    nextUpdate = @findNextUpdate(konnector)
-                    @nextUpdates[konnector.slug] = [nextUpdate, konnector]
-                    delete @timeouts[konnector.slug]
-                    callback() if callback?
+                        nextUpdate = @findNextUpdate(konnector)
+                        @nextUpdates[konnector.slug] = [nextUpdate, konnector]
+                        delete @timeouts[konnector.slug]
+                        callback() if callback?
 
             else
 
                 # Next import is run now and the next import timeout is set.
                 data = lastAutoImport: new Date()
                 konnector.lastAutoImport = data.lastAutoImport
-                fields = konnectorHash[konnector.slug]
-                konnector.removeEncryptedFields fields
+                konnectorHash (modules) =>
+                    fields = modules[konnector.slug]
+                    konnector.removeEncryptedFields fields
 
-                konnector.updateAttributes data, (err, body) =>
-                    log.error err if err?
+                    konnector.updateAttributes data, (err, body) =>
+                        log.error err if err?
 
-                    @schedule konnector, @findNextUpdate(konnector)
-                    callback() if callback?
+                        @schedule konnector, @findNextUpdate(konnector)
+                        callback() if callback?
 
         else
             callback() if callback?
@@ -208,19 +210,20 @@ class KonnectorPoller
             # First initialization
             Konnector.all (err, konnectors) =>
 
-                async.eachSeries konnectors, (konnector, next) =>
+                konnectorHash (modules) =>
+                    async.eachSeries konnectors, (konnector, next) =>
 
-                    # If both importInterval and lastAutoImport are valid
-                    if konnector.importInterval? \
-                    and konnector.importInterval isnt 'none' \
-                    and konnector.lastAutoImport? \
-                    and konnectorHash[konnector.slug]?
-                        @initializeKonnectorUpdates konnector
-                    next()
+                        # If both importInterval and lastAutoImport are valid
+                        if konnector.importInterval? \
+                        and konnector.importInterval isnt 'none' \
+                        and konnector.lastAutoImport? \
+                        and modules[konnector.slug]?
+                            @initializeKonnectorUpdates konnector
+                        next()
 
-                , (err) =>
-                    callback() if callback?
-                    @manageNextChecks()
+                    , (err) =>
+                        callback() if callback?
+                        @manageNextChecks()
 
         else
             callback() if callback?

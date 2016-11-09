@@ -1,5 +1,4 @@
 Konnector = require '../models/konnector'
-konnectorHash = require '../lib/konnector_hash'
 handleNotification = require '../lib/notification_handler'
 
 log = require('printit')

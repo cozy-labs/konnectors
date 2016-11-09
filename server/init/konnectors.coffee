@@ -95,7 +95,7 @@ patchOnlineNet = (callback) ->
                 account.login = account.username
                 delete account.username
                 newAccounts.push(account)
-            
+
             konnector.updateAttributes accounts: newAccounts, (err) ->
                 return callback err if err
 
@@ -139,12 +139,11 @@ module.exports = (callback) ->
                     , (err) ->
                         log.error err if err
 
-                        konnectorsToCreate = getKonnectorsToCreate konnectorHash
-
-                        if konnectorsToCreate.length is 0
-                            callback()
-                        else
-                            createKonnectors konnectorsToCreate, callback
+                        getKonnectorsToCreate konnectorHash, (konnectorsToCreate) ->
+                            if konnectorsToCreate.length is 0
+                                callback()
+                            else
+                                createKonnectors konnectorsToCreate, callback
 
 
 # Reset konnector importing flags: isImporting flag is set to false if value
@@ -171,16 +170,17 @@ konnectorResetValue = (konnector, callback) ->
 
 
 # Get the list of konnectors that are not listed in database.
-getKonnectorsToCreate = (konnectorHash) ->
+getKonnectorsToCreate = (konnectorHash, callback) ->
 
     konnectorsToCreate = []
 
-    for name, konnectorModule of konnectorModules
-        unless konnectorHash[konnectorModule.slug]?
-            konnectorsToCreate.push konnectorModule
-            log.info "New konnector to init: #{name}"
+    konnectorModules (modules) ->
+        for name, konnectorModule of modules
+            unless konnectorHash[konnectorModule.slug]?
+                konnectorsToCreate.push konnectorModule
+                log.info "New konnector to init: #{name}"
 
-    return konnectorsToCreate
+        return callback konnectorsToCreate
 
 
 # Init and create all given konnectors
