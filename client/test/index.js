@@ -29,20 +29,6 @@ describe('Routes', () => {
   })
 
 
-  describe('default', () => {
-    let route;
-
-    before(() => {
-      route = routes.find((obj) => { return '/' === obj.path })
-    })
-
-    it('Should be equal to `discovery`', () => {
-      assert.deepEqual('discovery', route.redirect)
-    })
-
-  })
-
-
   describe('Discovery', () => {
     let route
 
