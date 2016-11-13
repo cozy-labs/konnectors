@@ -21,11 +21,13 @@ const configConversion = function (configOptions) {
     let fields = {}
 
     Object.keys(configOptions).forEach((configName) => {
-        // TODO: Handle int, float, bool, choices
-        // TODO: Handle folder
+        // TODO: Handle float, bool, choices
         if (configOptions[configName].type === 'password') {
             fields[configName] = 'password'
-        } else {
+        } else if (configOptions[configName].type === 'int') {
+            // Number HTML5 input type
+            fields[configName] = 'number'
+        }else {
             fields[configName] = 'text'
         }
     })
@@ -34,12 +36,24 @@ const configConversion = function (configOptions) {
 }
 
 
-const capabilitiesToModels = function (capabilities) {
+/**
+ * Generate a list of models output by the connector depending on the
+ * associated capabilities.
+ *
+ * Also generate extra necessary config options, such as folderPath to store
+ * output documents.
+ */
+const capabilitiesToModelsAndConfig = function (capabilities) {
     let models = []
+    let extraConfig = {}
 
     capabilities.split(' ').forEach((capability) => {
         switch (capability) {
             case 'CapDocument':
+                // This capability will download documents, we need to specify
+                // this extra config field
+                extraConfig['folderPath'] = 'folder'
+                // And it will fetch Bill model
                 return models.push(Bill)
 
             case 'CapAccount':
@@ -83,7 +97,10 @@ const capabilitiesToModels = function (capabilities) {
         }
     })
 
-    return models
+    return {
+        models: models,
+        extraConfig: extraConfig
+    }
 }
 
 
@@ -93,11 +110,13 @@ const KonnectorConverters = {
         let parsedData = []
 
         data.forEach((module) => {
+            const { models, extraConfig } = capabilitiesToModels(module.capabilities);
             let konnectorData = baseKonnector.createNew({
                 name: module.name,
                 vendorLink: module.website,
-                fields: configConversion(module.config),
-                models: capabilitiesToModels(module.capabilities),
+                fields: Object.assign(
+                    {}, configConversion(module.config), extraConfig),
+                models: models,
                 fetchOperations: [
                     // Filled right afterwards
                 ]
