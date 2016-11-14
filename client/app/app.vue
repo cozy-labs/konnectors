@@ -47,6 +47,18 @@
           }
       },
 
+      created () {
+          const query = this.$router.currentRoute.query
+
+          // Show Dialogs
+          if (query.dialog) {
+              const values = query.dialog.split(',')
+              values.forEach((value) => {
+                  this.onOpenDialog(value)
+              })
+          }
+      },
+
       methods: {
           onError (err) {
 
