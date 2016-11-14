@@ -40,24 +40,30 @@
         },
 
         beforeMount () {
+            // Add query to URI
             const dialog = this.item.id
             this.$router.push({ query: { dialog }})
-        },
-
-        beforeDestroy () {
-            this.onClose()
         },
 
 
         // Update URL query
         methods: {
             onClose () {
+                const dialogs = this.$router.currentRoute.query.dialog.split(',')
+                const index = dialogs.indexOf(this.item)
+
                 // Update URL query
-                this.$router.push({ query: { dialog: null } })
+                const dialog = dialogs.splice(index, 0).map((item) => {
+                    return item.id
+                })
+                this.$router.push({ query: { dialog } })
+
+                // Bubbling `close` event
                 this.$emit('close', { item: this.item })
             },
 
             onSubmit (err) {
+                // Bubbling `submit` event
                 this.$emit('submit', { item: this.item, data: this.data })
             },
         }

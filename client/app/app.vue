@@ -1,5 +1,11 @@
 <template lang="pug">
     div(role="application")
+        cozy-dialog(v-for="item in dialogs",
+            v-bind:item="item",
+            v-on:close='onCloseDialog',
+            v-on:submit='onSubmitDialog',
+            v-on:success='onSuccess')
+
         aside
             h4 {{ 'my_accounts title' | t }}
             ul(role="navigation")
@@ -18,8 +24,81 @@
                         svg: use(:xlink:href="require('./assets/sprites/icon-connected.svg')")
                         | {{ 'my_accounts connected title' | t }}
 
-        router-view
+        router-view(v-on:open-dialog='onOpenDialog')
+
 </template>
+
+
+<script>
+    const dialogs = [{
+        id: 'dialog-1',
+        hidden: false,
+        headerImage: 'test0.png',
+        success: {
+            route: { name: 'create-account-success' }
+        }
+    }]
+
+
+    export default {
+      data() {
+          return {
+              'dialogs': []
+          }
+      },
+
+      methods: {
+          onError (err) {
+
+          },
+
+          onSuccess (item, success) {
+              // Close Dialog
+              this.onCloseDialog(item)
+
+              // Goto NextComponent
+              if (undefined !== success.route) {
+                  this.$router.push(item.success.route)
+              }
+          },
+
+          onOpenDialog (id) {
+              // Get DialogConfig
+              const item = dialogs.find((obj) => {
+                  return id === obj.id
+              })
+
+              // Show <dialog>
+              if (item) this.dialogs.push(item)
+          },
+
+          onCloseDialog ({item}) {
+              // Hide <dialog>
+              const index = this.dialogs.indexOf(item)
+              this.dialogs = this.dialogs.splice(index, 0)
+          },
+
+          onSubmitDialog ({data, item, success}) {
+              const validate = (item, data) => {
+                  // Add specific validation here
+                  // and call it into submit form
+                  // return error if exists
+                  // otherwise return nothing
+              }
+
+              const err = validate(item, data)
+              if (err) {
+                  this.onError(err)
+                  return false
+
+              } else {
+                  this.onSuccess(item, item.success)
+                  return true
+              }
+          }
+      },
+    }
+</script>
 
 
 <style lang="stylus">
