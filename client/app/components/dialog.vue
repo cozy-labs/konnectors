@@ -50,3 +50,23 @@
         }
     }
 </script>
+
+<style lang="stylus">
+    @import 'cozy-ui'
+    [role=dialog]
+        @extend $dialog
+
+        [role=separator]
+            cursor pointer
+            background-color rgba(78, 91, 105, 0.75)
+
+        .wrapper
+            min-height 100vh
+            padding 3em 1em
+            box-sizing border-box
+
+
+        [role=contentinfo]
+            overflow initial
+            flex-direction column
+</style>

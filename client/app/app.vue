@@ -28,7 +28,6 @@
     @import './styles/base/_colors'
 
     @import 'cozy-ui'
-    @import './styles/base/_dialog'
 
     [role=application]
         @extend $app-2panes-toolbar
