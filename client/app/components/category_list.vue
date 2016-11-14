@@ -4,7 +4,8 @@
     block content
         cozy-dialog(v-for="item in dialogs", v-bind:item="item", v-on:success="onSuccess", v-on:error="onError", v-on:submit="onSubmit", v-on:close="onCloseDialog")
 
-        include ../templates/category_list.pug
+        h1 {{ 'my_accounts category title' | t }}
+        article {{ 'my_accounts coming_soon' | t }}
 
         ul
             li(v-for="link in links")
@@ -20,7 +21,6 @@
         success: 'create-account-success',
         error: 'create-account-error'
     }]
-
 
     export default {
         data () {
