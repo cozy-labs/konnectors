@@ -32,7 +32,6 @@
 <script>
     const dialogs = [{
         id: 'dialog-1',
-        hidden: false,
         headerImage: 'test0.png',
         success: {
             route: { name: 'create-account-success' }
