@@ -41,9 +41,6 @@
 
                 // Show <dialog>
                 this.dialogs.push(item)
-
-                // Update URL query
-                this.$router.push({ query: { dialog: item.id }})
             },
 
 
@@ -51,9 +48,6 @@
                 // Hide <dialog>
                 const index = this.dialogs.indexOf(item)
                 this.dialogs = this.dialogs.splice(index, 0)
-
-                // Update URL query
-                this.$router.push({ query: {}})
             },
 
 

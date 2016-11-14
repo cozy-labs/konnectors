@@ -22,6 +22,8 @@
 
 <script>
     export default {
+        props: ['item'],
+
         data () {
             return {
                 hidden: false
@@ -31,21 +33,32 @@
         computed: {
             headerStyles: {
                 get () {
-                    const src = this.$vnode.data.attrs.item.headerImage
+                    const src = this.item.headerImage
                     return `background-image: url('${src}');`
                 }
             }
         },
 
+        beforeMount () {
+            const dialog = this.item.id
+            this.$router.push({ query: { dialog }})
+        },
+
+        beforeDestroy () {
+            this.onClose()
+        },
+
+
+        // Update URL query
         methods: {
             onClose () {
-                const item = this.$vnode.data.attrs.item
-                this.$emit('close', { item })
+                // Update URL query
+                this.$router.push({ query: { dialog: null } })
+                this.$emit('close', { item: this.item })
             },
 
             onSubmit (err) {
-                const item = this.$vnode.data.attrs.item
-                this.$emit('submit', { item, data: this.data })
+                this.$emit('submit', { item: this.item, data: this.data })
             },
         }
     }
