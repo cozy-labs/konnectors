@@ -42,9 +42,8 @@ Add your markup into `block dialog`.
         div(aria-hidden='false', role='dialog')
             div(role='separator', v-on:click="closeWindow")
             .wrapper
-                div(role='contentinfo')
-                    a(v-on:click="closeWindow", title='close') Fermer
-                    p hello
+                a(v-on:click="closeWindow", title='close') Fermer
+                p hello
         </div>
 </template>
 ````
