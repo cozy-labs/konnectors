@@ -140,8 +140,6 @@
               }
           },
 
-          // TODO: handle client errors
-          // to display notifications
           onErrorDialog (err, item) {
               this.notifications.push({
                   type: 'error',

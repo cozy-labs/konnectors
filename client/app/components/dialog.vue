@@ -23,7 +23,6 @@
             }
         },
 
-        // Update URL query
         methods: {
             onClose () {
                 // Bubbling `close` event
