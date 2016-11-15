@@ -2,9 +2,9 @@
     div(role="application")
         cozy-dialog(v-for="item in dialogs",
             v-bind:item="item",
-            v-on:close='onCloseDialog',
-            v-on:submit='onSubmitDialog',
-            v-on:success='onSuccess')
+            v-on:close="onCloseDialog",
+            v-on:error="onErrorDialog",
+            v-on:success="onSuccessDialog")
 
         aside
             h4 {{ 'my_accounts title' | t }}
@@ -30,9 +30,22 @@
 
 
 <script>
-    const dialogs = [{
+    import DialogComponent from './components/dialog'
+    import ExampleKonnector from './components/konnectors/example'
+
+    //
+    // Handle use case:
+    // when adding real dialogs this declaration
+    // will be very obscure and un-readable
+    //
+    // TODO:
+    // create a directory `./config/myDialog.js`
+    // and then import it into (Array)Dialogs
+    //
+    const Dialogs = [{
         id: 'dialog-1',
         headerImage: 'test0.png',
+        content: ExampleKonnector,
         success: {
             route: { name: 'create-account-success' }
         }
@@ -40,73 +53,70 @@
 
 
     export default {
-      data() {
+      data () {
           return {
-              'dialogs': []
+              dialogs: []
           }
+      },
+
+      components: {
+          'cozy-dialog': DialogComponent
       },
 
       created () {
           const query = this.$router.currentRoute.query
 
           // Show Dialogs
-          if (query.dialog) {
-              const values = query.dialog.split(',')
-              values.forEach((value) => {
-                  this.onOpenDialog(value)
+          if (query.dialogs) {
+              this.dialogs = query.dialogs.split(',').map((id) => {
+                  return Dialogs.find(item => item.id === id)
               })
           }
       },
 
-      methods: {
-          onError (err) {
+      watch: {
+          dialogs (val, oldVal) {
+              let dialogs = val.map(item => item.id)
 
+              // Do not show dialogs query when empty
+              // avoid [].join(',') that leads to dialogs=''
+              if (dialogs.length) dialogs = dialogs.join(',')
+
+              // Update RouteQuery from dialogs values
+              const oldQuery = this.$router.currentRoute.query
+              const query = Object.assign({}, oldQuery, { dialogs })
+              this.$router.push({ query })
+          }
+      },
+
+      methods: {
+          onOpenDialog (id) {
+              const dialog = Dialogs.find(item => item.id === id)
+              if (-1 === this.dialogs.indexOf(dialog)) {
+                  this.dialogs.push(dialog)
+              }
           },
 
-          onSuccess (item, success) {
+          onCloseDialog (item) {
+              const index = Dialogs.indexOf(item)
+              this.dialogs = this.dialogs.splice(index, 0)
+          },
+
+          onSuccessDialog (item) {
               // Close Dialog
               this.onCloseDialog(item)
 
               // Goto NextComponent
-              if (undefined !== success.route) {
+              if (item.success && item.success.route) {
                   this.$router.push(item.success.route)
               }
           },
 
-          onOpenDialog (id) {
-              // Get DialogConfig
-              const item = dialogs.find((obj) => {
-                  return id === obj.id
-              })
+          // TODO: handle client errors
+          // to display notifications
+          onErrorDialog (err) {
 
-              // Show <dialog>
-              if (item) this.dialogs.push(item)
           },
-
-          onCloseDialog ({item}) {
-              // Hide <dialog>
-              const index = this.dialogs.indexOf(item)
-              this.dialogs = this.dialogs.splice(index, 0)
-          },
-
-          onSubmitDialog ({data, item, success}) {
-              const validate = (item, data) => {
-                  // Add specific validation here
-                  // and call it into submit form
-                  // return error if exists
-                  // otherwise return nothing
-              }
-
-              const err = validate(item, data)
-              if (err) {
-                  this.onError(err)
-                  return false
-
-              } else {
-                  this.onSuccess(item, item.success)
-                  return true
-              }
-          }
       },
     }
 </script>
