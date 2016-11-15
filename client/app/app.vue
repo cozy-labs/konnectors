@@ -1,5 +1,8 @@
 <template lang="pug">
     div(role="application")
+        cozy-notif(v-for="item in notifications",
+            v-bind:item="item")
+
         cozy-dialog(v-for="item in dialogs",
             v-bind:item="item",
             v-on:close="onCloseDialog",
@@ -31,6 +34,8 @@
 
 <script>
     import DialogComponent from './components/dialog'
+    import NotifComponent from './components/notification'
+
     import ExampleKonnector from './components/konnectors/example'
 
     //
@@ -52,35 +57,58 @@
     }]
 
 
+    function getDialogsProp(query={}) {
+        if (typeof query.dialogs === 'string')
+            return query.dialogs.split(',').map((id) => {
+                return Dialogs.find(item => item.id === id)
+            }).filter(item => !!item)
+        else
+            return []
+    }
+
+
     export default {
       data () {
           return {
-              dialogs: []
+              dialogs: [],
+              notifications: []
+          }
+      },
+
+      computed: {
+          dialogsQuery: {
+              get () {
+                  let values = this.dialogs.map(item => item.id)
+
+                  // Do not show dialogs query when empty
+                  // avoid [].join(',') that leads to dialogs=''
+                  if (values.length) values = values.join(',')
+
+                  return values
+              }
           }
       },
 
       components: {
-          'cozy-dialog': DialogComponent
+          'cozy-dialog': DialogComponent,
+          'cozy-notif': NotifComponent
       },
 
       created () {
-          const query = this.$router.currentRoute.query
+          const to = this.$router.currentRoute
 
-          // Show Dialogs
-          if (query.dialogs) {
-              this.dialogs = query.dialogs.split(',').map((id) => {
-                  return Dialogs.find(item => item.id === id)
-              })
-          }
+          // Show Dialog when component is created
+          this.dialogs = getDialogsProp(to.query)
       },
 
       watch: {
-          dialogs (val, oldVal) {
-              let dialogs = val.map(item => item.id)
+          '$route' (to, from) {
+              // Show or hide Dialog when route is updated
+              this.dialogs = getDialogsProp(to.query)
+          },
 
-              // Do not show dialogs query when empty
-              // avoid [].join(',') that leads to dialogs=''
-              if (dialogs.length) dialogs = dialogs.join(',')
+          dialogs (val, oldVal) {
+              const dialogs = this.dialogsQuery
 
               // Update RouteQuery from dialogs values
               const oldQuery = this.$router.currentRoute.query
@@ -114,9 +142,12 @@
 
           // TODO: handle client errors
           // to display notifications
-          onErrorDialog (err) {
-
-          },
+          onErrorDialog (err, item) {
+              this.notifications.push({
+                  type: 'error',
+                  label: err
+              })
+          }
       },
     }
 </script>

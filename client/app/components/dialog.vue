@@ -2,7 +2,8 @@
   cozy-dialog(v-if="content",
       v-bind:headerStyles="headerStyles",
       v-bind:onClose="onClose",
-      v-bind:onSuccess="onSuccess")
+      v-bind:onSuccess="onSuccess",
+      v-bind:onError="onError")
 </template>
 
 <script>
@@ -29,10 +30,15 @@
                 this.$emit('close', this.item)
             },
 
+            onError (err) {
+                // Bubbling `error` event
+                this.$emit('error', err, this.item)
+            },
+
             onSuccess () {
                 // Bubbling `success` event
                 this.$emit('success', this.item)
-            },
+            }
         }
     }
 </script>
