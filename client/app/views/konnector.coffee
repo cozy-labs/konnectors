@@ -25,7 +25,6 @@ module.exports = class KonnectorView extends BaseView
 
     # Build fields
     afterRender: =>
-
         slug = @model.get 'slug'
 
         if not @values? or @values.length is @model.get('accounts').length
@@ -55,6 +54,9 @@ module.exports = class KonnectorView extends BaseView
 
 
     renderValues: (values, slug, index) =>
+        if @model.has 'connectUrl'
+            @addConnectButton index
+
         for name, val of @model.get 'fields'
             values[name] ?= ""
 
@@ -303,6 +305,22 @@ target="_blank">
 """
 
         @$('.fields').append fieldHtml
+
+
+    addConnectButton: (index) ->
+        connectUrl = @model.get 'connectUrl'
+        if connectUrl.indexOf 'redirect_url' isnt -1
+            redirectUrl = "#{document.location.origin}\
+                #{document.location.pathname}#{@model.url()}/#{index}/redirect"
+            redirectUrl = encodeURIComponent redirectUrl
+            connectUrl += redirectUrl
+
+        connectButtonHtml = """
+<div class='connectButton'>
+<a href='#{connectUrl}' ><button>#{t 'Connect'}</button></a>
+</div>"""
+        connectButtonElem = $ connectButtonHtml
+        @$('.fields').append connectButtonElem
 
 
     addIntervalWidget: (slug) ->
