@@ -113,4 +113,4 @@ module.exports =
         req.konnector.updateFieldValues { accounts: accounts }, (err) ->
             return next err if err
 
-            res.redirect '/#konnector/' + req.konnector.slug
+            res.redirect '../../../#konnector/' + req.konnector.slug

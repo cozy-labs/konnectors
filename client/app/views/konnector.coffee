@@ -311,7 +311,7 @@ target="_blank">
         connectUrl = @model.get 'connectUrl'
         if connectUrl.indexOf 'redirect_url' isnt -1
             redirectUrl = "#{document.location.origin}\
-                /#{@model.url()}/#{index}/redirect"
+                #{document.location.pathname}#{@model.url()}/#{index}/redirect"
             redirectUrl = encodeURIComponent redirectUrl
             connectUrl += redirectUrl
 
