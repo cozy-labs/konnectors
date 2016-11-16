@@ -110,15 +110,11 @@
       },
 
       created () {
-          console.log('CREATE')
           this.updateDialogs(this.$router.currentRoute)
       },
 
       watch: {
-          '$route' (to, from) {
-              console.log('ROUTE')
-              this.updateDialogs(to)
-          }
+          '$route': 'updateDialogs'
       },
 
       methods: {
@@ -126,16 +122,13 @@
               const dialogs = to.query.dialogs
 
               if (typeof dialogs === 'string')
-
                   // Check if query have a configuration
                   // if none do not it save into dialogs
                   this.dialogs = dialogs.split(',').map((id) => {
                       return Dialogs.find(item => item.id === id)
                   }).filter(item => !!item)
-
-                  console.log(this.dialogs)
-
-              this.dialogs = []
+              else
+                  this.dialogs = []
           },
 
           onOpenDialog (id) {
@@ -150,16 +143,10 @@
                   query.dialogs = id
               }
 
-              console.log('OPEN', id, query)
-
               this.$router.push({ query })
           },
 
           onCloseDialog (id) {
-              const dialog = Dialogs.find(item => item.id === id)
-              const index = Dialogs.indexOf(dialog)
-              this.dialogs = this.dialogs.splice(index, 0)
-
               // Close Notifications
               // related to this item
               this.onCloseNotif(id)

@@ -36,9 +36,9 @@
                 }
 
                 if (query.length) {
-                    return `${this.$route.path}?${query.join('&')}`
+                    return `#${this.$route.path}?${query.join('&')}`
                 } else {
-                    return this.$route.path
+                    return `#${this.$route.path}`
                 }
             },
 
@@ -63,6 +63,9 @@
 
         methods: {
             close () {
+                const query = this.closeQuery
+                this.$router.push({ query })
+
                 // Bubbling `close` event
                 this.$emit('close', this.id)
             },
