@@ -110,46 +110,49 @@
       },
 
       created () {
-          const to = this.$router.currentRoute
-
-          // Show Dialog when component is created
-          this.dialogs = this.updateDialogs(to.query.dialogs)
+          console.log('CREATE')
+          this.updateDialogs(this.$router.currentRoute)
       },
 
       watch: {
           '$route' (to, from) {
-              // Show or hide Dialog when route is updated
-              this.dialogs = this.updateDialogs(to.query.dialogs)
-          },
-
-          dialogs (val, oldVal) {
-              const dialogs = this.dialogsQuery
-
-              // Update RouteQuery from dialogs values
-              const oldQuery = this.$router.currentRoute.query
-              const query = Object.assign({}, oldQuery, { dialogs })
-              this.$router.push({ query })
+              console.log('ROUTE')
+              this.updateDialogs(to)
           }
       },
 
       methods: {
-          updateDialogs (dialogs) {
+          updateDialogs (to) {
+              const dialogs = to.query.dialogs
+
               if (typeof dialogs === 'string')
 
                   // Check if query have a configuration
                   // if none do not it save into dialogs
-                  return dialogs.split(',').map((id) => {
+                  this.dialogs = dialogs.split(',').map((id) => {
                       return Dialogs.find(item => item.id === id)
                   }).filter(item => !!item)
 
-              return []
+                  console.log(this.dialogs)
+
+              this.dialogs = []
           },
 
           onOpenDialog (id) {
-              const dialog = Dialogs.find(item => item.id === id)
-              if (-1 === this.dialogs.indexOf(dialog)) {
-                  this.dialogs.push(dialog)
+              let dialogs = this.$router.currentRoute.query.dialogs || null
+              const query   = Object.assign({}, this.$router.currentRoute.query)
+
+              if (dialogs) {
+                  dialogs = dialogs.split(',')
+                  if (-1 === dialogs.indexOf(id))
+                      query.dialogs = dialogs.concat([id]).join(',')
+              } else {
+                  query.dialogs = id
               }
+
+              console.log('OPEN', id, query)
+
+              this.$router.push({ query })
           },
 
           onCloseDialog (id) {
