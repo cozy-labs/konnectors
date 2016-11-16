@@ -57,16 +57,6 @@
     }]
 
 
-    function getDialogsProp(query={}) {
-        if (typeof query.dialogs === 'string')
-            return query.dialogs.split(',').map((id) => {
-                return Dialogs.find(item => item.id === id)
-            }).filter(item => !!item)
-        else
-            return []
-    }
-
-
     export default {
       data () {
           return {
@@ -98,13 +88,13 @@
           const to = this.$router.currentRoute
 
           // Show Dialog when component is created
-          this.dialogs = getDialogsProp(to.query)
+          this.dialogs = this.updateDialogs(to.query.dialogs)
       },
 
       watch: {
           '$route' (to, from) {
               // Show or hide Dialog when route is updated
-              this.dialogs = getDialogsProp(to.query)
+              this.dialogs = this.updateDialogs(to.query.dialogs)
           },
 
           dialogs (val, oldVal) {
@@ -118,6 +108,18 @@
       },
 
       methods: {
+          updateDialogs (dialogs) {
+              if (typeof dialogs === 'string')
+
+                  // Check if query have a configuration
+                  // if none do not it save into dialogs
+                  return dialogs.split(',').map((id) => {
+                      return Dialogs.find(item => item.id === id)
+                  }).filter(item => !!item)
+
+              return []
+          },
+
           onOpenDialog (id) {
               const dialog = Dialogs.find(item => item.id === id)
               if (-1 === this.dialogs.indexOf(dialog)) {
