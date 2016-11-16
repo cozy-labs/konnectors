@@ -1,42 +1,80 @@
 <template lang="pug">
-  cozy-dialog(v-if="content",
-      :headerStyles="headerStyles",
-      :onClose="onClose",
-      :onSuccess="onSuccess",
-      :onError="onError")
+    div(aria-hidden="false" role="dialog")
+        div(role="separator" @click="close")
+        .wrapper
+            div(role="contentinfo")
+                header(:style="headerStyles")
+                    a(:href="closeURL" @click="close" role="close")
+                        | Close
+
+                    slot(name="header")
+
+                main: slot
+
+                footer
+                    slot(name="footer")
 </template>
 
 <script>
     import Vue from 'vue'
 
     export default {
-        props: ['item', 'content'],
+        props: ['id', 'headerStyles', 'hub'],
+
+        created () {
+            this.hub.$on('close', this.close)
+            this.hub.$on('success', this.success)
+            this.hub.$on('error', this.error)
+        },
 
         computed: {
-            content () {
-                Vue.component('cozy-dialog', this.item.content)
-                return !!this.item.content
+            closeURL () {
+                let query = []
+
+                for (let name in this.closeQuery) {
+                    query.push(`${name}=${this.closeQuery[name]}`)
+                }
+
+                if (query.length) {
+                    return `${this.$route.path}?${query.join('&')}`
+                } else {
+                    return this.$route.path
+                }
             },
-            headerStyles () {
-                const src = this.item.headerImage
-                return `background-image: url('${src}');`
+
+            closeQuery () {
+                const query = Object.assign({}, this.$router.currentRoute.query)
+                const dialogs = query.dialogs.split(',')
+
+                // Remove dialog from query
+                const index = dialogs.indexOf(this.id)
+                dialogs.splice(index, 1)
+
+                // Update or remove dialog query
+                if (!dialogs.length) {
+                    delete query.dialogs
+                } else {
+                    query.dialogs = dialogs.join(',')
+                }
+
+                return query
             }
         },
 
         methods: {
-            onClose () {
+            close () {
                 // Bubbling `close` event
-                this.$emit('close', this.item)
+                this.$emit('close', this.id)
             },
 
-            onError (err) {
+            error (err) {
                 // Bubbling `error` event
-                this.$emit('error', err, this.item)
+                this.$emit('error', err, this.id)
             },
 
-            onSuccess () {
+            success () {
                 // Bubbling `success` event
-                this.$emit('success', this.item)
+                this.$emit('success', this.id)
             }
         }
     }

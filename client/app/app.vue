@@ -3,11 +3,22 @@
         cozy-notif(v-for="item in notifications",
             :item="item")
 
-        cozy-dialog(v-for="item in dialogs",
-            :item="item",
+        cozy-dialog(v-for="dialog in dialogs",
+            :id="dialog.id",
+            :headerStyles="dialog.headerStyles",
+            :hub="dialog.hub",
             @close="onCloseDialog",
             @error="onErrorDialog",
             @success="onSuccessDialog")
+
+            h3(slot="header") {{ dialog.title }}
+
+            component(:is="dialog.component")
+
+            ul(slot="footer")
+                li: button(@click="dialog.hub.$emit('error', 'this is a notification error')") Error
+                li: button(@click="dialog.hub.$emit('close')") Cancel
+                li: button(@click="dialog.hub.$emit('success')") Next
 
         aside
             h4 {{ 'my_accounts title' | t }}
@@ -33,6 +44,8 @@
 
 
 <script>
+    import Vue from 'vue'
+
     import DialogComponent from './components/dialog'
     import NotifComponent from './components/notification'
 
@@ -49,11 +62,21 @@
     //
     const Dialogs = [{
         id: 'dialog-1',
-        headerImage: 'test0.png',
-        content: ExampleKonnector,
-        success: {
-            route: { name: 'create-account-success' }
-        }
+
+        headerStyles: {
+            'background-image': `url(header.png)`,
+            'height': '100px'
+        },
+
+        component: ExampleKonnector,
+
+        routes: {
+            success: { name: 'create-account-success' }
+        },
+
+        // Handle Events emitted
+        // from dialogsVue to appVue
+        hub: new Vue()
     }]
 
 
@@ -127,40 +150,42 @@
               }
           },
 
-          onCloseDialog (item) {
-              const index = Dialogs.indexOf(item)
+          onCloseDialog (id) {
+              const dialog = Dialogs.find(item => item.id === id)
+              const index = Dialogs.indexOf(dialog)
               this.dialogs = this.dialogs.splice(index, 0)
 
               // Close Notifications
               // related to this item
-              this.onCloseNotif(item)
+              this.onCloseNotif(id)
           },
 
-          onSuccessDialog (item) {
+          onSuccessDialog (id) {
               // Close Dialog
-              this.onCloseDialog(item)
+              this.onCloseDialog(id)
 
               // Goto NextComponent
-              if (item.success && item.success.route) {
-                  this.$router.push(item.success.route)
+              const dialog = Dialogs.find(item => item.id === id)
+              if (dialog && dialog.routes.success) {
+                  this.$router.push(dialog.routes.success)
               }
           },
 
-          onErrorDialog (err, item) {
-              this.onOpenNotif(err, item)
+          onErrorDialog (err, id) {
+              this.onOpenNotif(err, id)
           },
 
-          onOpenNotif (err, item) {
+          onOpenNotif (err, id) {
               this.notifications.push({
                   type: 'error',
                   label: err,
-                  dialog: item.id
+                  dialog: id
               })
           },
 
-          onCloseNotif (item) {
+          onCloseNotif (id) {
               this.notifications = this.notifications.filter((notif) => {
-                  return notif.dialog !== item.id
+                  return notif.dialog !== id
               })
           }
       },
