@@ -63,6 +63,8 @@
     const Dialogs = [{
         id: 'dialog-1',
 
+        title: "dialog title",
+
         headerStyles: {
             'background-image': `url(header.png)`,
             'height': '100px'
