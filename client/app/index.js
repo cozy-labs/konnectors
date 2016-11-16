@@ -14,6 +14,7 @@ const router = new VueRouter({ routes })
 
 // Initialize Application
 document.addEventListener('DOMContentLoaded', function initialize () {
+
   new Vue({
     router,
     render: h => h(app)
