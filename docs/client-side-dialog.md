@@ -133,4 +133,4 @@ The content is called into [`DialogComponent`](https://github.com/misstick/konne
 
 ### <a name="dialog_success_route"></a> Dialog.success.route `(optional)``VueRoute`
 Redirection for a next step.
-For more information see (the route object reference)(http://router.vuejs.org/en/api/route-object.html).
+For more information see [the route object reference](http://router.vuejs.org/en/api/route-object.html).
