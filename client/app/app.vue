@@ -130,6 +130,10 @@
           onCloseDialog (item) {
               const index = Dialogs.indexOf(item)
               this.dialogs = this.dialogs.splice(index, 0)
+
+              // Close Notifications
+              // related to this item
+              this.onCloseNotif(item)
           },
 
           onSuccessDialog (item) {
@@ -143,9 +147,20 @@
           },
 
           onErrorDialog (err, item) {
+              this.onOpenNotif(err, item)
+          },
+
+          onOpenNotif (err, item) {
               this.notifications.push({
                   type: 'error',
-                  label: err
+                  label: err,
+                  dialog: item.id
+              })
+          },
+
+          onCloseNotif (item) {
+              this.notifications = this.notifications.filter((notif) => {
+                  return notif.dialog !== item.id
               })
           }
       },
