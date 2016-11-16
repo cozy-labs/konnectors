@@ -22,10 +22,13 @@ getKonnectorModules = function() {
   moduleFiles = fs.readdirSync(modulesPath);
   for (i = 0, len = moduleFiles.length; i < len; i++) {
     moduleFile = moduleFiles[i];
-    if (isCoffeeOrJsFile(moduleFile)) {
+    if (fs.lstatSync(path.join(modulesPath, moduleFile)).isDirectory() || isCoffeeOrJsFile(moduleFile)) {
       name = moduleFile.split('.')[0];
-      modulePath = "../konnectors/" + name;
+      modulePath = path.join(modulesPath, name);
       modules[name] = require(modulePath);
+      if (modules[name]["default"] != null) {
+        modules[name] = modules[name]["default"];
+      }
     }
   }
   return modules;
