@@ -1,9 +1,9 @@
 <template lang="pug">
   cozy-dialog(v-if="content",
-      v-bind:headerStyles="headerStyles",
-      v-bind:onClose="onClose",
-      v-bind:onSuccess="onSuccess",
-      v-bind:onError="onError")
+      :headerStyles="headerStyles",
+      :onClose="onClose",
+      :onSuccess="onSuccess",
+      :onError="onError")
 </template>
 
 <script>

@@ -1,13 +1,13 @@
 <template lang="pug">
     div(role="application")
         cozy-notif(v-for="item in notifications",
-            v-bind:item="item")
+            :item="item")
 
         cozy-dialog(v-for="item in dialogs",
-            v-bind:item="item",
-            v-on:close="onCloseDialog",
-            v-on:error="onErrorDialog",
-            v-on:success="onSuccessDialog")
+            :item="item",
+            @close="onCloseDialog",
+            @error="onErrorDialog",
+            @success="onSuccessDialog")
 
         aside
             h4 {{ 'my_accounts title' | t }}
