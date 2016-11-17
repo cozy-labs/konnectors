@@ -59,34 +59,25 @@ Note: Dialog layout is defined into [`client/app/app.vue`](../client/app/app.vue
 </script>
 ```
 
-## Events
-
-### Global events
+## Use cases
 
 Note: This are hypothetical use cases because none `Notifications` or `DialogContentComponent` are yet displayed.
 
-#### onCloseDialog
-see into [source](../client/app/app.vue#L153)
+### Add a custom `<header>` or `<footer>`
+Both content are defined into `client/app/app.vue` ([here](../client/app/app.vue#L14) and [here](../client/app/app.vue#L18)).
 
-#### onSuccessDialog
+These content are common to all dialogs from `app.dialogs`. If you want several kinds of dialogs layout, you will have to create an other `Array` property different than `app.dialogs` (you should adapt existing code before `app.methods` only care about `app.dialogs`).
 
-##### Display a notification
+For more information have a look to `vuejs` [documentation](https://vuejs.org/v2/guide/components.html#Content-Distribution-with-Slots)
+
+
+### Display a notification
 If you want to display a `SuccessNotification` you can handle this [here](../client/app/app.vue#L163)
 
 
-##### Success redirection
+### Success redirection
 Configure [here](../client/app/app.vue#L55)
 Called [here](../client/app/app.vue#L170).
-
-
-#### onErrorDialog
-This listener can display error notification from `DialogContentComponent`.
-
-see into [source](../client/app/app.vue#L174)
-
-
-### Contextual events
-Handle your component own behaviour [here](../client/app/components/konnectors/example.vue).
 
 
 ### Bubbling events
@@ -97,8 +88,22 @@ ie: Add a [close button](../client/app/app.vue#L20) into footer
     button(@click="dialog.hub.$emit('close')") Cancel
 ```
 
+Handle your component own behaviour [here](../client/app/components/konnectors/example.vue).
+
 
 ## API
+
+### onCloseDialog `Event`
+see into [source](../client/app/app.vue#L153)
+
+### onSuccessDialog `Event`
+
+
+### onErrorDialog `Event`
+This listener can display error notification from `DialogContentComponent`.
+
+see into [source](../client/app/app.vue#L174)
+
 
 ### Dialog.id `String`
 
