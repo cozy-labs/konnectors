@@ -3,6 +3,7 @@ handleNotification = require './notification_handler'
 log = require('printit')
     prefix: null
     date: true
+path = require 'path'
 
 Konnector = require '../models/konnector'
 localization = require './localization_manager'
