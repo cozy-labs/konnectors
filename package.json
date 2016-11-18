@@ -1,6 +1,6 @@
 {
   "name": "konnectors",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "Set of connectors to fetch data from the web and store them into your Cozy.",
   "cozy-displayName": "My accounts",
   "cozy-color": "#ff9800",
