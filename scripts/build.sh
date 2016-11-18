@@ -5,7 +5,7 @@ echo "Clean previous server"
 rm -rf build/server && mkdir -p build/server
 echo "Previous server cleaned."
 
-source `dirname $0`/build_server.sh
+. `dirname $0`/build_server.sh
 
 echo "Clean previous client build..."
 rm -rf build/client && mkdir -p build/client/app
