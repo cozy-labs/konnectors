@@ -1,22 +1,17 @@
 "use strict"
 
 const webpack = require('webpack')
-
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CopyPlugin        = require('copy-webpack-plugin');
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
-
-const optimize = false;
-const cssOptions = optimize? 'css?-svgo&-autoprefixer&-mergeRules':'css';
-const imgPath = 'img/' + '[name]' + (optimize? '.[hash]': '') + '.[ext]';
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 module.exports = {
     entry: './app',
+
     resolve: {
         extensions: ['', '.js', '.json', '.vue']
     },
-    debug: !optimize,
+
+    debug: true,
+
     devtool: 'source-map',
 
     module: {
@@ -45,7 +40,7 @@ module.exports = {
             {
                 test: /\.(png|gif|jpe?g|svg)$/i,
                 exclude: /(vendor|sprites)/,
-                loader: 'file?name=' + imgPath
+                loader: 'file?name=img/[name].[ext]'
             }
         ]
     },
@@ -53,16 +48,18 @@ module.exports = {
     plugins: [
         new ExtractTextPlugin('app.css')
     ],
+
     vue: {
         loaders: {
-            css: ExtractTextPlugin.extract('style', cssOptions),
-            stylus: ExtractTextPlugin.extract('style', cssOptions + '!stylus')
+            css: ExtractTextPlugin.extract('style', 'css'),
+            stylus: ExtractTextPlugin.extract('style', 'css!stylus')
         },
         postcss: [
             require('autoprefixer')(['last 2 versions']),
             require('css-mqpacker')
         ]
     },
+
     stylus: {
         use: [require('cozy-ui/lib/stylus')()]
     }

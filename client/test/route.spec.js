@@ -6,24 +6,6 @@ import routes from '../app/routes'
 
 describe('Routes', () => {
 
-  before(() => {
-    // mockery.enable({
-    //   warnOnReplace: false,
-    //   warnOnUnregistered: false
-    // })
-    //
-    // // Components are useless here
-    // mockery.registerMock('./components/discovery_list', {})
-    // mockery.registerMock('./components/category_list', {})
-    // mockery.registerMock('./components/connected_list', {})
-  })
-
-
-  after(() => {
-    //mockery.disable()
-  })
-
-
   describe('Discovery', () => {
     let route
 

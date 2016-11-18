@@ -28,9 +28,6 @@ module.exports = function(config) {
      'karma-webpack'
     ],
 
-    // FIXME: erreur dans la config de webpack
-    // babel semble être mal récupéré
-    // use the webpack config
     webpack: webpackConfig,
 
     // avoid walls of useless text
