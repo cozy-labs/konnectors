@@ -7,6 +7,8 @@ module.exports = function(config) {
 
     frameworks: ['mocha'],
 
+    reporters: ['mocha'],
+
     files: [
       {pattern: 'app/*.js', included: false},
       {pattern: 'app/**/*.js', included: false},
@@ -23,6 +25,7 @@ module.exports = function(config) {
 
     plugins: [
      'karma-mocha',
+     'karma-mocha-reporter',
      'karma-firefox-launcher',
      'karma-babel-preprocessor',
      'karma-webpack'
