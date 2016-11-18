@@ -2,7 +2,7 @@
 
 const webpack = require('webpack')
 
-
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyPlugin        = require('copy-webpack-plugin');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
@@ -50,16 +50,9 @@ module.exports = {
         ]
     },
 
-            /*
     plugins: [
-        new ExtractTextPlugin('app.css'),
-        new CopyPlugin([ { from: 'vendor/assets', ignore: ['.gitkeep'] }]),
-        new BrowserSyncPlugin({
-            proxy: 'http://localhost:' + (process.env.PORT || 9358) + '/',
-            open: false
-        })
+        new ExtractTextPlugin('app.css')
     ],
-*/
     vue: {
         loaders: {
             css: ExtractTextPlugin.extract('style', cssOptions),
