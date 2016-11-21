@@ -6,6 +6,6 @@ npm install
 cd ../
 echo "clients dependencies installed."
 
-echo "Start client tests..."
+echo "Execute Client Tests..."
 karma start client/karma.conf.js
-echo "client tests are OK."
+echo "Client tests are OK"
