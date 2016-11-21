@@ -3,6 +3,17 @@
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
+const plugins = [];
+const TRAVIS = process.env.TRAVIS ? JSON.parse(process.env.TRAVIS) : false
+
+if (TRAVIS) {
+  console.log('TRAVIS mode (will fail on error)')
+  plugins.push(new webpack.NoErrorsPlugin())
+}
+
+plugins.push(new ExtractTextPlugin('app.css'));
+
+
 module.exports = {
     entry: './app',
 
@@ -13,6 +24,8 @@ module.exports = {
     debug: true,
 
     devtool: 'source-map',
+
+    bail: TRAVIS,
 
     module: {
         loaders: [
@@ -45,9 +58,7 @@ module.exports = {
         ]
     },
 
-    plugins: [
-        new ExtractTextPlugin('app.css')
-    ],
+    plugins: plugins,
 
     vue: {
         loaders: {
