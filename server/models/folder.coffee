@@ -40,6 +40,8 @@ Folder.createNewFolder = (folder, callback) ->
 
 
 Folder.mkdir = (path, callback) ->
+    return callback(null, {path}) if path.length is 0
+
     Folder.isPresent path, (err, isPresent) ->
         parts = path.split '/'
         name  = parts.pop()
