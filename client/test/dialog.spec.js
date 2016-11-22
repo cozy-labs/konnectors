@@ -3,52 +3,65 @@
 import { assert } from 'chai'
 
 import Vue from 'vue'
+import VueRouter from 'vue-router'
+Vue.use(VueRouter)
+
 import App from '../app/app'
 
 
 describe('Dialogs', () => {
-  it('`dialogs` should be equal to []', () => {
-    //console.log(App.data())
-    //assert.isOk(true)
+  const vm
+  const dialogs
+
+  describe('data()', () => {
+    describe('`dialogs` should be equal to [] (defaut)', () => {
+      expect(App.data().dialogs).toBe([])
+    })
+
+    it('`notifications` should be equal to []', () => {
+      expect(App.data().notifications).toBe([])
+    })
+
+    it('`dialogsQuery` should return `\'\'` for `dialogs=[]`', () => {
+      expect(App.data().dialogs).toBe([])
+      expect(App.computed.dialogsQuery.get()).toBe('')
+    })
   })
 
-  it('`notifications` should be equal to []', () => {
 
-  })
+  describe('`updateDialogs()` ', () => {
 
-  describe('`dialogsQuery` ', () => {
-    it('should return `\'\'` for `dialogs=[]`', () => {
+    beforeEach(() => {
+      vm = new Vue({
+        template: '<div><test></test></div>',
+        components: {
+          'test': App
+        }
+      }).$mount()
 
+      dialogs = 'truc'
+      vm.updateDialogs({ query: dialogs })
     })
 
-    it('should return `dialogs=plop` for `dialogs=[plop]`', () => {
-
-    })
-  })
-
-
-  // updateDialogs(to)
-  describe('`updateDialogs` ', () => {
-    it('should be called when App is created`', () => {
-
+    afterEach(() => {
+      vm.$destroy()
     })
 
 
-    it('should be called when route changes', () => {
-
+    it('should update `vm.dialogs', () => {
+      expect(vm.dialogs).toBe([dialogs])
     })
 
-    // Update from Route behavior
-    describe('`data.dialogs` ', () => {
-      it('should be equal to `[]` when no dialog query exist', () => {
 
-      })
-
-
-      it('should be equal to `[plop]` when `?dialogs=plop`', () => {
-
-      })
+    it('should update `vm.query`', () => {
+      expect(vm.dialogsQuery).toBe(`dialogs=${dialogs}`)
     })
+
+
+    it('should update `vm.$router.currentRoute`', () => {
+      expect(this.$router.currentRoute.query).toBe(vm.dialogsQuery)
+    })
+
   })
 
 
@@ -99,6 +112,43 @@ describe('Dialogs', () => {
     describe('`notifications` ', () => {
       it('shouldnt have values from `dialog` anymore', () => {
 
+      })
+    })
+  })
+
+
+  describe('Use Cases', () => {
+
+    describe('Routing', () => {
+      beforeEach(() => {
+        vm = new Vue({
+          template: '<div><test></test></div>',
+          components: {
+            'test': App
+          }
+        }).$mount()
+      })
+
+      afterEach(() => {
+        vm.$destroy()
+      })
+
+
+      describe('location/?dialogs=plop', () => {
+          beforeEach(() => {
+            dialogs = 'plop'
+            this.$router.push({ query: { dialogs: dialogs } })
+          })
+
+
+          it('should update `dialogs`', () => {
+            expect(vm.dialogs).toBe([dialogs])
+          })
+
+
+          it('should update `dialogsQuery`', () => {
+            expect(vm.dialogsQuery).toBe(`dialogs=${dialogs}`)
+          })
       })
     })
   })
