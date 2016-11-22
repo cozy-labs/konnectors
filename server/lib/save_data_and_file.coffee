@@ -1,6 +1,7 @@
 async = require 'async'
 naming = require './naming'
 moment = require 'moment'
+Folder = require '../models/folder'
 File = require '../models/file'
 
 
@@ -29,9 +30,9 @@ module.exports = (log, model, options, tags) ->
 
             createFileAndSaveData = (entry, entryLabel) ->
                 # Legacy code: Date is not used in File Model
-
                 pdfurl = entry.pdfurl
-                File.createNew fileName, path, pdfurl, tags, onCreated
+                Folder.mkdirp path, ->
+                    File.createNew fileName, path, pdfurl, tags, onCreated
 
             onCreated = (err, file) ->
                 if err
@@ -101,14 +102,13 @@ checkForMissingFiles = (options, callback) ->
         File.isPresent path, (err, isPresent) ->
 
             # If it's there, it does nothing.
-            if isPresent or not entry.pdfurl?
-                done()
+            return done() if isPresent or not entry.pdfurl?
 
             # If it's not there, it creates it.
-            else
-                url = entry.pdfurl
-                path = folderPath
+            url = entry.pdfurl
+            path = folderPath
 
+            Folder.mkdirp path, ->
                 File.createNew fileName, path, url, tags, (err, file) ->
 
                     if err

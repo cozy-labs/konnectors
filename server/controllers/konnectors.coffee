@@ -59,7 +59,6 @@ module.exports =
     # No import is started when the konnector is already in the is importing
     # state.
     import: (req, res, next) ->
-
         # Don't run a new import if an import is already running.
         if req.konnector.isImporting
             res.send 400, message: 'konnector is importing'
