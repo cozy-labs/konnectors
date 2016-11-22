@@ -56,6 +56,8 @@ module.exports =
         data =
             lastAutoImport: null
             importErrorMessage: null
+            lastImport: null
+            lastSuccess: null
             accounts: []
             password: null
 
