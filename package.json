@@ -76,7 +76,7 @@
     "build": "sh scripts/build.sh",
     "test": "sh scripts/lint.sh && npm-run-all test:*",
     "test:server": "sh scripts/tests.sh",
-    "test:client": "sh scripts/tests_client.sh",
+    "test:client": "npm run prewatch:client && karma start client/karma.conf.js",
     "lint": "sh scripts/lint.sh",
     "pretest": "tx pull -a || true",
     "prewatch:client": "cd client && npm install",
