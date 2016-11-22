@@ -3,6 +3,8 @@ delete webpackConfig.entry
 
 module.exports = function(config) {
   config.set({
+    basePath: '',
+
     browsers: ['Firefox'],
 
     frameworks: ['mocha'],
@@ -10,17 +12,11 @@ module.exports = function(config) {
     reporters: ['mocha'],
 
     files: [
-      {pattern: 'app/*.js', included: false},
-      {pattern: 'app/**/*.js', included: false},
-      {pattern: 'test/**/*.spec.js', included: true, watched: false},
-      'test/index.js'
+      "test/index.js"
     ],
 
     preprocessors: {
-      "app/*.js": ["webpack"],
-      "app/**/*.js": ["webpack"],
       "test/index.js": ["webpack"],
-      "test/*.spec.js": ["webpack"]
     },
 
     plugins: [
