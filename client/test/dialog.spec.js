@@ -151,5 +151,33 @@ describe('Dialogs', () => {
           })
       })
     })
+
+
+    describe('Click on `showDialog` button', () => {
+      it('should open `dialogVue`', () => {
+
+      })
+    })
+
+
+    describe('Click on `closeDialog` button', () => {
+      it('should close `dialogVue`', () => {
+
+      })
+    })
+
+
+    describe('Click on `success` button', () => {
+      it('should display a `success` notif', () => {
+
+      })
+    })
+
+
+    describe('Click on `error` button', () => {
+      it('should display a `error` notif', () => {
+
+      })
+    })
   })
 })
