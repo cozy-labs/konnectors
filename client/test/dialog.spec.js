@@ -13,6 +13,19 @@ describe('Dialogs', () => {
   const vm
   const dialogs
 
+  const createApp = () => {
+    vm = new Vue({
+      template: '<div><test></test></div>',
+      components: {
+        'test': App
+      }
+    }).$mount()
+  }
+
+  const destroyApp = () => {
+    vm.$destroy()
+  }
+
   describe('App.vue', () => {
 
     describe('data', () => {
@@ -35,19 +48,14 @@ describe('Dialogs', () => {
       describe('`updateDialogs()` ', () => {
 
         beforeEach(() => {
-          vm = new Vue({
-            template: '<div><test></test></div>',
-            components: {
-              'test': App
-            }
-          }).$mount()
+          createApp()
 
           dialogs = 'truc'
           vm.updateDialogs({ query: dialogs })
         })
 
         afterEach(() => {
-          vm.$destroy()
+          destroyApp()
         })
 
 
@@ -62,16 +70,34 @@ describe('Dialogs', () => {
 
 
         it('should update `vm.$router.currentRoute`', () => {
-          expect(this.$router.currentRoute.query).toBe(vm.dialogsQuery)
+          expect(vm.$router.currentRoute.query).toBe(vm.dialogsQuery)
         })
 
       })
 
 
       describe('`onOpenDialog` ', () => {
-        it('this.dialogQuery should be equal to `dialogs=plop`', () => {
-          // prévoir plusieurs ajouts à la suite;
-          // ne pas avoir plusieurs fois le même param dans la query
+        const dialog
+
+        beforeEach(() => {
+          createApp()
+
+          dialog = 'plop'
+          vm.onOpenDialog(dialog)
+        })
+
+        afterEach(() => {
+          destroyApp()
+        })
+
+
+        it('`dialogQuery` should be equal to `dialogs=plop`', () => {
+          expect(vm.dialogsQuery).toBe(`dialogs=${dialogs}`)
+        })
+
+
+        it('`vm.$router.currentRoute` should be updated ', () => {
+          expect(vm.$router.currentRoute.query).toBe(vm.dialogsQuery)
         })
       })
 
@@ -125,16 +151,11 @@ describe('Dialogs', () => {
 
       describe('Routing', () => {
         beforeEach(() => {
-          vm = new Vue({
-            template: '<div><test></test></div>',
-            components: {
-              'test': App
-            }
-          }).$mount()
+          createApp()
         })
 
         afterEach(() => {
-          vm.$destroy()
+          destroyApp()
         })
 
 
