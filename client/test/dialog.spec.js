@@ -8,26 +8,27 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 import App from '../app/app'
+import Dialog from '../app/components/dialog'
 
 
 describe('Dialogs', () => {
-  const vm
-  const dialogs
-
-  const createApp = () => {
-    vm = new Vue({
-      template: '<div><test></test></div>',
-      components: {
-        'test': App
-      }
-    }).$mount()
-  }
-
-  const destroyApp = () => {
-    vm.$destroy()
-  }
 
   describe('App.vue', () => {
+    const vm
+    const dialogs
+
+    const createApp = () => {
+      vm = new Vue({
+        template: '<div><test></test></div>',
+        components: {
+          'test': App
+        }
+      }).$mount()
+    }
+
+    const destroyApp = () => {
+      vm.$destroy()
+    }
 
     describe('data', () => {
       describe('`dialogs` should be equal to []', () => {
@@ -327,6 +328,21 @@ describe('Dialogs', () => {
 
 
   describe('Dialog.vue', () => {
+    const vm
+
+    const createDialog = () => {
+      vm = new Vue({
+        template: '<div><test></test></div>',
+        components: {
+          'test': Dialog
+        }
+      }).$mount()
+    }
+
+    const destroyDialog = () => {
+      vm.$destroy()
+    }
+
 
     describe('props', () => {
       it('should have `id` property', () => {
