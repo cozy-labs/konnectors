@@ -13,10 +13,9 @@ import Dialog from '../app/components/dialog'
 describe('Dialogs', () => {
 
   describe('App.vue', () => {
-    const vm
-    const dialogs
+    let vm
 
-    const createApp = () => {
+    function createApp () {
       vm = new Vue({
         template: '<div><test></test></div>',
         components: {
@@ -25,7 +24,7 @@ describe('Dialogs', () => {
       }).$mount()
     }
 
-    const destroyApp = () => {
+    function destroyApp () {
       vm.$destroy()
     }
 
@@ -132,7 +131,7 @@ describe('Dialogs', () => {
 
 
       describe('`onSuccessDialog` ', () => {
-        const dialog
+        let dialog
 
         beforeEach(() => {
           dialog = vm.config.find(item => item.id === 'burp')
@@ -327,9 +326,9 @@ describe('Dialogs', () => {
 
 
   describe('Dialog.vue', () => {
-    const vm
+    let vm
 
-    const createDialog = () => {
+    function createDialog () {
       vm = new Vue({
         template: '<div><test></test></div>',
         components: {
@@ -338,7 +337,7 @@ describe('Dialogs', () => {
       }).$mount()
     }
 
-    const destroyDialog = () => {
+    function destroyDialog () {
       vm.$destroy()
     }
 
