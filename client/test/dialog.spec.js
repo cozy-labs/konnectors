@@ -255,6 +255,55 @@ describe('Dialogs', () => {
           })
       })
     })
+
+
+    describe('Markup', () => {
+
+      beforeEach(() => {
+        createApp()
+        vm.config = [{ id: 'plop' }, { id: 'truc' }]
+      })
+
+      afterEach(() => {
+        destroyApp()
+      })
+
+
+      describe('Dialogs', () => {
+
+        it('shouldnt have any <cozy-dialogs>', () => {
+          const notifs = vm.$el.querySelectorAll('role="notification"')
+          assert.equal(notifs.length, 0)
+        })
+
+
+        it('should have 2 <cozy-dialog> when `vm.dialogs.length == 2`', () => {
+          vm.dialogs.push({ id: 'plop' })
+          vm.dialogs.push({ id: 'truc' })
+
+          const dialogs = vm.$el.querySelectorAll('div role="dialog"')
+          assert.equal(dialogs.length, 2)
+        })
+
+
+        it('should remove <cozy-dialog> if dialogs is reset', () => {
+          vm.dialogs.push({ id: 'plop' })
+          assert.equal(vm.$el.querySelectorAll('div role="dialog"').length, 1)
+
+          vm.dialogs = []
+          assert.equal(vm.$el.querySelectorAll('div role="dialog"').length, 0)
+        })
+
+
+        it('shouldnt have <cozy-dialog> when query doesnt belongs to `vm.config`', () => {
+          vm.dialogs.push({ id: 'test' })
+
+          const dialogs = vm.$el.querySelectorAll('div role="dialog"')
+          assert.equal(dialogs.length, 0)
+        })
+      })
+
+    })
   })
 
 
