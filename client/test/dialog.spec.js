@@ -1,7 +1,6 @@
 'use strict'
 
 import { assert } from 'chai'
-import sinon from 'sinon'
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
