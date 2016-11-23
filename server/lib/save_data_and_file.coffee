@@ -34,6 +34,7 @@ module.exports = (log, model, options, tags) ->
             createFileAndSaveData = (entry, entryLabel) ->
                 # Legacy code: Date is not used in File Model
                 pdfurl = entry.pdfurl
+
                 Folder.mkdirp normalizedPath, ->
                     File.createNew fileName, normalizedPath, pdfurl, tags,
                         onCreated
