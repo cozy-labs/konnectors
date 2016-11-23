@@ -227,105 +227,76 @@ describe('Dialogs', () => {
     })
 
 
-    describe('Use Cases', () => {
+    describe('Routing', () => {
 
-      describe('Routing', () => {
-        beforeEach(() => {
-          createApp()
-        })
+      describe('location/?dialogs=plop', () => {
+          beforeEach(() => {
+            createApp()
+            vm.$router.push({ query: { dialogs: 'plop' } })
+          })
 
-        afterEach(() => {
-          destroyApp()
-        })
-
-
-        describe('location/?dialogs=plop', () => {
-            beforeEach(() => {
-              this.$router.push({ query: { dialogs: 'plop' } })
-            })
+          afterEach(() => {
+            destroyApp()
+          })
 
 
-            it('should update `dialogs`', () => {
-              expect(vm.dialogs).toBe(['plop'])
-            })
+          it('should update `dialogs`', () => {
+            expect(vm.dialogs).toBe(['plop'])
+
+            // Do not add dialog into query
+            // if it already exists
+            vm.$router.push({ query: { dialogs: 'plop' } })
+            expect(vm.dialogs).toBe(['plop'])
+          })
 
 
-            it('should update `dialogsQuery`', () => {
-              expect(vm.dialogsQuery).toBe(`dialogs=plop`)
-            })
-        })
+          it('should update `dialogsQuery`', () => {
+            expect(vm.dialogsQuery).toBe(`dialogs=plop`)
+          })
+      })
+    })
+  })
+
+
+  describe('Dialog.vue', () => {
+
+    describe('props', () => {
+      it('should have `id` property', () => {
+
       })
 
+      it('should have `headerStyles` property', () => {
 
-      describe('Click on `showDialog` button', () => {
-        it('should open `dialogVue`', () => {
-
-        })
       })
 
+      it('should have `hub` property', () => {
 
-      describe('Click on `closeDialog` button', () => {
-        it('should close `dialogVue`', () => {
-
-        })
-      })
-
-
-      describe('Click on `success` button', () => {
-        it('should display a `success` notif', () => {
-
-        })
-      })
-
-
-      describe('Click on `error` button', () => {
-        it('should display a `error` notif', () => {
-
-        })
       })
     })
 
 
-    describe('Dialog.vue', () => {
+    describe('computed', () => {
+      describe('closeURL', () => {
 
-      describe('props', () => {
-        it('should have `id` property', () => {
-
-        })
-
-        it('should have `headerStyles` property', () => {
-
-        })
-
-        it('should have `hub` property', () => {
-
-        })
       })
 
+      describe('closeQuery', () => {
 
-      describe('computed', () => {
-        describe('closeURL', () => {
+      })
+    })
 
-        })
 
-        describe('closeQuery', () => {
+    describe('methods', () => {
+      describe('close', () => {
 
-        })
       })
 
+      describe('error', () => {
 
-      describe('methods', () => {
-        describe('close', () => {
+      })
 
-        })
+      describe('success', () => {
 
-        describe('error', () => {
-
-        })
-
-        describe('success', () => {
-
-        })
       })
     })
   })
