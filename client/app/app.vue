@@ -168,10 +168,10 @@
               this.onOpenNotif(err, id)
           },
 
-          onOpenNotif (err, id) {
+          onOpenNotif (msg, id) {
               this.notifications.push({
                   type: 'error',
-                  label: err,
+                  label: msg,
                   dialog: id
               })
           },

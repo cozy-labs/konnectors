@@ -124,7 +124,7 @@ describe('Dialogs', () => {
 
           vm.onCloseDialog('plop')
           assert(spy.calledOnce)
-          assert(spy.calledWith('plop'))
+          assert(spy.calledWithExactly('plop'))
 
           vm.onOpenNotif.restore()
         })
@@ -145,7 +145,7 @@ describe('Dialogs', () => {
 
           vm.onSuccessDialog('burp')
           assert(spy.calledOnce)
-          assert(spy.calledWith('burp'))
+          assert(spy.calledWithExactly('burp'))
 
           vm.onCloseDialog.restore()
         })
@@ -154,22 +154,50 @@ describe('Dialogs', () => {
         it('should redirect to `dialog.success`', () => {
           expect(vm.$router.currentRoute.name).toBe(dialog.success)
         })
+
+
+        it('should call `onOpenNotif` with `msg` and `id` args', () => {
+            sinon.spy(vm, 'onOpenNotif')
+
+            vm.onSuccessDialog('burp')
+            assert(spy.calledOnce)
+            assert(spy.calledWithExactly('burp'))
+
+            vm.onOpenNotif.restore()
+        })
+
+
+        it('shouldnt call `onOpenNotif`', () => {
+          delete dialog.success
+
+          sinon.spy(vm, 'onOpenNotif')
+
+          vm.onSuccessDialog('burp')
+          assert.equal(spy.callCount, 0)
+
+          vm.onOpenNotif.restore()
+        })
       })
 
 
       describe('`onErrorDialog` ', () => {
-        it('should call onOpenNotif with `err` and `id` args', () => {
+        it('should call `onOpenNotif` with `msg` and `id` args', () => {
+          sinon.spy(vm, 'onOpenNotif')
 
+          vm.onErrorDialog('msg error', 'burp')
+          assert(spy.calledOnce)
+          assert(spy.calledWithExactly('msg error', 'burp'))
+
+          vm.onOpenNotif.restore()
         })
       })
 
 
       describe('`onOpenNotif` ', () => {
-          describe('`notifications` ', () => {
-            it('should be equal to `[{ err, label, dialog }]`', () => {
+        it('`notifications` should be equal to `[{ msg, label, dialog }]`', () => {
 
-            })
-          })
+          //vm.onErrorDialog('error', 'burp')
+        })
       })
 
 
