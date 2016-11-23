@@ -144,6 +144,7 @@ module.exports =
     'konnector description maif': "La Maif vous propose de télécharger automatiquement des données vous concernant (sociétaire, foyer, véhicule, sinistre, ...) dans votre Cozy."
     'konnector customview maif': "Pour cela <ol> <li>connectez-vous à votre compte en ligne Maif via le bouton 'connect',</li><li>sélectionnez 'Tous les jours' comme fréquence de mise à jour,</li><li>cliquez sur 'importer et sauvegarder'.</li></ol>"
     'konnector description edf': "EDF vous propose de téléchargez vos factures, données de consommation, des données à propos de votre relation client, de vos contrats, modalités de paiement... De plus, si vous utilisez le service EDF e.quilibre ces données seront plus riches."
+    'konnector description edf': "EDF vous propose de télécharger automatiquement vos factures, données de consommation, des données à propos de votre relation client, de vos contrats, modalités de paiement... dans votre Cozy. Pour cela, indiquez l'e-mail et le mot de passe de votre compte client EDF ci-dessous, sélectionnez 'Tous les jours' comme fréquence de mise à jour, puis cliquez sur 'importer et sauvegarder'. (Notez bien que la copie des données que vous aller récupérer est sous votre responsabilitée)"
 
     # Konnectors' notifications
     'notification import error': "une erreur est survenue pendant l'importation des données"

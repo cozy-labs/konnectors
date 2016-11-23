@@ -15,9 +15,6 @@ logger = require('printit') {
     date: true
 }
 
-# TODO :
-# multi account
-# multi contract
 
 # Models
 Client = cozydb.getModel 'Client',
