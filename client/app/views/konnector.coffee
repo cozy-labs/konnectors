@@ -287,7 +287,7 @@ module.exports = class KonnectorView extends BaseView
     <option value="#{path.id}">#{path.path}</option>
     """
                 fieldHtml += """
-    <option value="#{magicFolder}">#{magicFolder}</option>
+    <option selected value="#{magicFolder}">#{magicFolder}</option>
     """ if addMagicFolder
                 fieldHtml += "</select></div>"
 
