@@ -1,6 +1,7 @@
 'use strict'
 
 import { assert } from 'chai'
+import sinon from 'sinon'
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -41,31 +42,49 @@ describe('Dialogs', () => {
         expect(App.data().dialogs).toBe([])
         expect(App.computed.dialogsQuery.get()).toBe('')
       })
+
+      it('`dialogsQuery` should return `\'\'` for `dialogs=[]`', () => {
+        expect(App.data().dialogs).toBe([])
+        expect(App.computed.dialogsQuery.get()).toBe('')
+      })
     })
 
 
     describe('methods', () => {
+
+      beforeEach(() => {
+        createApp()
+
+        vm.config = [{
+            id: 'plop',
+            routes: { success: { name: 'plop-success' } }
+        },{
+            id: 'burp',
+            routes: { success: { name: 'burp-success' } }
+        },{
+            id: 'truc',
+            routes: { success: { name: 'burp-success' } }
+        }]
+      })
+
+      afterEach(() => {
+        destroyApp()
+      })
+
       describe('`updateDialogs()` ', () => {
 
         beforeEach(() => {
-          createApp()
-
-          dialogs = 'truc'
-          vm.updateDialogs({ query: dialogs })
-        })
-
-        afterEach(() => {
-          destroyApp()
+          vm.updateDialogs({ query: 'truc' })
         })
 
 
         it('should update `vm.dialogs', () => {
-          expect(vm.dialogs).toBe([dialogs])
+          expect(vm.dialogs).toBe(['truc'])
         })
 
 
         it('should update `vm.query`', () => {
-          expect(vm.dialogsQuery).toBe(`dialogs=${dialogs}`)
+          expect(vm.dialogsQuery).toBe(`dialogs=truc`)
         })
 
 
@@ -77,22 +96,13 @@ describe('Dialogs', () => {
 
 
       describe('`onOpenDialog` ', () => {
-        const dialog
 
         beforeEach(() => {
-          createApp()
-
-          dialog = 'plop'
-          vm.onOpenDialog(dialog)
+          vm.onOpenDialog('plop')
         })
-
-        afterEach(() => {
-          destroyApp()
-        })
-
 
         it('`dialogQuery` should be equal to `dialogs=plop`', () => {
-          expect(vm.dialogsQuery).toBe(`dialogs=${dialogs}`)
+          expect(vm.dialogsQuery).toBe(`dialogs=plop`)
         })
 
 
@@ -103,20 +113,46 @@ describe('Dialogs', () => {
 
 
       describe('`onCloseDialog` ', () => {
-        it('should call `onOpenNotif`', () => {
 
+        beforeEach(() => {
+          vm.onOpenDialog('plop')
+        })
+
+
+        it('should call `onOpenNotif` with `id` as 1rst args', () => {
+          sinon.spy(vm, 'onOpenNotif')
+
+          vm.onCloseDialog('plop')
+          assert(spy.calledOnce)
+          assert(spy.calledWith('plop'))
+
+          vm.onOpenNotif.restore()
         })
       })
 
 
       describe('`onSuccessDialog` ', () => {
-        it('should close current dialog', () => {
+        const dialog
 
+        beforeEach(() => {
+          dialog = vm.config.find(item => item.id === 'burp')
+          vm.onOpenDialog('burp')
         })
 
 
-        it('should redirect to config.success', () => {
+        it('should call `onCloseDialog` with `id` as 1rst args', () => {
+          sinon.spy(vm, 'onCloseDialog')
 
+          vm.onSuccessDialog('burp')
+          assert(spy.calledOnce)
+          assert(spy.calledWith('burp'))
+
+          vm.onCloseDialog.restore()
+        })
+
+
+        it('should redirect to `dialog.success`', () => {
+          expect(vm.$router.currentRoute.name).toBe(dialog.success)
         })
       })
 
@@ -161,18 +197,17 @@ describe('Dialogs', () => {
 
         describe('location/?dialogs=plop', () => {
             beforeEach(() => {
-              dialogs = 'plop'
-              this.$router.push({ query: { dialogs: dialogs } })
+              this.$router.push({ query: { dialogs: 'plop' } })
             })
 
 
             it('should update `dialogs`', () => {
-              expect(vm.dialogs).toBe([dialogs])
+              expect(vm.dialogs).toBe(['plop'])
             })
 
 
             it('should update `dialogsQuery`', () => {
-              expect(vm.dialogsQuery).toBe(`dialogs=${dialogs}`)
+              expect(vm.dialogsQuery).toBe(`dialogs=plop`)
             })
         })
       })

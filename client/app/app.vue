@@ -86,7 +86,8 @@
       data () {
           return {
               dialogs: [],
-              notifications: []
+              notifications: [],
+              config: Dialogs
           }
       },
 
@@ -125,7 +126,7 @@
                   // Check if query have a configuration
                   // if none do not it save into dialogs
                   this.dialogs = dialogs.split(',').map((id) => {
-                      return Dialogs.find(item => item.id === id)
+                      return this.config.find(item => item.id === id)
                   }).filter(item => !!item)
               else
                   this.dialogs = []
@@ -157,7 +158,7 @@
               this.onCloseDialog(id)
 
               // Goto NextComponent
-              const dialog = Dialogs.find(item => item.id === id)
+              const dialog = this.config.find(item => item.id === id)
               if (dialog && dialog.routes.success) {
                   this.$router.push(dialog.routes.success)
               }
