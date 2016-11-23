@@ -195,8 +195,14 @@ describe('Dialogs', () => {
 
       describe('`onOpenNotif` ', () => {
         it('`notifications` should be equal to `[{ msg, label, dialog }]`', () => {
+          const result = {
+            dialog: 'burp',
+            label: 'msg error',
+            type: 'error'
+          }
 
-          //vm.onErrorDialog('error', 'burp')
+          vm.onOpenNotif('msg error', 'burp')
+          expect(vm.notifications.indexOf(result).toBe(0))
         })
       })
 
@@ -204,7 +210,17 @@ describe('Dialogs', () => {
       describe('`onCloseNotif` ', () => {
         describe('`notifications` ', () => {
           it('shouldnt have values from `dialog` anymore', () => {
+            const result = {
+              dialog: 'burp',
+              label: 'msg error',
+              type: 'error'
+            }
 
+            vm.onOpenNotif('msg error', 'burp')
+            expect(vm.notifications.indexOf(result)).toBe(0)
+
+            vm.onCloseNotif('msg error', 'burp')
+            expect(vm.notifications.indexOf(result)).toBe(-1)
           })
         })
       })
