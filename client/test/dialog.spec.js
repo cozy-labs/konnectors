@@ -29,7 +29,7 @@ describe('Dialogs', () => {
     }
 
     describe('data', () => {
-      describe('`dialogs` should be equal to []', () => {
+      it('`dialogs` should be equal to []', () => {
         expect(App.data().dialogs).toBe([])
       })
 
