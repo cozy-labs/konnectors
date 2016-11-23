@@ -215,8 +215,13 @@ module.exports = class KonnectorView extends BaseView
     getFolderPath: (slug, name, index) ->
         id = $("##{slug}-#{name}#{index}-input").val()
         value = ''
-        path = _.findWhere(@paths, id: id)
-        value = path.path if path?
+
+        if /^\//.test(id) and id.length > 1
+            value = id
+        else
+            path = _.findWhere(@paths, id: id)
+            value = path.path if path?
+
         return value
 
 
@@ -256,11 +261,12 @@ module.exports = class KonnectorView extends BaseView
 """
 
             if val is 'folder'
-
+                magicFolder = "/Administration/#{slug}"
+                addMagicFolder = true
                 # Add a widget to select given folder.
                 fieldHtml += """
-<div><select id="#{slug}-#{name}#{index}-input" class="folder"">
-    <option selected value="/">/</option>
+<div><select id="#{slug}-#{name}#{index}-input" class="folder">
+    <option value="/">/</option>
 """
                 selectedPath = path: '', id: ''
                 pathName = values[name]
@@ -271,6 +277,7 @@ module.exports = class KonnectorView extends BaseView
                     # Displayed label is the path of the folder.
                     for path in @paths
                         if path.path is pathName
+                            addMagicFolder = false if path.path is magicFolder
                             fieldHtml += """
     <option selected value="#{path.id}">#{path.path}</option>
     """
@@ -279,6 +286,9 @@ module.exports = class KonnectorView extends BaseView
                             fieldHtml += """
     <option value="#{path.id}">#{path.path}</option>
     """
+                fieldHtml += """
+    <option selected value="#{magicFolder}">#{magicFolder}</option>
+    """ if addMagicFolder
                 fieldHtml += "</select></div>"
 
                 # Add a button to open quickly the selected folder in the files
