@@ -561,7 +561,7 @@ fetchRecupereDocumentContractuelListx = (reqFields, entries, data, callback) ->
 
                 return bill
 
-            entries.bills = bills
+            entries.bill = bills
             K.logger.info "Fetched #{bills.length} bills"
             callback()
         catch e
@@ -571,7 +571,7 @@ fetchRecupereDocumentContractuelListx = (reqFields, entries, data, callback) ->
 
 fetchVisualiserHistoConso = (requiredFields, entries, data, callback) ->
     K.logger.info "fetchVisualiserHistoConso"
-    async.mapSeries entries.contracts, (contract, cb) ->
+    async.mapSeries entries.contract, (contract, cb) ->
         path = '/ws/visualiserHistoConso_rest_V3-0/invoke'
         body =
             'message:msgRequete':
@@ -690,7 +690,7 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
             jeton_sso: data.edfToken
             bp: entries.clients[0].clientId
             # TODO : one procedure per contract !!!
-            pdl: entries.contracts[0].pdl
+            pdl: entries.contract[0].pdl
         json: true
     , (err, response, result) ->
         if err
@@ -700,7 +700,7 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
 
         K.logger.info 'Fetched edelia token'
         data.edeliaToken = result.access_token
-        data.contract = entries.contracts[0]
+        data.contract = entries.contract[0]
         callback()
 
 
@@ -737,7 +737,7 @@ fetchEdeliaProfile = (requiredFields, entries, data, callback) ->
                 sanitoryHotWaterType: obj.sanitoryHotWaterType
                 docTypeVersion: K.docTypeVersion
 
-            entries.homes.push doc
+            entries.home.push doc
             K.logger.info 'Fetched fetchEdeliaProfile'
 
         catch e
@@ -1175,6 +1175,7 @@ K = module.exports = require('../lib/base_konnector').createNew
 
     fetchOperations: [
         prepareEntries
+
         getEDFToken
         fetchListerContratClientParticulier
         fetchVisualiserPartenaire
