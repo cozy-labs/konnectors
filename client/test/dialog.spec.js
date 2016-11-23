@@ -303,6 +303,25 @@ describe('Dialogs', () => {
         })
       })
 
+
+      describe('Notification', () => {
+
+          it('shouldnt have any <cozy-notif>', () => {
+            const notifs = vm.$el.querySelectorAll('role="notification"')
+            assert.equal(notifs.length, 0)
+          })
+
+
+          it('should have 3 <cozy-notif> when `vm.notifications.length == 3`', () => {
+            vm.notifications.push({ id: 'notif 1' })
+            vm.notifications.push({ id: 'notif 2' })
+            vm.notifications.push({ id: 'notif 3' })
+
+            const notifs = vm.$el.querySelectorAll('role="notification"')
+            assert.equal(notifs.length, 3)
+          })
+      })
+
     })
   })
 
