@@ -303,7 +303,7 @@ class="folder-link"
 target="_blank">
 #{t "open selected folder"}
 </a>
-"""
+""" if 'confirmation' in (window.user.onboardedSteps or [])
                 fieldHtml += "</div>"
 
             else
