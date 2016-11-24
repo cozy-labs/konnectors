@@ -1,4 +1,5 @@
 async = require 'async'
+User = require '../models/user'
 Konnector = require '../models/konnector'
 Folder = require '../models/folder'
 CozyInstance = require '../models/cozy_instance'
@@ -14,6 +15,7 @@ module.exports.main = (req, res) ->
         konnectors: Konnector.getKonnectorsToDisplay
         instance: CozyInstance.first
         folders: Folder.all
+        user: User.first
 
     , (err, results) ->
         console.log err if err?
