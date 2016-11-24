@@ -28,7 +28,7 @@ module.exports =
     'apikey': 'Api key'
     'phoneNumber': 'Numéro de téléphone'
     'folderPath': 'Chemin du dossier'
-    'none' : 'Aucun'
+    'none' : 'Pas de mise à jour auto'
     'every hour': 'Toutes les heures'
     'every day': 'Tous les jours'
     'every week': 'Toutes les semaines'
@@ -138,7 +138,7 @@ module.exports =
     'konnector description podcast': 'Téléchargez vos podcasts audios préférés depuis leurs flux RSS. Les importations peuvent prendre du temps.'
     'konnector description materiel_net': "Télécharge vos factures Materiel.net. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy."
     'konnector description meetup': "Synchronise votre calendrier Meetup sur votre Cozy. Ce connecteur requiert l'application Calendrier."
-
+    'konnector description maif': "La Maif vous propose de télécharger automatiquement des données vous concernant (sociétaire, foyer, véhicule, sinistre, ...) dans votre Cozy. Pour cela (1) connectez-vous à votre compte en ligne Maif via le bouton 'connect', (2) sélectionnez 'Tous les jours' comme fréquence de mise à jour, puis (3) cliquez sur 'importer et sauvegarder'."
     # Konnectors' notifications
     'notification import error': "une erreur est survenue pendant l'importation des données"
     'notification prefix': "Konnector %{name} :"

@@ -106,6 +106,10 @@ module.exports =
             for k, v of req.query
                 account[k] = v
 
+            # Add redirection path, used by some konnector to build back the
+            # redirectUri
+            account['redirect_path'] = req.originalUrl
+
             accounts[req.params.accountId] = account
         catch e then return next e
 
