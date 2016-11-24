@@ -143,6 +143,7 @@ module.exports =
     'konnector description maif': "Maif invites you to download some data in your Cozy (societary, home, claims, ...)."
     'konnector customview maif': "To do that<ol><li>use the 'connect' button to connect on your Maif account,</li><li>select 'every day' as update schedule,</li></li>click on 'Import and Save'."
     'konnector description edf': "EDF invites you to download your bills, consumption statements, contracts, payment terms,  and data about your client's relation, ... If you use the EDF e.quilibre service, the data will be richer."
+    'konnector description orange_mobile': "Orange (France) invites you to download your communication log and the geolocation of your Orange Mobile phone in your Cozy. To do that, (1) use the 'connect' button to connect on your Orange Mobile account with your mobile phone number, (2) select 'every hour' as update schedule, then (3) click on 'Import and Save'."
 
     # Konnectors' notifications
     'notification import error': 'an error occurred during import of data'

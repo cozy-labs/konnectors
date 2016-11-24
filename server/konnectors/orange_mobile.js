@@ -27,30 +27,56 @@ const GeoPoint = cozydb.getModel('GeoPoint', {
   radius: Number,
 });
 
+const PhoneCommunicationLog = cozydb.getModel('PhoneCommunicationLog', {
+  docType: String,
+  docTypeVersion: String,
+  timestamp: String,
+  subscriber: String,
+  peer: String,
+  chipCount: Number,
+  chipType: String,
+  type: String,
+  imsi: String,
+  imei: String,
+  latitude: Number,
+  longitude: Number,
+});
+
 /*
  * The goal of this connector is to fetch event from facebook and store them
  * in the Cozy
  */
 const connector = module.exports = baseKonnector.createNew({
-  name: 'Orange MesInfos',
-  slug: 'orange_mesinfos',
+  name: 'Orange Mobile',
+  slug: 'orange_mobile',
   connectUrl:  'https://mesinfos.orange-labs.fr/auth?redirect_url=',
   fields: {
     access_token: 'hidden',
   },
 
-  models: [GeoPoint],
+  models: [GeoPoint, PhoneCommunicationLog],
+
+  init: function() {
+    async.each(this.models, function(model, cb) {
+      model.defineRequest('all', cozydb.defaultRequests.all, cb);
+    }, function(err) {
+      if (err) {
+        this.logger.error(err)
+      }
+    });
+  },
 
   fetchOperations: [
-    //downloadData,
     downloadGeoloc,
+    downloadCRA,
     display,
     updateOrCreate(logger, GeoPoint, ['msisdn', 'timestamp']),
+    updateOrCreate(logger, PhoneCommunicationLog, ['subscriber', 'timestamp']),
   ],
 
 });
 
-
+// Debug function to remove.
 function downloadData(requiredFields, entries, data, next) {
   connector.logger.info('Downloading events data from Facebook...');
 
@@ -73,11 +99,9 @@ function downloadGeoloc(requiredFields, entries, data, next) {
   //TODO: something coherent with the orange collect. Overlaping doesn't matter.
   let uri = `${API_ROOT}/data/geoloc`;
   if (requiredFields.lastSuccess) {
-    console.log('toto');
-    let since = moment(requiredFields.lastSuccess).add(-2, 'hours');
+    let since = moment(requiredFields.lastSuccess).add(-1, 'days');
     uri += `?start=${since.format('YYYY-MM-DDThh:mm:ss')}`;
   }
-  console.log(uri);
   request.get(uri,
     { auth: { bearer: requiredFields.access_token }, json: true },
     (err, res, body) => {
@@ -107,6 +131,42 @@ function downloadGeoloc(requiredFields, entries, data, next) {
       next(err);
     });
 }
+
+function downloadCRA(requiredFields, entries, data, next) {
+  connector.logger.info('Downloading CRA data from Orange...');
+
+  //TODO: something coherent with the orange collect. Overlaping doesn't matter.
+  let uri = `${API_ROOT}/data/cra`;
+  if (requiredFields.lastSuccess) {
+    let since = moment(requiredFields.lastSuccess).add(-1, 'month');
+    uri += `?start=${since.format('YYYY-MM-DDThh:mm:ss')}`;
+  }
+  request.get(uri,
+    { auth: { bearer: requiredFields.access_token }, json: true },
+    (err, res, body) => {
+      if (res.statusCode != 200) {
+        err = `${res.statusCode} - ${res.statusMessage} ${err || ''}`
+        connector.logger.error(body);
+      }
+
+      if (err) {
+        connector.logger.error(`Download CRA failed: ${err}`);
+      } else {
+        connector.logger.info('Download CRA succeeded.');
+        connector.logger.info(body);
+
+
+        entries.PhoneCommunicationLog = body.filter(call => !call.err)
+        .map((point) => (
+          {
+            docType: "PhoneCommunicationLog",
+            docTypeVersion: connector.doctypeVersion,
+          }));
+      }
+      next(err);
+    });
+}
+
 
 function display(requiredFields, entries, data, next) {
   connector.logger.info(JSON.stringify(entries, null, 2));
