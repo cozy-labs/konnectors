@@ -1221,9 +1221,9 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
             fetchPDF data.edfToken, entries.client[0], bill.number
             , (err, base64String) ->
                 binaryBill = new Buffer base64String, 'base64'
-
+                name = "#{moment(bill.date).format('YYYY-MM')}-factureEDF.pdf"
                 file = new File
-                    name: "#{bill.date.toISOString().slice(0, 7)}-factureEDF.pdf"
+                    name: name
                     mime: "application/pdf"
                     creationDate: new Date().toISOString()
                     lastModification: new Date().toISOString()
