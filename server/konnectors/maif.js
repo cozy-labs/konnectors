@@ -6,6 +6,7 @@
 
 const request = require('request');
 const moment = require('moment');
+const uuid = require('uuid');
 const cozydb = require('cozydb');
 const NotifHelper = require('cozy-notifications-helper');
 
@@ -61,11 +62,11 @@ let state = '';
 let nonce = '';
 
 if (state === '') {
-  state = generateUUID();
+  state = uuid();
 }
 
 if (nonce === '') {
-  nonce = generateUUID();
+  nonce = uuid();
 }
 
 const MaifUser = cozydb.getModel('MaifUser', {
@@ -297,17 +298,4 @@ function sendNotification(code, appToOpen) {
       app: appToOpen,
     }
   });
-}
-
-/**
-* generate UUID for nonce and state parameters
-*/
-function generateUUID() {
-  let d = new Date().getTime();
-  const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (d + Math.random() * 16) % 16 | 0;
-    d = Math.floor(d / 16);
-    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-  });
-  return uuid;
 }
