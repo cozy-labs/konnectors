@@ -7,11 +7,9 @@ The component [`list_item.vue`](../../client/app/components/list_item.vue) is a 
 ```pug
 a.item-wrapper
     header
-        //- icon (optional)
-        svg: use
-    //- title (mandatory)
+        svg.item-icon
+            use
     p.item-title
-    //- subtitle (optional)
     span.item-subtitle
 ```
 

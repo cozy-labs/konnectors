@@ -1,10 +1,10 @@
 <template lang="pug">
     a.item-wrapper(:href="link")
         header(:style="headerBackground")
-            svg(v-if="icon")
+            svg.item-icon(v-if="icon")
                 use(:xlink:href="icon")
         p.item-title {{ title }}
-        span.item-subtitle(v-if="subtitle") {{ subtitle }}
+        p.item-subtitle(v-if="subtitle") {{ subtitle }}
 </template>
 
 <script>
@@ -85,7 +85,7 @@
             height              9em
             position            relative
 
-            svg
+            .item-icon
                 border-radius   4px 4px 0px 0px
                 width           14em
                 height          4em
