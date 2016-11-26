@@ -12,8 +12,6 @@ const async = require('async');
 
 module.exports = (log, model, filter, options) =>
   function(requiredFields, entries, data, next) {
-
-    // function(entries, filter, docType, callback) ->
     const modelName = model.displayName.toLowerCase();
 
     let news = entries[modelName];
@@ -33,7 +31,6 @@ module.exports = (log, model, filter, options) =>
 
         if (toUpdate) {
           toUpdate.updateAttributes(entry, cb);
-
         } else {
           model.create(entry, cb);
         }

@@ -393,26 +393,26 @@ fetchVisualiserPartenaire = (requiredFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
         try
-            partenaireElem = getF result["ns:msgReponse"], \
+            partnerElem = getF result["ns:msgReponse"], \
                         "ns:corpsSortie", "ns:partenaire"
             client = {}
-            coordonneesElem = getF partenaireElem, 'ns:coordonnees'
+            coordonneesElem = getF partnerElem, 'ns:coordonnees'
             client.cellPhone = getF coordonneesElem, 'ns:NumTelMobile'
             client.homePhone = getF coordonneesElem, 'ns:NumTelFixe'
             client.email = getF coordonneesElem, 'ns:Email'
             client.loginEmail = getF coordonneesElem, 'ns:EmailAEL'
 
-            contactElem = getF partenaireElem, 'ns:centreContact'
+            contactElem = getF partnerElem, 'ns:centreContact'
             contact = {}
             contact.title = getF contactElem, 'ns:gsr'
             contact.phone = getF contactElem, 'ns:telephone'
 
-            adresseElem = getF contactElem, 'ns:adresse'
-            if adresseElem
+            addressElem = getF contactElem, 'ns:adresse'
+            if addressElem
                 address = {}
-                address.street = getF adresseElem, 'ns:nomRue'
-                address.postcode = getF adresseElem, 'ns:codePostal'
-                address.city = getF adresseElem, 'ns:ville'
+                address.street = getF addressElem, 'ns:nomRue'
+                address.postcode = getF addressElem, 'ns:codePostal'
+                address.city = getF addressElem, 'ns:ville'
                 address.formated = "#{address.street}" +
                     "\n#{address.postcode} #{address.city}"
                 contact.address = address
@@ -505,8 +505,8 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
                 service = {}
                 service.name = getF serviceElem, 'ns:nomService'
                 service.status = getF serviceElem, 'ns:etat'
-                service.valeurSouscrite = getF serviceElem, 'ns:valeurSouscrite'
-                service.valeurPossibles = serviceElem['ns:valeursPossibles']
+                service.valueSubscribed = getF serviceElem, 'ns:valeurSouscrite'
+                service.valuesAvailable = serviceElem['ns:valeursPossibles']
 
                 return service
 
@@ -762,7 +762,7 @@ fetchPDF = (token, client, billNumber, callback) ->
 
 fetchEdeliaToken = (requiredFields, entries, data, callback) ->
     K.logger.info "fetchEdeliaToken"
-    request.post 'https://api.edelia.fr/' + 'authorization-server/oauth/token',
+    request.post 'https://api.edelia.fr/authorization-server/oauth/token',
         form:
             client_id: requiredFields.edeliaClientId
             grant_type: 'edf_sso'
@@ -789,7 +789,7 @@ fetchEdeliaProfile = (requiredFields, entries, data, callback) ->
     new Date().toISOString(), (err, response, obj) ->
         error = null
         try
-            err = 'no result' if not err and not obj
+            err = 'no import performed' if not err and not obj
 
             if err
                 K.logger.error 'While fetchEdeliaProfile'
@@ -1086,7 +1086,6 @@ requiredFields, entries, data, callback) ->
                 throw err
 
             objs.forEach (obj) ->
-                # if ...
                 statement = data.consumptionStatementByYear[obj.year]
                 statement.similarHomes =
                     site: obj.energies.site
@@ -1145,49 +1144,6 @@ prepareEntries = (requiredFields, entries, data, next) ->
     entries.client = []
     entries.paymentterms = []
     next()
-###
-updateOrCreateDocs = (requiredFields, entries, data, next) ->
-    async.series [
-        (cb) ->
-            updateOrCreate [entries.client], ['clientId', 'vendor'], Client, cb
-        (cb) ->
-            updateOrCreate entries.contracts, ['number', 'vendor'], Contract, cb
-        (cb) ->
-            updateOrCreate [entries.paymentTerms]
-                , ['vendor', 'clientId'], PaymentTerms, cb
-
-        (cb) -> updateOrCreate entries.homes, ['pdl'], Home, cb
-        (cb) ->
-            updateOrCreate entries.consumptionStatements
-            , ['contractNumber', 'statementType', 'statementReason'
-            , 'statementCategory', 'start'],
-            ConsumptionStatement, cb
-        (cb) ->
-            updateOrCreate entries.bills, ['vendor', 'number'], Bill, cb
-        (cb) ->
-            saveMissingBills requiredFields, entries, data, cb
-    ], next
-
-updateOrCreate = (entries, filter, docType, callback) ->
-    return callback() if not entries or entries.length is 0
-
-    docType.all (err, docs) ->
-        return callback err if err
-
-        async.eachSeries entries, (entry, cb) ->
-            toUpdate = docs.find (doc) ->
-                for k in filter
-                    if doc[k] isnt entry[k]
-                        return false
-                return true
-
-            if toUpdate
-                toUpdate.updateAttributes entry, cb
-            else
-                docType.create entry, cb
-
-        , callback
-###
 
 
 createNewFile = (data, file, callback) ->
@@ -1232,7 +1188,7 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
                     size: binaryBill.length
 
                 createNewFile file, binaryBill, (err, file) ->
-                    return callback err if err
+                    return callback 'file error' if err
                     bill.updateAttributes
                         fileId: file._id
                         binaryId: file.binary?.file.id
@@ -1333,9 +1289,6 @@ edfRequestPost = (path, body, callback) ->
     request
         url: 'https://rce-mobile.edf.com' + path
         method: 'POST'
-        # TODO : fix SSL3_GET_RECORD:wrong version number
-        #agentOption: securityOptions: 'TLSv1_method'
-        agentOption: securityOptions: 'SSLv3_method'
         headers:
             # Server needs Capitalize headers, and request use lower case...
             'Host': 'rce-mobile.edf.com'
@@ -1348,9 +1301,9 @@ edfRequestPost = (path, body, callback) ->
         gzip: true
     , (err, response, data) ->
         K.logger.error JSON.stringify(err) if err
-        return callback err if err
+        return callback 'request error' if err
         parser.parseString data, (err, result) ->
-            return callback err if err
+            return callback 'request error' if err
             errorCode = getF result['ns:msgReponse'], \
                         'ns:enteteSortie', 'ent:codeErreur'
 

@@ -141,7 +141,7 @@ module.exports =
     'konnector description meetup': 'Synchronize your Meetup calendar with your Cozy. This konnector requires the Calendar application.'
     'konnector description maif': "Maif invites you to download some data in your Cozy (societary, home, claims, ...)."
     'konnector customview maif': "To do that<ol><li>use the 'connect' button to connect on your Maif account,</li><li>select 'every day' as update schedule,</li></li>click on 'Import and Save'."
-    'konnector description edf': "EDF invites you to download your bills, consumption statements, and data about your client's relation,contracts, paiement terms, ... If you use the EDF e.quilibre service, the data will be richer."
+    'konnector description edf': "EDF invites you to download your bills, consumption statements, contracts, payment terms,  and data about your client's relation, ... If you use the EDF e.quilibre service, the data will be richer."
 
     # Konnectors' notifications
     'notification import error': 'an error occurred during import of data'
