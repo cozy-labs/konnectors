@@ -315,7 +315,7 @@ fetchVisualiserPartenaire = (requiredFields, entries, data, callback) ->
             partnerElem = getF result["ns:msgReponse"], \
                         "ns:corpsSortie", "ns:partenaire"
             client = {}
-            coordonneesElem = getF partenaireElem, 'ns:coordonnees'
+            coordonneesElem = getF partnerElem, 'ns:coordonnees'
             client.cellPhone = getF coordonneesElem, 'ns:NumTelMobile'
             client.homePhone = getF coordonneesElem, 'ns:NumTelFixe'
             client.email = getF coordonneesElem, 'ns:Email'

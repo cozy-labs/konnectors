@@ -189,10 +189,10 @@
       "description": "This information is needed to localize the application in your language."
     },
     "Client": {
-      "description": "Import your Client informations, from the CRM of your vendors."
+      "description": "Import your Client information, from the CRM of your vendors."
     },
     "Contract": {
-      "description": "Import informations about your contracts from your vendors."
+      "description": "Import information about your contracts from your vendors."
     },
     "PaymentTerms": {
       "description": "Import payment modalities from your vendors."
@@ -201,7 +201,7 @@
       "description": "Import some data about your home from EDF."
     },
     "ConsumptionStatement": {
-      "description": "Import energy consumption dat ain your Cozy."
+      "description": "Import energy consumption data in your Cozy."
     },
     "Event": {
       "description": "Import event to fill the calendar."
