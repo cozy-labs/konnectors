@@ -44,6 +44,9 @@ module.exports =
     'loginUrl': "URL d'authentification"
     'token': "Token"
     'refreshToken': "Mettre à jour le token"
+    'code': "Code d'autorisation"
+    'redirectPath': "Chemin de l'URL de redirection"
+
 
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.

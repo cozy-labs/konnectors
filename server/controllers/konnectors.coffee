@@ -108,7 +108,7 @@ module.exports =
 
             # Add redirection path, used by some konnector to build back the
             # redirectUri
-            account['redirect_path'] = req.originalUrl
+            account.redirectPath = req.originalUrl
 
             accounts[req.params.accountId] = account
         catch e then return next e

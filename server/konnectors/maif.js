@@ -82,7 +82,7 @@ const connecteur = module.exports = factory.createNew({
 
   fields: {
     code: 'hidden', // To get the Auth code returned on the redirection.
-    redirect_path: 'hidden',
+    redirectPath: 'hidden',
   },
 
   models: [MaifUser],
@@ -107,8 +107,8 @@ function getConnectUrl() {
 * call post request to get token
 */
 function getCode(requiredFields, callback) {
-  if (!(requiredFields.redirect_path && requiredFields.code)) {
-    return callback('No auth code.');
+  if (!(requiredFields.redirectPath && requiredFields.code)) {
+    return callback('token not found');
   }
 
   cozydb.api.getCozyDomain((err, domain) => {
@@ -116,7 +116,7 @@ function getCode(requiredFields, callback) {
     //   domain = domain.replace('https', 'http');
     // }
 
-    let path = requiredFields.redirect_path.split('?')[0];
+    let path = requiredFields.redirectPath.split('?')[0];
     if (path[0] === '/') {
       path = path.slice(1);
     }
@@ -138,20 +138,20 @@ function getCode(requiredFields, callback) {
     };
     connecteur.logger.info(options);
     request(options, (err, response, body) => {
+      let jsonToken = null;
       try {
-        JSON.parse(body);
+        jsonToken = JSON.parse(body);
       } catch (e) {
-        err = 'error';
+        err = 'parsing error';
       }
 
       if (err != null) {
         connecteur.logger.error(err);
         callback('Erreur lors de la récupération des données.');
-      } else if (JSON.parse(body).id_token === undefined) {
-        connecteur.logger.error(err);
-        callback('Erreur lors de la récupération des données.');
+      } else if (jsonToken.id_token === undefined) {
+        connecteur.logger.error('token not found');
+        callback('token not found');
       } else {
-        const jsonToken = JSON.parse(body);
         getToken(jsonToken.id_token, jsonToken.refresh_token, callback);
       }
     }, false);
@@ -252,7 +252,7 @@ function refreshToken(requiredFields, entries, data, next) {
           try {
             JSON.parse(body);
           } catch (e) {
-            err = 'error';
+            err = 'parsing error';
           }
           if (err != null) { // refresh token not valid anymore
             sendNotification('refresh token not valid', 'konnectors/konnector/maif');
@@ -273,7 +273,8 @@ function refreshToken(requiredFields, entries, data, next) {
       getCode(requiredFields, (err) => {
         if (err) {
           sendNotification('refresh token not valid', 'konnectors/konnector/maif');
-          next(err);
+          connecteur.logger.error(err);
+          next('token not found');
         } else {
           next();
         }

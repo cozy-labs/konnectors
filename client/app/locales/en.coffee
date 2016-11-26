@@ -44,6 +44,8 @@ module.exports =
     'loginUrl': "Login URL"
     'token': "Token"
     'refreshToken': "Refresh Token"
+    'code': "Authorization code"
+    'redirectPath': "Path of the redirect URL"
 
     'home headline': """
     With Konnectors you can retrieve many data and save them into your Cozy.
