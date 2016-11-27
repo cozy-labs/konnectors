@@ -56,21 +56,21 @@ function login(requiredFields, billInfos, data, next) {
         apiAppName: ''
       }
     };
-    request(opts, (err, res, body) => {
+    request(opts, (err, res) => {
       if (err) {
         logger.error(err);
         return next(REQUEST_ERROR_KEY);
       } else if (res.statusCode === 200) {
         // 200 if credentials are incorrect
         return next('bad credentials');
-      } else if (res.statusCode >= 300 && res.statusCode < 400) {
-        // Didn't redirect till the end
+      } else if (res.statusCode === 302 && res.headers.location) {
+        logger.info('Connected');
         request(res.headers.location, (err, res, body) => {
+          if (err) {
+            return next(err);
+          }
           sendToICalKonnector(body, requiredFields.calendar, next);
         });
-      } else {
-        // Already connected
-        sendToICalKonnector(body, requiredFields.calendar, next);
       }
     });
   });
@@ -78,8 +78,31 @@ function login(requiredFields, billInfos, data, next) {
 
 
 function sendToICalKonnector(body, calendar, next) {
-  const icalUrl = cheerio.load(body)('li.ical-supported > a.export-feed-option').attr('href');
-  ical.fetch({ url: icalUrl, calendar }, next);
+  const $ = cheerio.load(body);
+  const icalUrls = $('ul[data-filter="going"] > li > a.export-feed-option').map((i, elem) => (
+    $(elem).attr('href')
+  )).get().filter((url) => {
+    let matches = true;
+    // We do not want to get the rss feed
+    if (url.match(/rss/)) {
+      matches = false;
+    }
+    // We do not want to get the google feed
+    if (url.match(/google/)) {
+      matches = false;
+    }
+    // We do not want to get the webcal feed
+    if (url.match(/webcal/)) {
+      matches = false;
+    }
+    return matches;
+  });
+  if (typeof icalUrls !== 'undefined' && icalUrls.length > 0) {
+    ical.fetch({ url: icalUrls[0], calendar }, next);
+  } else {
+    logger.info('No feed found');
+    next('no feed');
+  }
 }
 
 function logout(requiredFields, billInfos, data, next) {
@@ -88,7 +111,7 @@ function logout(requiredFields, billInfos, data, next) {
       return next(err);
     }
     if (res.statusCode === 302) {
-      logger.info('Discnonected');
+      logger.info('Disconnected');
     }
     return next();
   });
