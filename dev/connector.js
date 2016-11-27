@@ -10,36 +10,37 @@ let baseBuildPath = path.join(
 // Display most important fields of a konnector. It hides the password
 // in case some are stored in the field values of the connector.
 let displayKonnector = function(konnector, log) {
-    konnector.removeEncryptedFields();
-    // The fields are in the konnector file
-    let konnectorConfig = {};
-    try {
-        konnectorConfig = require(
-            path.join(
-                baseBuildPath,
-                '/server/konnectors/',
-                konnector.slug
-            )
-        );
-        if (konnectorConfig.default !== undefined) {
-            konnectorConfig = konnectorConfig.default;
+    konnector.removeEncryptedFields(function () {
+        // The fields are in the konnector file
+        let konnectorConfig = {};
+        try {
+            konnectorConfig = require(
+                path.join(
+                    baseBuildPath,
+                    '/server/konnectors/',
+                    konnector.slug
+                )
+            );
+            if (konnectorConfig.default !== undefined) {
+                konnectorConfig = konnectorConfig.default;
+            }
+        } catch (error) {
+            log.error(`Konnector file name and konnector slug do not match.\
+                        Slug is: ${konnector.slug}`
+            );
         }
-    } catch (error) {
-        log.error(`Konnector file name and konnector slug do not match.\
-                    Slug is: ${konnector.slug}`
-        );
-    }
-    log.raw({
-        slug: konnector.slug,
-        accounts: konnector.accounts,
-        fields: konnectorConfig.fields,
-        lastSuccess: konnector.lastSuccess,
-        lastImport: konnector.lastImport,
-        isImporting: konnector.isImporting,
-        importInterval: konnector.importInterval,
-        importErrorMessage: konnector.importErrorMessage
+        log.raw({
+            slug: konnector.slug,
+            accounts: konnector.accounts,
+            fields: konnectorConfig.fields,
+            lastSuccess: konnector.lastSuccess,
+            lastImport: konnector.lastImport,
+            isImporting: konnector.isImporting,
+            importInterval: konnector.importInterval,
+            importErrorMessage: konnector.importErrorMessage
+        });
+        return log.lineBreak();
     });
-    return log.lineBreak();
 };
 
 
@@ -64,19 +65,20 @@ export default {
         }
         return Konnector.get(konnectorName, function(err, konnector) {
             if (err) { return callback(err); }
-            konnector.appendConfigData(konnectorConfig);
+            konnector.appendConfigData(konnectorConfig, function () {
 
-            if (konnector == null) {
-                return callback(new Error("Konnector not found."));
+                if (konnector == null) {
+                    return callback(new Error("Konnector not found."));
 
-            } else {
-                log.info("Import starting...");
-                if (konnector.fieldValues == null) { konnector.fieldValues = {}; }
-                return konnector.import(function(err) {
-                    if (err) { log.error(err); }
-                    return callback();
-                });
-            }
+                } else {
+                    log.info("Import starting...");
+                    if (konnector.fieldValues == null) { konnector.fieldValues = {}; }
+                    return konnector.import(function(err) {
+                        if (err) { log.error(err); }
+                        return callback();
+                    });
+                }
+            });
         });
     },
 
@@ -106,35 +108,38 @@ export default {
                 '/server/lib/konnector_hash'
             )
         );
-        return Konnector.all(function(err, konnectors) {
-            if (err) { return callback(err); }
+        return konnectorMap(function (modules) {
+            return Konnector.all(function(err, konnectors) {
+                if (err) { return callback(err); }
 
-            let konnector = konnectors.find(konnector => konnector.slug === konnectorName);
-            let konnectorMetaData = konnectorMap[konnector.slug];
+                let konnector = konnectors.find(konnector => konnector.slug === konnectorName);
+                let konnectorMetaData = modules[konnector.slug];
 
-            if (konnector.accounts && konnector.accounts.length > 0) {
-                var { accounts } = konnector;
-                for (key in account) {
-                    let fields = konnector.getFields();
-                    if (fields[key] === undefined) {
-                        return callback(new Error(
-                            "Can't set fields which are not in the konnector fields list: " + key)
-                        );
+                if (konnector.accounts && konnector.accounts.length > 0) {
+                    var { accounts } = konnector;
+                    for (key in account) {
+                        konnector.getFields(function (fields) {
+                            if (fields[key] === undefined) {
+                                return callback(new Error(
+                                    "Can't set fields which are not in the konnector fields list: " + key)
+                                );
+                            }
+                            let value = account[key];
+                            accounts[0][key] = value;
+                        });
                     }
-                    let value = account[key];
-                    accounts[0][key] = value;
+                } else {
+                    var accounts = [account];
                 }
-            } else {
-                var accounts = [account];
-            }
 
-            if (konnector) {
-                return konnector.updateAttributes({accounts}, callback);
-            } else {
-                return callback(new Error(
-                    "Can't find given konnector (slug expected).")
-                );
-            }
+                if (konnector) {
+                    return konnector.updateAttributes({accounts}, callback);
+                } else {
+                    return callback(new Error(
+                        "Can't find given konnector (slug expected).")
+                    );
+                }
+            });
         });
     },
 

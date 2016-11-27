@@ -21,7 +21,7 @@ module.exports = (log, model, suffix, vendor) ->
             return next err if err
             entryHash = {}
 
-            # Build an hash where key is the date and valie is the entry
+            # Build an hash where key is the date and value is the entry
             for entry in entryObjects
 
                 # If a vendor parameter is given, entry should be of given
@@ -30,7 +30,6 @@ module.exports = (log, model, suffix, vendor) ->
                     if entry.vendor is vendor
                         hash = "#{entry.date.format 'YYYY-MM-DD'}T00:00:00.000Z"
                         entryHash[hash] = entry
-
 
                     # else do nothing
 
@@ -41,8 +40,11 @@ module.exports = (log, model, suffix, vendor) ->
 
             # Keep only non already existing entries.
             entries.filtered = entries.fetched.filter (entry) ->
-                hash = "#{entry.date.format 'YYYY-MM-DD'}T00:00:00.000Z"
-                not entryHash[hash]?
+                if entry.date?
+                    hash = "#{entry.date.format 'YYYY-MM-DD'}T00:00:00.000Z"
+                    not entryHash[hash]?
+                else
+                    false
 
             # Keep only entries matching current vendor.
             entries.filtered = entries.filtered.filter (entry) ->

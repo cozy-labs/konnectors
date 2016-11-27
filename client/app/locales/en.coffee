@@ -137,6 +137,7 @@ module.exports =
     'konnector description podcast': 'Download your favourite audio podcasts from a RSS feed. This import can take a while.'
     'konnector description materiel_net': 'Import your Materiel.net bills. This konnector requires the Files application to store the bill PDF files.'
     'konnector description meetup': 'Synchronize your Meetup calendar with your Cozy. This konnector requires the Calendar application.'
+    'konnector description weboob': "Synchronize your accounts using Weboob modules. This connector requires Weboob and Python on your instance."
 
     # Konnectors' notifications
     'notification import error': 'an error occurred during import of data'

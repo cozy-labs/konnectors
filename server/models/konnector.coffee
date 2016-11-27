@@ -48,11 +48,12 @@ Konnector.get = (slug, callback) ->
 
 # Return fields registered in the konnector module. If it's not defined,
 # it uses the current fields.
-Konnector::getFields = ->
-    if konnectorHash[@slug]?
-        return konnectorHash[@slug]?.fields
-    else
-        return @fields
+Konnector::getFields = (callback) ->
+    konnectorHash (modules) =>
+        if modules[@slug]?
+            return callback modules[@slug]?.fields
+        else
+            return callback @fields
 
 
 # Unencrypt password fields and set them as normal fields.
@@ -72,41 +73,46 @@ Konnector::injectEncryptedFields = (callback) ->
 # Remove encrypted fields data from field list. Set password attribute with
 # encrpyted fields data to save them encrypted.
 # The data system by default encrypt the password attribute on every object.
-Konnector::removeEncryptedFields = (fields) ->
+Konnector::removeEncryptedFields = (fields, callback) ->
 
     if not fields?
         log.warn "Fields variable undefined, use current one instead."
-        fields = @getFields()
+        fieldsGetter = @getFields
+    else
+        fieldsGetter = (callback) ->
+            return callback()
 
-    @cleanFieldValues()
-    password = []
+    fieldsGetter (fields) =>
+        @cleanFieldValues()
+        password = []
 
-    for account in @accounts
-        passwords = {}
-        for name, type of fields when type is "password"
-            passwords[name] = account[name]
-            delete account[name]
-        password.push passwords
+        for account in @accounts
+            passwords = {}
+            for name, type of fields when type is "password"
+                passwords[name] = account[name]
+                delete account[name]
+            password.push passwords
 
-    @password = JSON.stringify password
+        @password = JSON.stringify password
+        return callback()
 
 
 # Update field values with the one given in parameters.
 Konnector::updateFieldValues = (data, callback) ->
-    fields = @getFields()
-    data.accounts ?= []
-    data.accounts.unshift data.fieldValues if data.fieldValues?
+    @getFields (fields) =>
+        data.accounts ?= []
+        data.accounts.unshift data.fieldValues if data.fieldValues?
 
-    @accounts = data.accounts
-    @removeEncryptedFields fields
-    @importInterval = data.importInterval or @importInterval
+        @accounts = data.accounts
+        @removeEncryptedFields fields, =>
+            @importInterval = data.importInterval or @importInterval
 
-    data =
-        accounts: @accounts
-        password: @password
-        importInterval: @importInterval
-    @updateAttributes data, (err) =>
-        callback err, @
+            data =
+                accounts: @accounts
+                password: @password
+                importInterval: @importInterval
+            @updateAttributes data, (err) =>
+                callback err, @
 
 
 # Run import process for given konnector. It runs the fetch command for each
@@ -144,61 +150,63 @@ Konnector::import = (callback) ->
 
 Konnector::runImport = (values, callback) ->
 
-    konnectorModule = konnectorHash[@slug]
+    konnectorHash (modules) =>
+        konnectorModule = modules[@slug]
 
-    # Only raise the error if there is an account for this konnector
-    if @shallRaiseEncryptedFieldsError()
-        return callback 'encrypted fields',\
-        localization.t 'encrypted fields'
+        # Only raise the error if there is an account for this konnector
+        if @shallRaiseEncryptedFieldsError()
+            return callback 'encrypted fields',\
+            localization.t 'encrypted fields'
 
-    @injectEncryptedFields()
+        @injectEncryptedFields()
 
-    values.lastSuccess = @lastSuccess
-    konnectorModule.fetch values, (importErr, notifContent) =>
-        fields = @getFields()
-        @removeEncryptedFields fields
+        values.lastSuccess = @lastSuccess
+        konnectorModule.fetch values, (importErr, notifContent) =>
+            @getFields (fields) =>
+                @removeEncryptedFields fields, =>
 
-        if importErr? and \
-        typeof(importErr) is 'object' and \
-        importErr.message?
-            callback importErr, notifContent
+                    if importErr? and \
+                    typeof(importErr) is 'object' and \
+                    importErr.message?
+                        callback importErr, notifContent
 
-        else if importErr? and typeof(importErr) is 'string'
-            callback importErr, notifContent
+                    else if importErr? and typeof(importErr) is 'string'
+                        callback importErr, notifContent
 
-        else
-            callback null, notifContent
+                    else
+                        callback null, notifContent
 
 
 # Append data from module file of curent konnector.
-Konnector::appendConfigData = (konnectorData) ->
-    konnectorData ?= konnectorHash[@slug]
+Konnector::appendConfigData = (konnectorData, callback) ->
+    konnectorHash (modules) =>
+        konnectorData ?= modules[@slug]
 
-    unless konnectorData?
-        msg = "Config data cannot be appended for konnector #{@slug}: " + \
-              "missing config file."
-        throw new Error msg
+        unless konnectorData?
+            msg = "Config data cannot be appended for konnector #{@slug}: " + \
+                "missing config file."
+            throw new Error msg
 
-    # add missing fields
-    @[key] = konnectorData[key] for key of konnectorData
+        # add missing fields
+        @[key] = konnectorData[key] for key of konnectorData
 
-    # Build a string list of the model names. Models are the one linked to the
-    # konnector.
-    modelNames = []
-    for key, value of @models
-        name = value.toString()
+        # Build a string list of the model names. Models are the one linked to
+        # the konnector.
+        modelNames = []
+        for key, value of @models
+            name = value.toString()
 
-        if name.indexOf('Constructor') isnt -1
-            name = name.substring 0, (name.length - 'Constructor'.length)
-        else
-            match = name.match /function ([^(]+)/
-            if match? and match[1]?
-                name = match[1]
+            if name.indexOf('Constructor') isnt -1
+                name = name.substring 0, (name.length - 'Constructor'.length)
+            else
+                match = name.match /function ([^(]+)/
+                if match? and match[1]?
+                    name = match[1]
 
-        modelNames.push name
-    @modelNames = modelNames
+            modelNames.push name
+        @modelNames = modelNames
 
-    return @
+        return callback @
 
 
 # Build list of available konnectors. Retrieve information from database and
@@ -210,14 +218,16 @@ Konnector.getKonnectorsToDisplay = (callback) ->
             callback err
         else
             try
-                konnectorsToDisplay = konnectors
-                    .filter (konnector) ->
-                        return konnectorHash[konnector.slug]?
-                    .map (konnector) ->
-                        konnector.appendConfigData()
-                        return konnector
+                konnectorHash (modules) ->
+                    konnectorsToDisplay = konnectors
+                        .filter (konnector) ->
+                            return modules[konnector.slug]?
+                        .forEach (konnector, index) ->
+                            konnector.appendConfigData(null, (config) ->
+                                konnectorsToDisplay[index] = config
+                            )
 
-                callback null, konnectorsToDisplay
+                    callback null, konnectorsToDisplay
             catch err
                 log.error 'An error occured while filtering konnectors'
                 callback err

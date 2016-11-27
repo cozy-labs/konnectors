@@ -1,6 +1,9 @@
 fs = require 'fs'
 path = require 'path'
 
+weboob = require './weboob'
+
+
 currentPath = path.dirname fs.realpathSync __filename
 modulesPath = path.join currentPath, '..', 'konnectors'
 
@@ -15,7 +18,7 @@ isCoffeeOrJsFile = (fileName) ->
 
 # Build a hash of all konnectors available where keys are module names and
 # values are konnector modules.
-getKonnectorModules = ->
+getKonnectorModules = () ->
     modules = {}
     moduleFiles = fs.readdirSync modulesPath
 
@@ -27,8 +30,11 @@ getKonnectorModules = ->
                 modules[name] = require modulePath
                 if modules[name].default?
                     modules[name] = modules[name].default
-
-    return modules
-
+    # Append weboob modules
+    return (callback) ->
+        weboob.default.getWeboobKonnectors (weboobKonnectors) ->
+            weboobKonnectors.forEach (weboobKonnector) ->
+                modules[weboobKonnector.name] = weboobKonnector
+            callback modules
 
 module.exports = getKonnectorModules()
