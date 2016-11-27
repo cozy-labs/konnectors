@@ -11,8 +11,8 @@ color =
 
 api =
     endpoint: 'kimsufi-eu'
-    appKey: ''
-    appSecret: ''
+    appKey: '00Q53g7zU6ktWgNP'
+    appSecret: '4KJTPUU43lhrxQ2XFGgG3FJSVDuVkC3P'
 
 connector = module.exports = baseOVHKonnector.createNew(
     api, name, slug, link, category, color
