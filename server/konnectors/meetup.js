@@ -1,3 +1,5 @@
+'use strict';
+
 const request = require('request').defaults({ jar: true });
 const cheerio = require('cheerio');
 const ical = require('./ical_feed');
