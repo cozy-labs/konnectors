@@ -4,6 +4,14 @@ var _ = require('lodash');
 var printit = require('printit');
 var slugify = require('cozy-slug');
 var fetcher = require('./fetcher');
+var pkg = {};
+try {
+  // Build mode
+  pkg = require('../../../package.json');
+} catch (e) {
+  // Dev mode
+  pkg = require('../../package.json');
+}
 
 module.exports = {
 
@@ -24,6 +32,7 @@ module.exports = {
       prefix: konnector.name,
       date: true
     });
+    var docTypeVersion = pkg.name + '_' + slug + '-' + pkg.version;
     var modelsObj = {};
     konnector.models.forEach(function (model) {
       modelsObj[model.displayName.toLowerCase()] = model;
@@ -33,6 +42,7 @@ module.exports = {
       slug: slug,
       description: 'konnector description ' + slug,
       logger: logger,
+      docTypeVersion: docTypeVersion,
       models: modelsObj,
 
       fetch: function fetch(requiredFields, callback) {

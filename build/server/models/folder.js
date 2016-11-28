@@ -33,6 +33,17 @@ Folder.allPath = function(callback) {
   });
 };
 
+Folder.isPresent = function(fullPath, callback) {
+  return Folder.request("byFullPath", {
+    key: fullPath
+  }, function(err, folders) {
+    if (err) {
+      return callback(err);
+    }
+    return callback(null, (folders != null ? folders.length : void 0) > 0);
+  });
+};
+
 Folder.createNewFolder = function(folder, callback) {
   return Folder.create(folder, function(err, newFolder) {
     if (err) {
@@ -40,4 +51,41 @@ Folder.createNewFolder = function(folder, callback) {
     }
     return callback(null, newFolder);
   });
+};
+
+Folder.mkdir = function(path, callback) {
+  if (path.length === 0) {
+    return callback(null, {
+      path: path
+    });
+  }
+  return Folder.isPresent(path, function(err, isPresent) {
+    var name, parts;
+    parts = path.split('/');
+    name = parts.pop();
+    path = parts.join('/');
+    if (isPresent) {
+      return callback(null, {
+        name: name,
+        path: path
+      });
+    } else {
+      return Folder.createNewFolder({
+        name: name,
+        path: path
+      }, callback);
+    }
+  });
+};
+
+Folder.mkdirp = function(path, callback) {
+  var recurseCreate;
+  recurseCreate = function(err, folder) {
+    if (folder.path.substring(1).split('/').length > 1) {
+      return Folder.mkdir(folder.path, recurseCreate);
+    } else {
+      return Folder.mkdir(folder.path, callback);
+    }
+  };
+  return Folder.mkdir(path, recurseCreate);
 };

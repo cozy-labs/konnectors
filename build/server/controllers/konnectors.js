@@ -106,6 +106,7 @@ module.exports = {
         v = ref[k];
         account[k] = v;
       }
+      account.redirectPath = req.originalUrl;
       accounts[req.params.accountId] = account;
     } catch (error) {
       e = error;
