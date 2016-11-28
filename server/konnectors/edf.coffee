@@ -3,6 +3,8 @@ request = require 'request'
 async = require 'async'
 moment = require 'moment'
 cozydb = require 'cozydb'
+localization = require '../lib/localization_manager'
+
 
 localization = require '../lib/localization_manager'
 
@@ -561,7 +563,7 @@ fetchRecupereDocumentContractuelListx = (reqFields, entries, data, callback) ->
 
                 return bill
 
-            entries.bill = bills
+            entries.bills = bills
             K.logger.info "Fetched #{bills.length} bills"
             callback()
         catch e
@@ -571,7 +573,7 @@ fetchRecupereDocumentContractuelListx = (reqFields, entries, data, callback) ->
 
 fetchVisualiserHistoConso = (requiredFields, entries, data, callback) ->
     K.logger.info "fetchVisualiserHistoConso"
-    async.mapSeries entries.contract, (contract, cb) ->
+    async.mapSeries entries.contracts, (contract, cb) ->
         path = '/ws/visualiserHistoConso_rest_V3-0/invoke'
         body =
             'message:msgRequete':
@@ -690,7 +692,7 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
             jeton_sso: data.edfToken
             bp: entries.clients[0].clientId
             # TODO : one procedure per contract !!!
-            pdl: entries.contract[0].pdl
+            pdl: entries.contracts[0].pdl
         json: true
     , (err, response, result) ->
         if err
@@ -700,7 +702,7 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
 
         K.logger.info 'Fetched edelia token'
         data.edeliaToken = result.access_token
-        data.contract = entries.contract[0]
+        data.contract = entries.contracts[0]
         callback()
 
 
@@ -737,7 +739,7 @@ fetchEdeliaProfile = (requiredFields, entries, data, callback) ->
                 sanitoryHotWaterType: obj.sanitoryHotWaterType
                 docTypeVersion: K.docTypeVersion
 
-            entries.home.push doc
+            entries.homes.push doc
             K.logger.info 'Fetched fetchEdeliaProfile'
 
         catch e

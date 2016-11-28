@@ -1,8 +1,17 @@
-const _ = require('lodash')
-const printit = require('printit')
-const slugify = require('cozy-slug')
-const fetcher = require('./fetcher')
-const package = require('../../package.json')
+'use strict'
+
+const _ = require('lodash');
+const printit = require('printit');
+const slugify = require('cozy-slug');
+const fetcher = require('./fetcher');
+let pkg = {};
+try {
+  // Build mode
+  pkg = require('../../../package.json');
+} catch (e) {
+  // Dev mode
+  pkg = require('../../package.json');
+}
 
 module.exports = {
 
