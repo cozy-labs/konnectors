@@ -319,7 +319,8 @@ target="_blank">
 
     addConnectButton: (index) ->
         connectUrl = @model.get 'connectUrl'
-        if connectUrl.indexOf 'redirect_url' isnt -1
+        if (connectUrl.indexOf('redirect_url') isnt -1) or
+        (connectUrl.indexOf('redirect_uri') isnt -1)
             redirectUrl = "#{document.location.origin}\
                 #{document.location.pathname}#{@model.url()}/#{index}/redirect"
             redirectUrl = encodeURIComponent redirectUrl

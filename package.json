@@ -38,6 +38,7 @@
     "querystring": "0.2.0",
     "request": "2.76.0",
     "request-json": "0.6.1",
+    "uuid": "^3.0.0",
     "ware": "1.3.0"
   },
   "devDependencies": {
@@ -159,6 +160,9 @@
     },
     "Contact": {
       "description": "Create contacts from vendors or extract data from contact (for example to create birthdays)."
+    },
+    "MaifUser": {
+      "description": "Maif information about you and your insurances contracts."
     },
     "Tag": {
       "description": "Tags used to manage events and contacts."

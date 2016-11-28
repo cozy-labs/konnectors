@@ -44,6 +44,8 @@ module.exports =
     'loginUrl': "Login URL"
     'token': "Token"
     'refreshToken': "Refresh Token"
+    'code': "Authorization code"
+    'redirectPath': "Path of the redirect URL"
 
     'home headline': """
     With Konnectors you can retrieve many data and save them into your Cozy.
@@ -137,6 +139,8 @@ module.exports =
     'konnector description podcast': 'Download your favourite audio podcasts from a RSS feed. This import can take a while.'
     'konnector description materiel_net': 'Import your Materiel.net bills. This konnector requires the Files application to store the bill PDF files.'
     'konnector description meetup': 'Synchronize your Meetup calendar with your Cozy. This konnector requires the Calendar application.'
+    'konnector description maif': "Maif invites you to download some data in your Cozy (societary, home, claims, ...)."
+    'konnector customview maif': "To do that<ol><li>use the 'connect' button to connect on your Maif account,</li><li>select 'every day' as update schedule,</li></li>click on 'Import and Save'."
 
     # Konnectors' notifications
     'notification import error': 'an error occurred during import of data'
