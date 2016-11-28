@@ -8,6 +8,9 @@ localization = require '../lib/localization_manager'
 
 updateOrCreate = require '../lib/update_or_create'
 File = require '../models/file'
+Folder = require '../models/folder'
+
+
 
 parser = new xml2js.Parser()
 builder = new xml2js.Builder headless: true
@@ -1199,13 +1202,14 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
                     class: "document"
                     path: requiredFields.folderPath
                     size: binaryBill.length
-
-                createNewFile file, binaryBill, (err, file) ->
+                Folder.mkdirp requiredFields.folderPath, (err) ->
                     return callback 'file error' if err
-                    bill.updateAttributes
-                        fileId: file._id
-                        binaryId: file.binary?.file.id
-                    , cb
+                    createNewFile file, binaryBill, (err, file) ->
+                        return callback 'file error' if err
+                        bill.updateAttributes
+                            fileId: file._id
+                            binaryId: file.binary?.file.id
+                        , cb
         , callback
 
 
