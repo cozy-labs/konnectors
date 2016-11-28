@@ -161,6 +161,9 @@
     "Contact": {
       "description": "Create contacts from vendors or extract data from contact (for example to create birthdays)."
     },
+    "MaifUser": {
+      "description": "Maif information about you and your insurances contracts."
+    },
     "Tag": {
       "description": "Tags used to manage events and contacts."
     },
