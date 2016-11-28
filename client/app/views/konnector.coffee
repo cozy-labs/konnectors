@@ -277,14 +277,22 @@ module.exports = class KonnectorView extends BaseView
                     # Displayed label is the path of the folder.
                     for path in @paths
                         if path.path is pathName
-                            addMagicFolder = false if path.path is magicFolder
+                            addMagicFolder = false
                             fieldHtml += """
     <option selected value="#{path.id}">#{path.path}</option>
     """
                             selectedPath = path
                         else
+                            if path.path is magicFolder
+                                addMagicFolder = false
+                            isSelected = path.path is magicFolder and (\
+                                            pathName is magicFolder or\
+                                            not pathName\
+                                        )
                             fieldHtml += """
-    <option value="#{path.id}">#{path.path}</option>
+    <option #{if isSelected then "selected" else ""} value="#{path.id}">
+        #{path.path}
+    </option>
     """
                 fieldHtml += """
     <option selected value="#{magicFolder}">#{magicFolder}</option>
