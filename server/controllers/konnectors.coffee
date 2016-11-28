@@ -62,7 +62,7 @@ module.exports =
             lastAutoImport: null
             importErrorMessage: null
             accounts: []
-            password: '{}'
+            password: null
 
         req.konnector.updateAttributes data, (err, konnector) ->
             return next err if err
