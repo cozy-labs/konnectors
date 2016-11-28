@@ -8,7 +8,7 @@
                 v-for="konnector in konnectorsList",
                 v-if="!konnector.accounts.length",
                 :title="konnector.name",
-                :subtitle="konnector.category",
+                :subtitle="(konnector.category + ' category') | t",
                 :backgroundCSS="konnector.color.css",
                 :enableDefaultIcon="true",
                 :iconName="konnector.slug",
