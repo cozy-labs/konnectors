@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+PATH="./node_modules/.bin:$PATH"
 
-./node_modules/.bin/coffeelint -f coffeelint.json -r --color=always . &&\
-./node_modules/.bin/eslint  server/konnectors/*.js
+coffeelint -f coffeelint.json -r --color=always . &&\
+eslint  server/konnectors/*.js

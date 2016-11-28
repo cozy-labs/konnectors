@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+PATH="./node_modules/.bin:$PATH"
 
-./node_modules/.bin/mocha \
+mocha \
     --reporter spec \
     --colors \
     --globals clearImmediate,setImmediate \

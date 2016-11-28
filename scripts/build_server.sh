@@ -1,5 +1,5 @@
 #!/bin/sh
-PATH="$PATH:./node_modules/.bin"
+PATH="./node_modules/.bin:$PATH"
 
 echo "Build server files..."
 echo "Building CoffeeScript..."
