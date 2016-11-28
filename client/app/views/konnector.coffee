@@ -442,7 +442,7 @@ target="_blank">
                 alert t 'konnector deleted'
                 @model.set 'lastAutoImport', null
                 @model.set 'accounts', [{}]
-                @model.set 'password', '{}'
+                @model.set 'password', null
                 @model.set 'importErrorMessage', null
 
                 window.router.navigate '', trigger: true
