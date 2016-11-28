@@ -13,6 +13,22 @@ a.item-wrapper
     span.item-subtitle
 ```
 
+## Usage example
+
+```pug
+//- After been imported as 'listItem'
+//- The related icon path here is assets/icons/example.svg
+list-item(
+    title="My Item title",
+    subtitle="My Item subtitle",
+    backgroundCSS="blue",
+    enableDefaultIcon="true",
+    iconName="example",
+    link="#")
+```
+
+> __Important__: This component is defined to work in a HTML parent element with `flex` as `display` CSS property.
+
 ## Props
 
 ### `title`
