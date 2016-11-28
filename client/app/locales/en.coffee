@@ -139,7 +139,8 @@ module.exports =
     'konnector description podcast': 'Download your favourite audio podcasts from a RSS feed. This import can take a while.'
     'konnector description materiel_net': 'Import your Materiel.net bills. This konnector requires the Files application to store the bill PDF files.'
     'konnector description meetup': 'Synchronize your Meetup calendar with your Cozy. This konnector requires the Calendar application.'
-    'konnector description maif': "Maif invites you to download some data in your Cozy (societary, home, claims, ...). To do that, (1) use the 'connect' button to connect on your Maif account, (2) select 'every day' as update schedule, then (3) click on 'Import and Save'."
+    'konnector description maif': "Maif invites you to download some data in your Cozy (societary, home, claims, ...)."
+    'konnector customview maif': "To do that<ol><li>use the 'connect' button to connect on your Maif account,</li><li>select 'every day' as update schedule,</li></li>click on 'Import and Save'."
 
     # Konnectors' notifications
     'notification import error': 'an error occurred during import of data'

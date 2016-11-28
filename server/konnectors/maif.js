@@ -8,52 +8,13 @@ const request = require('request');
 const moment = require('moment');
 const uuid = require('uuid');
 const cozydb = require('cozydb');
-const NotifHelper = require('cozy-notifications-helper');
-
 const factory = require('../lib/base_konnector');
-const localization = require('../lib/localization_manager');
 
-const notifHelper = new NotifHelper('konnectors');
-
-const env = 'prod'; // dev / pprod / prod
-
-let connectUrl;
-let apikey;
-let infoUrl;
-let clientId;
-let secret;
-
-switch (env) {
-  case 'dev':
-    connectUrl = 'http://connect-dev-d.maif.local/connect';
-    apikey = '1f3299b5-967c-46ae-9bbe-94c22051da5e';
-    infoUrl = `http://slapp671.maif.local:7080/mapa/cozy/v1/mes_infos?apikey=${apikey}`;
-    clientId = 'eea55366-14b5-4609-ac4d-45f6abfad351';
-    secret = 'AILc_ai8K1o68uEnx56L2V9v08siwCIuvWmQSjbpcfq9_wwtxQYw20SjMi9NXZaT3Wi0jWuSQwTlpufQ4UzGXz4';
-    break;
-  case 'pprod':
-    // connectUrl = 'http://connect-maiffr-pprodcorr.maif.local/connect/';
-    connectUrl = 'https://connectbuild.maif.fr/connect';
-    apikey = '1f3299b5-967c-46ae-9bbe-94c22051da5e';
-    infoUrl = `https://openapiweb-build.maif.fr/ppcor/cozy/v1/mes_infos?apikey=${apikey}`;
-    clientId = 'eea55366-14b5-4609-ac4d-45f6abfad351';
-    secret = 'AILc_ai8K1o68uEnx56L2V9v08siwCIuvWmQSjbpcfq9_wwtxQYw20SjMi9NXZaT3Wi0jWuSQwTlpufQ4UzGXz4';
-    break;
-  case 'prod':
-    connectUrl = 'https://connect.maif.fr/connect';
-    apikey = 'eeafd0bd-a921-420e-91ce-3b52ee5807e8';
-    infoUrl = `https://openapiweb.maif.fr/prod/cozy/v1/mes_infos?apikey=${apikey}`;
-    clientId = '2921ebd6-5599-4fa6-a533-0537fac62cfe';
-    secret = 'Z_-AMVTppsgj_F9tRLXfwUm6Wdq8OOv5a4ydDYzvbhFjMcp8aM90D0sdNp2kdaEczeGH_qYZhhd9JIzWkoWdGw';
-    break;
-  default:
-    connectUrl = 'http://connect-dev-d.maif.local/connect';
-    apikey = '1f3299b5-967c-46ae-9bbe-94c22051da5e';
-    infoUrl = `http://slapp671.maif.local:7080/mapa/cozy/v1/mes_infos?apikey=${apikey}`;
-    clientId = 'eea55366-14b5-4609-ac4d-45f6abfad351';
-    secret = 'AILc_ai8K1o68uEnx56L2V9v08siwCIuvWmQSjbpcfq9_wwtxQYw20SjMi9NXZaT3Wi0jWuSQwTlpufQ4UzGXz4';
-    break;
-}
+const connectUrl = 'https://connect.maif.fr/connect';
+const apikey = 'eeafd0bd-a921-420e-91ce-3b52ee5807e8';
+const infoUrl = `https://openapiweb.maif.fr/prod/cozy/v1/mes_infos?apikey=${apikey}`;
+const clientId = '2921ebd6-5599-4fa6-a533-0537fac62cfe';
+const secret = 'Z_-AMVTppsgj_F9tRLXfwUm6Wdq8OOv5a4ydDYzvbhFjMcp8aM90D0sdNp2kdaEczeGH_qYZhhd9JIzWkoWdGw';
 
 const scope = 'openid+profile+offline_access';
 const type = 'code';
@@ -70,14 +31,18 @@ if (nonce === '') {
 }
 
 const MaifUser = cozydb.getModel('MaifUser', {
-  password: String,
+  password: String, // The refresh token. TODO: move it in a konnector field
+
+  // All the Maif data ( http://mesinfos.fing.org/cartographies/datapilote/ ).
+  // TODO: split it in multiples documents. But it  should be synchronized with
+  // one update of mes infos maif app.
   profile: Object,
-  date: String,
+  date: String, // last update date TODO: use the one from konnector.
 });
 
 const connecteur = module.exports = factory.createNew({
   name: 'MAIF',
-  slug: 'maif',
+  customView: '<%t konnector customview maif %>',
   connectUrl: `${getConnectUrl()}&redirect_uri=`,
 
   fields: {
@@ -138,6 +103,11 @@ function getCode(requiredFields, callback) {
     };
     connecteur.logger.info(options);
     request(options, (err, response, body) => {
+      if (err) {
+        connecteur.logger.error(err);
+        return callback('request error');
+      }
+
       let jsonToken = null;
       try {
         jsonToken = JSON.parse(body);
@@ -147,7 +117,7 @@ function getCode(requiredFields, callback) {
 
       if (err != null) {
         connecteur.logger.error(err);
-        callback('Erreur lors de la récupération des données.');
+        callback(err);
       } else if (jsonToken.id_token === undefined) {
         connecteur.logger.error('token not found');
         callback('token not found');
@@ -202,13 +172,18 @@ function getData(token, callback) {
     };
 
     request(options, (err, response, body) => {
+      if (err) {
+        connecteur.logger.error(err);
+        return callback('request error');
+      }
+
       try {
         JSON.parse(body);
       } catch (e) {
-        err = 'error';
+        err = 'parsing error';
       }
       if (err != null) {
-        sendNotification('data retrieved failed', 'konnectors/konnector/maif');
+        connecteur.logger.error(err);
         callback(err);
       } else {
         moment.locale('fr');
@@ -216,7 +191,6 @@ function getData(token, callback) {
         const payload = { profile: JSON.parse(body), date: importDate };
 
         maifuser.updateAttributes(payload, (err) => { // mise à jour du maifuser en base en insérant le token
-          sendNotification('data retrieved', 'mes-infos-maif');
           callback(err);
         });
       }
@@ -232,6 +206,10 @@ function getData(token, callback) {
 */
 function refreshToken(requiredFields, entries, data, next) {
   MaifUser.first((err, maifUser) => {
+    if (err) {
+      return next(err);
+    }
+
     let tokenValid = true;
     if (maifUser !== undefined) {
       const token = maifUser.password;
@@ -249,13 +227,17 @@ function refreshToken(requiredFields, entries, data, next) {
           }
         };
         request(options, (err, response, body) => {
+          if (err) {
+            connecteur.logger.error(err);
+            return next('request error');
+          }
           try {
             JSON.parse(body);
           } catch (e) {
             err = 'parsing error';
           }
           if (err != null) { // refresh token not valid anymore
-            sendNotification('refresh token not valid', 'konnectors/konnector/maif');
+            connecteur.logger.error(err);
             next(err);
           } else {
             const jsonToken = JSON.parse(body);
@@ -272,31 +254,12 @@ function refreshToken(requiredFields, entries, data, next) {
       // Maybe we have no token yet !
       getCode(requiredFields, (err) => {
         if (err) {
-          sendNotification('refresh token not valid', 'konnectors/konnector/maif');
           connecteur.logger.error(err);
           next('token not found');
         } else {
           next();
         }
       });
-    }
-  });
-}
-
-/**
-* Display a notification in Cozy
-* code : code of the message to send
-* appToOpen : Link to the app that will be opened on notification's click
-*/
-function sendNotification(code, appToOpen) {
-  code = code === undefined ? '' : code;
-  appToOpen = appToOpen === undefined ? 'konnectors/konnector/maif' : appToOpen;
-  const notifContent = localization.t(code, {});
-  notifHelper.createTemporary({
-    app: 'konnectors',
-    text: notifContent,
-    resource: {
-      app: appToOpen,
     }
   });
 }
