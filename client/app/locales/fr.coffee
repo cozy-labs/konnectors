@@ -143,6 +143,9 @@ module.exports =
     'konnector description meetup': "Synchronise votre calendrier Meetup sur votre Cozy. Ce connecteur requiert l'application Calendrier."
     'konnector description maif': "La Maif vous propose de télécharger automatiquement des données vous concernant (sociétaire, foyer, véhicule, sinistre, ...) dans votre Cozy."
     'konnector customview maif': "Pour cela <ol> <li>connectez-vous à votre compte en ligne Maif via le bouton 'connect',</li><li>sélectionnez 'Tous les jours' comme fréquence de mise à jour,</li><li>cliquez sur 'importer et sauvegarder'.</li></ol>"
+    'konnector description edf': "EDF vous propose de télécharger automatiquement vos factures, données de consommation, des données à propos de votre relation client, de vos contrats, modalités de paiement... dans votre Cozy. Pour cela, indiquez l'e-mail et le mot de passe de votre compte client EDF ci-dessous, sélectionnez 'Tous les jours' comme fréquence de mise à jour, puis cliquez sur 'importer et sauvegarder'. (Notez bien que la copie des données que vous allez récupérer est sous votre responsabilité)"
+
+
     # Konnectors' notifications
     'notification import error': "une erreur est survenue pendant l'importation des données"
     'notification prefix': "Konnector %{name} :"
@@ -163,6 +166,11 @@ module.exports =
     'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}"
     'notification isen date format': "DD/MM [à] HH:mm"
     'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"
+    'notification homes': "%{smart_count} description du domicile importée |||| %{smart_count} descriptions du domicile importées"
+    'notification consumptionstatements': "%{smart_count} nouveau relevé de consommation d'énergie importé |||| %{smart_count} nouveaux relevés de consommation d'énergie importés"
+    'notification contracts': "%{smart_count} nouveau contrat importé |||| %{smart_count} nouveaux contrats importés"
+    'notification clients': "%{smart_count} nouvelle informations client importée |||| %{smart_count}  nouvelles informations client importées"
+    'notification paymenttermss': "%{smart_count} modalité de paiement importée |||| %{smart_count} modalités de paiement importées"
 
     "konnector birthdays birthday": "Anniversaire de"
 
