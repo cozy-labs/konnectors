@@ -81,11 +81,13 @@ function getCode(requiredFields, callback) {
     //   domain = domain.replace('https', 'http');
     // }
 
+    // TODO: redirectionURI reconstruction is not clean enough, and doesn't work
+    // in dev mode.
     let path = requiredFields.redirectPath.split('?')[0];
     if (path[0] === '/') {
       path = path.slice(1);
     }
-    const urlRedirect = `${domain}${path}`;
+    const urlRedirect = `${domain}apps/konnectors/${path}`;
     const options = {
       url: `${connectUrl}/token`,
       jar: true,
@@ -206,14 +208,10 @@ function getData(token, callback) {
 */
 function refreshToken(requiredFields, entries, data, next) {
   MaifUser.first((err, maifUser) => {
-    if (err) {
-      return next(err);
-    }
-
     let tokenValid = true;
-    if (maifUser !== undefined) {
+    if (maifUser && !err) {
       const token = maifUser.password;
-      if (token !== undefined) {
+      if (token) {
         const options = {
           url: `${connectUrl}/token`,
           jar: true,
