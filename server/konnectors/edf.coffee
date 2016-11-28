@@ -3,6 +3,8 @@ request = require 'request'
 async = require 'async'
 moment = require 'moment'
 cozydb = require 'cozydb'
+localization = require '../lib/localization_manager'
+
 
 updateOrCreate = require '../lib/update_or_create'
 File = require '../models/file'
@@ -357,8 +359,8 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
                 return contract
 
             K.logger.info "Fetched listerContratClientParticulier"
-            entries.client.push client
-            entries.contract = contracts
+            entries.clients.push client
+            entries.contracts = contracts
 
             callback()
 
@@ -388,7 +390,7 @@ fetchVisualiserPartenaire = (requiredFields, entries, data, callback) ->
                 'ent:jeton': data.edfToken
 
             'corpsEntree':
-                'numeroBp': entries.client[0].clientId
+                'numeroBp': entries.clients[0].clientId
 
     edfRequestPost path, body, (err, result) ->
         return callback err if err
@@ -419,7 +421,7 @@ fetchVisualiserPartenaire = (requiredFields, entries, data, callback) ->
 
             client.commercialContact = contact
 
-            entries.client[0] = _extend entries.client[0], client
+            entries.clients[0] = _extend entries.clients[0], client
 
             K.logger.info "Fetched visualiserPartenaire."
             callback()
@@ -452,8 +454,8 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
                 'ent:jeton': data.edfToken
 
             'msg:corpsEntree':
-                'msg:numeroBp': entries.client[0].clientId
-                'msg:numeroAcc': entries.client[0].numeroAcc
+                'msg:numeroBp': entries.clients[0].clientId
+                'msg:numeroAcc': entries.clients[0].numeroAcc
 
 
     edfRequestPost path, body, (err, result) ->
@@ -464,7 +466,7 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
 
             paymentTerms =
                 vendor: 'EDF'
-                clientId: entries.client[0].clientId
+                clientId: entries.clients[0].clientId
                 docTypeVersion: K.docTypeVersion
 
             paymentTerms.bankDetails =
@@ -511,8 +513,8 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
                 return service
 
 
-            entries.paymentterms.push paymentTerms
-            entries.contract.forEach (contract) ->
+            entries.paymenttermss.push paymentTerms
+            entries.contracts.forEach (contract) ->
                 contract.services = contract.services.concat services
 
             K.logger.info "Fetched visualiserAccordCommercial."
@@ -545,8 +547,8 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
                 'ent:jeton': data.edfToken
 
             'message:corpsEntree':
-                'message:numeroBp': entries.client[0].clientId
-                'message:numeroAcc': entries.client[0].numeroAcc
+                'message:numeroBp': entries.clients[0].clientId
+                'message:numeroAcc': entries.clients[0].numeroAcc
 
     edfRequestPost path, body, (err, result) ->
         return callback err if err
@@ -572,13 +574,13 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
                     amountElectricity: amountElec
                 return doc
 
-            unless entries.paymentterms[0]
-                entries.paymentterms[0] =
+            unless entries.paymenttermss[0]
+                entries.paymenttermss[0] =
                     vendor: 'EDF'
-                    clientId: entries.client[0].clientId
+                    clientId: entries.clients[0].clientId
                     docTypeVersion: K.docTypeVersion
 
-            entries.paymentterms[0].paymentSchedules = paymentSchedules
+            entries.paymenttermss[0].paymentSchedules = paymentSchedules
             K.logger.info "Fetched #{paymentSchedules.length} " +
             "from fetchVisualiserCalendrierPaiement"
             callback()
@@ -608,7 +610,7 @@ fetchRecupereDocumentContractuelListx = (reqFields, entries, data, callback) ->
                 'ns:valeur': 'pscedfmoi'
             ,
                 'ns:cle': 2
-                'ns:valeur': entries.client[0].clientId
+                'ns:valeur': entries.clients[0].clientId
             ,
                 'ns:cle': 6
                 'ns:valeur': 'Facture'
@@ -624,7 +626,7 @@ fetchRecupereDocumentContractuelListx = (reqFields, entries, data, callback) ->
             bills = documents.map (elem) ->
                 bill =
                     vendor: 'EDF'
-                    clientId: entries.client[0].clientId
+                    clientId: entries.clients[0].clientId
                     docTypeVersion: K.docTypeVersion
 
                 date = moment getF(elem, 'ns:datecre'), 'YYYYMMDD'
@@ -640,7 +642,7 @@ fetchRecupereDocumentContractuelListx = (reqFields, entries, data, callback) ->
 
                 return bill
 
-            entries.bill = bills
+            entries.bills = bills
             K.logger.info "Fetched #{bills.length} bills"
             callback()
         catch e
@@ -650,7 +652,7 @@ fetchRecupereDocumentContractuelListx = (reqFields, entries, data, callback) ->
 
 fetchVisualiserHistoConso = (requiredFields, entries, data, callback) ->
     K.logger.info "fetchVisualiserHistoConso"
-    async.mapSeries entries.contract, (contract, cb) ->
+    async.mapSeries entries.contracts, (contract, cb) ->
         path = '/ws/visualiserHistoConso_rest_V3-0/invoke'
         body =
             'message:msgRequete':
@@ -670,7 +672,7 @@ fetchVisualiserHistoConso = (requiredFields, entries, data, callback) ->
                     'ent:jeton': data.edfToken
 
                 'message:corpsEntree':
-                    'message:numeroBp': entries.client[0].clientId
+                    'message:numeroBp': entries.clients[0].clientId
                     'message:numeroContrat': contract.number
 
         edfRequestPost path, body, (err, result) ->
@@ -709,11 +711,11 @@ fetchVisualiserHistoConso = (requiredFields, entries, data, callback) ->
     , (err, results) ->
         return callback err if err
 
-        entries.consumptionstatement = results.reduce (agg, result) ->
+        entries.consumptionstatements = results.reduce (agg, result) ->
             return agg.concat result
         , []
 
-        K.logger.info "Fetched #{entries.consumptionstatement.length}"+
+        K.logger.info "Fetched #{entries.consumptionstatements.length}"+
             " consumptionStatements"
         callback()
 
@@ -767,9 +769,9 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
             client_id: requiredFields.edeliaClientId
             grant_type: 'edf_sso'
             jeton_sso: data.edfToken
-            bp: entries.client[0].clientId
+            bp: entries.clients[0].clientId
             # TODO : one procedure per contract !!!
-            pdl: entries.contract[0].pdl
+            pdl: entries.contracts[0].pdl
         json: true
     , (err, response, result) ->
         if err
@@ -779,7 +781,7 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
 
         K.logger.info 'Fetched edelia token'
         data.edeliaToken = result.access_token
-        data.contract = entries.contract[0]
+        data.contract = entries.contracts[0]
         callback()
 
 
@@ -816,7 +818,7 @@ fetchEdeliaProfile = (requiredFields, entries, data, callback) ->
                 sanitoryHotWaterType: obj.sanitoryHotWaterType
                 docTypeVersion: K.docTypeVersion
 
-            entries.home.push doc
+            entries.homes.push doc
             K.logger.info 'Fetched fetchEdeliaProfile'
 
         catch e
@@ -849,7 +851,7 @@ requiredFields, entries, data, callback) ->
             if err
                 K.logger.error 'Wihle fetchEdeliaMonthlyElecConsumptions'
                 K.logger.error err
-                throw callback err
+                throw err
 
             statements = []
 
@@ -900,8 +902,8 @@ requiredFields, entries, data, callback) ->
                 return doc
 
             if statements.length isnt 0
-                entries.consumptionstatement = entries
-                    .consumptionstatement.concat statements
+                entries.consumptionstatements = entries
+                    .consumptionstatements.concat statements
 
             K.logger.info 'Fetched fetchEdeliaMonthlyElecConsumptions'
 
@@ -932,7 +934,6 @@ requiredFields, entries, data, callback) ->
                 throw err
 
             objs.forEach (obj) ->
-                # if ...
                 statement = data.consumptionStatementByYear[obj.year]
                 statement.similarHomes =
                     site: obj.energies.site
@@ -942,11 +943,9 @@ requiredFields, entries, data, callback) ->
             K.logger.info 'Fetched fetchEdeliaSimilarHomeYearlyElecComparisions'
         catch e
             error = e
-        finally
-            callback error
 
         delete data.consumptionStatementByYear
-        callback()
+        callback error
 
 fetchEdeliaElecIndexes = (requiredFields, entries, data, callback) ->
     return callback() if data.noEdelia or data.noElec
@@ -965,7 +964,7 @@ fetchEdeliaElecIndexes = (requiredFields, entries, data, callback) ->
             if err
                 K.logger.error 'Wihle fetchEdeliaElecIndexes'
                 K.logger.error err
-                throw callback err
+                throw err
 
             objs.forEach (obj) ->
                 statement = data
@@ -977,11 +976,9 @@ fetchEdeliaElecIndexes = (requiredFields, entries, data, callback) ->
             K.logger.info 'Fetched fetchEdeliaElecIndexes'
         catch e
             error = e
-        finally
-            callback error
 
         delete data.consumptionStatementByMonth
-        callback()
+        callback error
 
 ##
 # Edelia Gas
@@ -1054,15 +1051,15 @@ fetchEdeliaMonthlyGasConsumptions = (requiredFields, entries, data, callback) ->
                 return doc
 
             if (statements.length isnt 0)
-                entries.consumptionstatement = entries
-                .consumptionstatement.concat statements
+                entries.consumptionstatements = entries
+                .consumptionstatements.concat statements
 
             K.logger.info 'Fetched fetchEdeliaMonthlyGasConsumptions'
 
         catch e
             error = e
-        finally
-            callback error
+
+        callback error
 
 fetchEdeliaSimilarHomeYearlyGasComparisions = (
 requiredFields, entries, data, callback) ->
@@ -1095,9 +1092,9 @@ requiredFields, entries, data, callback) ->
             K.logger.info 'Fetched fetchEdeliaSimilarHomeYearlyGasComparisions'
         catch e
             error = e
-        finally
-            callback error
-        callback()
+
+        callback error
+
 
 fetchEdeliaGasIndexes = (requiredFields, entries, data, callback) ->
     return callback() if data.noEdelia or data.noGas
@@ -1117,7 +1114,7 @@ fetchEdeliaGasIndexes = (requiredFields, entries, data, callback) ->
             if err
                 K.logger.error 'Wihle fetchEdeliaGasIndexes'
                 K.logger.error err
-                throw callback err
+                throw err
 
             objs.forEach (obj) ->
                 statement = data
@@ -1129,20 +1126,36 @@ fetchEdeliaGasIndexes = (requiredFields, entries, data, callback) ->
             K.logger.info 'Fetched fetchEdeliaGasIndexes'
         catch e
             error = e
-        finally
-            callback error
-        callback()
+
+        callback error
 
 ##
 
 
 prepareEntries = (requiredFields, entries, data, next) ->
-    entries.home = []
-    entries.consumptionstatement = []
-    entries.contract = []
-    entries.bill = []
-    entries.client = []
-    entries.paymentterms = []
+    entries.homes = []
+    entries.consumptionstatements = []
+    entries.contracts = []
+    entries.bills = []
+    entries.clients = []
+    entries.paymenttermss = []
+    next()
+
+buildNotifContent = (requiredFields, entries, data, next) ->
+    # data.updated: we don't sepak about update, beacause we don't now if the
+    # update actually changes the data or not.
+
+    # Signal all add of document.
+    addedList = []
+    for docsName, count of data.created
+        if count > 0
+            message = localization.t "notification #{docsName}"
+            , smart_count: count
+
+            addedList.push message
+
+    entries.notifContent = addedList.join ', '
+
     next()
 
 
@@ -1174,7 +1187,7 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
         async.eachSeries bills, (bill, cb) ->
             return cb() if ((bill.vendor isnt 'EDF') or bill.fileId)
 
-            fetchPDF data.edfToken, entries.client[0], bill.number
+            fetchPDF data.edfToken, entries.clients[0], bill.number
             , (err, base64String) ->
                 binaryBill = new Buffer base64String, 'base64'
                 name = "#{moment(bill.date).format('YYYY-MM')}-factureEDF.pdf"
@@ -1228,6 +1241,8 @@ K = module.exports = require('../lib/base_konnector').createNew
         , (err) ->
             if err
                 @logger.error err
+                return callback err
+            callback()
 
     fetchOperations: [
         prepareEntries
@@ -1258,6 +1273,7 @@ K = module.exports = require('../lib/base_konnector').createNew
             'statementType', 'statementReason', 'statementCategory', 'start']
         updateOrCreate logger, Bill, ['vendor', 'number']
         saveMissingBills
+        buildNotifContent
         #displayData
     ]
 

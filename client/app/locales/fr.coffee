@@ -167,6 +167,11 @@ module.exports =
     'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}"
     'notification isen date format': "DD/MM [à] HH:mm"
     'notification isen event deleted': "Attention, l'intervention %{description} devant se dérouler le %{date} a été annulée"
+    'notification homes': "%{smart_count} description du domicile importée |||| %{smart_count} descriptions du domicile importées"
+    'notification consumptionstatements': "%{smart_count} nouveau relevé de consommation d'énergie importé |||| %{smart_count} nouveaux relevés de consommation d'énergie importés"
+    'notification contracts': "%{smart_count} nouveau contrat importé |||| %{smart_count} nouveaux contrats importés"
+    'notification clients': "%{smart_count} nouvelle informations client importée |||| %{smart_count}  nouvelles informations client importées"
+    'notification paymenttermss': "%{smart_count} modalité de paiement importée |||| %{smart_count} modalités de paiement importées"
 
     "konnector birthdays birthday": "Anniversaire de"
 

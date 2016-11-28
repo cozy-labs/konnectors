@@ -1,8 +1,17 @@
-const _ = require('lodash')
-const printit = require('printit')
-const slugify = require('cozy-slug')
-const fetcher = require('./fetcher')
-const package = require('../../package.json')
+'use strict'
+
+const _ = require('lodash');
+const printit = require('printit');
+const slugify = require('cozy-slug');
+const fetcher = require('./fetcher');
+let pkg = {};
+try {
+  // Build mode
+  pkg = require('../../../package.json');
+} catch (e) {
+  // Dev mode
+  pkg = require('../../package.json');
+}
 
 module.exports = {
 
@@ -24,7 +33,7 @@ module.exports = {
       prefix: konnector.name,
       date: true
     });
-    var docTypeVersion = `${package.name}_${slug}-${package.version}`;
+    var docTypeVersion = `${pkg.name}_${slug}-${pkg.version}`;
     var modelsObj = {}
     konnector.models.forEach((model) => {
       modelsObj[model.displayName.toLowerCase()] = model

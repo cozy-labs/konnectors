@@ -164,6 +164,13 @@ module.exports =
     'notification isen date format': "MM/DD [at] HH:mm a"
     'notification isen event deleted': "Careful, the intervention %{description} that should have taken place on %{date} has been canceled"
 
+    'notification homes': "%{smart_count} home description imported |||| %{smart_count} home descriptions imported"
+    'notification consumptionstatements': "%{smart_count} new consumption statement imported |||| %{smart_count} new consumption statements imported"
+    'notification contracts': "%{smart_count} new contract imported |||| %{smart_count} new contracts imported"
+    'notification clients': "%{smart_count} new client's informations imported"
+    'notification paymenttermss': "%{smart_count} new payment term imported |||| %{smart_count} new payment term imported"
+
+
     "konnector birthdays birthday": "Birthday of"
 
     "konnector voyages_sncf reference": "Reference"

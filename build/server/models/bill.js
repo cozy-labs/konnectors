@@ -14,7 +14,10 @@ module.exports = Bill = cozydb.getModel('Bill', {
   binaryId: String,
   fileId: String,
   content: String,
-  isRefund: Boolean
+  isRefund: Boolean,
+  clientId: String,
+  number: String,
+  docTypeVersion: String
 });
 
 Bill.all = function(callback) {
