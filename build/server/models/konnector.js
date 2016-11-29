@@ -21,7 +21,7 @@ module.exports = Konnector = cozydb.getModel('Konnector', {
   "default": [{}],
   password: {
     type: String,
-    "default": '[{}]'
+    "default": null
   },
   lastSuccess: Date,
   lastImport: Date,
@@ -87,24 +87,26 @@ Konnector.prototype.injectEncryptedFields = function(callback) {
   try {
     parsedPasswords = JSON.parse(this.password);
     this.cleanFieldValues();
-    results = [];
-    for (i = j = 0, len = parsedPasswords.length; j < len; i = ++j) {
-      passwords = parsedPasswords[i];
-      if (this.accounts[i] != null) {
-        results.push((function() {
-          var results1;
-          results1 = [];
-          for (name in passwords) {
-            val = passwords[name];
-            results1.push(this.accounts[i][name] = val);
-          }
-          return results1;
-        }).call(this));
-      } else {
-        results.push(void 0);
+    if (parsedPasswords != null) {
+      results = [];
+      for (i = j = 0, len = parsedPasswords.length; j < len; i = ++j) {
+        passwords = parsedPasswords[i];
+        if (this.accounts[i] != null) {
+          results.push((function() {
+            var results1;
+            results1 = [];
+            for (name in passwords) {
+              val = passwords[name];
+              results1.push(this.accounts[i][name] = val);
+            }
+            return results1;
+          }).call(this));
+        } else {
+          results.push(void 0);
+        }
       }
+      return results;
     }
-    return results;
   } catch (error1) {
     error = error1;
     log.error("Attempt to retrieve password for " + this.slug + " failed: " + error);

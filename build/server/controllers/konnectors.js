@@ -51,7 +51,7 @@ module.exports = {
       lastAutoImport: null,
       importErrorMessage: null,
       accounts: [],
-      password: '{}'
+      password: null
     };
     return req.konnector.updateAttributes(data, function(err, konnector) {
       if (err) {
