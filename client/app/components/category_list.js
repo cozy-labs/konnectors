@@ -9,10 +9,11 @@ const CategoryList = ({ t, konnectors, onSelect }) => (
             {konnectors.map(k => 
                 <KonnectorItem
                     title={k.name}
+                    subtitle={t(k.category + ' category')}
                     slug={k.slug}
                     onClick={onSelect}
                     backgroundCSS={k.color.css}
-                    />
+                />
             )}            
         </div>
     </div>
