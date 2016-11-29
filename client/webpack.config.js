@@ -44,12 +44,12 @@ let loaders = [
     },
     {
         test: /\.svg$/,
-        include: /sprites/,
+        include: /(sprites|icons)/,
         loader: 'svg-sprite?name=[name]_[hash]'
     },
     {
         test: /\.(png|gif|jpe?g|svg)$/i,
-        exclude: /(vendor|sprites)/,
+        exclude: /(vendor|sprites|icons)/,
         loader: 'file?name=' + imgPath
     }
 ];

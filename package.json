@@ -79,6 +79,7 @@
     "test": "sh scripts/lint.sh && npm-run-all test:*",
     "test:server": "sh scripts/tests.sh",
     "test:client": "karma start client/karma.conf.js",
+    "test:client:watch": "karma start client/karma.conf.js --no-single-run",
     "lint": "sh scripts/lint.sh",
     "pretest": "tx pull -a || true",
     "pretest:client": "npm run ensure:client",

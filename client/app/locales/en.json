@@ -145,8 +145,18 @@
   "tag": "Tag",
 
   "my_accounts title": "My accounts",
-  "my_accounts category title": "Categories",
+  "my_accounts category title": "All accounts",
   "my_accounts discovery title": "Discovery",
   "my_accounts connected title": "Connected",
-  "my_accounts coming_soon": "Coming soon!"
+  "my_accounts coming_soon": "Coming soon!",
+
+  "health category": "Health",
+  "transport category": "Transportation",
+  "social category": "Social",
+  "isp category": "ISP",
+  "telecom category": "Telecom",
+  "energy category": "Energy",
+  "host_provider category": "Host",
+  "productivity category": "Productivity",
+  "others category": "Others"
 }
