@@ -26,7 +26,6 @@ aside
         padding: 1em 1.5em
         margin: 0
 
-
 [role="navigation"]
     li
         display: flex
@@ -56,3 +55,57 @@ aside
         margin-right: 0.5em
         display: inline-block
         vertical-align: middle
+
+.konnectors-list
+        display         flex
+        flex-wrap       wrap
+
+.item-wrapper
+        width               19em
+        border-radius       4px
+        background-color    white
+        box-shadow          0 2px 6px 0 rgba(0, 0, 0, 0.15)
+        padding-bottom      1em
+        margin              .7em
+        cursor              pointer
+        text-decoration     none
+        transition          .2s ease all
+        &:hover
+            box-shadow          0 4px 12px 0 rgba(0, 0, 0, 0.25)
+            transform           scale(1.05)
+            transition          .2s ease all
+        header
+            border-radius       4px 4px 0px 0px
+            height              9em
+            position            relative
+            .item-icon
+                border-radius   4px 4px 0px 0px
+                width           14em
+                height          4em
+                margin          2.5em
+        .item-title
+            padding             0em .5em
+            font-size           20px
+            margin              .5em
+            color               black
+        .item-subtitle
+            font-size           14px
+            padding             0em 1em
+            margin              0em .5em
+            color               $grey-06
+
+[role=dialog]
+    @extend $dialog
+
+    [role=separator]
+        cursor pointer
+        background-color rgba(78, 91, 105, 0.75)
+
+    .wrapper
+        min-height 100vh
+        padding 3em 1em
+        box-sizing border-box
+
+    [role=contentinfo]
+        overflow initial
+        flex-direction column
