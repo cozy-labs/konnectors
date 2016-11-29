@@ -8,6 +8,9 @@ const cozydb = require('cozydb');
 const baseKonnector = require('../lib/base_konnector');
 const updateOrCreate = require('../lib/update_or_create');
 
+const GeoPoint = require('../models/geopoint');
+const PhoneCommunicationLog = require('../models/phonecommunicationlog');
+
 const API_ROOT = 'https://mesinfos.orange-labs.fr';
 
 const logger = require('printit')({
@@ -15,30 +18,6 @@ const logger = require('printit')({
   date: true
 });
 
-
-const GeoPoint = cozydb.getModel('GeoPoint', {
-  docTypeVersion: String,
-  msisdn: String,
-  timestamp: String,
-  latitude: Number,
-  longitude: Number,
-  radius: Number,
-});
-
-const PhoneCommunicationLog = cozydb.getModel('PhoneCommunicationLog', {
-  docType: String,
-  docTypeVersion: String,
-  timestamp: String,
-  subscriber: String,
-  peer: String,
-  chipCount: Number,
-  chipType: String,
-  type: String,
-  imsi: String,
-  imei: String,
-  latitude: Number,
-  longitude: Number,
-});
 
 /*
  * The goal of this connector is to fetch event from facebook and store them
@@ -54,22 +33,21 @@ const connector = module.exports = baseKonnector.createNew({
 
   models: [GeoPoint, PhoneCommunicationLog],
 
-  init: () => {
-    async.each(this.models, (model, cb) => {
-      model.defineRequest('all', cozydb.defaultRequests.all, cb);
-    }, (err) => {
-      if (err) {
-        this.logger.error(err);
-      }
-    });
-  },
-
   fetchOperations: [
     downloadGeoloc,
-    // downloadCRA,
+    downloadCRA,
+    //   function(requiredFields, entries, data, next) {
+    // let uri = `${API_ROOT}/data/loc`;
+
+    // request.get(uri,
+    //   { auth: { bearer: requiredFields.access_token }, json: true },
+    //   (err, res, body) => {
+    //     console.log(body);
+    //   });
+    // } ,
     // display,
     updateOrCreate(logger, GeoPoint, ['msisdn', 'timestamp']),
-    // updateOrCreate(logger, PhoneCommunicationLog, ['subscriber', 'timestamp']),
+    updateOrCreate(logger, PhoneCommunicationLog, ['msisdn', 'timestamp']),
   ],
 
 });
@@ -97,7 +75,7 @@ function downloadGeoloc(requiredFields, entries, data, next) {
       } else {
         connector.logger.info('Download succeeded.');
 
-        entries.geopoint = body.filter(point => !point.err)
+        entries.geopoints = body.filter(point => !point.err)
         .map(point => (
           {
             docType: 'GeoPoint',
@@ -114,38 +92,50 @@ function downloadGeoloc(requiredFields, entries, data, next) {
 }
 
 // TODO: wait for definiv API format to activate this.
-// function downloadCRA(requiredFields, entries, data, next) {
-//   connector.logger.info('Downloading CRA data from Orange...');
+function downloadCRA(requiredFields, entries, data, next) {
+  connector.logger.info('Downloading CRA data from Orange...');
 
-//   //TODO: something coherent with the orange collect. Overlaping doesn't matter.
-//   let uri = `${API_ROOT}/data/cra`;
-//   if (requiredFields.lastSuccess) {
-//     let since = moment(requiredFields.lastSuccess).add(-1, 'month');
-//     uri += `?start=${since.format('YYYY-MM-DDThh:mm:ss')}`;
-//   }
-//   request.get(uri,
-//     { auth: { bearer: requiredFields.access_token }, json: true },
-//     (err, res, body) => {
-//       if (res.statusCode != 200) {
-//         err = `${res.statusCode} - ${res.statusMessage} ${err || ''}`
-//         connector.logger.error(body);
-//       }
+  //TODO: something coherent with the orange collect. Overlaping doesn't matter.
+  let uri = `${API_ROOT}/data/cra`;
+  if (requiredFields.lastSuccess) {
+    let since = moment(requiredFields.lastSuccess).add(-1, 'month');
+    uri += `?start=${since.format('YYYY-MM-DDThh:mm:ss')}`;
+  }
+  request.get(uri,
+    { auth: { bearer: requiredFields.access_token }, json: true },
+    (err, res, body) => {
+      if (res.statusCode != 200) {
+        err = `${res.statusCode} - ${res.statusMessage} ${err || ''}`
+        connector.logger.error(body);
+      }
 
-//       if (err) {
-//         connector.logger.error(`Download CRA failed: ${err}`);
-//       } else {
-//         connector.logger.info('Download CRA succeeded.');
+      if (err) {
+        connector.logger.error(`Download CRA failed: ${err}`);
+      } else {
+        connector.logger.info('Download CRA succeeded.');
 
-//         entries.PhoneCommunicationLog = body.filter(call => !call.err)
-//         .map((point) => (
-//           {
-//             docType: "PhoneCommunicationLog",
-//             docTypeVersion: connector.doctypeVersion,
-//           }));
-//       }
-//       next(err);
-//     });
-// }
+        connector.logger.info(body);
+        entries.phonecommunicationlogs = body.filter(call => !call.err)
+        .map((point) => (
+          {
+            docType: "PhoneCommunicationLog",
+            docTypeVersion: connector.doctypeVersion,
+            timestamp: call.time,
+            msisdn: call.msisdn,
+            partner: call.partner,
+            length: call.units,
+            chipType: call.typ_units,
+            //type: String,
+            longitude: call.loc ? call.loc[0] : undefined,
+            latitude: call.loc ? call.loc[1] : undefined,
+            networkType: call.net_lbl,
+            description: call.desc,
+            endCause: call.end_cause,
+          }));
+      }
+      next(err);
+    });
+}
 
 // TODO: remove this tool.
 // function display(requiredFields, entries, data, next) {
