@@ -16,15 +16,15 @@ const KonnectorItem = ({ t, onClick, title, subtitle, slug, iconName, background
 const icon = (iconName) => {
     let icon
     // fallback to use a default icon if icon not found
-    // try {
-    //     icon = require(`../assets/icons/${iconName}.svg`)
-    // } catch (e) {
-    //     if (ENABLE_DEFAULT_ICON) {
-    //         icon = require('../assets/icons/default_myaccount.svg')
-    //     } else {
-    //         icon = ''
-    //     }
-    // }
+    try {
+        icon = require(`../assets/icons/${iconName}.svg`)
+    } catch (e) {
+        if (ENABLE_DEFAULT_ICON) {
+            icon = require('../assets/icons/default_myaccount.svg')
+        } else {
+            icon = ''
+        }
+    }
     return icon
 }
 

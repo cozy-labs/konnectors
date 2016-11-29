@@ -10,6 +10,7 @@ const CategoryList = ({ t, konnectors, onSelect }) => (
                 <KonnectorItem
                     title={k.name}
                     subtitle={t(k.category + ' category')}
+                    iconName={k.slug}
                     slug={k.slug}
                     onClick={onSelect}
                     backgroundCSS={k.color.css}
