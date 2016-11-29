@@ -1,5 +1,5 @@
+import './lib/polyfills'
 import { h, render } from 'preact'
-
 import { I18n } from './plugins/preact-polyglot'
 import App from './app'
 
