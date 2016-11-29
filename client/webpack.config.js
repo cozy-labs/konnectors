@@ -4,15 +4,14 @@ const path = require('path')
 const fs   = require('fs')
 
 const webpack = require('webpack')
+const autoprefixer = require('autoprefixer')
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CopyPlugin        = require('copy-webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 
-
 // use the `OPTIMIZE` env to switch from dev to production build
 const optimize = process.env.OPTIMIZE === 'true'
-
 
 /**
  * Loaders used by webpack
@@ -27,20 +26,21 @@ const imgPath = 'img/' + '[name]' + (optimize? '.[hash]': '') + '.[ext]'
 
 let loaders = [
     {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015']
+          presets: ['es2015'],
+          plugins: [["transform-react-jsx", { "pragma":"h" }]]
         }
-    },
-    {
-        test: /\.vue$/,
-        loader: 'vue'
     },
     {
         test: /\.json$/,
         loader: 'json'
+    },
+    {
+        test: /\.styl$/,
+        loader: ExtractTextPlugin.extract('style', cssOptions + '!postcss-loader!stylus')
     },
     {
         test: /\.svg$/,
@@ -127,7 +127,7 @@ module.exports = {
         filename: optimize? 'app.[hash].js' : 'app.js'
     },
     resolve: {
-        extensions: ['', '.js', '.json', '.vue']
+        extensions: ['', '.js', '.json']
     },
     debug: !optimize,
     devtool: 'source-map',
@@ -135,14 +135,13 @@ module.exports = {
         loaders: loaders
     },
     plugins: plugins,
-    vue: {
-        loaders: {
-            css: ExtractTextPlugin.extract('style', cssOptions),
-            stylus: ExtractTextPlugin.extract('style', cssOptions + '!stylus')
-        },
-        postcss: [
-            require('autoprefixer')(['last 2 versions']),
-            require('css-mqpacker')
+    postcss: function() {
+        return [
+            autoprefixer({
+                browsers: [
+                    'last 2 versions'
+                ]
+            })
         ]
     },
     stylus: {

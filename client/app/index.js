@@ -1,22 +1,14 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import VuePolyglot from './plugins/vue-polyglot'
+import { h, render } from 'preact'
+import { I18n } from './plugins/preact-polyglot'
+import App from './app'
 
-import app from './app'
-import routes from './routes'
+import './styles/index.styl'
 
-// Initialize Vue
-Vue.use(VueRouter)
-Vue.use(VuePolyglot, { context: window.context || 'cozy' })
+const lang = document.documentElement.getAttribute('lang') || 'en'
+const context = window.context || 'cozy'
 
-// Initialize Vue-router
-const router = new VueRouter({ routes })
-
-// Initialize Application
-document.addEventListener('DOMContentLoaded', function initialize () {
-
-  new Vue({
-    router,
-    render: h => h(app)
-  }).$mount('[role=application]')
-})
+render((
+    <I18n context={context} lang={lang}>
+        <App/>
+    </I18n>
+), document.querySelector('[role=application]'));
