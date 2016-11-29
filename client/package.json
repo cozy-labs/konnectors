@@ -4,8 +4,7 @@
     "normalize.css": "5.0.0",
     "preact": "^6.4.0",
     "preact-compat": "^3.9.2",
-    "preact-router": "^2.3.2",
-    "proptypes": "^0.14.3"
+    "preact-router": "^2.3.2"
   },
   "devDependencies": {
     "autoprefixer": "6.5.1",

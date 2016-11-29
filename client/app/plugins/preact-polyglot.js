@@ -6,7 +6,6 @@
 'use strict';
 
 import { h, render, Component } from 'preact'
-import PropTypes from 'proptypes'
 import Polyglot from 'node-polyglot'
 import en from '../locales/en'
 
@@ -62,27 +61,12 @@ export class I18n extends Component {
   }
 }
 
-I18n.propTypes = {
-  locale: PropTypes.string.isRequired,
-  messages: PropTypes.object.isRequired,
-  children: PropTypes.element.isRequired,
-};
-
-I18n.childContextTypes = {
-  t: PropTypes.func.isRequired,
-};
-
 // higher order decorator for components that need `t`
 export const translate = () => {
   return (WrappedComponent) => {
     const _translate = (props, context) => (
       <WrappedComponent {...props} t={context.t} />
     )
-
-    _translate.contextTypes = {
-      t: PropTypes.func.isRequired,
-    }
-
     return _translate
   }
 }
