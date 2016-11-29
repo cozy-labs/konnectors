@@ -15,7 +15,7 @@ module.exports = Konnector = cozydb.getModel 'Konnector',
     accounts: [Object], default: [{}]
     password:
         type: String
-        default: '[{}]'
+        default: null
     lastSuccess: Date
     lastImport: Date
     lastAutoImport: Date
@@ -60,9 +60,10 @@ Konnector::injectEncryptedFields = (callback) ->
     try
         parsedPasswords = JSON.parse @password
         @cleanFieldValues()
-        for passwords, i in parsedPasswords
-            if @accounts[i]?
-                @accounts[i][name] = val for name, val of passwords
+        if parsedPasswords?
+            for passwords, i in parsedPasswords
+                if @accounts[i]?
+                    @accounts[i][name] = val for name, val of passwords
     catch error
         log.error "Attempt to retrieve password for #{@slug} failed: #{error}"
         log.error @password
