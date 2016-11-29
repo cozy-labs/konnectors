@@ -34,7 +34,7 @@
             }
         },
 
-        data: function () {
+        data () {
             return {
                 headerBackground: {
                     background: this.backgroundCSS
@@ -43,7 +43,7 @@
         },
 
         computed: {
-            icon: function () {
+            icon () {
                 let icon
                 // fallback to use a default icon if icon not found
                 try {

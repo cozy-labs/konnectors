@@ -8,7 +8,7 @@
                 v-for="konnector in konnectorsList",
                 v-if="!konnector.accounts.length",
                 :title="konnector.name",
-                :subtitle="(konnector.category + ' category') | t",
+                :subtitle="`${konnector.category} category` | t",
                 :backgroundCSS="konnector.color.css",
                 :enableDefaultIcon="true",
                 :iconName="konnector.slug",
@@ -17,11 +17,12 @@
 
 <script>
     import konnectorItemComponent from './list_item'
+    import konnectorsHelper from './lib/konnectors'
 
     export default {
-        data: function () {
+        data () {
             return {
-                konnectorsList: window.initKonnectors
+                konnectorsList: konnectorsHelper.getKonnectors()
             }
         },
 
