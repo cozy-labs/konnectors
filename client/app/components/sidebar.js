@@ -13,7 +13,7 @@ const Sidebar = ({ t }) => (
                 </Link>
             </li>
             <li>
-                <Link to="/category" activeClassName="router-link-active">
+                <Link to="/category/all" activeClassName="router-link-active">
                     <svg><use xlinkHref={require('../assets/sprites/icon-category.svg')}/></svg>
                     {t('my_accounts category title')}
                 </Link>
