@@ -7,7 +7,7 @@ module.exports = function(config) {
 
     browsers: ['Firefox'],
 
-    frameworks: ['mocha'],
+    frameworks: ['mocha', 'sinon'],
 
     reporters: ['mocha'],
 
@@ -24,7 +24,8 @@ module.exports = function(config) {
      'karma-mocha-reporter',
      'karma-firefox-launcher',
      'karma-babel-preprocessor',
-     'karma-webpack'
+     'karma-webpack',
+     'karma-sinon'
     ],
 
     webpack: webpackConfig,
