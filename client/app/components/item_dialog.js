@@ -22,8 +22,6 @@ const ItemDialog = ({ t, item }) => (
                 </header>
             </div>
         </div>
-        <h1>{t('my_accounts connected title')}</h1>
-        <article>{t('my_accounts coming_soon')}</article>
     </div>
 )
 
