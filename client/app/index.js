@@ -12,15 +12,21 @@ import './styles/index.styl'
 
 const lang = document.documentElement.getAttribute('lang') || 'en'
 const context = window.context || 'cozy'
-const konnectors = window.initKonnectors
+const accounts = window.initKonnectors
+
+const categories = accounts.map(a => a.category).filter((cat, idx, all) => all.indexOf(cat) === idx)
+
+const accountsByCategory = ({filter}) => {
+    return filter === 'all' ? accounts : accounts.filter(a => a.category === filter)
+}
 
 render((
     <Router history={hashHistory}>
-        <Route component={(props) => <App context={context} lang={lang} {...props}/>}>
+        <Route component={(props) => <App context={context} lang={lang} categories={categories} {...props}/>}>
             <Route path="/" component={Discovery}/>
             <Redirect from="/category" to="/category/all"/>
-            <Route path="/category/:filter" component={(props) => <CategoryList konnectors={konnectors} {...props}/>}>
-                <Route path=":account" component={(props) => <ItemDialog item={konnectors.find(k => k.slug === props.params.account)} {...props}/>}/>
+            <Route path="/category/:filter" component={(props) => <CategoryList konnectors={accountsByCategory(props.params)} {...props}/>}>
+                <Route path=":account" component={(props) => <ItemDialog item={accounts.find(a => a.slug === props.params.account)} {...props}/>}/>
             </Route>
             <Route path="/connected" component={ConnectedList}/>
         </Route>

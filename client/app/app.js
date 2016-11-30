@@ -4,10 +4,10 @@ import { I18n } from './plugins/preact-polyglot'
 
 import Sidebar from './components/sidebar'
 
-const App = ({ context, lang, children }) => (
+const App = ({ context, lang, categories, children }) => (
     <I18n context={context} lang={lang}>
         <div role="application">
-            <Sidebar/>
+            <Sidebar categories={categories}/>
             <main>
                 <div role="contentinfo">
                     {children}

@@ -1,8 +1,8 @@
 import { h, render } from 'preact'
-import { Link } from 'react-router'
+import { Link, withRouter } from 'react-router'
 import { translate } from '../plugins/preact-polyglot'
 
-const Sidebar = ({ t }) => (
+const Sidebar = ({ t, categories, router }) => (
     <aside>
         <h4>{t('my_accounts title')}</h4>
         <ul role="navigation">
@@ -17,7 +17,17 @@ const Sidebar = ({ t }) => (
                     <svg><use xlinkHref={require('../assets/sprites/icon-category.svg')}/></svg>
                     {t('my_accounts category title')}
                 </Link>
+                
             </li>
+            <ul>
+                {categories.map(category => (
+                    <li>
+                        <Link to={`/category/${category}`} activeClassName="router-link-active">
+                            {t(`${category} category`)}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
             <li>
                 <Link to="/connected" activeClassName="router-link-active">
                     <svg><use xlinkHref={require('../assets/sprites/icon-connected.svg')}/></svg>
@@ -28,4 +38,4 @@ const Sidebar = ({ t }) => (
     </aside>
 )
 
-export default translate()(Sidebar)
+export default translate()(withRouter(Sidebar))

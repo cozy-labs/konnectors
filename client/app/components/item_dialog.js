@@ -25,5 +25,4 @@ const ItemDialog = ({ t, item }) => (
     </div>
 )
 
-
 export default translate()(ItemDialog)
