@@ -1,6 +1,8 @@
 'use strict'
 
 const webpack = require('webpack')
+const autoprefixer = require('autoprefixer')
+
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 const plugins = [];
@@ -30,20 +32,21 @@ module.exports = {
     module: {
         loaders: [
             {
-                test: /\.js$/,
+                test: /\.jsx?$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader',
                 query: {
-                  presets: ['es2015']
+                  presets: ['es2015'],
+                  plugins: [["transform-react-jsx", { "pragma":"h" }]]
                 }
-            },
-            {
-                test: /\.vue$/,
-                loader: 'vue'
             },
             {
                 test: /\.json$/,
                 loader: 'json'
+            },
+            {
+                test: /\.styl$/,
+                loader: ExtractTextPlugin.extract('style', 'css!postcss-loader!stylus')
             },
             {
                 test: /\.svg$/,
@@ -60,14 +63,13 @@ module.exports = {
 
     plugins: plugins,
 
-    vue: {
-        loaders: {
-            css: ExtractTextPlugin.extract('style', 'css'),
-            stylus: ExtractTextPlugin.extract('style', 'css!stylus')
-        },
-        postcss: [
-            require('autoprefixer')(['last 2 versions']),
-            require('css-mqpacker')
+    postcss: function() {
+        return [
+            autoprefixer({
+                browsers: [
+                    'last 2 versions'
+                ]
+            })
         ]
     },
 

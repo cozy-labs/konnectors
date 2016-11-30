@@ -1,5 +1,6 @@
 import { h, Component } from 'preact'
 import { Router } from 'preact-router'
+import { I18n } from './plugins/preact-polyglot'
 
 import Sidebar from './components/sidebar'
 import Discovery from './components/discovery'
@@ -28,21 +29,23 @@ export default class App extends Component {
         this.setState({ selectedItem: null })
     }
 
-    render({ t }, { konnectors, selectedItem }) {
+    render({ context, lang }, { konnectors, selectedItem }) {
         return (
-            <div role="application">
-                <Sidebar/>
-                <main>
-                    <div role="contentinfo">
-                        <Router>
-                            <Discovery path="/"/>
-                            <CategoryList path="/category" konnectors={konnectors} onSelect={this.onItemSelect} />
-                            <ConnectedList path="/connected"/>
-                        </Router>
-                    </div>
-                </main>
-                {selectedItem && <ItemDialog item={selectedItem} onClose={this.onItemUnselect} />}
-            </div>
+            <I18n context={context} lang={lang}>
+                <div role="application">
+                    <Sidebar/>
+                    <main>
+                        <div role="contentinfo">
+                            <Router>
+                                <Discovery path="/"/>
+                                <CategoryList path="/category" konnectors={konnectors} onSelect={this.onItemSelect} />
+                                <ConnectedList path="/connected"/>
+                            </Router>
+                        </div>
+                    </main>
+                    {selectedItem && <ItemDialog item={selectedItem} onClose={this.onItemUnselect} />}
+                </div>
+            </I18n>
         )
     }
 }

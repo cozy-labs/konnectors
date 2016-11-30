@@ -1,4 +1,5 @@
 import { h, render } from 'preact'
+import { Link } from 'preact-router'
 import { translate } from '../plugins/preact-polyglot'
 
 const Sidebar = ({ t }) => (
@@ -6,22 +7,22 @@ const Sidebar = ({ t }) => (
         <h4>{t('my_accounts title')}</h4>
         <ul role="navigation">
             <li>
-                <a href="/">
+                <Link href="/">
                     <svg><use xlinkHref={require('../assets/sprites/icon-discovery.svg')}/></svg>
                     {t('my_accounts discovery title')}
-                </a>
+                </Link>
             </li>
             <li>
-                <a href="/category">
+                <Link href="/category">
                     <svg><use xlinkHref={require('../assets/sprites/icon-category.svg')}/></svg>
                     {t('my_accounts category title')}
-                </a>
+                </Link>
             </li>
             <li>
-                <a href="/connected">
+                <Link href="/connected">
                     <svg><use xlinkHref={require('../assets/sprites/icon-connected.svg')}/></svg>
                     {t('my_accounts connected title')}
-                </a>
+                </Link>
             </li>
         </ul>
     </aside>
