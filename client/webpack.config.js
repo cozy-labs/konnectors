@@ -127,7 +127,11 @@ module.exports = {
         filename: optimize? 'app.[hash].js' : 'app.js'
     },
     resolve: {
-        extensions: ['', '.js', '.json']
+        extensions: ['', '.js', '.json'],
+        alias: {
+            'react': 'preact-compat',
+            'react-dom': 'preact-compat'
+        }
     },
     debug: !optimize,
     devtool: 'source-map',

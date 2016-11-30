@@ -1,16 +1,17 @@
 import { h, render } from 'preact'
+import { Link, withRouter } from 'react-router'
 import { translate } from '../plugins/preact-polyglot'
 
 const ENABLE_DEFAULT_ICON = false
 
-const KonnectorItem = ({ t, onClick, title, subtitle, slug, iconName, backgroundCSS = 'white' }) => (
-    <a class="item-wrapper" onClick={() => onClick(slug)}>
+const KonnectorItem = ({ t, title, subtitle, slug, iconName, backgroundCSS = 'white', router }) => (
+    <Link class="item-wrapper" to={`${router.location.pathname}/${slug}`}>
         <header style={{background: backgroundCSS}}>
             {iconName && <svg class="item-icon"><use xlinkHref={icon(iconName)}/></svg>}
         </header>
         <p class="item-title">{title}</p>
         {subtitle && <p class="item-subtitle">{subtitle}</p>}
-    </a>
+    </Link>
 )
 
 const icon = (iconName) => {
@@ -28,4 +29,4 @@ const icon = (iconName) => {
     return icon
 }
 
-export default translate()(KonnectorItem)
+export default translate()(withRouter(KonnectorItem))

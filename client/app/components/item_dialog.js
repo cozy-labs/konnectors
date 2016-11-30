@@ -1,12 +1,17 @@
 import { h, render } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
+import { withRouter } from 'react-router'
 
-const ItemDialog = ({ t, item, onClose }) => (
+const CloseButton = withRouter(({ router }) => (
+    <button role="close" onClick={router.goBack}>Close</button>
+))
+
+const ItemDialog = ({ t, item }) => (
     <div role="dialog">
         <div class="wrapper">
             <div role="contentinfo">
                 <header>
-                    <a role="close" onClick={onClose}>Close</a>
+                    <CloseButton/>
                     <h3>{item.name}</h3>
                     <main>
                         <p>Foo</p>
@@ -21,5 +26,6 @@ const ItemDialog = ({ t, item, onClose }) => (
         <article>{t('my_accounts coming_soon')}</article>
     </div>
 )
+
 
 export default translate()(ItemDialog)
