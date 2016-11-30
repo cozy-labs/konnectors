@@ -1,5 +1,6 @@
 'use strict'
 
+const path = require('path')
 const webpack = require('webpack')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
@@ -18,7 +19,11 @@ module.exports = {
     entry: './app',
 
     resolve: {
-        extensions: ['', '.js', '.json', '.vue']
+        extensions: ['', '.js', '.json', '.vue'],
+        fallback: [path.join(__dirname, 'node_modules')],
+        alias: {
+            vue: 'vue/dist/vue.js'
+        },
     },
 
     debug: true,

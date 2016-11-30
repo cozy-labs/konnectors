@@ -6,20 +6,43 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-import App from '../app/app'
-import Dialog from '../app/components/dialog'
+Vue.use({
+  install (Vue) {
+    Vue.prototype.$t = text => text
+    Vue.filter('t', Vue.prototype.$t)
+  }
+}, { context: 'cozy' })
 
+const App = require('../app/app')
+const Dialog = require('../app/components/dialog')
 
 describe('Dialogs', () => {
 
   describe('App.vue', () => {
     let vm
 
-    function createApp () {
+    const dialogsConfig = [{
+            id: 'plop',
+            Routes: { success: { name: 'plop-success' } }
+        },{
+            id: 'burp',
+            Routes: { success: { name: 'burp-success' } }
+        },{
+            id: 'truc',
+            Routes: { success: { name: 'burp-success' } }
+        }]
+
+    function createApp (mocks) {
+      const AppInjector = require('!!vue?inject!../app/app')
+      const AppWithMocks = AppInjector({
+        './config/dialog_example': dialogsConfig
+      })
+
       vm = new Vue({
         template: '<div><test></test></div>',
+        router: new VueRouter(),
         components: {
-          'test': App
+          'test': AppWithMocks
         }
       }).$mount()
     }
@@ -28,90 +51,98 @@ describe('Dialogs', () => {
       vm.$destroy()
     }
 
+
     describe('data', () => {
       it('`dialogs` should be equal to []', () => {
-        expect(App.data().dialogs).toBe([])
+        assert.deepEqual(App.data().dialogs, [])
       })
+
 
       it('`notifications` should be equal to []', () => {
-        expect(App.data().notifications).toBe([])
+        assert.deepEqual(App.data().notifications, [])
       })
 
-      it('`dialogsQuery` should return `\'\'` for `dialogs=[]`', () => {
-        expect(App.data().dialogs).toBe([])
-        expect(App.computed.dialogsQuery.get()).toBe('')
-      })
 
       it('`dialogsQuery` should return `\'\'` for `dialogs=[]`', () => {
-        expect(App.data().dialogs).toBe([])
-        expect(App.computed.dialogsQuery.get()).toBe('')
+        assert.deepEqual(App.data().dialogs, [])
+        assert.deepEqual(App.computed.dialogsQuery.get.call(App.data()), [])
       })
     })
 
 
     describe('methods', () => {
 
-      beforeEach(() => {
+      before(() => {
         createApp()
-
-        vm.config = [{
-            id: 'plop',
-            routes: { success: { name: 'plop-success' } }
-        },{
-            id: 'burp',
-            routes: { success: { name: 'burp-success' } }
-        },{
-            id: 'truc',
-            routes: { success: { name: 'burp-success' } }
-        }]
       })
 
-      afterEach(() => {
+      after(() => {
         destroyApp()
       })
 
       describe('`updateDialogs()` ', () => {
 
-        beforeEach(() => {
-          vm.updateDialogs({ query: 'truc' })
+        afterEach(() => {
+          vm.$children[0].updateDialogs({ query: {} })
         })
 
 
-        it('should update `vm.dialogs', () => {
-          expect(vm.dialogs).toBe(['truc'])
+        describe('with value that exist', () => {
+
+          beforeEach(() => {
+            vm.$children[0].updateDialogs({ query: { dialogs: 'burp' } })
+          })
+
+
+          it('should update `vm.dialogs`', () => {
+            const output = dialogsConfig.find(item => item.id === 'burp')
+            assert.deepEqual(vm.$children[0].dialogs, [output])
+          })
+
+
+          it('should update `vm.dialogsQuery`', () => {
+            assert.deepEqual(vm.$children[0].dialogsQuery, 'burp')
+          })
         })
 
 
-        it('should update `vm.query`', () => {
-          expect(vm.dialogsQuery).toBe(`dialogs=truc`)
+        describe('with `undefined` value', () => {
+
+          beforeEach(() => {
+            vm.$children[0].updateDialogs({ query: { dialogs: 'coucou' } })
+          })
+
+
+          it('shouldnt update `vm.dialogs`', () => {
+            assert.deepEqual(vm.$children[0].dialogs, [])
+          })
+
+
+          it('shouldnt update `vm.dialogsQuery`', () => {
+            assert.deepEqual(vm.$children[0].dialogsQuery, [])
+          })
         })
-
-
-        it('should update `vm.$router.currentRoute`', () => {
-          expect(vm.$router.currentRoute.query).toBe(vm.dialogsQuery)
-        })
-
       })
 
 
-      describe('`onOpenDialog` ', () => {
+      describe.skip('`onOpenDialog` ', () => {
 
         beforeEach(() => {
           vm.onOpenDialog('plop')
         })
 
         it('`dialogQuery` should be equal to `dialogs=plop`', () => {
-          expect(vm.dialogsQuery).toBe(`dialogs=plop`)
+          assert.equal(vm.dialogsQuery, `dialogs=plop`)
         })
 
 
         it('`vm.$router.currentRoute` should be updated ', () => {
-          expect(vm.$router.currentRoute.query).toBe(vm.dialogsQuery)
+          assert.equal(vm.$router.currentRoute.query, vm.dialogsQuery)
         })
       })
 
 
-      describe('`onCloseDialog` ', () => {
+      describe.skip('`onCloseDialog` ', () => {
 
         beforeEach(() => {
           vm.onOpenDialog('plop')
@@ -130,7 +161,7 @@ describe('Dialogs', () => {
       })
 
 
-      describe('`onSuccessDialog` ', () => {
+      describe.skip('`onSuccessDialog` ', () => {
         let dialog
 
         beforeEach(() => {
@@ -151,7 +182,7 @@ describe('Dialogs', () => {
 
 
         it('should redirect to `dialog.success`', () => {
-          expect(vm.$router.currentRoute.name).toBe(dialog.success)
+          assert.equal(vm.$router.currentRoute.name, dialog.success)
         })
 
 
@@ -179,7 +210,7 @@ describe('Dialogs', () => {
       })
 
 
-      describe('`onErrorDialog` ', () => {
+      describe.skip('`onErrorDialog` ', () => {
         it('should call `onOpenNotif` with `msg` and `id` args', () => {
           sinon.spy(vm, 'onOpenNotif')
 
@@ -192,7 +223,7 @@ describe('Dialogs', () => {
       })
 
 
-      describe('`onOpenNotif` ', () => {
+      describe.skip('`onOpenNotif` ', () => {
         it('`notifications` should be equal to `[{ msg, label, dialog }]`', () => {
           const result = {
             dialog: 'burp',
@@ -201,62 +232,72 @@ describe('Dialogs', () => {
           }
 
           vm.onOpenNotif('msg error', 'burp')
-          expect(vm.notifications.indexOf(result).toBe(0))
+          assert.equal(vm.notifications.indexOf(result, 0))
         })
       })
 
 
-      describe('`onCloseNotif` ', () => {
-        describe('`notifications` ', () => {
-          it('shouldnt have values from `dialog` anymore', () => {
-            const result = {
-              dialog: 'burp',
-              label: 'msg error',
-              type: 'error'
-            }
+      describe.skip('`onCloseNotif` ', () => {
+        it('`notifications` shouldnt have values from `dialog` anymore', () => {
+          const result = {
+            dialog: 'burp',
+            label: 'msg error',
+            type: 'error'
+          }
 
-            vm.onOpenNotif('msg error', 'burp')
-            expect(vm.notifications.indexOf(result)).toBe(0)
+          vm.onOpenNotif('msg error', 'burp')
+          assert.equal(vm.notifications.indexOf(result), 0)
 
-            vm.onCloseNotif('msg error', 'burp')
-            expect(vm.notifications.indexOf(result)).toBe(-1)
-          })
+          vm.onCloseNotif('msg error', 'burp')
+          assert.equal(vm.notifications.indexOf(result), -1)
         })
       })
     })
 
 
     describe('Routing', () => {
+    // shouldnt add fakeQuery
+      describe.skip('location', () => {
+          it.skip('shouldnt have `dialogs` query', () => {
 
-      describe('location/?dialogs=plop', () => {
-          beforeEach(() => {
-            createApp()
-            vm.$router.push({ query: { dialogs: 'plop' } })
           })
+      })
 
-          afterEach(() => {
-            destroyApp()
+      describe.skip('location/?dialogs=undefined', () => {
+          it.skip('shouldnt add fakeQuery', () => {
+
           })
+      })
+
+      describe.skip('location/?dialogs=plop', () => {
+        beforeEach(() => {
+          createApp()
+          vm.$router.push({ query: { dialogs: 'plop' } })
+        })
+
+        afterEach(() => {
+          destroyApp()
+        })
 
 
-          it('should update `dialogs`', () => {
-            expect(vm.dialogs).toBe(['plop'])
+        it.skip('should update `dialogs`', () => {
+          assert.equal(vm.dialogs, ['plop'])
 
-            // Do not add dialog into query
-            // if it already exists
-            vm.$router.push({ query: { dialogs: 'plop' } })
-            expect(vm.dialogs).toBe(['plop'])
-          })
+          // Do not add dialog into query
+          // if it already exists
+          vm.$router.push({ query: { dialogs: 'plop' } })
+          assert.equal(vm.dialogs, ['plop'])
+        })
 
 
-          it('should update `dialogsQuery`', () => {
-            expect(vm.dialogsQuery).toBe(`dialogs=plop`)
-          })
+        it.skip('should update `dialogsQuery`', () => {
+          assert.equal(vm.dialogsQuery, `dialogs=plop`)
+        })
       })
     })
 
 
-    describe('Markup', () => {
+    describe.skip('Markup', () => {
 
       beforeEach(() => {
         createApp()
@@ -268,7 +309,7 @@ describe('Dialogs', () => {
       })
 
 
-      describe('Dialogs', () => {
+      describe.skip('Dialogs', () => {
 
         it('shouldnt have any <cozy-dialogs>', () => {
           const notifs = vm.$el.querySelectorAll('role="notification"')
@@ -303,7 +344,7 @@ describe('Dialogs', () => {
       })
 
 
-      describe('Notification', () => {
+      describe.skip('Notifications', () => {
 
           it('shouldnt have any <cozy-notif>', () => {
             const notifs = vm.$el.querySelectorAll('role="notification"')
@@ -325,7 +366,7 @@ describe('Dialogs', () => {
   })
 
 
-  describe('Dialog.vue', () => {
+  describe.skip('Dialog.vue', () => {
     let vm
 
     function createDialog () {

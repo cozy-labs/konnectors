@@ -44,50 +44,16 @@
 
 
 <script>
-    import Vue from 'vue'
-
     import DialogComponent from './components/dialog'
     import NotifComponent from './components/notification'
-
-    import ExampleKonnector from './components/konnectors/example'
-
-    //
-    // Handle use case:
-    // when adding real dialogs this declaration
-    // will be very obscure and un-readable
-    //
-    // TODO:
-    // create a directory `./config/myDialog.js`
-    // and then import it into (Array)Dialogs
-    //
-    const Dialogs = [{
-        id: 'dialog-1',
-
-        title: "dialog title",
-
-        headerStyles: {
-            'background-image': `url(header.png)`,
-            'height': '100px'
-        },
-
-        component: ExampleKonnector,
-
-        routes: {
-            success: { name: 'create-account-success' }
-        },
-
-        // Handle Events emitted
-        // from dialogsVue to appVue
-        hub: new Vue()
-    }]
-
+    import DialogsConfig from './config/dialog_example'
 
     export default {
       data () {
           return {
               dialogs: [],
               notifications: [],
-              config: Dialogs
+              config: DialogsConfig
           }
       },
 
@@ -111,7 +77,7 @@
       },
 
       created () {
-          this.updateDialogs(this.$router.currentRoute)
+          this.updateDialogs(this.$root.$router.currentRoute)
       },
 
       watch: {
@@ -133,8 +99,8 @@
           },
 
           onOpenDialog (id) {
-              let dialogs = this.$router.currentRoute.query.dialogs || null
-              const query   = Object.assign({}, this.$router.currentRoute.query)
+              let dialogs = this.$root.$router.currentRoute.query.dialogs || null
+              const query   = Object.assign({}, this.$root.$router.currentRoute.query)
 
               if (dialogs) {
                   dialogs = dialogs.split(',')
@@ -144,7 +110,7 @@
                   query.dialogs = id
               }
 
-              this.$router.push({ query })
+              this.$root.$router.push({ query })
           },
 
           onCloseDialog (id) {
@@ -160,7 +126,7 @@
               // Goto NextComponent
               const dialog = this.config.find(item => item.id === id)
               if (dialog && dialog.routes.success) {
-                  this.$router.push(dialog.routes.success)
+                  this.$root.$router.push(dialog.routes.success)
               }
           },
 
