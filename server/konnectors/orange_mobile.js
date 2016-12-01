@@ -25,10 +25,11 @@ const logger = require('printit')({
  */
 const connector = module.exports = baseKonnector.createNew({
   name: 'Orange Mobile',
-  slug: 'orange_mobile',
   connectUrl: 'https://mesinfos.orange-labs.fr/auth?redirect_url=',
   fields: {
     access_token: 'hidden',
+    lastGeoPoint: 'hidden',
+    lastPhoneCommunicationLog: 'hidden',
   },
 
   models: [GeoPoint, PhoneCommunicationLog],
@@ -48,93 +49,125 @@ const connector = module.exports = baseKonnector.createNew({
     // display,
     updateOrCreate(logger, GeoPoint, ['msisdn', 'timestamp']),
     updateOrCreate(logger, PhoneCommunicationLog, ['msisdn', 'timestamp']),
+    saveFieldsInKonnector,
   ],
 
 });
 
+function requestOrange(uri, token, callback) {
+  connector.logger.info(uri);
+
+  request.get(uri, { auth: { bearer: token }, json: true }, (err, res, body) => {
+    if (res.statusCode != 200) {
+      err = `${res.statusCode} - ${res.statusMessage} ${err || ''}`;
+      connector.logger.error(body);
+    }
+
+    if (err) {
+      connector.logger.error(`Download failed: ${err}`);
+      return callback(err);
+    }
+    callback(null, body);
+  });
+}
 
 function downloadGeoloc(requiredFields, entries, data, next) {
   connector.logger.info('Downloading geoloc data from Orange...');
 
-  // TODO: something coherent with the orange collect. Overlaping doesn't matter.
   let uri = `${API_ROOT}/data/geoloc`;
-  if (requiredFields.lastSuccess) {
-    const since = moment(requiredFields.lastSuccess).add(-1, 'days');
-    uri += `?start=${since.format('YYYY-MM-DDThh:mm:ss')}`;
+  if (requiredFields.lastGeoPoint) {
+    uri += `?start=${requiredFields.lastGeoPoint.slice(0, 19)}`;
   }
-  request.get(uri,
-    { auth: { bearer: requiredFields.access_token }, json: true },
-    (err, res, body) => {
-      if (res.statusCode != 200) {
-        err = `${res.statusCode} - ${res.statusMessage} ${err || ''}`;
-        connector.logger.error(body);
-      }
 
-      if (err) {
-        connector.logger.error(`Download failed: ${err}`);
-      } else {
-        connector.logger.info('Download succeeded.');
+  requestOrange(uri, requiredFields.access_token, (err, body) => {
+    if (err) { return next(err); }
 
-        entries.geopoints = body.filter(point => !point.err)
-        .map(point => (
-          {
-            docType: 'GeoPoint',
-            docTypeVersion: connector.doctypeVersion,
-            msisdn: point.msisdn,
-            timestamp: point.ts,
-            longitude: point.loc[0],
-            latitude: point.loc[1],
-            radius: point.rad,
-          }));
+    entries.geopoints = [];
+    body.forEach((point) => {
+      if (point.ts && requiredFields.lastGeoPoint < point.ts) {
+        requiredFields.lastGeoPoint = point.ts ;
       }
-      next(err);
+      if (point.err) { return; }
+
+      entries.geopoints.push({
+        docType: 'GeoPoint',
+        docTypeVersion: connector.doctypeVersion,
+        msisdn: point.msisdn,
+        timestamp: point.ts,
+        longitude: point.loc[0],
+        latitude: point.loc[1],
+        radius: point.rad,
+      });
     });
+
+    next();
+  });
 }
 
-// TODO: wait for definiv API format to activate this.
 function downloadCRA(requiredFields, entries, data, next) {
   connector.logger.info('Downloading CRA data from Orange...');
 
-  //TODO: something coherent with the orange collect. Overlaping doesn't matter.
   let uri = `${API_ROOT}/data/cra`;
-  if (requiredFields.lastSuccess) {
-    let since = moment(requiredFields.lastSuccess).add(-1, 'month');
-    uri += `?start=${since.format('YYYY-MM-DDThh:mm:ss')}`;
+  if (requiredFields.lastPhoneCommunicationLog) {
+    uri += `?start=${requiredFields.lastPhoneCommunicationLog.slice(0, 19)}`;
   }
-  request.get(uri,
-    { auth: { bearer: requiredFields.access_token }, json: true },
-    (err, res, body) => {
-      if (res.statusCode != 200) {
-        err = `${res.statusCode} - ${res.statusMessage} ${err || ''}`
-        connector.logger.error(body);
-      }
 
-      if (err) {
-        connector.logger.error(`Download CRA failed: ${err}`);
-      } else {
-        connector.logger.info('Download CRA succeeded.');
+  requestOrange(uri, requiredFields.access_token, (err, body) => {
+    if (err) { return next(err); }
+    connector.logger.info(body);
 
-        connector.logger.info(body);
-        entries.phonecommunicationlogs = body.filter(call => !call.err)
-        .map((point) => (
-          {
-            docType: "PhoneCommunicationLog",
-            docTypeVersion: connector.doctypeVersion,
-            timestamp: call.time,
-            msisdn: call.msisdn,
-            partner: call.partner,
-            length: call.units,
-            chipType: call.typ_units,
-            //type: String,
-            longitude: call.loc ? call.loc[0] : undefined,
-            latitude: call.loc ? call.loc[1] : undefined,
-            networkType: call.net_lbl,
-            description: call.desc,
-            endCause: call.end_cause,
-          }));
+    entries.phonecommunicationlogs = [];
+    body.forEach((cra) => {
+      if (cra.time && requiredFields.lastPhoneCommunicationLog < cra.time) {
+        requiredFields.lastPhoneCommunicationLog = cra.time ;
       }
-      next(err);
+      if (cra.err) { return; }
+
+      entries.phonecommunicationlogs.push({
+        docType: 'PhoneCommunicationLog',
+        docTypeVersion: connector.doctypeVersion,
+        timestamp: cra.time,
+        msisdn: cra.msisdn,
+        partner: cra.partner,
+        length: cra.units,
+        chipType: cra.typ_units,
+        longitude: cra.loc ? cra.loc[0] : undefined,
+        latitude: cra.loc ? cra.loc[1] : undefined,
+        networkType: cra.net_lbl,
+        type: cra.desc,
+        endCause: cra.end_cause,
+      });
+
+      next();
     });
+  });
+}
+
+
+
+// Save konnector's fieldValues during fetch process.
+function saveFieldsInKonnector(requiredFields, entries, data, next) {
+  connector.logger.info('saveFieldsInKonnector');
+
+  // Disable eslint because we can't require models/konnector at the top
+  // of this file (or Konnector will be empty). It's because in the require
+  // tree of models/konnector, there is the current file.
+  //eslint-disable-next-line
+  const Konnector = require('../models/konnector');
+
+  Konnector.all((err, konnectors) => {
+    if (err) {
+      connector.logger.error(err);
+      return next('request error');
+    }
+
+    const konnector = konnectors.filter(k => k.slug === connector.slug)[0];
+    const accounts = konnector.accounts;
+    const index = accounts.findIndex(account =>
+        account.access_token === requiredFields.access_token);
+    accounts[index] = requiredFields;
+    konnector.updateFieldValues({ accounts: accounts }, next);
+  });
 }
 
 // TODO: remove this tool.

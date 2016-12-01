@@ -65,5 +65,6 @@ module.exports =
 
     geopoint:
         all: cozydb.defaultRequests.all
+
     phonecommunicationlog:
         all: cozydb.defaultRequests.all
