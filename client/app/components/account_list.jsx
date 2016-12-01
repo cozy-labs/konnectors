@@ -4,15 +4,18 @@ import AccountItem from './account_item'
 
 const AccountList = ({ t, accounts }) => (
     <div class="accounts-list">
-        {accounts.map(a => 
-            <AccountItem
-                title={a.name}
-                subtitle={t(a.category + ' category')}
-                iconName={a.slug}
-                slug={a.slug}
-                backgroundCSS={a.color.css}
-            />
-        )}
+        {accounts.map(a => {
+            if (!a.accounts.length) {
+                return <AccountItem
+                    title={a.name}
+                    subtitle={t(a.category + ' category')}
+                    iconName={a.slug}
+                    slug={a.slug}
+                    enableDefaultIcon
+                    backgroundCSS={a.color.css}
+                />
+            }
+        })}
     </div>
 )
 
