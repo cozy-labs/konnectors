@@ -24,8 +24,6 @@ const accountsByCategory = ({filter}) => {
     return filter === 'all' ? accounts : accounts.filter(a => a.category === filter)
 }
 
-console.log(useCases)
-
 render((
     <Router history={hashHistory}>
         <Route component={(props) => <App context={context} lang={lang} categories={categories} {...props}/>}>
