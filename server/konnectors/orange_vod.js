@@ -1,17 +1,17 @@
 'use strict';
 
 const request = require('request');
+
 const localization = require('../lib/localization_manager');
 const baseKonnector = require('../lib/base_konnector');
 const updateOrCreate = require('../lib/update_or_create');
 
-const GeoPoint = require('../models/geopoint');
-const PhoneCommunicationLog = require('../models/phonecommunicationlog');
+const VideoStream = require('../models/videostream');
 
 const API_ROOT = 'https://mesinfos.orange-labs.fr';
 
 const logger = require('printit')({
-  prefix: 'Orange Mobile',
+  prefix: 'Orange VOD',
   date: true
 });
 
@@ -21,29 +21,27 @@ const logger = require('printit')({
  * in the Cozy
  */
 const connector = module.exports = baseKonnector.createNew({
-  name: 'Orange Mobile',
-  customView: '<%t konnector customview orange_mobile %>',
+  name: 'Orange VOD',
+  customView: '<%t konnector customview orange_vod %>',
 
   connectUrl: 'https://mesinfos.orange-labs.fr/auth?redirect_url=',
   fields: {
     access_token: 'hidden',
-    lastGeoPoint: 'hidden',
-    lastPhoneCommunicationLog: 'hidden',
+    lastVideoStream: 'hidden',
   },
 
-  models: [GeoPoint, PhoneCommunicationLog],
+  models: [VideoStream],
 
   fetchOperations: [
     checkToken,
-    downloadGeoloc,
-    downloadCRA,
-    updateOrCreate(logger, GeoPoint, ['msisdn', 'timestamp']),
-    updateOrCreate(logger, PhoneCommunicationLog, ['msisdn', 'timestamp']),
+    downloadVod,
+    updateOrCreate(logger, VideoStream, ['clientId', 'timestamp']),
     saveFieldsInKonnector,
     buildNotifContent,
   ],
 
 });
+
 
 function checkToken(requiredFields, entries, data, next) {
   const token = requiredFields.access_token;
@@ -53,9 +51,9 @@ function checkToken(requiredFields, entries, data, next) {
     let payload = token.split('.')[1];
     payload = JSON.parse(new Buffer(payload, 'base64').toString());
 
-    if (payload.token_type !== 'mobile') {
+    if (payload.token_type !== 'fixe') {
       connector.logger.error(`Wronk token_type for this konnector: ${payload.token_type}`);
-      return next('not mobile token');
+      return next('not fixe token');
     }
 
     next();
@@ -64,6 +62,7 @@ function checkToken(requiredFields, entries, data, next) {
     next('token not found');
   }
 }
+
 
 function requestOrange(uri, token, callback) {
   connector.logger.info(uri);
@@ -82,93 +81,40 @@ function requestOrange(uri, token, callback) {
   });
 }
 
-function downloadGeoloc(requiredFields, entries, data, next) {
-  connector.logger.info('Downloading geoloc data from Orange...');
 
-  let uri = `${API_ROOT}/data/loc`;
+function downloadVod(requiredFields, entries, data, next) {
+  connector.logger.info('Downloading vod data from Orange...');
+
+  let uri = `${API_ROOT}/data/vod`;
   if (requiredFields.lastGeoPoint) {
-    uri += `?start=${requiredFields.lastGeoPoint.slice(0, 19)}`;
+    uri += `?start=${requiredFields.lastVideoStream.slice(0, 19)}`;
   }
 
   requestOrange(uri, requiredFields.access_token, (err, body) => {
     if (err) { return next(err); }
-    entries.geopoints = [];
-    body.forEach((point) => {
-      if (point.ts && requiredFields.lastGeoPoint < point.ts) {
-        requiredFields.lastGeoPoint = point.ts;
-      }
-      if (point.err) { return; }
 
-      entries.geopoints.push({
-        docType: 'GeoPoint',
+    entries.videostreams = [];
+    body.forEach((vod) => {
+      if (vod.ts && requiredFields.lastVideoStream < vod.ts) {
+        requiredFields.lastVideoStream = vod.ts;
+      }
+      if (vod.err) { return; }
+
+      entries.videostreams.push({
+        docType: 'VideoStream',
         docTypeVersion: connector.doctypeVersion,
-        msisdn: point.msisdn,
-        timestamp: point.ts,
-        longitude: point.loc[0],
-        latitude: point.loc[1],
-        radius: point.rad,
+        title: vod.title,
+        subTitle: vod.subtitle,
+        price: vod.cost,
+        timestamp: vod.ts,
+        viewingDuration: vod.dur ? Math.round(Number(vod.dur) * 60) : undefined,
+        fromOffer: vod.offer,
+        quality: vod.format, // empty, HD or SD.
+        action: vod.action,  // visualisation or command
+        clientId: vod.I_mail || vod.I_ADSL,
       });
     });
 
-    next();
-  });
-}
-
-function downloadCRA(requiredFields, entries, data, next) {
-  connector.logger.info('Downloading CRA data from Orange...');
-
-  let uri = `${API_ROOT}/data/cra`;
-  if (requiredFields.lastPhoneCommunicationLog) {
-    uri += `?start=${requiredFields.lastPhoneCommunicationLog.slice(0, 19)}`;
-  }
-
-  requestOrange(uri, requiredFields.access_token, (err, body) => {
-    if (err) { return next(err); }
-
-    // map SMS_C for further concat in one SMS object.
-    const smsCByTs = body.filter(cra => cra.desc.indexOf('SMS_C') === 0)
-      .reduce((agg, smsC) => {
-        agg[smsC.ts] = smsC;
-        return agg;
-      }, {});
-
-    entries.phonecommunicationlogs = [];
-
-    body.forEach((cra) => {
-      try {
-        if (cra.time && requiredFields.lastPhoneCommunicationLog < cra.time) {
-          requiredFields.lastPhoneCommunicationLog = cra.time;
-        }
-        if (cra.err || cra.desc.indexOf('SMS_C') === 0) { return; }
-
-        if (cra.desc.indexOf('SMS ') === 0) {
-          // Try to merge informations
-          const smsC = smsCByTs[cra.ts];
-          if (smsC) {
-            cra.length = smsC.units;
-            cra.chipType = 'c';
-          }
-        }
-
-        entries.phonecommunicationlogs.push({
-          docType: 'PhoneCommunicationLog',
-          docTypeVersion: connector.doctypeVersion,
-          timestamp: cra.time,
-          msisdn: cra.msisdn,
-          partner: cra.partner,
-          length: cra.units,
-          chipType: cra.typ_units,
-          longitude: cra.loc ? cra.loc[0] : undefined,
-          latitude: cra.loc ? cra.loc[1] : undefined,
-          networkType: cra.net_lbl,
-          type: cra.desc,
-          endCause: cra.end_cause,
-        });
-      } catch (e) {
-        connector.logger.error('While parsing CRA.');
-        connector.logger.error(e);
-      }
-    });
     next();
   });
 }

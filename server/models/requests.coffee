@@ -68,3 +68,6 @@ module.exports =
 
     phonecommunicationlog:
         all: cozydb.defaultRequests.all
+
+    videostream:
+        all: cozydb.defaultRequests.all
