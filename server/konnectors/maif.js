@@ -155,13 +155,12 @@ function saveTokenInKonnector(requiredFields, entries, data, next) {
   //eslint-disable-next-line
   const Konnector = require('../models/konnector');
 
-  Konnector.all((err, konnectors) => {
+  Konnector.get(connector.slug, (err, konnector) => {
     if (err) {
       connector.logger.error(err);
-      return next('request error');
+      return next('internal error');
     }
 
-    const konnector = konnectors.filter(k => k.slug === 'maif')[0];
     konnector.updateFieldValues({ accounts: [requiredFields] }, next);
   });
 }
