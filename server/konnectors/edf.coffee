@@ -9,7 +9,12 @@ localization = require '../lib/localization_manager'
 updateOrCreate = require '../lib/update_or_create'
 File = require '../models/file'
 Folder = require '../models/folder'
-
+Client = require '../models/client'
+Contract = require '../models/contract'
+PaymentTerms = require '../models/paymentterms'
+Home = require '../models/home'
+ConsumptionStatement = require '../models/consumptionstatement'
+Bill = require '../models/bill'
 
 
 parser = new xml2js.Parser()
@@ -19,95 +24,6 @@ logger = require('printit') {
     prefix: 'EDF'
     date: true
 }
-
-
-# Models
-Client = cozydb.getModel 'Client',
-    clientId: String # Client Id in EDF.
-    vendor: String # EDF
-    numeroAcc: String # Another client Id from EDF.
-    address: Object # Client postal address
-    name: Object # CLiet name
-    email: String # client Email
-    cellPhone: String # Client cell phone number
-    homePhone: String # Client home phone number
-    loginEmail: String # Client email used as login
-    coHolder: Object # Name of the co-holder of the contract
-    commercialContact: Object # Commercial contact information.
-    docTypeVersion: String
-
-Contract = cozydb.getModel 'Contract',
-    clientId: String # Client Id in EDF
-    vendor: String # EDF
-    number: String # Contract number
-    name: String # Name of the commercial offer
-    start: String # Start date of the contract
-    end: String # End date of the contract (if contract ended.)
-    status: String # Current state of the contract
-    terminationGrounds: String # if the contract is ended
-    services: [Object] # Additionnal services with the contract.
-
-    pdl: String # "Point de livraison" : id of the electric counter
-    energie: String # Type of energy
-    troubleshootingPhone: String # Phone number to get help from edf.
-    power: String # Power contracted.
-    contractSubcategory1: String # Sub category of the contract
-    contractSubcategory2: String # Sub category of the contract
-    counter: Object # Data about energy counter.
-    annualConsumption: Number # The previous annual energy consumption.
-    peakHours: String # For some offers, time of rpice shift.
-    statement: Object # Details about counter reading.
-    docTypeVersion: String
-
-PaymentTerms = cozydb.getModel 'PaymentTerms',
-    vendor: String # EDF
-    clientId: String # Client Id in EDF
-    bankDetails: Object #  IBAN, ...
-    balance: Number # Amount due to EDF.
-    paymentMeans: String # Way of paiement.
-    lastPayment: Object # Last payment occured.
-    billFrequency: String # Duration between each bills.
-    nextBillDate: String # Date of the next bill.
-    paymentSchedules: [Object] # Accounts payment agenda.
-    modifBankDetailsAllowed: Boolean # Is client allowed to change the
-                                     # bankdetails.
-    idPayer: String # Client Id of the client which pay the bills.
-    payerDivergent: Boolean # True if clientId isent idPayer.
-    docTypeVersion: String
-
-Home = cozydb.getModel 'Home',
-    pdl: String # "Point de livraison" : id of the electric counter
-    beginTs: String # Creation of the profil.
-    isProfileValidated: Boolean # If the user as re-read and validated this.
-    housingType: String # Flat, house, ...
-    residenceType: String # first, secondary ...
-    occupationType: String # Rent, owned
-    constructionDate: String # Date of construction of the building.
-    isBBC: Boolean # Low consumption building.
-    surface: Number # Living surface.
-    occupantsCount: Number # How much people leaves in.
-    principalHeatingSystemType: String # What kind of heating system.
-    sanitoryHotWaterType: String # What king of water heating system.
-    docTypeVersion: String
-
-ConsumptionStatement = cozydb.getModel 'ConsumptionStatement',
-    contractNumber: String # Contract linked to this consumption
-    billNumber: String # bill linked to this consumption.
-    start: String # start date of the statement period.
-    end: String # end date of the statement period.
-    value: Number # Consumption value.
-    statementType: String # Readed, estimated, ...
-    statementCategory: String # Statemet subcategory
-    statementReason: String # Statemet subcategory
-    period: String # Simple designation of the temporal period of statement.
-    cost: Number # Cost
-    costsByCategory: Object # Details on costs
-    valuesByCatergory: Object # Details on values
-    similarHomes: Object # Similar home consumption comparisons.
-    statements: [Object] # List of statement occured in this period.
-    docTypeVersion: String
-
-Bill = require '../models/bill'
 
 
 # Requests
@@ -1236,17 +1152,6 @@ K = module.exports = require('../lib/base_konnector').createNew
         # TODO : get one edeliaClientId: 'text'
 
     models: [Client, Contract, PaymentTerms, Home, ConsumptionStatement, Bill]
-
-    # Define model requests !
-    init: (callback) ->
-        async.each [Client, Contract, PaymentTerms, Home, ConsumptionStatement]
-        , (docType, cb) ->
-            docType.defineRequest 'all', cozydb.defaultRequests.all, cb
-        , (err) ->
-            if err
-                @logger.error err
-                return callback err
-            callback()
 
     fetchOperations: [
         prepareEntries
