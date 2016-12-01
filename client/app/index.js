@@ -1,22 +1,34 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import VuePolyglot from './plugins/vue-polyglot'
+import './lib/polyfills'
+import { h, render } from 'preact'
+import { Router, Route, Redirect, hashHistory } from 'react-router'
 
-import app from './app'
-import routes from './routes'
+import App from './components/app'
+import Discovery from './components/discovery'
+import CategoryList from './components/category_list'
+import ConnectedList from './components/connected_list'
+import AccountDialog from './components/account_dialog'
 
-// Initialize Vue
-Vue.use(VueRouter)
-Vue.use(VuePolyglot, { context: window.context || 'cozy' })
+import './styles/index.styl'
 
-// Initialize Vue-router
-const router = new VueRouter({ routes })
+const lang = document.documentElement.getAttribute('lang') || 'en'
+const context = window.context || 'cozy'
+const accounts = window.initKonnectors
 
-// Initialize Application
-document.addEventListener('DOMContentLoaded', function initialize () {
+const categories = accounts.map(a => a.category).filter((cat, idx, all) => all.indexOf(cat) === idx)
 
-  new Vue({
-    router,
-    render: h => h(app)
-  }).$mount('[role=application]')
-})
+const accountsByCategory = ({filter}) => {
+    return filter === 'all' ? accounts : accounts.filter(a => a.category === filter)
+}
+
+render((
+    <Router history={hashHistory}>
+        <Route component={(props) => <App context={context} lang={lang} categories={categories} {...props}/>}>
+            <Route path="/" component={Discovery}/>
+            <Redirect from="/category" to="/category/all"/>
+            <Route path="/category/:filter" component={(props) => <CategoryList accounts={accountsByCategory(props.params)} {...props}/>}>
+                <Route path=":account" component={(props) => <AccountDialog item={accounts.find(a => a.slug === props.params.account)} {...props}/>}/>
+            </Route>
+            <Route path="/connected" component={ConnectedList}/>
+        </Route>
+    </Router>
+), document.querySelector('[role=application]'))
