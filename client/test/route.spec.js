@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 import { h, render, rerender } from 'preact'
-import { route } from 'preact-router'
 import App from '../app/app'
 
 // describe('App', () => {
