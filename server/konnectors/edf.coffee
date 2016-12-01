@@ -1209,6 +1209,12 @@ translate = (dict, name) ->
     return name
 
 edfRequestPost = (path, body, callback) ->
+    async.retry { times: 5, interval: 2000 }
+    , (cb) ->
+        _edfRequestPost(path, body, cb)
+    , callback
+
+_edfRequestPost = (path, body, callback) ->
     K.logger.debug "called edfRequestPost"
     xmlBody = builder.buildObject body
     request
