@@ -60,7 +60,7 @@ getEDFToken = (requiredFields, entries, data, callback) ->
             callback()
         else
             K.logger.error "Can't fetch EDF token"
-            callback new Error "Can't fetch token"
+            callback 'token not found'
 
 fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
     K.logger.info "fetch listerContratClientParticulier"
@@ -1090,7 +1090,7 @@ createNewFile = (data, file, callback) ->
             upload = false
             if err
                 newFile.destroy (error) ->
-                    callback "Error attaching binary: #{err}"
+                    callback 'file error'
             else
                 callback null, newFile
 
@@ -1098,7 +1098,8 @@ createNewFile = (data, file, callback) ->
     # document.
     File.create data, (err, newFile) ->
         if err
-            callback new Error "Server error while creating file; #{err}"
+            K.logger.error err
+            callback 'file error'
         else
             attachBinary newFile
 
@@ -1110,6 +1111,8 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
 
             fetchPDF data.edfToken, entries.clients[0], bill.number
             , (err, base64String) ->
+                return cb err if err
+
                 binaryBill = new Buffer base64String, 'base64'
                 name = "#{moment(bill.date).format('YYYY-MM')}-factureEDF.pdf"
                 file = new File
@@ -1120,10 +1123,11 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
                     class: "document"
                     path: requiredFields.folderPath
                     size: binaryBill.length
+
                 Folder.mkdirp requiredFields.folderPath, (err) ->
-                    return callback 'file error' if err
+                    return cb 'file error' if err
                     createNewFile file, binaryBill, (err, file) ->
-                        return callback 'file error' if err
+                        return cb 'file error' if err
                         bill.updateAttributes
                             fileId: file._id
                             binaryId: file.binary?.file.id
