@@ -388,7 +388,7 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
                 clientId: entries.clients[0].clientId
                 docTypeVersion: K.docTypeVersion
 
-            paymentTerms.bankDetails =
+            bankDetails =
                 iban: getF(acoElem, 'ns:banque', 'ns:iban')
                 holder: getF(acoElem, 'ns:compte', 'ns:titulaire')
                 bank: getF(acoElem, "ns:banque", "ns:nom")
@@ -401,7 +401,9 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
 
             bankAddress.formated = "#{bankAddress.street}" +
                 "\n#{bankAddress.city} #{bankAddress.country}"
-            paymentTerms.bankDetails.bankAddress = bankAddress
+
+            bankDetails.bankAddress = bankAddress
+            paymentTerms.encryptedBankDetails = JSON.stringify bankDetails
 
             paymentTerms.balance = getF acoElem, 'ns:detail', 'ns:solde'
             paymentTerms.paymentMeans = getF acoElem, 'ns:detail'

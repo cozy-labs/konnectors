@@ -3,7 +3,7 @@ cozydb = require 'cozydb'
 module.exports = PaymentTerms = cozydb.getModel 'PaymentTerms',
     vendor: String # EDF
     clientId: String # Client Id in EDF
-    bankDetails: Object #  IBAN, ...
+    encryptedBankDetails: String #  JSON.stringify of iban, holder, bank, ...
     balance: Number # Amount due to EDF.
     paymentMeans: String # Way of paiement.
     lastPayment: Object # Last payment occured.
