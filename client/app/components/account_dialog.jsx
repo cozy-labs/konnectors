@@ -6,7 +6,7 @@ const CloseButton = withRouter(({ router }) => (
     <button role="close" onClick={router.goBack}>Close</button>
 ))
 
-const ItemDialog = ({ t, item }) => (
+const AccountDialog = ({ t, item }) => (
     <div role="dialog">
         <div class="wrapper">
             <div role="contentinfo">
@@ -25,4 +25,4 @@ const ItemDialog = ({ t, item }) => (
     </div>
 )
 
-export default translate()(ItemDialog)
+export default translate()(AccountDialog)

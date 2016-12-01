@@ -4,7 +4,7 @@ import { translate } from '../plugins/preact-polyglot'
 
 const ENABLE_DEFAULT_ICON = false
 
-const KonnectorItem = ({ t, title, subtitle, slug, iconName, backgroundCSS = 'white', router }) => (
+const AccountItem = ({ t, title, subtitle, slug, iconName, backgroundCSS = 'white', router }) => (
     <Link class="item-wrapper" to={`${router.location.pathname}/${slug}`}>
         <header style={{background: backgroundCSS}}>
             {iconName && <svg class="item-icon"><use xlinkHref={icon(iconName)}/></svg>}
@@ -29,4 +29,4 @@ const icon = (iconName) => {
     return icon
 }
 
-export default translate()(withRouter(KonnectorItem))
+export default translate()(withRouter(AccountItem))

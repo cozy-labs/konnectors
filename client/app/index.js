@@ -2,11 +2,11 @@ import './lib/polyfills'
 import { h, render } from 'preact'
 import { Router, Route, Redirect, hashHistory } from 'react-router'
 
-import App from './app'
+import App from './components/app'
 import Discovery from './components/discovery'
 import CategoryList from './components/category_list'
 import ConnectedList from './components/connected_list'
-import ItemDialog from './components/item_dialog'
+import AccountDialog from './components/account_dialog'
 
 import './styles/index.styl'
 
@@ -25,8 +25,8 @@ render((
         <Route component={(props) => <App context={context} lang={lang} categories={categories} {...props}/>}>
             <Route path="/" component={Discovery}/>
             <Redirect from="/category" to="/category/all"/>
-            <Route path="/category/:filter" component={(props) => <CategoryList konnectors={accountsByCategory(props.params)} {...props}/>}>
-                <Route path=":account" component={(props) => <ItemDialog item={accounts.find(a => a.slug === props.params.account)} {...props}/>}/>
+            <Route path="/category/:filter" component={(props) => <CategoryList accounts={accountsByCategory(props.params)} {...props}/>}>
+                <Route path=":account" component={(props) => <AccountDialog item={accounts.find(a => a.slug === props.params.account)} {...props}/>}/>
             </Route>
             <Route path="/connected" component={ConnectedList}/>
         </Route>

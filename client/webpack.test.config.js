@@ -20,7 +20,7 @@ module.exports = {
     entry: './app',
 
     resolve: {
-        extensions: ['', '.js', '.json', '.vue'],
+        extensions: ['', '.js', '.jsx', '.json'],
         alias: {
             'react': 'preact-compat',
             'react-dom': 'preact-compat'
