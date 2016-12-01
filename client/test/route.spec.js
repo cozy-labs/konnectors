@@ -2,35 +2,39 @@ import { expect } from 'chai'
 import { h, render, rerender } from 'preact'
 import App from '../app/components/app'
 
-// describe('App', () => {
-//     let scratch
+describe('App', () => {
+    let scratch
 
-//     before( () => {
-//         scratch = document.createElement('div');
-//         (document.body || document.documentElement).appendChild(scratch)
-//     })
+    it('should work', () => {
+        expect(true).to.be.true
+    })
 
-//     beforeEach( () => {
-//         scratch.innerHTML = ''
-//     })
+    // before( () => {
+    //     scratch = document.createElement('div');
+    //     (document.body || document.documentElement).appendChild(scratch)
+    // })
 
-//     after( () => {
-//         scratch.parentNode.removeChild(scratch)
-//         scratch = null
-//     })
+    // beforeEach( () => {
+    //     scratch.innerHTML = ''
+    // })
 
-//     describe('routing', () => {
-//         it('should render the discovery page', () => {
-//             render(<App konnectors={[]}/>, scratch)
-//             route('/')
-//             expect(scratch.querySelector('main').innerHTML).to.contain('Discovery')
-//         })
+    // after( () => {
+    //     scratch.parentNode.removeChild(scratch)
+    //     scratch = null
+    // })
 
-//         it('should render /category', () => {
-//             render(<App konnectors={[]}/>, scratch)
-//             route('/category')
-//             //rerender()
-//             expect(scratch.querySelector('main').innerHTML).to.contain('All accounts')
-//         })
-//     })
-// })
+    // describe('routing', () => {
+    //     it('should render the discovery page', () => {
+    //         render(<App konnectors={[]}/>, scratch)
+    //         route('/')
+    //         expect(scratch.querySelector('main').innerHTML).to.contain('Discovery')
+    //     })
+
+    //     it('should render /category', () => {
+    //         render(<App konnectors={[]}/>, scratch)
+    //         route('/category')
+    //         //rerender()
+    //         expect(scratch.querySelector('main').innerHTML).to.contain('All accounts')
+    //     })
+    // })
+})
