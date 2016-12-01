@@ -2,7 +2,7 @@ import { h, render } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 import UseCasesList from './useCases_list'
 
-const Discovery = ({ t, useCases, children }) => (
+const DiscoveryList = ({ t, useCases, children }) => (
     <div class="content">
         <h1>{t('my_accounts discovery title')}</h1>
           <UseCasesList useCases={useCases} />
@@ -10,4 +10,4 @@ const Discovery = ({ t, useCases, children }) => (
     </div>
 )
 
-export default translate()(Discovery)
+export default translate()(DiscoveryList)
