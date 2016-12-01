@@ -28,7 +28,7 @@ render((
             <Route path="/category/:filter" component={(props) => <CategoryList accounts={accountsByCategory(props.params)} {...props}/>}>
                 <Route path=":account" component={(props) => <AccountDialog item={accounts.find(a => a.slug === props.params.account)} {...props}/>}/>
             </Route>
-            <Route path="/connected" component={ConnectedList}/>
+            <Route path="/connected" component={(props) => <ConnectedList accounts={accounts} {...props} />} />
         </Route>
     </Router>
 ), document.querySelector('[role=application]'))
