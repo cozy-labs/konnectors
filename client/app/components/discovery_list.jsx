@@ -1,10 +1,12 @@
 import { h, render } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
+import UseCasesList from './useCases_list'
 
-const Discovery = ({ t }) => (
+const Discovery = ({ t, useCases, children }) => (
     <div class="content">
         <h1>{t('my_accounts discovery title')}</h1>
-        <article>{t('my_accounts coming_soon')}</article>
+          <UseCasesList useCases={useCases} />
+          {children}
     </div>
 )
 
