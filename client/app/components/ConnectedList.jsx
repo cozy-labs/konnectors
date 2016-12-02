@@ -5,12 +5,9 @@ import AccountsList from './AccountsList'
 const ConnectedList = ({ t, accounts, children }) => (
     <div class="content">
         <h1>{t('my_accounts connected title')}</h1>
-        <AccountsList accounts={filterConnected(accounts)} />
+        <AccountsList accounts={accounts} />
         {children}
     </div>
 )
-
-const filterConnected = (accounts) =>
-  accounts.filter(a => a.accounts.length !== 0)
 
 export default translate()(ConnectedList)

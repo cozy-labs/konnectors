@@ -14,7 +14,11 @@ import './styles/index.styl'
 
 const lang = document.documentElement.getAttribute('lang') || 'en'
 const context = window.context || 'cozy'
+// accounts
 const accounts = window.initKonnectors
+const connectedAccounts = accounts.filter(a => a.accounts.length !== 0)
+const unconnectedAccounts = accounts.filter(a => a.accounts.length === 0)
+// use cases
 const useCasesHelper = new UseCasesHelper(context)
 const useCases = useCasesHelper.getUseCases()
 
@@ -22,7 +26,9 @@ const useCases = useCasesHelper.getUseCases()
 const categories = accounts.map(a => a.category).filter((cat, idx, all) => all.indexOf(cat) === idx)
 
 const accountsByCategory = ({filter}) => {
-    return filter === 'all' ? accounts : accounts.filter(a => a.category === filter)
+    // unconnected accounts for category views
+    return filter === 'all' ? unconnectedAccounts
+      : unconnectedAccounts.filter(a => a.category === filter)
 }
 
 render((
