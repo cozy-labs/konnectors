@@ -7,7 +7,7 @@ import DiscoveryList from './components/discovery_list'
 import CategoryList from './components/category_list'
 import ConnectedList from './components/connected_list'
 import AccountDialog from './components/account_dialog'
-import UseCaseDialog from './components/account_dialog'
+import UseCaseDialog from './components/useCase_dialog'
 import UseCaseHelper from './lib/useCasesHelper'
 
 import './styles/index.styl'
