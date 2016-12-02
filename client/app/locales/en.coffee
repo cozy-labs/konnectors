@@ -7,6 +7,7 @@ module.exports =
     'parsing error': 'The result could not be parsed.'
     'encrypted fields': 'The passwords are still encrypted, no import can be done. Please log out of your Cozy, log in again and restart Konnectors'
     'file error': 'The file could not be created/modified/deleted'
+    'internal error': 'An error occured in your Cozy'
     'no bills retrieved': 'No bills retrieved'
     'last import:': 'Last import:'
     'save and import': 'Import and save'

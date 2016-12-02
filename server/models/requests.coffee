@@ -59,3 +59,6 @@ module.exports =
 
     consumptionstatement:
         all: cozydb.defaultRequests.all
+
+    maifuser:
+        all: cozydb.defaultRequests.all
