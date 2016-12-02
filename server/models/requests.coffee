@@ -44,3 +44,18 @@ module.exports =
 
     track:
         all: cozydb.defaultRequests.all
+
+    client:
+        all: cozydb.defaultRequests.all
+
+    contract:
+        all: cozydb.defaultRequests.all
+
+    paymentterms:
+        all: cozydb.defaultRequests.all
+
+    home:
+        all: cozydb.defaultRequests.all
+
+    consumptionstatement:
+        all: cozydb.defaultRequests.all
