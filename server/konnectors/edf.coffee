@@ -9,7 +9,12 @@ localization = require '../lib/localization_manager'
 updateOrCreate = require '../lib/update_or_create'
 File = require '../models/file'
 Folder = require '../models/folder'
-
+Client = require '../models/client'
+Contract = require '../models/contract'
+PaymentTerms = require '../models/paymentterms'
+Home = require '../models/home'
+ConsumptionStatement = require '../models/consumptionstatement'
+Bill = require '../models/bill'
 
 
 parser = new xml2js.Parser()
@@ -19,95 +24,6 @@ logger = require('printit') {
     prefix: 'EDF'
     date: true
 }
-
-
-# Models
-Client = cozydb.getModel 'Client',
-    clientId: String # Client Id in EDF.
-    vendor: String # EDF
-    numeroAcc: String # Another client Id from EDF.
-    address: Object # Client postal address
-    name: Object # CLiet name
-    email: String # client Email
-    cellPhone: String # Client cell phone number
-    homePhone: String # Client home phone number
-    loginEmail: String # Client email used as login
-    coHolder: Object # Name of the co-holder of the contract
-    commercialContact: Object # Commercial contact information.
-    docTypeVersion: String
-
-Contract = cozydb.getModel 'Contract',
-    clientId: String # Client Id in EDF
-    vendor: String # EDF
-    number: String # Contract number
-    name: String # Name of the commercial offer
-    start: String # Start date of the contract
-    end: String # End date of the contract (if contract ended.)
-    status: String # Current state of the contract
-    terminationGrounds: String # if the contract is ended
-    services: [Object] # Additionnal services with the contract.
-
-    pdl: String # "Point de livraison" : id of the electric counter
-    energie: String # Type of energy
-    troubleshootingPhone: String # Phone number to get help from edf.
-    power: String # Power contracted.
-    contractSubcategory1: String # Sub category of the contract
-    contractSubcategory2: String # Sub category of the contract
-    counter: Object # Data about energy counter.
-    annualConsumption: Number # The previous annual energy consumption.
-    peakHours: String # For some offers, time of rpice shift.
-    statement: Object # Details about counter reading.
-    docTypeVersion: String
-
-PaymentTerms = cozydb.getModel 'PaymentTerms',
-    vendor: String # EDF
-    clientId: String # Client Id in EDF
-    bankDetails: Object #  IBAN, ...
-    balance: Number # Amount due to EDF.
-    paymentMeans: String # Way of paiement.
-    lastPayment: Object # Last payment occured.
-    billFrequency: String # Duration between each bills.
-    nextBillDate: String # Date of the next bill.
-    paymentSchedules: [Object] # Accounts payment agenda.
-    modifBankDetailsAllowed: Boolean # Is client allowed to change the
-                                     # bankdetails.
-    idPayer: String # Client Id of the client which pay the bills.
-    payerDivergent: Boolean # True if clientId isent idPayer.
-    docTypeVersion: String
-
-Home = cozydb.getModel 'Home',
-    pdl: String # "Point de livraison" : id of the electric counter
-    beginTs: String # Creation of the profil.
-    isProfileValidated: Boolean # If the user as re-read and validated this.
-    housingType: String # Flat, house, ...
-    residenceType: String # first, secondary ...
-    occupationType: String # Rent, owned
-    constructionDate: String # Date of construction of the building.
-    isBBC: Boolean # Low consumption building.
-    surface: Number # Living surface.
-    occupantsCount: Number # How much people leaves in.
-    principalHeatingSystemType: String # What kind of heating system.
-    sanitoryHotWaterType: String # What king of water heating system.
-    docTypeVersion: String
-
-ConsumptionStatement = cozydb.getModel 'ConsumptionStatement',
-    contractNumber: String # Contract linked to this consumption
-    billNumber: String # bill linked to this consumption.
-    start: String # start date of the statement period.
-    end: String # end date of the statement period.
-    value: Number # Consumption value.
-    statementType: String # Readed, estimated, ...
-    statementCategory: String # Statemet subcategory
-    statementReason: String # Statemet subcategory
-    period: String # Simple designation of the temporal period of statement.
-    cost: Number # Cost
-    costsByCategory: Object # Details on costs
-    valuesByCatergory: Object # Details on values
-    similarHomes: Object # Similar home consumption comparisons.
-    statements: [Object] # List of statement occured in this period.
-    docTypeVersion: String
-
-Bill = require '../models/bill'
 
 
 # Requests
@@ -144,7 +60,7 @@ getEDFToken = (requiredFields, entries, data, callback) ->
             callback()
         else
             K.logger.error "Can't fetch EDF token"
-            callback new Error "Can't fetch token"
+            callback 'token not found'
 
 fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
     K.logger.info "fetch listerContratClientParticulier"
@@ -472,7 +388,7 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
                 clientId: entries.clients[0].clientId
                 docTypeVersion: K.docTypeVersion
 
-            paymentTerms.bankDetails =
+            bankDetails =
                 iban: getF(acoElem, 'ns:banque', 'ns:iban')
                 holder: getF(acoElem, 'ns:compte', 'ns:titulaire')
                 bank: getF(acoElem, "ns:banque", "ns:nom")
@@ -485,7 +401,9 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
 
             bankAddress.formated = "#{bankAddress.street}" +
                 "\n#{bankAddress.city} #{bankAddress.country}"
-            paymentTerms.bankDetails.bankAddress = bankAddress
+
+            bankDetails.bankAddress = bankAddress
+            paymentTerms.encryptedBankDetails = JSON.stringify bankDetails
 
             paymentTerms.balance = getF acoElem, 'ns:detail', 'ns:solde'
             paymentTerms.paymentMeans = getF acoElem, 'ns:detail'
@@ -1172,7 +1090,7 @@ createNewFile = (data, file, callback) ->
             upload = false
             if err
                 newFile.destroy (error) ->
-                    callback "Error attaching binary: #{err}"
+                    callback 'file error'
             else
                 callback null, newFile
 
@@ -1180,7 +1098,8 @@ createNewFile = (data, file, callback) ->
     # document.
     File.create data, (err, newFile) ->
         if err
-            callback new Error "Server error while creating file; #{err}"
+            K.logger.error err
+            callback 'file error'
         else
             attachBinary newFile
 
@@ -1192,6 +1111,8 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
 
             fetchPDF data.edfToken, entries.clients[0], bill.number
             , (err, base64String) ->
+                return cb err if err
+
                 binaryBill = new Buffer base64String, 'base64'
                 name = "#{moment(bill.date).format('YYYY-MM')}-factureEDF.pdf"
                 file = new File
@@ -1202,10 +1123,11 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
                     class: "document"
                     path: requiredFields.folderPath
                     size: binaryBill.length
+
                 Folder.mkdirp requiredFields.folderPath, (err) ->
-                    return callback 'file error' if err
+                    return cb 'file error' if err
                     createNewFile file, binaryBill, (err, file) ->
-                        return callback 'file error' if err
+                        return cb 'file error' if err
                         bill.updateAttributes
                             fileId: file._id
                             binaryId: file.binary?.file.id
@@ -1236,17 +1158,6 @@ K = module.exports = require('../lib/base_konnector').createNew
         # TODO : get one edeliaClientId: 'text'
 
     models: [Client, Contract, PaymentTerms, Home, ConsumptionStatement, Bill]
-
-    # Define model requests !
-    init: (callback) ->
-        async.each [Client, Contract, PaymentTerms, Home, ConsumptionStatement]
-        , (docType, cb) ->
-            docType.defineRequest 'all', cozydb.defaultRequests.all, cb
-        , (err) ->
-            if err
-                @logger.error err
-                return callback err
-            callback()
 
     fetchOperations: [
         prepareEntries
@@ -1304,6 +1215,12 @@ translate = (dict, name) ->
     return name
 
 edfRequestPost = (path, body, callback) ->
+    async.retry { times: 5, interval: 2000 }
+    , (cb) ->
+        _edfRequestPost(path, body, cb)
+    , callback
+
+_edfRequestPost = (path, body, callback) ->
     K.logger.debug "called edfRequestPost"
     xmlBody = builder.buildObject body
     request
