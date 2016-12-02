@@ -9,6 +9,7 @@ var moment = require('moment');
 var uuid = require('uuid');
 var cozydb = require('cozydb');
 var factory = require('../lib/base_konnector');
+var MaifUser = require('../models/maifuser');
 
 var connectUrl = 'https://connect.maif.fr/connect';
 var apikey = 'eeafd0bd-a921-420e-91ce-3b52ee5807e8';
@@ -30,28 +31,102 @@ if (nonce === '') {
   nonce = uuid();
 }
 
-var MaifUser = cozydb.getModel('MaifUser', {
-  password: String, // The refresh token. TODO: move it in a konnector field
-
-  // All the Maif data ( http://mesinfos.fing.org/cartographies/datapilote/ ).
-  // TODO: split it in multiples documents. But it  should be synchronized with
-  // one update of mes infos maif app.
-  profile: Object,
-  date: String });
-
-var connecteur = module.exports = factory.createNew({
+var connector = module.exports = factory.createNew({
   name: 'MAIF',
   customView: '<%t konnector customview maif %>',
   connectUrl: getConnectUrl() + '&redirect_uri=',
 
   fields: {
     code: 'hidden', // To get the Auth code returned on the redirection.
-    redirectPath: 'hidden'
-  },
+    redirectPath: 'hidden',
+    refreshToken: 'hidden' },
 
   models: [MaifUser],
-  fetchOperations: [refreshToken]
+  fetchOperations: [refreshToken, saveTokenInKonnector, fetchData, createOrUpdateInDB]
 });
+
+function refreshToken(requiredFields, entries, data, next) {
+  connector.logger.info('refreshToken');
+
+  if (requiredFields.refreshToken && requiredFields.refreshToken !== '') {
+    // Get a new access_token using the refreshToken.
+    fetchToken({
+      grant_type: 'refresh_token',
+      refresh_token: requiredFields.refreshToken
+    }, requiredFields, data, next);
+  } else if (requiredFields.code && requiredFields.code !== '') {
+    // Obtain tokens with the auth code.
+    buildCallbackUrl(requiredFields, function (err, redirectUrl) {
+      if (err) {
+        return next(err);
+      }
+      fetchToken({
+        grant_type: 'authorization_code',
+        code: requiredFields.code,
+        state: state,
+        nonce: nonce,
+        redirect_uri: redirectUrl
+      }, requiredFields, data, next);
+    });
+  } else {
+    next('token not found'); // Need to perform OpenIdConnect steps.
+  }
+}
+
+function fetchToken(form, requiredFields, data, next) {
+  connector.logger.info('fetchToken');
+
+  request.post({
+    url: connectUrl + '/token',
+    json: true,
+    headers: {
+      Authorization: 'Basic ' + b64Client
+    },
+    form: form
+  }, function (err, response, body) {
+    if (response.statusCode !== 200 && response.statusCode !== '200') {
+      connector.logger.error('fetchToken error: ' + response.statusCode + ' - ' + response.statusMessage);
+      err = 'token not found';
+    }
+
+    if (err) {
+      return next(err);
+    }
+
+    if (!body.id_token || !body.refresh_token) {
+      connector.logger.error('no token in body: ' + body);
+      return next('token not found');
+    }
+
+    data.accessToken = body.id_token;
+    requiredFields.refreshToken = body.refresh_token;
+
+    next();
+  });
+}
+
+function buildCallbackUrl(requiredFields, callback) {
+  cozydb.api.getCozyDomain(function (err, domain) {
+    if (err) {
+      connector.logger.error(err);
+      return callback('internal error');
+    }
+
+    var url = null;
+    var error = null;
+    try {
+      var path = requiredFields.redirectPath.split('?')[0];
+      if (path[0] === '/') {
+        path = path.slice(1);
+      }
+      url = domain + 'apps/konnectors/' + path;
+    } catch (e) {
+      connector.logger.error(e);
+      error = 'internal error';
+    }
+    callback(error, url);
+  });
+}
 
 /**
 * return connection url with all params
@@ -61,201 +136,62 @@ function getConnectUrl() {
   return baseUrl + 'response_type=' + type + '&client_id=' + clientId + '&scope=' + scope + '&state=' + state + '&nonce=' + nonce;
 }
 
-/**
-* called with connection's callback.
-* get code from data
-* create or update user in db
-* call post request to get token
-*/
-function getCode(requiredFields, callback) {
-  if (!(requiredFields.redirectPath && requiredFields.code)) {
-    return callback('token not found');
-  }
+// Save konnector's fieldValues during fetch process.
+function saveTokenInKonnector(requiredFields, entries, data, next) {
+  connector.logger.info('saveTokenInKonnector');
 
-  cozydb.api.getCozyDomain(function (err, domain) {
-    // if(domain.indexOf('localhost') != -1){ //contains localhost, transform https to http
-    //   domain = domain.replace('https', 'http');
-    // }
+  // Disable eslint because we can't require models/konnector at the top
+  // of this file (or Konnector will be empty). It's because in the require
+  // tree of models/konnector, there is the current file.
+  //eslint-disable-next-line
+  var Konnector = require('../models/konnector');
 
-    // TODO: redirectionURI reconstruction is not clean enough, and doesn't work
-    // in dev mode.
-    var path = requiredFields.redirectPath.split('?')[0];
-    if (path[0] === '/') {
-      path = path.slice(1);
+  Konnector.get(connector.slug, function (err, konnector) {
+    if (err) {
+      connector.logger.error(err);
+      return next('internal error');
     }
-    var urlRedirect = domain + 'apps/konnectors/' + path;
-    var options = {
-      url: connectUrl + '/token',
-      jar: true,
-      method: 'POST',
-      headers: {
-        Authorization: 'Basic ' + b64Client
-      },
-      form: {
-        grant_type: 'authorization_code',
-        code: requiredFields.code,
-        state: state,
-        nonce: nonce,
-        redirect_uri: urlRedirect
-      }
-    };
-    connecteur.logger.info(options);
-    request(options, function (err, response, body) {
-      if (err) {
-        connecteur.logger.error(err);
-        return callback('request error');
-      }
 
-      var jsonToken = null;
-      try {
-        jsonToken = JSON.parse(body);
-      } catch (e) {
-        err = 'parsing error';
-      }
-
-      if (err != null) {
-        connecteur.logger.error(err);
-        callback(err);
-      } else if (jsonToken.id_token === undefined) {
-        connecteur.logger.error('token not found');
-        callback('token not found');
-      } else {
-        getToken(jsonToken.id_token, jsonToken.refresh_token, callback);
-      }
-    }, false);
+    konnector.updateFieldValues({ accounts: [requiredFields] }, next);
   });
 }
 
-function updateOrCreateMaifUser(callback) {
-  MaifUser.first(function (err, maifUser) {
-    if (maifUser) {
-      callback(null, maifUser);
-    } else {
-      MaifUser.create({}, callback);
+function fetchData(requiredFields, entries, data, next) {
+  connector.logger.info('fetchData');
+
+  request.get({
+    url: infoUrl,
+    json: true,
+    headers: {
+      Authorization: 'Bearer ' + data.accessToken
     }
+  }, function (err, response, body) {
+    if (response.statusCode !== 200 && response.statusCode !== '200') {
+      connector.logger.error('fetchToken error: ' + response.statusCode + ' - ' + response.statusMessage);
+      err = 'request error';
+    }
+
+    if (err) {
+      return next(err);
+    }
+    moment.locale('fr');
+    entries.maifusers = [{
+      profile: body,
+      date: moment().format('LLL')
+    }];
+    next();
   });
 }
 
-/**
-* function called when token returns
-* update user's line in db with token_refresh
-* call getData function
-*/
-function getToken(token, tokenRefresh, callback) {
-  var payload = { password: tokenRefresh };
+function createOrUpdateInDB(requiredFields, entries, data, next) {
+  connector.logger.info('createOrUpdateInDB');
 
-  updateOrCreateMaifUser(function (err, maifUser) {
-    maifUser.updateAttributes(payload, function (err) {
-      if (err) {
-        return callback(err);
-      }
-      getData(token, callback);
-    });
-  });
-}
-
-/**
-* function called after getToken
-* sends get request with token to get JSON data in return
-*/
-function getData(token, callback) {
-  MaifUser.first(function (err, maifuser) {
-    var options = {
-      url: infoUrl,
-      jar: true,
-      method: 'GET',
-      headers: {
-        Authorization: 'Bearer ' + token
-      }
-    };
-
-    request(options, function (err, response, body) {
-      if (err) {
-        connecteur.logger.error(err);
-        return callback('request error');
-      }
-
-      try {
-        JSON.parse(body);
-      } catch (e) {
-        err = 'parsing error';
-      }
-      if (err != null) {
-        connecteur.logger.error(err);
-        callback(err);
-      } else {
-        moment.locale('fr');
-        var importDate = moment().format('LLL');
-        var payload = { profile: JSON.parse(body), date: importDate };
-
-        maifuser.updateAttributes(payload, function (err) {
-          // mise à jour du maifuser en base en insérant le token
-          callback(err);
-        });
-      }
-    }, false);
-  });
-}
-
-/**
-* refreshToken function
-* called at each scheduled import (every hour/day/week/month)
-* get new token and refresh token
-* call getToken with token and refresh token
-*/
-function refreshToken(requiredFields, entries, data, next) {
-  MaifUser.first(function (err, maifUser) {
-    var tokenValid = true;
-    if (maifUser && !err) {
-      var token = maifUser.password;
-      if (token) {
-        var options = {
-          url: connectUrl + '/token',
-          jar: true,
-          method: 'POST',
-          headers: {
-            Authorization: 'Basic ' + b64Client
-          },
-          form: {
-            grant_type: 'refresh_token',
-            refresh_token: token
-          }
-        };
-        request(options, function (err, response, body) {
-          if (err) {
-            connecteur.logger.error(err);
-            return next('request error');
-          }
-          try {
-            JSON.parse(body);
-          } catch (e) {
-            err = 'parsing error';
-          }
-          if (err != null) {
-            // refresh token not valid anymore
-            connecteur.logger.error(err);
-            next(err);
-          } else {
-            var jsonToken = JSON.parse(body);
-            getToken(jsonToken.token, jsonToken.token_refresh, next);
-          }
-        }, false);
-      } else {
-        tokenValid = false;
-      }
-    } else {
-      tokenValid = false;
+  MaifUser.updateOrCreate(entries.maifusers[0], function (err) {
+    if (err) {
+      connector.logger.error(err);
+      return next('internal error');
     }
-    if (!tokenValid) {
-      // Maybe we have no token yet !
-      getCode(requiredFields, function (err) {
-        if (err) {
-          connecteur.logger.error(err);
-          next('token not found');
-        } else {
-          next();
-        }
-      });
-    }
+
+    next();
   });
 }
