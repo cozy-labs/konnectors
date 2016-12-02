@@ -1,6 +1,6 @@
 import { h, render } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
-import UseCasesList from './useCases_list'
+import UseCasesList from './UseCasesList'
 
 const DiscoveryList = ({ t, useCases, children }) => (
     <div class="content">

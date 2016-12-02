@@ -2,20 +2,20 @@ import './lib/polyfills'
 import { h, render } from 'preact'
 import { Router, Route, Redirect, hashHistory } from 'react-router'
 
-import App from './components/app'
-import DiscoveryList from './components/discovery_list'
-import CategoryList from './components/category_list'
-import ConnectedList from './components/connected_list'
-import AccountDialog from './components/account_dialog'
-import UseCaseDialog from './components/useCase_dialog'
-import UseCaseHelper from './lib/useCasesHelper'
+import App from './components/App'
+import DiscoveryList from './components/DiscoveryList'
+import CategoryList from './components/CategoryList'
+import ConnectedList from './components/ConnectedList'
+import AccountDialog from './components/AccountDialog'
+import UseCaseDialog from './components/UseCaseDialog'
+import UseCasesHelper from './lib/UseCasesHelper'
 
 import './styles/index.styl'
 
 const lang = document.documentElement.getAttribute('lang') || 'en'
 const context = window.context || 'cozy'
 const accounts = window.initKonnectors
-const useCasesHelper = new UseCaseHelper(context)
+const useCasesHelper = new UseCasesHelper(context)
 const useCases = useCasesHelper.getUseCases()
 
 

@@ -1,8 +1,8 @@
 import { h, Component } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
-import AccountItem from './account_item'
+import AccountItem from './AccountItem'
 
-const AccountList = ({ t, accounts }) => (
+const AccountsList = ({ t, accounts }) => (
     <div class="accounts-list">
         {accounts.map(a =>
             <AccountItem
@@ -17,4 +17,4 @@ const AccountList = ({ t, accounts }) => (
     </div>
 )
 
-export default translate()(AccountList)
+export default translate()(AccountsList)

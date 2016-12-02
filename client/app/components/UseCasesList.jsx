@@ -1,6 +1,6 @@
 import { h, Component } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
-import UseCaseItem from './account_item'
+import UseCaseItem from './AccountItem'
 
 const UseCasesList = ({ t, useCases }) => (
     <div class="use-cases-list">
