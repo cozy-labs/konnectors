@@ -41,10 +41,16 @@ Konnector.all = (callback) ->
 
 
 # Return a konnector for a given key.
+
 Konnector.get = (slug, callback) ->
-    Konnector.request 'all', (err, konnectors) ->
-        konnector = konnectors.find (konnector) -> konnector.slug is slug
-        callback err, konnector
+    Konnector.request 'bySlug', { key: slug }, (err, konnectors) ->
+        return callback err if err
+
+        if konnectors && konnectors.length < 0
+            return callback "No #{slug} konnector in database."
+
+
+        callback null, konnectors[0]
 
 
 # Return fields registered in the konnector module. If it's not defined,
