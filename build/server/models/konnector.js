@@ -64,12 +64,16 @@ Konnector.all = function(callback) {
 };
 
 Konnector.get = function(slug, callback) {
-  return Konnector.request('all', function(err, konnectors) {
-    var konnector;
-    konnector = konnectors.find(function(konnector) {
-      return konnector.slug === slug;
-    });
-    return callback(err, konnector);
+  return Konnector.request('bySlug', {
+    key: slug
+  }, function(err, konnectors) {
+    if (err) {
+      return callback(err);
+    }
+    if (konnectors && konnectors.length < 0) {
+      return callback("No " + slug + " konnector in database.");
+    }
+    return callback(null, konnectors[0]);
   });
 };
 
