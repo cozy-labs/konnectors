@@ -1,5 +1,5 @@
 {
-  "use-cases":[{
+  "useCases":[{
     "slug": "phone-bills",
     "konnectors": [{
       "slug": "virgin_mobile"

@@ -7,7 +7,7 @@ const Sidebar = ({ t, categories, router }) => (
         <h4>{t('my_accounts title')}</h4>
         <ul role="navigation">
             <li>
-                <Link to="/" activeClassName="router-link-active">
+                <Link to="/discovery" activeClassName="router-link-active">
                     <svg><use xlinkHref={require('../assets/sprites/icon-discovery.svg')}/></svg>
                     {t('my_accounts discovery title')}
                 </Link>
@@ -17,7 +17,6 @@ const Sidebar = ({ t, categories, router }) => (
                     <svg><use xlinkHref={require('../assets/sprites/icon-category.svg')}/></svg>
                     {t('my_accounts category title')}
                 </Link>
-                
             </li>
             <ul>
                 {categories.map(category => (
