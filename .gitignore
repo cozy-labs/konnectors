@@ -18,3 +18,5 @@ client/public
 
 Vagrantfile
 .vagrant
+
+build
