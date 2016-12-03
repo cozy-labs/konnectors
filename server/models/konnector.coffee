@@ -23,6 +23,8 @@ module.exports = Konnector = cozydb.getModel 'Konnector',
     importInterval: type: String, default: 'none'
     errorMessage: type: String, default: null
     importErrorMessage: type: String, default: null
+    # Whether this konnector is backed by Weboob or not
+    isWeboob: type: Boolean, default: false
     _passwordStillEncrypted: Boolean
 
 # Retrieve all konnectors. Make sure that encrypted fields are decrypted before

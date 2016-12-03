@@ -119,7 +119,8 @@ const KonnectorConverters = {
                 models: models,
                 fetchOperations: [
                     // Filled right afterwards
-                ]
+                ],
+                isWeboob: true  // This konnector is backed by Weboob
             })
 
             /**
