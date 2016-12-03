@@ -21,7 +21,7 @@ const configConversion = function (configOptions) {
     let fields = {}
 
     Object.keys(configOptions).forEach((configName) => {
-        // TODO: Handle float, bool, choices
+        // TODO[Phyks] Handle float, bool, choices
         if (configOptions[configName].type === 'password') {
             fields[configName] = 'password'
         } else if (configOptions[configName].type === 'int') {
@@ -92,7 +92,7 @@ const capabilitiesToModelsAndConfig = function (capabilities) {
             case 'CapVideo':
             case 'CapWeather':
             default:
-                // TODO: Not implemented
+                // TODO[Phyks]: Not implemented
                 return
         }
     })
@@ -110,7 +110,7 @@ const KonnectorConverters = {
         let parsedData = []
 
         data.forEach((module) => {
-            const { models, extraConfig } = capabilitiesToModels(module.capabilities);
+            const { models, extraConfig } = capabilitiesToModelsAndConfig(module.capabilities);
             let konnectorData = baseKonnector.createNew({
                 name: module.name,
                 vendorLink: module.website,
@@ -227,7 +227,7 @@ const KonnectorConverters = {
                         () => {
                             konnectorData.logger.info(`Done filtering out existing ${model}!`)
                             // Store filtered entities in data field
-                            data.filteredEntities[model] = {}  // TODO
+                            data.filteredEntities[model] = {}  // TODO[Phyks]
                             return next()
                         }
                     )
@@ -249,8 +249,8 @@ const KonnectorConverters = {
                         filtered: data.filteredEntities[model]
                     }
                     // Call saveDataAndFile
-                    const options = {}  // TODO
-                    const tags = []  // TODO
+                    const options = {}  // TODO[Phyks]
+                    const tags = []  // TODO[Phyks]
                     return saveDataAndFile(konnectorData.logger, model, options, tags) (
                         requiredFields,
                         saveDataAndFileInput,
@@ -267,7 +267,7 @@ const KonnectorConverters = {
              */
             konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
                 konnectorData.logger.info('Cleaning all temporary files from cozyweboob...')
-                // TODO: Should not be ran while another Weboob-based konnector is running!
+                // TODO[Phyks] Should not be ran while another Weboob-based konnector is running!
                 return data.client.clean(() => {
                     konnectorData.logger.info('Done cleaning all temporary files from cozyweboob!')
                     return next()
@@ -287,7 +287,7 @@ const KonnectorConverters = {
              * Build notifications
              */
             konnectorData.fetchOperations.push(function (requiredFields, entries, data, next) {
-                // TODO
+                // TODO[Phyks]
                 return next()
             })
 

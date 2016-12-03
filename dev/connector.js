@@ -2,6 +2,8 @@ import cozydb from 'cozydb';
 import fs from 'fs';
 import path from 'path';
 
+import weboob from '../server/lib/weboob'
+
 let baseBuildPath = path.join(
     path.dirname(fs.realpathSync(__filename)),
     '../build/'
@@ -10,7 +12,7 @@ let baseBuildPath = path.join(
 // Display most important fields of a konnector. It hides the password
 // in case some are stored in the field values of the connector.
 let displayKonnector = function(konnector, log) {
-    konnector.removeEncryptedFields(function () {
+    konnector.removeEncryptedFields(null, function () {
         // The fields are in the konnector file
         let konnectorConfig = {};
         try {

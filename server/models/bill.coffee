@@ -16,7 +16,7 @@ module.exports = Bill = cozydb.getModel 'Bill',
     vat: Number
     # Currency of the bill
     currency: String
-    # TODO
+    # TODO[Phyks]
     plan: String
     # Link to the bill document (not necessarily a PDF file)
     pdfurl: String
@@ -24,7 +24,7 @@ module.exports = Bill = cozydb.getModel 'Bill',
     binaryId: String
     # ID of the file doctype containing the bill, CouchDB metadata
     fileId: String
-    # TODO
+    # TODO[Phyks]
     content: String
     # Whether this bill is a refund
     isRefund: Boolean

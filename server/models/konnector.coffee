@@ -222,10 +222,10 @@ Konnector.getKonnectorsToDisplay = (callback) ->
                     konnectorsToDisplay = konnectors
                         .filter (konnector) ->
                             return modules[konnector.slug]?
-                        .forEach (konnector, index) ->
-                            konnector.appendConfigData(null, (config) ->
-                                konnectorsToDisplay[index] = config
-                            )
+                    konnectorsToDisplay.forEach (konnector, index) ->
+                        konnector.appendConfigData(null, (config) ->
+                            konnectorsToDisplay[index] = config
+                        )
 
                     callback null, konnectorsToDisplay
             catch err

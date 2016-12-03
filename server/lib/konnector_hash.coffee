@@ -7,7 +7,6 @@ weboob = require './weboob'
 currentPath = path.dirname fs.realpathSync __filename
 modulesPath = path.join currentPath, '..', 'konnectors'
 
-
 # Tell if filename is Javascript file or is a Coffeescript file. Detection
 # is based on file extension.
 isCoffeeOrJsFile = (fileName) ->
@@ -30,9 +29,9 @@ getKonnectorModules = () ->
                 modules[name] = require modulePath
                 if modules[name].default?
                     modules[name] = modules[name].default
-    # Append weboob modules
     return (callback) ->
         weboob.default.getWeboobKonnectors (weboobKonnectors) ->
+            weboobKonnectorsCache = weboobKonnectors # Set cache
             weboobKonnectors.forEach (weboobKonnector) ->
                 modules[weboobKonnector.name] = weboobKonnector
             callback modules

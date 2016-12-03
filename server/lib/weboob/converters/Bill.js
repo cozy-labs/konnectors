@@ -18,22 +18,22 @@ const BillConverters = {
         var parsedBills = [];
         Object.keys(data).forEach(function (subscriptionID) {
             data[subscriptionID].forEach(function (bill) {
-                // TODO: Label not mapped
+                // TODO[Phyks] Label not mapped
                 let pdfUrl = null;
                 if (downloaded_documents[bill.id]) {
                     pdfUrl = downloaded_documents[bill.id];
                 }
                 parsedBills.push({
-                    type: '',  // TODO: What is it?
-                    subtype: '',  // TODO: What is it?
+                    type: '',  // TODO[Phyks] What is it?
+                    subtype: '',  // TODO[Phyks] What is it?
                     date: bill.date ? moment(bill.date) : null,
                     vendor: moduleName,
                     amount: bill.price ? parseFloat(bill.price) : null,
                     vat: bill.vat ? parseFloat(bill.vat) : null,
                     currency: bill.currency,
-                    plan: '',  // TODO: What is it?
+                    plan: '',  // TODO[Phyks] What is it?
                     pdfurl: pdfUrl,  // Do not fill in pdfurl at this point, fill with downloaded
-                    content: '',  // TODO: What is it?
+                    content: '',  // TODO[Phyks] What is it?
                     duedate: bill.duedate ? moment(bill.duedate) : null,
                     startdate: bill.startdate ? moment(bill.startdate) : null,
                     finishdate: bill.finishdate ? moment(bill.finishdate) : null,
@@ -49,22 +49,22 @@ const BillConverters = {
         var parsedHistoryBills = [];
         Object.keys(data).forEach(function (subscriptionID) {
             data[subscriptionID].forEach(function (historyBill) {
-                // TODO: Infos / label / quantity / unit not mapped
+                // TODO[Phyks] Infos / label / quantity / unit not mapped
                 let pdfUrl = null;
                 if (downloaded_documents[historyBill.id]) {
                     pdfUrl = downloaded_documents[historyBill.id];
                 }
                 parsedHistoryBills.push({
-                    type: '',  // TODO: What is it?
-                    subtype: '',  // TODO: What is it?
+                    type: '',  // TODO[Phyks] What is it?
+                    subtype: '',  // TODO[Phyks] What is it?
                     date: historyBill.datetime ? moment(historyBill.datetime) : null,
                     vendor: moduleName,
                     amount: historyBill.price ? parseFloat(historyBill.price) : null,
                     vat: historyBill.vat ? parseFloat(historyBill.vat) : null,
                     currency: historyBill.currency,
-                    plan: '',  // TODO: What is it?
+                    plan: '',  // TODO[Phyks] What is it?
                     pdfurl: pdfUrl,  // Do not fill in pdfurl at this point, fill with downloaded
-                    content: '',  // TODO: What is it?
+                    content: '',  // TODO[Phyks] What is it?
                 });
             });
         });
@@ -82,17 +82,17 @@ const BillConverters = {
                     pdfUrl = downloaded_documents[detailedBill.id];
                 }
                 parsedDetailedBills.push({
-                    // TODO: Infos / label / quantity / unit not mapped
-                    type: '',  // TODO: What is it?
-                    subtype: '',  // TODO: What is it?
+                    // TODO[Phyks] Infos / label / quantity / unit not mapped
+                    type: '',  // TODO[Phyks] What is it?
+                    subtype: '',  // TODO[Phyks] What is it?
                     date: detailedBill.datetime ? moment(detailedBill.datetime) : null,
                     vendor: moduleName,
                     amount: detailedBill.price ? parseFloat(detailedBill.price) : null,
                     vat: detailedBill.vat ? parseFloat(detailedBill.vat) : null,
                     currency: detailedBill.currency,
-                    plan: '',  // TODO: What is it?
+                    plan: '',  // TODO[Phyks] What is it?
                     pdfurl: pdfUrl,  // Do not fill in pdfurl at this point, fill with downloaded
-                    content: '',  // TODO: What is it?
+                    content: '',  // TODO[Phyks] What is it?
                 });
             });
         });

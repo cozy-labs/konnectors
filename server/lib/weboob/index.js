@@ -8,6 +8,9 @@
 import KonnectorConverter from './converters/Konnector'
 import WeboobFetcher from './WeboobFetcher'
 
+// Cache for weboob konnectors
+var weboobKonnectors = null
+
 /**
  * Build Konnectors objects for Weboob-backed modules
  *
@@ -28,13 +31,18 @@ const getWeboobKonnectors = function (callback) {
             return callback(builtKonnectors)
         }
     }
-    return weboobFetcher.connect(() =>
-        weboobFetcher.list(data =>
-            buildKonnectors(data, data =>
-                weboobFetcher.exit(() => callback(data))
+    if (weboobKonnectors) {
+        return callback(weboobKonnectors)
+    } else {
+        return weboobFetcher.connect(() =>
+            weboobFetcher.list(data =>
+                buildKonnectors(data, data => {
+                    weboobKonnectors = data  // Store konnectors in cache
+                    weboobFetcher.exit(() => callback(data))
+                })
             )
         )
-    )
+    }
 }
 
 export default {
