@@ -1,18 +1,19 @@
-import { h, render } from 'preact'
+/** @jsx h */
+import { h } from 'preact'
 import { Link, withRouter } from 'react-router'
 import { translate } from '../plugins/preact-polyglot'
 
-const AccountItem = ({ t, title, subtitle, slug, iconName, backgroundCSS = 'white', enableDefaultIcon = false, router }) => (
-  <Link class="item-wrapper" to={`${router.location.pathname}/${slug}`}>
+const AccountItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white', enableDefaultIcon = false, router }) => (
+  <Link class='item-wrapper' to={`${router.location.pathname}/${slug}`}>
     <header style={{background: backgroundCSS}}>
       {iconName &&
-        <svg class="item-icon">
+        <svg class='item-icon'>
           <use xlinkHref={icon(iconName, enableDefaultIcon)} />
         </svg>
       }
     </header>
-    <p class="item-title">{title}</p>
-    {subtitle && <p class="item-subtitle">{subtitle}</p>}
+    <p class='item-title'>{title}</p>
+    {subtitle && <p class='item-subtitle'>{subtitle}</p>}
   </Link>
 )
 

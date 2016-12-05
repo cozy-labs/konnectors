@@ -1,4 +1,5 @@
 import './lib/polyfills'
+/** @jsx h */
 import { h, render } from 'preact'
 import { Router, Route, Redirect, hashHistory } from 'react-router'
 
@@ -37,13 +38,13 @@ render((
         <App context={context} lang={lang} categories={categories}{...props}
         />}
     >
-      <Redirect from="/" to="/discovery" />
+      <Redirect from='/' to='/discovery' />
       <Route
-        path="/discovery"
+        path='/discovery'
         component={(props) => <DiscoveryList useCases={useCases} {...props} />}
       >
         <Route
-          path=":useCase"
+          path=':useCase'
           component={(props) =>
             <UseCaseDialog
               item={useCases.find(u => u.slug === props.params.useCase)}
@@ -51,16 +52,16 @@ render((
             />}
         />
       </Route>
-      <Redirect from="/category" to="/category/all" />
+      <Redirect from='/category' to='/category/all' />
       <Route
-        path="/category/:filter"
+        path='/category/:filter'
         component={(props) =>
           <CategoryList
             accounts={accountsByCategory(props.params)} {...props}
           />}
       >
         <Route
-          path=":account"
+          path=':account'
           component={(props) =>
             <AccountDialog
               item={accounts.find(a => a.slug === props.params.account)}
@@ -69,12 +70,12 @@ render((
         />
       </Route>
       <Route
-        path="/connected"
+        path='/connected'
         component={(props) =>
           <ConnectedList accounts={connectedAccounts} {...props} />}
       >
         <Route
-          path=":account"
+          path=':account'
           component={(props) =>
             <AccountDialog
               item={accounts.find(u => u.slug === props.params.account)}

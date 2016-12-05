@@ -1,6 +1,6 @@
-import { expect } from 'chai'
-import { h, render, rerender } from 'preact'
-import App from '../app/components/App'
+// import { expect } from 'chai'
+// import { h, render, rerender } from 'preact'
+// import App from '../app/components/App'
 
 // describe('App', () => {
 //     let scratch

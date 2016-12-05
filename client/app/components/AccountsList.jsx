@@ -1,9 +1,10 @@
-import { h, Component } from 'preact'
+/** @jsx h */
+import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 import AccountItem from './AccountItem'
 
 const AccountsList = ({ t, accounts }) => (
-  <div class="accounts-list">
+  <div class='accounts-list'>
     {accounts.map(a =>
       <AccountItem
         title={a.name}

@@ -1,9 +1,10 @@
-import { h, Component } from 'preact'
+/** @jsx h */
+import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 import UseCaseItem from './AccountItem'
 
 const UseCasesList = ({ t, useCases }) => (
-  <div class="use-cases-list">
+  <div class='use-cases-list'>
     {useCases.map(u =>
       <UseCaseItem
         title={t(u.slug)}

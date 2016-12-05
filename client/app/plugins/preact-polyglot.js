@@ -5,7 +5,8 @@
 
 'use strict'
 
-import { h, render, Component } from 'preact'
+/** @jsx h */
+import { h, Component } from 'preact'
 import Polyglot from 'node-polyglot'
 import en from '../locales/en'
 

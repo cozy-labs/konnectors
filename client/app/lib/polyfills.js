@@ -1,4 +1,5 @@
 if (!Array.prototype.find) {
+  // eslint-disable-next-line
   Object.defineProperty(Array.prototype, 'find', {
     value: function (predicate) {
       'use strict'
