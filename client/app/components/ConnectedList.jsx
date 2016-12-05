@@ -1,10 +1,12 @@
 import { h, render } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
+import AccountsList from './AccountsList'
 
-const ConnectedList = ({ t }) => (
+const ConnectedList = ({ t, accounts, children }) => (
     <div class="content">
         <h1>{t('my_accounts connected title')}</h1>
-        <article>{t('my_accounts coming_soon')}</article>
+        <AccountsList accounts={accounts} />
+        {children}
     </div>
 )
 
