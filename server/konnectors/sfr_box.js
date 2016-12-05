@@ -1,28 +1,28 @@
-'use strict';
+'use strict'
 
 const request = require('request').defaults({
-  jar: true,
-});
-const moment = require('moment');
-const cheerio = require('cheerio');
-const baseKonnector = require('../lib/base_konnector');
+  jar: true
+})
+const moment = require('moment')
+const cheerio = require('cheerio')
+const baseKonnector = require('../lib/base_konnector')
 
-const filterExisting = require('../lib/filter_existing');
-const localization = require('../lib/localization_manager');
-const saveDataAndFile = require('../lib/save_data_and_file');
-const linkBankOperation = require('../lib/link_bank_operation');
+const filterExisting = require('../lib/filter_existing')
+const localization = require('../lib/localization_manager')
+const saveDataAndFile = require('../lib/save_data_and_file')
+const linkBankOperation = require('../lib/link_bank_operation')
 
 const log = require('printit')({
   prefix: 'Sfr box',
-  date: true,
-});
+  date: true
+})
 
 const fileOptions = {
   vendor: 'SFR',
-  dateFormat: 'YYYYMMDD',
-};
+  dateFormat: 'YYYYMMDD'
+}
 
-const Bill = require('../models/bill');
+const Bill = require('../models/bill')
 
 // Konnector
 const connector = module.exports = baseKonnector.createNew({
@@ -31,12 +31,12 @@ const connector = module.exports = baseKonnector.createNew({
   category: 'isp',
   color: {
     hex: '#9E0017',
-    css: 'linear-gradient(90deg, #EF0001 0%, #9E0017 100%)',
+    css: 'linear-gradient(90deg, #EF0001 0%, #9E0017 100%)'
   },
   fields: {
     login: 'text',
     password: 'password',
-    folderPath: 'folder',
+    folderPath: 'folder'
   },
   models: [Bill],
   fetchOperations: [
@@ -52,38 +52,38 @@ const connector = module.exports = baseKonnector.createNew({
       identifier: 'SFR FIXE',
       minDateDelta: 4,
       maxDateDelta: 20,
-      amountDelta: 0.1,
+      amountDelta: 0.1
     }),
-    buildNotifContent,
-  ],
-});
+    buildNotifContent
+  ]
+})
 
 // Procedure to get the login token
-function getToken(requiredFields, bills, data, next) {
-  const url = 'https://www.sfr.fr/bounce?target=//www.sfr.fr/sfr-et-moi/bounce.html&casforcetheme=mire-sfr-et-moi&mire_layer';
+function getToken (requiredFields, bills, data, next) {
+  const url = 'https://www.sfr.fr/bounce?target=//www.sfr.fr/sfr-et-moi/bounce.html&casforcetheme=mire-sfr-et-moi&mire_layer'
   const options = {
     url,
-    method: 'GET',
-  };
+    method: 'GET'
+  }
 
-  connector.logger.info('Getting the token on Sfr Website...');
+  connector.logger.info('Getting the token on Sfr Website...')
 
   request(options, (err, res, body) => {
     if (err) {
-      connector.logger.info(err);
-      return next('token not found');
+      connector.logger.info(err)
+      return next('token not found')
     }
 
-    const $ = cheerio.load(body);
-    data.token = $('input[name=lt]').val();
+    const $ = cheerio.load(body)
+    data.token = $('input[name=lt]').val()
 
-    connector.logger.info('Token retrieved');
-    return next();
-  });
+    connector.logger.info('Token retrieved')
+    return next()
+  })
 }
 
 // Procedure to login to Sfr website.
-function logIn(requiredFields, bills, data, next) {
+function logIn (requiredFields, bills, data, next) {
   const options = {
     method: 'POST',
     url: 'https://www.sfr.fr/cas/login?domain=mire-sfr-et-moi&service=https://www.sfr.fr/accueil/j_spring_cas_security_check#sfrclicid=EC_mire_Me-Connecter',
@@ -93,92 +93,92 @@ function logIn(requiredFields, bills, data, next) {
       _eventId: 'submit',
       username: requiredFields.login,
       password: requiredFields.password,
-      identifier: '',
-    },
-  };
+      identifier: ''
+    }
+  }
 
-  connector.logger.info('Logging in on Sfr website...');
+  connector.logger.info('Logging in on Sfr website...')
 
   request(options, (err) => {
     if (err) {
-      connector.logger.info(err);
-      return next('bad credentials');
+      connector.logger.info(err)
+      return next('bad credentials')
     }
 
-    connector.logger.info('Successfully logged in.');
-    return next();
-  });
+    connector.logger.info('Successfully logged in.')
+    return next()
+  })
 }
 
-function fetchBillingInfo(requiredFields, bills, data, next) {
-  const url = 'https://espace-client.sfr.fr/facture-fixe/consultation';
+function fetchBillingInfo (requiredFields, bills, data, next) {
+  const url = 'https://espace-client.sfr.fr/facture-fixe/consultation'
 
-  connector.logger.info('Fetch bill info');
+  connector.logger.info('Fetch bill info')
   const options = {
     method: 'GET',
-    url,
-  };
+    url
+  }
   request(options, (err, res, body) => {
     if (err) {
-      log.error('An error occured while fetching bills');
-      log.raw(err);
-      return next(err);
+      log.error('An error occured while fetching bills')
+      log.raw(err)
+      return next(err)
     }
-    connector.logger.info('Fetch bill info succeeded');
+    connector.logger.info('Fetch bill info succeeded')
 
-    data.html = body;
-    return next();
-  });
+    data.html = body
+    return next()
+  })
 }
 
-function parsePage(requiredFields, bills, data, next) {
-  bills.fetched = [];
-  moment.locale('fr');
-  const $ = cheerio.load(data.html);
+function parsePage (requiredFields, bills, data, next) {
+  bills.fetched = []
+  moment.locale('fr')
+  const $ = cheerio.load(data.html)
 
-  $('#tab tr').each(function each() {
-    let date = $(this).find('.date').text();
+  $('#tab tr').each(function each () {
+    let date = $(this).find('.date').text()
     let prix = $(this).find('.prix').text()
                                     .replace('€', '')
-                                    .replace(',', '.');
-    let pdf = $(this).find('.liens a').attr('href');
-    date = date.split(' ');
-    date.pop();
-    date = date.join(' ');
-    date = moment(date, 'D MMM YYYY');
-    prix = parseFloat(prix);
-    pdf = `https://espace-client.sfr.fr${pdf}`;
+                                    .replace(',', '.')
+    let pdf = $(this).find('.liens a').attr('href')
+    date = date.split(' ')
+    date.pop()
+    date = date.join(' ')
+    date = moment(date, 'D MMM YYYY')
+    prix = parseFloat(prix)
+    pdf = `https://espace-client.sfr.fr${pdf}`
 
     const bill = {
       date,
       type: 'Internet',
       amount: prix,
       pdfurl: pdf,
-      vendor: 'Sfr',
-    };
-    bills.fetched.push(bill);
-  });
-  connector.logger.info('Successfully parsed the page');
-  next();
+      vendor: 'Sfr'
+    }
+    bills.fetched.push(bill)
+  })
+  connector.logger.info('Successfully parsed the page')
+  next()
 }
 
-function customFilterExisting(requiredFields, bills, data, next) {
-  filterExisting(log, Bill)(requiredFields, bills, data, next);
+function customFilterExisting (requiredFields, bills, data, next) {
+  filterExisting(log, Bill)(requiredFields, bills, data, next)
 }
 
-function customSaveDataAndFile(requiredFields, bills, data, next) {
-  const fnsave = saveDataAndFile(log, Bill, fileOptions, ['bill']);
-  fnsave(requiredFields, bills, data, next);
+function customSaveDataAndFile (requiredFields, bills, data, next) {
+  const fnsave = saveDataAndFile(log, Bill, fileOptions, ['bill'])
+  fnsave(requiredFields, bills, data, next)
 }
 
-function buildNotifContent(requiredFields, bills, data, next) {
+function buildNotifContent (requiredFields, bills, data, next) {
   if (bills.filtered.length > 0) {
-    const localizationKey = 'notification bills';
+    const localizationKey = 'notification bills'
     const options = {
-      smart_count: bills.filtered.length,
-    };
-    bills.notifContent = localization.t(localizationKey, options);
+      smart_count: bills.filtered.length
+    }
+    bills.notifContent = localization.t(localizationKey, options)
   }
 
-  next();
+  next()
 }

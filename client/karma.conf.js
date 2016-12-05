@@ -1,7 +1,7 @@
 var webpackConfig = require('./webpack.test.config.js')
 delete webpackConfig.entry
 
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     basePath: '',
 
@@ -12,19 +12,19 @@ module.exports = function(config) {
     reporters: ['mocha'],
 
     files: [
-      "test/index.js"
+      'test/index.js'
     ],
 
     preprocessors: {
-      "test/index.js": ["webpack"],
+      'test/index.js': ['webpack']
     },
 
     plugins: [
-     'karma-mocha',
-     'karma-mocha-reporter',
-     'karma-firefox-launcher',
-     'karma-babel-preprocessor',
-     'karma-webpack'
+      'karma-mocha',
+      'karma-mocha-reporter',
+      'karma-firefox-launcher',
+      'karma-babel-preprocessor',
+      'karma-webpack'
     ],
 
     webpack: webpackConfig,
@@ -35,5 +35,5 @@ module.exports = function(config) {
     },
 
     singleRun: true
-  });
-};
+  })
+}

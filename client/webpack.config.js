@@ -1,13 +1,13 @@
 'use strict'
 
 const path = require('path')
-const fs   = require('fs')
+const fs = require('fs')
 
 const webpack = require('webpack')
 const autoprefixer = require('autoprefixer')
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const CopyPlugin        = require('copy-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 
 // use the `OPTIMIZE` env to switch from dev to production build
@@ -21,38 +21,38 @@ const optimize = process.env.OPTIMIZE === 'true'
  * customized via PostCSS
  * - images are cache-busted in production build
  */
-const cssOptions = optimize? 'css?-svgo&-autoprefixer&-mergeRules':'css'
-const imgPath = 'img/' + '[name]' + (optimize? '.[hash]': '') + '.[ext]'
+const cssOptions = optimize ? 'css?-svgo&-autoprefixer&-mergeRules' : 'css'
+const imgPath = 'img/' + '[name]' + (optimize ? '.[hash]' : '') + '.[ext]'
 
 let loaders = [
-    {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['es2015'],
-          plugins: [["transform-react-jsx", { "pragma":"h" }]]
-        }
-    },
-    {
-        test: /\.json$/,
-        loader: 'json'
-    },
-    {
-        test: /\.styl$/,
-        loader: ExtractTextPlugin.extract('style', cssOptions + '!postcss-loader!stylus')
-    },
-    {
-        test: /\.svg$/,
-        include: /(sprites|icons)/,
-        loader: 'svg-sprite?name=[name]_[hash]'
-    },
-    {
-        test: /\.(png|gif|jpe?g|svg)$/i,
-        exclude: /(vendor|sprites|icons)/,
-        loader: 'file?name=' + imgPath
+  {
+    test: /\.jsx?$/,
+    exclude: /node_modules/,
+    loader: 'babel-loader',
+    query: {
+      presets: ['es2015'],
+      plugins: [['transform-react-jsx', { 'pragma': 'h' }]]
     }
-];
+  },
+  {
+    test: /\.json$/,
+    loader: 'json'
+  },
+  {
+    test: /\.styl$/,
+    loader: ExtractTextPlugin.extract('style', cssOptions + '!postcss-loader!stylus')
+  },
+  {
+    test: /\.svg$/,
+    include: /(sprites|icons)/,
+    loader: 'svg-sprite?name=[name]_[hash]'
+  },
+  {
+    test: /\.(png|gif|jpe?g|svg)$/i,
+    exclude: /(vendor|sprites|icons)/,
+    loader: 'file?name=' + imgPath
+  }
+]
 
 /**
  * Configure Webpack's plugins to tweaks outputs:
@@ -73,45 +73,44 @@ let loaders = [
  *   http://localhost:3000, proxified to the server app port
  */
 let plugins = [
-    new ExtractTextPlugin(optimize? 'app.[hash].css' : 'app.css'),
-    new CopyPlugin([
-        { from: 'vendor/assets', ignore: ['.gitkeep'] }
-    ])
-];
+  new ExtractTextPlugin(optimize ? 'app.[hash].css' : 'app.css'),
+  new CopyPlugin([
+    { from: 'vendor/assets', ignore: ['.gitkeep'] }
+  ])
+]
 
 if (optimize) {
-    plugins = plugins.concat([
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.OccurenceOrderPlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-            mangle: true,
-            compress: {
-                warnings: false
-            },
-        }),
-        new webpack.DefinePlugin({
-            __SERVER__:      !optimize,
-            __DEVELOPMENT__: !optimize,
-            __DEVTOOLS__:    !optimize
-        }),
-        function() {
-            this.plugin("done", function(stats) {
-                fs.writeFileSync(
-                    path.join(__dirname, '..', 'build', 'assets.json'),
-                    '{"hash":"' + stats.hash + '"}'
-                );
-            });
-        }
-    ]);
+  plugins = plugins.concat([
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({
+      mangle: true,
+      compress: {
+        warnings: false
+      }
+    }),
+    new webpack.DefinePlugin({
+      __SERVER__: !optimize,
+      __DEVELOPMENT__: !optimize,
+      __DEVTOOLS__: !optimize
+    }),
+    function () {
+      this.plugin('done', function (stats) {
+        fs.writeFileSync(
+          path.join(__dirname, '..', 'build', 'assets.json'),
+          '{"hash":"' + stats.hash + '"}'
+        )
+      })
+    }
+  ])
 } else {
-    plugins = plugins.concat([
-        new BrowserSyncPlugin({
-            proxy: 'http://localhost:' + (process.env.PORT || 9358) + '/',
-            open: false
-        })
-    ]);
+  plugins = plugins.concat([
+    new BrowserSyncPlugin({
+      proxy: 'http://localhost:' + (process.env.PORT || 9358) + '/',
+      open: false
+    })
+  ])
 }
-
 
 /**
  * Webpack config
@@ -121,36 +120,37 @@ if (optimize) {
  */
 
 module.exports = {
-    entry: './app',
-    output: {
-        path: path.join(optimize? '../build/client' : '.', 'public'),
-        filename: optimize? 'app.[hash].js' : 'app.js'
-    },
-    resolve: {
-        extensions: ['', '.js', '.jsx', '.json'],
-        fallback: path.join(__dirname, "node_modules"), // so that npm linked libs can be found
-        alias: {
-            'react': 'preact-compat',
-            'react-dom': 'preact-compat'
-        }
-    },
-    resolveLoader: { fallback: path.join(__dirname, "node_modules") },
-    debug: !optimize,
-    devtool: 'source-map',
-    module: {
-        loaders: loaders
-    },
-    plugins: plugins,
-    postcss: function() {
-        return [
-            autoprefixer({
-                browsers: [
-                    'last 2 versions'
-                ]
-            })
-        ]
-    },
-    stylus: {
-        use: [require('cozy-ui/lib/stylus')()]
+  entry: './app',
+  output: {
+    path: path.join(optimize ? '../build/client' : '.', 'public'),
+    filename: optimize ? 'app.[hash].js' : 'app.js'
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx', '.json'],
+    // so that npm linked libs can be found
+    fallback: path.join(__dirname, 'node_modules'),
+    alias: {
+      'react': 'preact-compat',
+      'react-dom': 'preact-compat'
     }
-};
+  },
+  resolveLoader: { fallback: path.join(__dirname, 'node_modules') },
+  debug: !optimize,
+  devtool: 'source-map',
+  module: {
+    loaders: loaders
+  },
+  plugins: plugins,
+  postcss: function () {
+    return [
+      autoprefixer({
+        browsers: [
+          'last 2 versions'
+        ]
+      })
+    ]
+  },
+  stylus: {
+    use: [require('cozy-ui/lib/stylus')()]
+  }
+}

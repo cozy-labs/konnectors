@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 // Import Vue and the component being tested
 // import { expect } from 'chai'
 // import Vue from 'vue'
@@ -11,11 +12,9 @@
 //   listItem.props.title = 'A component title'
 //   listItem.props.link = '#'
 
-
 //   afterEach(function() {
 //     if (vm && vm._isMounted) vm.$destroy()
 //   })
-
 
 //   describe('data property', () => {
 //     it('sets the correct default data', () => {
@@ -33,7 +32,6 @@
 //       expect(componentCreated.$data)
 //         .to.deep.equal(expectedData)
 //     })
-
 
 //     it('sets the correct data if backgroundCSS provided', () => {
 //       expect(listItem.data).to.be.a('function')
@@ -58,7 +56,6 @@
 //     })
 //   })
 
-
 //   describe('computed property', () => {
 //     it('sets no icon by default', () => {
 //       expect(listItem.computed.icon).to.be.a('function')
@@ -70,7 +67,6 @@
 //       expect(componentCreated.icon)
 //         .to.deep.equal('')
 //     })
-
 
 //     it('sets default icon if enableDefaultIcon is true and no iconName is provided', () => {
 //       expect(listItem.computed.icon).to.be.a('function')
@@ -90,7 +86,6 @@
 //       // clean
 //       delete listItem.computed.enableDefaultIcon
 //     })
-
 
 //     it('sets correct icon if existing icon name is provided', () => {
 //       expect(listItem.computed.icon).to.be.a('function')

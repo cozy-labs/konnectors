@@ -3,9 +3,10 @@
  *
  */
 
-'use strict';
+'use strict'
 
-import { h, render, Component } from 'preact'
+/** @jsx h */
+import { h, Component } from 'preact'
 import Polyglot from 'node-polyglot'
 import en from '../locales/en'
 
@@ -16,7 +17,7 @@ const init = function (context, lang) {
   })
 
   // Load global locales
-  if (lang && lang != 'en') {
+  if (lang && lang !== 'en') {
     try {
       const dict = require(`../locales/${lang}`)
       polyglot.extend(dict)
@@ -41,22 +42,22 @@ const init = function (context, lang) {
 
 // Provider root component
 export class I18n extends Component {
-  constructor(props) {
-    super(props);
-    this.polyglot = init(props.context, props.lang);
+  constructor (props) {
+    super(props)
+    this.polyglot = init(props.context, props.lang)
   }
 
-  getChildContext() {
-    return { t: this.polyglot.t.bind(this.polyglot) };
+  getChildContext () {
+    return { t: this.polyglot.t.bind(this.polyglot) }
   }
-  
-  componentWillReceiveProps(newProps) {
+
+  componentWillReceiveProps (newProps) {
     if (newProps.locale !== this.props.locale) {
-      this.polyglot = init(newProps.context, newProps.lang);
+      this.polyglot = init(newProps.context, newProps.lang)
     }
- }
+  }
 
-  render({children}) {
+  render ({children}) {
     return children && children[0] || null
   }
 }
