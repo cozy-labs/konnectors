@@ -9,7 +9,7 @@ import CategoryList from './components/CategoryList'
 import ConnectedList from './components/ConnectedList'
 import AccountDialog from './components/AccountDialog'
 import UseCaseDialog from './components/UseCaseDialog'
-import UseCasesHelper from './lib/UseCasesHelper'
+import UseCasesHelper from './lib/useCasesHelper'
 
 import './styles/index.styl'
 

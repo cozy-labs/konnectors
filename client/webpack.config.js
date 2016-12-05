@@ -127,11 +127,14 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.js', '.jsx', '.json'],
+    // so that npm linked libs can be found
+    fallback: path.join(__dirname, 'node_modules'),
     alias: {
       'react': 'preact-compat',
       'react-dom': 'preact-compat'
     }
   },
+  resolveLoader: { fallback: path.join(__dirname, 'node_modules') },
   debug: !optimize,
   devtool: 'source-map',
   module: {

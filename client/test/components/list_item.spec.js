@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 // Import Vue and the component being tested
 // import { expect } from 'chai'
 // import Vue from 'vue'
