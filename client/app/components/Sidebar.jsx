@@ -10,7 +10,7 @@ const Sidebar = ({ t, categories, router }) => {
       <h4>{t('my_accounts title')}</h4>
       <ul role='navigation'>
         <li>
-          <Link to='/' activeClassName='router-link-active'>
+          <Link to='/discovery' activeClassName='router-link-active'>
             <svg>
               <use
                 xlinkHref={require('../assets/sprites/icon-discovery.svg')}
