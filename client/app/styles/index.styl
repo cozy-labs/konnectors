@@ -27,11 +27,8 @@ aside
         margin: 0
 
 [role="navigation"]
-    li
-        display: flex
-        flex-direction: row
-
     a
+        display: block
         text-decoration: none
         color: $red
         flex: 1
@@ -40,6 +37,18 @@ aside
 
         &:hover:not(.router-link-active)
             background-color: $grey-01-alpha
+
+    .submenu
+        margin-left: 3em
+
+        a
+            padding: 0.5em 1em
+            color: $grey-08
+
+        .router-link-active
+            color: white
+            background-color: $grey-08
+            border-radius: 4px 0 0 4px
 
     .router-link-active
         background-color: $red
