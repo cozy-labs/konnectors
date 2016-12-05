@@ -71,7 +71,7 @@ render((
       <Route
         path="/connected"
         component={(props) =>
-          <ConnectedList accounts={accounts} {...props} />}
+          <ConnectedList accounts={connectedAccounts} {...props} />}
       >
         <Route
           path=":account"
