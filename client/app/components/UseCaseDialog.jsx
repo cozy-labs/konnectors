@@ -8,12 +8,24 @@ const CloseButton = withRouter(({ router }) => (
   <button role='close' onClick={router.goBack}>Close</button>
 ))
 
+const getItemBackground = (item, context) => {
+  let background = 'rgb(0, 130, 230)'
+  if (item.figure && context) {
+    try {
+      let img = require(`../contexts/${context}/assets/img/${item.figure}`)
+      background = `center/100% url(${img})`
+    } catch (e) {
+      background = 'rgb(0, 130, 230)'
+    }
+  }
+  return background
+}
+
 const UseCaseDialog = ({ t, item, context }) => (
   <div role='dialog'>
     <div class='wrapper'>
       <div role='contentinfo'>
-        <header style={{background:
-          `center/100% url(${require(`../contexts/${context}/assets/img/${item.figure}`)})`}}
+        <header style={{background: getItemBackground(item, context)}}
         >
           <CloseButton />
         </header>
