@@ -52,6 +52,11 @@ getEDFToken = (requiredFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
 
+        errorCode = getF(result, 'ns:enteteSortie', 'ent:codeRetour')
+        if errorCode and errorCode isnt '0000'
+            K.logger.error getF result, \
+                'ns:enteteSortie', 'ent:libelleRetour '
+
         token = getF result['ns:msgReponse'], 'ns:corpsSortie', 'ns:jeton'
 
         if token?
@@ -82,6 +87,14 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
         try
+            errorCode = getF result, 'tns:EnteteSortie', 'tns:CodeErreur'
+            if errorCode and errorCode isnt 'PSC0000'
+                K.logger.error getF result, \
+                    'tns:EnteteSortie', 'tns:LibelleErreur'
+
+                return callback 'request error'
+
+
             client =
                 vendor: 'EDF'
                 docTypeVersion: K.docTypeVersion
@@ -314,6 +327,14 @@ fetchVisualiserPartenaire = (requiredFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
         try
+            errorCode = getF result, 'ns:enteteSortie', 'ent:codeRetour'
+            if errorCode and errorCode isnt '0'
+                K.logger.error getF result, \
+                    'tns:enteteSortie', 'tns:libelleRetour'
+
+                return callback() # Continue on error.
+
+
             partnerElem = getF result["ns:msgReponse"], \
                         "ns:corpsSortie", "ns:partenaire"
             client = {}
@@ -380,6 +401,15 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
         try
+            errorCode = getF result, 'ns:enteteSortie', 'ent:codeErreur'
+            if errorCode and errorCode isnt '0'
+                K.logger.error getF result, \
+                    'tns:enteteSortie', 'tns:libelleErreur'
+
+                return callback() # Continue on error.
+
+
+
             acoElem = getF result["ns:msgReponse"], "ns:corpsSortie", \
                 "ns:listeAccordCommerciaux", "ns:acordcommercial"
 
@@ -474,6 +504,14 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
         try
+            # Does API send an error ?
+            errorCode = getF result, 'ns:msgReponse', 'ns:enteteSortie', \
+                 'ent:codeRetour'
+            if errorCode and errorCode isnt '0'
+                K.logger.error getF result, 'ns:msgReponse', \
+                    'ns:enteteSortie' , 'ent:libelleRetour'
+                callback() # Continue, whitout error.
+
             listeEcheances = getF(result["ns:msgReponse"], "ns:corpsSortie", \
                 "ns:calendrierDePaiement")["ns:listeEcheances"]
 
@@ -600,6 +638,15 @@ fetchVisualiserHistoConso = (requiredFields, entries, data, callback) ->
             return callback err if err
 
             try
+
+                errorCode = getF result, 'ns:enteteSortie', 'ent:codeRetour'
+                if errorCode and errorCode isnt '0'
+                    K.logger.error getF result, \
+                        'tns:enteteSortie', 'tns:libelleRetour'
+
+                return callback() # Continue on error.
+
+
                 unless "ns:corpsSortie" of result["ns:msgReponse"]
                     K.logger.info "No histoConsos to fetch"
                     return callback null, []
@@ -1241,13 +1288,7 @@ _edfRequestPost = (path, body, callback) ->
         return callback 'request error' if err
         parser.parseString data, (err, result) ->
             return callback 'request error' if err
-            errorCode = getF result['ns:msgReponse'], \
-                        'ns:enteteSortie', 'ent:codeErreur'
-
-            if errorCode is '0' # means success.
-                errorCode = null
-
-            callback errorCode, result
+            callback null, result
 
 
 getEdelia = (accessToken, path, callback) ->
