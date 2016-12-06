@@ -1,5 +1,5 @@
 {
-  "name": "konnectors",
+  "name": "konnectorsdev",
   "version": "0.7.2",
   "description": "Set of connectors to fetch data from the web and store them into your Cozy.",
   "cozy-displayName": "My accounts",
