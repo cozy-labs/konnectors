@@ -41,7 +41,10 @@ render((
       <Redirect from='/' to='/discovery' />
       <Route
         path='/discovery'
-        component={(props) => <DiscoveryList useCases={useCases} {...props} />}
+        component={(props) =>
+          <DiscoveryList
+            useCases={useCases} context={context} {...props}
+          />}
       >
         <Route
           path=':useCase'
