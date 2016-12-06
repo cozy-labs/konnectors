@@ -1,7 +1,7 @@
 {
   "useCases":[{
     "slug": "phone-bills",
-    "konnectors": [{
+    "accounts": [{
       "slug": "virgin_mobile"
     }, {
       "slug": "sfr_mobile"
