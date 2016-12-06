@@ -31,6 +31,21 @@ const accountsByCategory = ({filter}) => {
     : unconnectedAccounts.filter(a => a.category === filter)
 }
 
+// complete a given use case with all related accounts object
+const completeUseCase = (usecase) => {
+  if (!usecase) return null
+  if (usecase.accounts) {
+    const completed = Object.assign({}, usecase)
+    completed.accounts = []
+    let account
+    usecase.accounts.map(a => {
+      account = accounts.find(u => u.slug === a.slug)
+      if (account) completed.accounts.push(account)
+    })
+    return completed
+  }
+}
+
 render((
   <Router history={hashHistory}>
     <Route
@@ -50,7 +65,10 @@ render((
           path=':useCase'
           component={(props) =>
             <UseCaseDialog
-              item={useCases.find(u => u.slug === props.params.useCase)}
+              item={completeUseCase(
+                  useCases.find(u => u.slug === props.params.useCase)
+              )}
+              context={context}
               {...props}
             />}
         />
