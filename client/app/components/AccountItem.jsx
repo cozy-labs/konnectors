@@ -5,7 +5,7 @@ import { translate } from '../plugins/preact-polyglot'
 
 const AccountItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white', enableDefaultIcon = false, router }) => (
   <Link class='item-wrapper' to={`${router.location.pathname}/${slug}`}>
-    <header style={{background: backgroundCSS}}>
+    <header class='item-header' style={{background: backgroundCSS}}>
       {iconName &&
         <svg class='item-icon'>
           <use xlinkHref={icon(iconName, enableDefaultIcon)} />

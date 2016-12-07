@@ -26,7 +26,9 @@ const UseCaseDialog = ({ t, item, context }) => (
   <div role='dialog' class='use-case-dialog'>
     <div class='wrapper'>
       <div role='contentinfo'>
-        <header style={{background: getItemBackground(item, context)}}
+        <header
+          class='dialog-header'
+          style={{background: getItemBackground(item, context)}}
         >
           <CloseButton />
         </header>

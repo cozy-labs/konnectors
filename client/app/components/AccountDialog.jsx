@@ -25,7 +25,10 @@ const AccountDialog = ({ t, item, iconName, enableDefaultIcon }) => (
   <div role='dialog' class='account-dialog'>
     <div class='wrapper'>
       <div role='contentinfo'>
-        <header style={{background: item.color.css || 'white'}}>
+        <header
+          class='dialog-header'
+          style={{background: item.color.css || 'white'}}
+        >
           <svg class='item-icon'>
             <use
               xlinkHref={getIcon(iconName || item.slug, enableDefaultIcon)}
