@@ -21,8 +21,9 @@ const getIcon = (iconName, enableDefaultIcon) => {
   return icon
 }
 
-const AccountDialog = ({ t, item, iconName, enableDefaultIcon }) => (
+const AccountDialog = ({ t, router, item, iconName, enableDefaultIcon }) => (
   <div role='dialog' class='account-dialog'>
+    <div role='separator' onClick={router.goBack} />
     <div class='wrapper'>
       <div role='contentinfo'>
         <header
