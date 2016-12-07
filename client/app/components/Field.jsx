@@ -22,10 +22,10 @@ const Field = (props) => {
 export default Field
 
 export const FieldWrapper = ({ required, label, dirty, touched, errors, children }) => {
-  var classes = classNames('ui-Field', {
-    'ui-Field--required': required === true,
-    'ui-Field--error': errors.length !== 0,
-    'ui-Field--dirty': dirty === true || touched === true
+  var classes = classNames('account-field', {
+    'account-field--required': required === true,
+    'account-field--error': errors.length !== 0,
+    'account-field--dirty': dirty === true || touched === true
   })
   return (
     <div className={classes}>

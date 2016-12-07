@@ -161,5 +161,6 @@
   "productivity category": "Productivity",
   "others category": "Others",
 
-  "my_accounts account config title": "Connect your %{name} account:"
+  "my_accounts account config title": "Connect your %{name} account:",
+  "my_accounts account config button": "Connect"
 }

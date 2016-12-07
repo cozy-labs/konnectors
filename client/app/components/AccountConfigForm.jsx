@@ -33,6 +33,9 @@ const formConfig = ({ fields, slug }) => {
 const AccountConfigForm = ({ t, fields, dirty, submit, submitting }) => (
   <div class='account-form'>
     {mapObject(fields, (field, name) => <Field label={t(name)} {...field} />)}
+    <div class='account-form-controls'>
+      <button>{t('my_accounts account config button')}</button>
+    </div>
   </div>
 )
 
