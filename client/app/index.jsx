@@ -50,7 +50,7 @@ render((
   <Router history={hashHistory}>
     <Route
       component={(props) =>
-        <App context={context} lang={lang} categories={categories}{...props}
+        <App context={context} lang={lang} categories={categories} {...props}
         />}
     >
       <Redirect from='/' to='/discovery' />
@@ -71,6 +71,24 @@ render((
               context={context}
               {...props}
             />}
+        />
+        <Route
+          path=':useCase/:account'
+          component={(props) =>
+            <div class='multi-dialogs-wrapper'>
+              <UseCaseDialog
+                item={completeUseCase(
+                    useCases.find(u => u.slug === props.params.useCase)
+                )}
+                context={context}
+                {...props}
+              />
+              <AccountDialog
+                item={accounts.find(a => a.slug === props.params.account)}
+                enableDefaultIcon
+                {...props}
+              />
+            </div>}
         />
       </Route>
       <Redirect from='/category' to='/category/all' />
