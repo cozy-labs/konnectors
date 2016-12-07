@@ -31,25 +31,64 @@ const accountsByCategory = ({filter}) => {
     : unconnectedAccounts.filter(a => a.category === filter)
 }
 
+// To complete a given use case with all related accounts object
+const completeUseCase = (usecase) => {
+  if (!usecase) return null
+  if (usecase.accounts) {
+    const completed = Object.assign({}, usecase)
+    completed.accounts = []
+    let account
+    usecase.accounts.map(a => {
+      account = accounts.find(u => u.slug === a.slug)
+      if (account) completed.accounts.push(account)
+    })
+    return completed
+  }
+}
+
 render((
   <Router history={hashHistory}>
     <Route
       component={(props) =>
-        <App context={context} lang={lang} categories={categories}{...props}
+        <App context={context} lang={lang} categories={categories} {...props}
         />}
     >
       <Redirect from='/' to='/discovery' />
       <Route
         path='/discovery'
-        component={(props) => <DiscoveryList useCases={useCases} {...props} />}
+        component={(props) =>
+          <DiscoveryList
+            useCases={useCases} context={context} {...props}
+          />}
       >
         <Route
           path=':useCase'
           component={(props) =>
             <UseCaseDialog
-              item={useCases.find(u => u.slug === props.params.useCase)}
+              item={completeUseCase(
+                  useCases.find(u => u.slug === props.params.useCase)
+              )}
+              context={context}
               {...props}
             />}
+        />
+        <Route
+          path=':useCase/:account'
+          component={(props) =>
+            <div class='multi-dialogs-wrapper'>
+              <UseCaseDialog
+                item={completeUseCase(
+                    useCases.find(u => u.slug === props.params.useCase)
+                )}
+                context={context}
+                {...props}
+              />
+              <AccountDialog
+                item={accounts.find(a => a.slug === props.params.account)}
+                enableDefaultIcon
+                {...props}
+              />
+            </div>}
         />
       </Route>
       <Redirect from='/category' to='/category/all' />
@@ -65,6 +104,7 @@ render((
           component={(props) =>
             <AccountDialog
               item={accounts.find(a => a.slug === props.params.account)}
+              enableDefaultIcon
               {...props}
             />}
         />
@@ -79,6 +119,7 @@ render((
           component={(props) =>
             <AccountDialog
               item={accounts.find(u => u.slug === props.params.account)}
+              enableDefaultIcon
               {...props}
             />}
         />
