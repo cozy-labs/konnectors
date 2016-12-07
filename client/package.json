@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "classnames": "^2.2.5",
     "node-polyglot": "2.0.0",
     "normalize.css": "5.0.0",
     "preact": "^6.4.0",

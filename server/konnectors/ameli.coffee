@@ -244,7 +244,7 @@ module.exports = baseKonnector.createNew
     fields:
         login: "text"
         password: "password"
-        bank_identifier: "string"
+        bank_identifier: "text"
         folderPath: "folder"
 
     models: [Bill]
