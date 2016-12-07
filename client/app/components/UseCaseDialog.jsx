@@ -5,7 +5,7 @@ import { withRouter } from 'react-router'
 import AccountItem from './AccountItem'
 
 const CloseButton = withRouter(({ router }) => (
-  <button role='close' onClick={router.goBack}>Close</button>
+  <div class='close-button' role='close' onClick={router.goBack} />
 ))
 
 const getItemBackground = (item, context) => {

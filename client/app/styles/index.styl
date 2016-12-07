@@ -116,6 +116,25 @@ aside
         padding 3em 1em
         box-sizing border-box
 
+    .close-button
+        height                  3em
+        width                   3em
+        cursor                  pointer
+        position                absolute
+        right                   4em
+        top                     3.5em
+        &:after, &:before
+            position            absolute
+            content             ' '
+            height              3em
+            width               2px
+            background-color    white
+            margin              0em 1.5em
+        &:after
+            transform: rotate(-45deg);
+        &:before
+            transform: rotate(45deg);
+
     [role=contentinfo]
         overflow            initial
         flex-direction      column
