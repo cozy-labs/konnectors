@@ -31,7 +31,7 @@ const accountsByCategory = ({filter}) => {
     : unconnectedAccounts.filter(a => a.category === filter)
 }
 
-// complete a given use case with all related accounts object
+// To complete a given use case with all related accounts object
 const completeUseCase = (usecase) => {
   if (!usecase) return null
   if (usecase.accounts) {
@@ -86,6 +86,7 @@ render((
           component={(props) =>
             <AccountDialog
               item={accounts.find(a => a.slug === props.params.account)}
+              enableDefaultIcon
               {...props}
             />}
         />
@@ -100,6 +101,7 @@ render((
           component={(props) =>
             <AccountDialog
               item={accounts.find(u => u.slug === props.params.account)}
+              enableDefaultIcon
               {...props}
             />}
         />

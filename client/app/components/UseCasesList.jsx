@@ -3,6 +3,7 @@ import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 import UseCaseItem from './AccountItem'
 
+// Fallback to get the item background image and avoid error if not found
 const getItemBackground = (item, context) => {
   let background = 'rgb(0, 130, 230)'
   if (item.figure && context) {

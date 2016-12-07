@@ -8,6 +8,7 @@ const CloseButton = withRouter(({ router }) => (
   <div class='close-button' role='close' onClick={router.goBack} />
 ))
 
+// Fallback to get the item background image and avoid error if not found
 const getItemBackground = (item, context) => {
   let background = 'rgb(0, 130, 230)'
   if (item.figure && context) {

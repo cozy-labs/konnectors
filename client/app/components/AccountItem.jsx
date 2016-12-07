@@ -17,9 +17,10 @@ const AccountItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white',
   </Link>
 )
 
+// Fallback to get the item icon and avoid error if not found
+// with a possible default icon
 const icon = (iconName, enableDefaultIcon) => {
   let icon = ''
-    // fallback to use a default icon if icon not found
   try {
     icon = require(`../assets/icons/${iconName}.svg`)
   } catch (e) {
