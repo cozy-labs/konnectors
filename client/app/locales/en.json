@@ -159,5 +159,7 @@
   "energy category": "Energy",
   "host_provider category": "Host",
   "productivity category": "Productivity",
-  "others category": "Others"
+  "others category": "Others",
+
+  "my_accounts account config title": "Connect your %{name} account:"
 }

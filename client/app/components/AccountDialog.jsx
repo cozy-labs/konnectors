@@ -28,7 +28,7 @@ const AccountDialog = ({ t, router, item, iconName, enableDefaultIcon }) => (
     <div role='separator' onClick={router.goBack} />
     <div class='wrapper'>
       <div role='contentinfo'>
-        <header
+        <div
           class='dialog-header'
           style={{background: item.color.css || 'white'}}
         >
@@ -38,13 +38,16 @@ const AccountDialog = ({ t, router, item, iconName, enableDefaultIcon }) => (
             />
           </svg>
           <CloseButton />
-        </header>
-        <main>
-          <h3>{item.name}</h3>
-          <div class=''>
+        </div>
+        <div class='dialog-content'>
+          <div>
+            <h3>Lorem ipsum</h3>
+          </div>
+          <div>
+            <h3>{t('my_accounts account config title', {name: item.name})}</h3>
             <AccountConfigForm fields={item.fields} slug={item.slug} />
           </div>
-        </main>
+        </div>
       </div>
     </div>
   </div>
