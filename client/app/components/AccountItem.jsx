@@ -18,15 +18,13 @@ const AccountItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white',
 )
 
 const icon = (iconName, enableDefaultIcon) => {
-  let icon
+  let icon = ''
     // fallback to use a default icon if icon not found
   try {
     icon = require(`../assets/icons/${iconName}.svg`)
   } catch (e) {
     if (enableDefaultIcon) {
       icon = require('../assets/icons/default_myaccount.svg')
-    } else {
-      icon = ''
     }
   }
   return icon
