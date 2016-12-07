@@ -22,8 +22,9 @@ const getItemBackground = (item, context) => {
   return background
 }
 
-const UseCaseDialog = ({ t, item, context }) => (
+const UseCaseDialog = ({ t, router, item, context }) => (
   <div role='dialog' class='use-case-dialog'>
+    <div role='separator' onClick={router.goBack} />
     <div class='wrapper'>
       <div role='contentinfo'>
         <header
