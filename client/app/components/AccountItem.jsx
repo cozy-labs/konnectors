@@ -5,7 +5,7 @@ import { translate } from '../plugins/preact-polyglot'
 
 const AccountItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white', enableDefaultIcon = false, router }) => (
   <Link class='item-wrapper' to={`${router.location.pathname}/${slug}`}>
-    <header style={{background: backgroundCSS}}>
+    <header class='item-header' style={{background: backgroundCSS}}>
       {iconName &&
         <svg class='item-icon'>
           <use xlinkHref={icon(iconName, enableDefaultIcon)} />
@@ -17,16 +17,15 @@ const AccountItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white',
   </Link>
 )
 
+// Fallback to get the item icon and avoid error if not found
+// with a possible default icon
 const icon = (iconName, enableDefaultIcon) => {
-  let icon
-    // fallback to use a default icon if icon not found
+  let icon = ''
   try {
     icon = require(`../assets/icons/${iconName}.svg`)
   } catch (e) {
     if (enableDefaultIcon) {
       icon = require('../assets/icons/default_myaccount.svg')
-    } else {
-      icon = ''
     }
   }
   return icon

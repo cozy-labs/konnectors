@@ -16,9 +16,9 @@ This document describes the context of using _use-cases_ in MyAccounts app, how 
 What are use-cases?
 -------------------
 
-A **use-case** is a way to sort and filter konnectors by an arbitrary denominator (e.g. _all konnectors that concerns billing_). It allows a user to browse available konnectors in a different way than browsing by categories. The user can discover some konnectors by selecting first a _use-case_ (aka a scenario) that cover usages, and see what konnectors can be suggested.
+A **use-case** is a way to sort and filter accounts by an arbitrary denominator (e.g. _all accounts that concerns billing_). It allows a user to browse available accounts in a different way than browsing by categories. The user can discover some accounts by selecting first a _use-case_ (aka a scenario) that cover usages, and see what accounts can be suggested.
 
-_MyAccounts_ can provide many _use-cases_, that can be configured, which means that an hoster can offer a different way to discover available konnectors (aka present different _use-cases_).
+_MyAccounts_ can provide many _use-cases_, that can be configured, which means that an hoster can offer a different way to discover available accounts (aka present different _use-cases_).
 
 
 How to define a use-case?
@@ -31,7 +31,7 @@ The `context` value is the one that defines in which context _MyAccounts_ app ru
 Adding a _use-case_ simply mean adding a new object into the _use-cases_ array, that provides the following keys (see the _Architecture_ section below for a complete list and informations):
 
 - `slug`: `<String>` the slugname for the use-case
-- `konnectors`: `<Array[Obj]>` an array of objects defining the konnectors
+- `accounts`: `<Array[Obj]>` an array of objects defining the accounts
 - `figure`: `<String>` the picture file that illustrate the use-case
 - `color`: `<Color>` a color object that defines the color of the use-case
 - `default`: `<Bool>` a `true|false` value that defines this use-case as the default one
@@ -47,7 +47,7 @@ There's two kind of default values for a _use-case_:
 
 ### the `default` key
 
-it defines if this _use-case_ is the default one. When we access the _use-cases_ screen (`/discover` URI), it offers a list of _use-cases_ screen, each one redirecting to a _use-case_ view (or the konnector if the _use-case_ only contains one).
+it defines if this _use-case_ is the default one. When we access the _use-cases_ screen (`/discover` URI), it offers a list of _use-cases_ screen, each one redirecting to a _use-case_ view (or the account if the _use-case_ only contains one).
 
 Sometimes, we need to directly open a _use-case_ screen without passing by the `/discover` view (this is the case when user access to _MyAccounts_ from the onboarding). In this case, this is the default _use-case_ which is displayed.
 
@@ -55,9 +55,9 @@ Sometimes, we need to directly open a _use-case_ screen without passing by the `
 
 ### The _incentive_
 
-When displaying a _use-case_ screen, a konnector can be highlighted first to incitate the user to first configure this one. Into the `konnectors` array, the _Konnector Object_ can define a `default` key at `true` to declare it as the _incentive_ one.
+When displaying a _use-case_ screen, an account can be highlighted first to incitate the user to first configure this one. Into the `accounts` array, the _account Object_ can define a `default` key at `true` to declare it as the _incentive_ one.
 
-⚠️ as for the _use-cases_ array, if more than one konnector has a `default` key set to true, only the first one in the array is considered as the _incentive_ one.
+⚠️ as for the _use-cases_ array, if more than one account has a `default` key set to true, only the first one in the array is considered as the _incentive_ one.
 
 
 Localization
@@ -82,8 +82,8 @@ A manifest should have the following structure:
 {
   "use-cases": [{
     "slug": "the use-case slug",
-    "konnectors": [{
-      "slug": "konnector-to-add-slugname",
+    "accounts": [{
+      "slug": "account-to-add-slugname",
       "default": true,
       "important": true
     }],
@@ -97,9 +97,9 @@ A manifest should have the following structure:
 }
 ```
 
-The `important` key indicate if the _use-case_/_konnector_ is recommended or not.
+The `important` key indicate if the _use-case_/_account_ is recommended or not.
 
 The `default` key indicate if:
 
 - the _use-case_ is the one displayed by default (_onboarding_ view)
-- the _konnector_ into the list is the incentive one
+- the _account_ into the list is the incentive one
