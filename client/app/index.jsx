@@ -102,6 +102,7 @@ render((
             path='/category/:filter'
             component={(props) =>
               <CategoryList
+                category={props.params.filter}
                 accounts={accountsByCategory(props.params)} {...props}
               />}
           >

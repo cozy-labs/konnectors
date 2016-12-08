@@ -12,6 +12,7 @@ const formConfig = ({ fields, slug }) => {
   let newFields = {}
   let values = {}
   Object.keys(fields).forEach(name => {
+    console.log(fields)
     type = fields[name]
     if (type === 'folder') {
       newFields[name] = { type: 'hidden' }
