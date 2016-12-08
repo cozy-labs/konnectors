@@ -55,10 +55,17 @@ module.exports =
     <p><%t konnector customview googlecontacts 3 %></p>
     """
     fields:
-        authCode: "hidden"
-        accountName: "label"
-        accessToken: "hidden"
-        refreshToken: "hidden"
+        authCode:
+            type: "text"
+            hidden: true
+        accountName:
+            type: "text"
+        accessToken:
+            type: "text"
+            hidden: true
+        refreshToken:
+            type: "text"
+            hidden: true
 
     models:
         contact: Contact

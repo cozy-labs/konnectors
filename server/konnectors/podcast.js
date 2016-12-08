@@ -45,8 +45,12 @@ const connector = module.exports = baseKonnector.createNew({
   models: [Track],
 
   fields: {
-    url: 'text',
-    folderPath: 'folder'
+    url: {
+      type: 'text'
+    },
+    folderPath: {
+      type: 'folder'
+    }
   },
 
   fetchOperations: [
