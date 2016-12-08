@@ -25,7 +25,7 @@ const getIcon = (iconName, enableDefaultIcon) => {
   return icon
 }
 
-const AccountDialog = ({ t, router, item, store, iconName, enableDefaultIcon }) => (
+const AccountDialog = ({ t, router, item, submitting, onConnectAccount, iconName, enableDefaultIcon }) => (
   <div role='dialog' class='account-dialog'>
     <div role='separator' onClick={router.goBack} />
     <div class='wrapper'>
@@ -47,7 +47,12 @@ const AccountDialog = ({ t, router, item, store, iconName, enableDefaultIcon }) 
           </div>
           <div>
             <h3>{t('my_accounts account config title', {name: item.name})}</h3>
-            <AccountConfigForm onSubmit={store.connectAccount.bind(this, item.slug)} fields={item.fields} slug={item.slug} />
+            <AccountConfigForm
+              fields={item.fields}
+              slug={item.slug}
+              onSubmit={values => onConnectAccount(item.id, values)}
+              submitting={submitting}
+            />
           </div>
         </div>
       </div>
@@ -55,6 +60,19 @@ const AccountDialog = ({ t, router, item, store, iconName, enableDefaultIcon }) 
   </div>
 )
 
-export default connectToStore()(
+export default connectToStore(
+  state => {
+    return {
+      submitting: state.working
+    }
+  },
+  (store, props) => {
+    return {
+      onConnectAccount: (accountId, values) => {
+        store.connectAccount(accountId, values)
+      }
+    }
+  }
+)(
   translate()(AccountDialog)
 )

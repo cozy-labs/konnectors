@@ -33,7 +33,7 @@ const AccountConfigForm = ({ t, fields, dirty, submit, submitting }) => (
   <div class='account-form'>
     {mapObject(fields, (field, name) => <Field label={t(name)} {...field} />)}
     <div class='account-form-controls'>
-      <button onClick={submit}>{t('my_accounts account config button')}</button>
+      <button aria-busy={submitting ? 'true': 'false'} onClick={submit}>{t('my_accounts account config button')}</button>
     </div>
   </div>
 )
