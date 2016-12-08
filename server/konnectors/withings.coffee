@@ -80,8 +80,10 @@ module.exports =
         css: '#0D9EE3'
 
     fields:
-        email: "text"
-        password: "password"
+        email:
+            type: "text"
+        password:
+            type: "password"
     models:
         scalemeasure: Weight
         heartbeat: HeartBeat

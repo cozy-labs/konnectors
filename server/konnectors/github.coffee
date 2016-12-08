@@ -46,9 +46,12 @@ module.exports =
         css: '#161615'
 
     fields:
-        login: "text"
-        password: "password"
-        folderPath: "folder"
+        login:
+            type: "text"
+        password:
+            type: "password"
+        folderPath:
+            type: "folder"
     models:
         codebill: CodeBill
 

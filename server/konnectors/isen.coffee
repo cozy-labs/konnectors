@@ -35,7 +35,8 @@ module.exports =
         css: '#E21910'
 
     fields:
-        email: "text"
+        email:
+            type: "text"
     models:
         file: File
         folder: Folder
