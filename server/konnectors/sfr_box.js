@@ -34,9 +34,15 @@ const connector = module.exports = baseKonnector.createNew({
     css: 'linear-gradient(90deg, #EF0001 0%, #9E0017 100%)'
   },
   fields: {
-    login: 'text',
-    password: 'password',
-    folderPath: 'folder'
+    login: {
+      type: 'text'
+    },
+    password: {
+      type: 'password'
+    },
+    folderPath: {
+      type: 'folder'
+    }
   },
   models: [Bill],
   fetchOperations: [

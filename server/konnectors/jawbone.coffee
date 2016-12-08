@@ -56,8 +56,10 @@ module.exports =
         css: '#1A1919'
 
     fields:
-        login: "text"
-        password: "password"
+        login:
+            type: "text"
+        password:
+            type: "password"
 
     models:
         moves: Steps

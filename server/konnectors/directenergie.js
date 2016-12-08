@@ -22,9 +22,15 @@ const connector = module.exports = factory.createNew({
     css: 'linear-gradient(-180deg, #FFE600 0%, #FFDF00 51%, #FFD400 98%)'
   },
   fields: {
-    login: 'text',
-    password: 'password',
-    folderPath: 'folder'
+    login: {
+      type: 'text'
+    },
+    password: {
+      type: 'password'
+    },
+    folderPath: {
+      type: 'folder'
+    }
   },
   models: [Bill],
   fetchOperations: [

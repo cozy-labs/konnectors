@@ -40,9 +40,15 @@ const connector = module.exports = baseKonnector.createNew({
     css: '#0088CE'
   },
   fields: {
-    login: 'text',
-    password: 'password',
-    calendar: 'text'
+    login: {
+      type: 'text'
+    },
+    password: {
+      type: 'password'
+    },
+    calendar: {
+      type: 'text'
+    }
   },
 
   models: [Event, Bill],

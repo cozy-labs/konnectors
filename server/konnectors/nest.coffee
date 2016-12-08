@@ -57,8 +57,10 @@ module.exports =
         css: '#8C979B'
 
     fields:
-        email: "text"
-        password: "password"
+        email:
+            type: "text"
+        password:
+            type: "password"
     models:
         nestTemperature: Temperature
 

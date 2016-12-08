@@ -43,9 +43,12 @@ module.exports =
         css: '#CD1E25'
 
     fields:
-        login: "text"
-        password: "password"
-        folderPath: "folder"
+        login:
+            type: "text"
+        password:
+            type: "password"
+        folderPath:
+            type: "folder"
     models:
         internetbill: InternetBill
 

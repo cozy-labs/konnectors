@@ -49,9 +49,15 @@ const connector = module.exports = baseKonnector.createNew({
     css: '#E8308A'
   },
   fields: {
-    login: 'text',
-    password: 'password',
-    folderPath: 'folder'
+    login: {
+      type: 'text'
+    },
+    password: {
+      type: 'password'
+    },
+    folderPath: {
+      type: 'folder'
+    }
   },
   models: [Bill],
   fetchOperations: [

@@ -26,8 +26,12 @@ const connector = module.exports = baseKonnector.createNew({
   },
 
   fields: {
-    tag: 'text',
-    calendar: 'text'
+    tag: {
+      type: 'text'
+    },
+    calendar: {
+      type: 'text'
+    }
   },
 
   models: [Event],
