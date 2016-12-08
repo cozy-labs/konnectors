@@ -26,8 +26,11 @@ describe 'Check all konnectors', ->
                     it "a slug", ->
                         should.exist konnector.slug
 
-                    it "fields", ->
+                    it "fields which are objects with a type property", ->
                         should.exist konnector.fields
+                        for fieldName in konnector.fields
+                            konnector.fields[fieldName].should.be.an.Object
+                            should.exist konnector.fields[fieldName].type
 
                     it "models", ->
                         should.exist konnector.models
