@@ -86,6 +86,10 @@ An account connector can define different sort of fields for its configuration f
         password: { // no default value expected
             type: 'password'
         },
+        email: {
+            type: 'text',
+            placeholder: 'example@domain.fr'
+        },
         calendar: {
             type: 'text',
             default: 'My connector calendar'
@@ -100,7 +104,8 @@ An account connector can define different sort of fields for its configuration f
         },
         customField: {
             type: 'text',
-            default: 'custom default value'
+            default: 'custom default value',
+            hidden: true
         }
     }
 ```
@@ -123,6 +128,13 @@ customField: {
     default: 'custom default value'
 }
 ```
+
+### Available properties
+
+* __`type`__ (mandatory): HTML input type attribute
+* __`default`__ (optional): default value of the field (different from the placeholder)
+* __`hidden`__ (optional): to hide the input if the value is `true`
+* __`placeholder`__ (optional): placeholder for compatible input (text type for example)
 
 ### Variables available for default value
 These variables will be automatically replaced by the application at the configuration form display.
