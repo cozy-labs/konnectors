@@ -3,6 +3,8 @@ import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 import { withRouter } from 'react-router'
 
+import { connectToStore } from '../lib/accountStore'
+
 import AccountConfigForm from './AccountConfigForm'
 
 const CloseButton = withRouter(({ router }) => (
@@ -23,7 +25,7 @@ const getIcon = (iconName, enableDefaultIcon) => {
   return icon
 }
 
-const AccountDialog = ({ t, router, item, iconName, enableDefaultIcon }) => (
+const AccountDialog = ({ t, router, item, store, iconName, enableDefaultIcon }) => (
   <div role='dialog' class='account-dialog'>
     <div role='separator' onClick={router.goBack} />
     <div class='wrapper'>
@@ -45,7 +47,7 @@ const AccountDialog = ({ t, router, item, iconName, enableDefaultIcon }) => (
           </div>
           <div>
             <h3>{t('my_accounts account config title', {name: item.name})}</h3>
-            <AccountConfigForm fields={item.fields} slug={item.slug} />
+            <AccountConfigForm onSubmit={store.connectAccount.bind(this, item.slug)} fields={item.fields} slug={item.slug} />
           </div>
         </div>
       </div>
@@ -53,4 +55,6 @@ const AccountDialog = ({ t, router, item, iconName, enableDefaultIcon }) => (
   </div>
 )
 
-export default translate()(AccountDialog)
+export default connectToStore()(
+  translate()(AccountDialog)
+)

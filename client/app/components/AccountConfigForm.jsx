@@ -8,7 +8,6 @@ import Field from './Field'
 const mapObject = (obj, cb) => Object.keys(obj).map(k => cb(obj[k], k))
 
 const formConfig = ({ fields, slug }) => {
-  console.log(fields)
   let type
   let newFields = {}
   let values = {}
@@ -34,7 +33,7 @@ const AccountConfigForm = ({ t, fields, dirty, submit, submitting }) => (
   <div class='account-form'>
     {mapObject(fields, (field, name) => <Field label={t(name)} {...field} />)}
     <div class='account-form-controls'>
-      <button>{t('my_accounts account config button')}</button>
+      <button onClick={submit}>{t('my_accounts account config button')}</button>
     </div>
   </div>
 )

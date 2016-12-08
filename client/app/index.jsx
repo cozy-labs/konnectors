@@ -3,6 +3,8 @@ import './lib/polyfills'
 import { h, render } from 'preact'
 import { Router, Route, Redirect, hashHistory } from 'react-router'
 
+import { AccountStore, Provider } from './lib/accountStore'
+
 import App from './components/App'
 import DiscoveryList from './components/DiscoveryList'
 import CategoryList from './components/CategoryList'
@@ -17,6 +19,7 @@ const lang = document.documentElement.getAttribute('lang') || 'en'
 const context = window.context || 'cozy'
 // accounts
 const accounts = window.initKonnectors
+const store = new AccountStore(accounts)
 const connectedAccounts = accounts.filter(a => a.accounts.length !== 0)
 const unconnectedAccounts = accounts.filter(a => a.accounts.length === 0)
 // use cases
@@ -47,83 +50,85 @@ const completeUseCase = (usecase) => {
 }
 
 render((
-  <Router history={hashHistory}>
-    <Route
-      component={(props) =>
-        <App context={context} lang={lang} categories={categories} {...props}
-        />}
-    >
-      <Redirect from='/' to='/discovery' />
+  <Provider store={store}>
+    <Router history={hashHistory}>
       <Route
-        path='/discovery'
         component={(props) =>
-          <DiscoveryList
-            useCases={useCases} context={context} {...props}
+          <App context={context} lang={lang} categories={categories} {...props}
           />}
       >
+        <Redirect from='/' to='/discovery' />
         <Route
-          path=':useCase'
+          path='/discovery'
           component={(props) =>
-            <UseCaseDialog
-              item={completeUseCase(
-                  useCases.find(u => u.slug === props.params.useCase)
-              )}
-              context={context}
-              {...props}
+            <DiscoveryList
+              useCases={useCases} context={context} {...props}
             />}
-        />
-        <Route
-          path=':useCase/:account'
-          component={(props) =>
-            <div class='multi-dialogs-wrapper'>
+        >
+          <Route
+            path=':useCase'
+            component={(props) =>
               <UseCaseDialog
                 item={completeUseCase(
                     useCases.find(u => u.slug === props.params.useCase)
                 )}
                 context={context}
                 {...props}
-              />
+              />}
+          />
+          <Route
+            path=':useCase/:account'
+            component={(props) =>
+              <div class='multi-dialogs-wrapper'>
+                <UseCaseDialog
+                  item={completeUseCase(
+                      useCases.find(u => u.slug === props.params.useCase)
+                  )}
+                  context={context}
+                  {...props}
+                />
+                <AccountDialog
+                  item={accounts.find(a => a.slug === props.params.account)}
+                  enableDefaultIcon
+                  {...props}
+                />
+              </div>}
+          />
+        </Route>
+        <Redirect from='/category' to='/category/all' />
+        <Route
+          path='/category/:filter'
+          component={(props) =>
+            <CategoryList
+              accounts={accountsByCategory(props.params)} {...props}
+            />}
+        >
+          <Route
+            path=':account'
+            component={(props) =>
               <AccountDialog
                 item={accounts.find(a => a.slug === props.params.account)}
                 enableDefaultIcon
                 {...props}
-              />
-            </div>}
-        />
-      </Route>
-      <Redirect from='/category' to='/category/all' />
-      <Route
-        path='/category/:filter'
-        component={(props) =>
-          <CategoryList
-            accounts={accountsByCategory(props.params)} {...props}
-          />}
-      >
+              />}
+          />
+        </Route>
         <Route
-          path=':account'
+          path='/connected'
           component={(props) =>
-            <AccountDialog
-              item={accounts.find(a => a.slug === props.params.account)}
-              enableDefaultIcon
-              {...props}
-            />}
-        />
+            <ConnectedList accounts={connectedAccounts} {...props} />}
+        >
+          <Route
+            path=':account'
+            component={(props) =>
+              <AccountDialog
+                item={accounts.find(u => u.slug === props.params.account)}
+                enableDefaultIcon
+                {...props}
+              />}
+          />
+        </Route>
       </Route>
-      <Route
-        path='/connected'
-        component={(props) =>
-          <ConnectedList accounts={connectedAccounts} {...props} />}
-      >
-        <Route
-          path=':account'
-          component={(props) =>
-            <AccountDialog
-              item={accounts.find(u => u.slug === props.params.account)}
-              enableDefaultIcon
-              {...props}
-            />}
-        />
-      </Route>
-    </Route>
-  </Router>
+    </Router>
+  </Provider>
 ), document.querySelector('[role=application]'))
