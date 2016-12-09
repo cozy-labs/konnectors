@@ -41,7 +41,8 @@ const connector = module.exports = baseKonnector.createNew({
       type: 'password'
     },
     folderPath: {
-      type: 'folder'
+      type: 'folder',
+      advanced: true
     }
   },
   models: [Bill],

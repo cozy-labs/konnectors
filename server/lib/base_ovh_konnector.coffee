@@ -36,6 +36,7 @@ module.exports =
                     type: "hidden"
                 folderPath:
                     type: "folder"
+                    advanced: true
 
             models: [Bill],
 

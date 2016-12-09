@@ -47,7 +47,8 @@ const connector = module.exports = baseKonnector.createNew({
       type: 'password'
     },
     calendar: {
-      type: 'text'
+      type: 'text',
+      advanced: true
     }
   },
 
