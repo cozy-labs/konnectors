@@ -33,7 +33,7 @@ export class AccountStore {
 
   connectAccount (slug, values) {
     this.setState({working: true})
-    fetch(`/konnectors/${slug}`, {
+    return fetch(`/konnectors/${slug}`, {
       method: 'PUT',
       credentials: 'same-origin',
       headers: {
@@ -43,7 +43,7 @@ export class AccountStore {
       body: JSON.stringify(values)
     }).then(response => {
       this.setState({working: false})
-      console.log(response)
+      return response.status === 200 ? Promise.resolve(response) : Promise.reject(response)
     })
   }
 }

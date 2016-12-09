@@ -70,8 +70,9 @@ export default function statefulForm (mapPropsToFormConfig) {
       configureFields (config) {
         let fields = {}
         Object.keys(config.fields).forEach(field => {
+          let defaut = config.fields[field].default || ''
           let value = config.values && config.values[field]
-            ? config.values[field] : ''
+            ? config.values[field] : defaut
           fields[field] = Object.assign({}, config.fields[field], {
             value: value,
             dirty: false,

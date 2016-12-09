@@ -9,23 +9,18 @@ const mapObject = (obj, cb) => Object.keys(obj).map(k => cb(obj[k], k))
 
 const formConfig = ({ fields, slug }) => {
   let type
-  let newFields = {}
   let values = {}
-  Object.keys(fields).forEach(name => {
-    console.log(fields)
-    type = fields[name]
-    if (type === 'folder') {
-      newFields[name] = { type: 'hidden' }
-      values[name] = `Administration/${slug}`
-    } else if (name === 'calendar') {
-      newFields[name] = { type: 'hidden' }
-      values[name] = `Mes Comptes/${slug}`
-    } else {
-      newFields[name] = { type: type }
-    }
-  })
+  // Object.keys(fields).forEach(name => {
+  //   if (name === 'folderPath') {
+  //     fields[name].type = 'hidden'
+  //     values[name] = `Administration/${slug}`
+  //   } else if (name === 'calendar') {
+  //     fields[name].type = 'hidden'
+  //     values[name] = `Mes Comptes/${slug}`
+  //   }
+  // })
   return {
-    fields: newFields,
+    fields,
     values
   }
 }

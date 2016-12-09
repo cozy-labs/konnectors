@@ -2,9 +2,9 @@
 import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 import { withRouter } from 'react-router'
-
 import { connectToStore } from '../lib/accountStore'
 
+import Notifier from './Notifier'
 import AccountConfigForm from './AccountConfigForm'
 
 const CloseButton = withRouter(({ router }) => (
@@ -60,19 +60,27 @@ const AccountDialog = ({ t, router, item, submitting, onConnectAccount, iconName
   </div>
 )
 
-export default connectToStore(
-  state => {
-    return {
-      submitting: state.working
-    }
-  },
-  (store, props) => {
-    return {
-      onConnectAccount: (accountId, values) => {
-        store.connectAccount(accountId, values)
+export default translate()(
+  connectToStore(
+    state => {
+      return {
+        submitting: state.working
+      }
+    },
+    (store, props) => {
+      const {t, router} = props
+      return {
+        onConnectAccount: (accountId, values) => {
+          store.connectAccount(accountId, values)
+            .then(response => {
+              router.goBack()
+              Notifier.info(t('my_accounts account config success'))
+            })
+            .catch(response => {
+              router.goBack()
+              Notifier.error(t('my_accounts account config success'))
+            })
+        }
       }
     }
-  }
-)(
-  translate()(AccountDialog)
-)
+)(withRouter(AccountDialog)))

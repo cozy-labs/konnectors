@@ -2,6 +2,7 @@
 import { h } from 'preact'
 
 import Sidebar from './Sidebar'
+import Notifier from './Notifier'
 
 const App = ({ categories, children }) => (
   <div role='application'>
@@ -11,6 +12,7 @@ const App = ({ categories, children }) => (
         {children}
       </div>
     </main>
+    <Notifier />
   </div>
 )
 

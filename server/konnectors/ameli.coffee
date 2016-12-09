@@ -250,6 +250,8 @@ module.exports = baseKonnector.createNew
             type: 'text'
         folderPath:
             type: 'folder'
+            hidden: true
+            default: 'Administration/<account>'
 
     models: [Bill]
 
