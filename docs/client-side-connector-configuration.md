@@ -105,12 +105,26 @@ An account connector can define different sort of fields for its configuration f
         customField: {
             type: 'text',
             default: 'custom default value',
-            hidden: true
         }
     }
 ```
 
-The type value can be any type of the input HTML tag that you can found [here (MDN)](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input).
+### Field properties
+
+* __`type`__ (mandatory): field type
+* __`default`__ (optional): default value of the field (different from the placeholder)
+* __`placeholder`__ (optional): placeholder for compatible input (text type for example)
+
+### Field type property
+Here are all types available for fields (most of them are [HTML input types](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)):
+
+* text (by default if the type is incorrect)
+* password
+* hidden
+* url
+* email
+* tel
+* folder: custom type that will render a specific field with folders values from the cozy-files app as options
 
 ### Available fields
 
@@ -118,7 +132,7 @@ The type value can be any type of the input HTML tag that you can found [here (M
 * password (__no default value expected__)
 * calendar
 * folderPath
-* frenquency
+* frequency
 
 But you can also use your own custom field like following:
 
@@ -128,13 +142,6 @@ customField: {
     default: 'custom default value'
 }
 ```
-
-### Available properties
-
-* __`type`__ (mandatory): HTML input type attribute
-* __`default`__ (optional): default value of the field (different from the placeholder)
-* __`hidden`__ (optional): to hide the input if the value is `true`
-* __`placeholder`__ (optional): placeholder for compatible input (text type for example)
 
 ### Variables available for default value
 These variables will be automatically replaced by the application at the configuration form display.
