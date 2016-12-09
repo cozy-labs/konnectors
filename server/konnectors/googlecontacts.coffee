@@ -56,16 +56,13 @@ module.exports =
     """
     fields:
         authCode:
-            type: "text"
-            hidden: true
+            type: "hidden"
         accountName:
             type: "text"
         accessToken:
-            type: "text"
-            hidden: true
+            type: "hidden"
         refreshToken:
-            type: "text"
-            hidden: true
+            type: "hidden"
 
     models:
         contact: Contact

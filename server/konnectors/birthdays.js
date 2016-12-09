@@ -30,7 +30,8 @@ const connector = module.exports = baseKonnector.createNew({
       type: 'text'
     },
     calendar: {
-      type: 'text'
+      type: 'text',
+      advanced: true
     }
   },
 

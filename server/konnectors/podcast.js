@@ -49,7 +49,8 @@ const connector = module.exports = baseKonnector.createNew({
       type: 'text'
     },
     folderPath: {
-      type: 'folder'
+      type: 'folder',
+      advanced: true
     }
   },
 
