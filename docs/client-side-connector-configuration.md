@@ -92,19 +92,23 @@ An account connector can define different sort of fields for its configuration f
         },
         calendar: {
             type: 'text',
-            default: 'My connector calendar'
+            default: 'My connector calendar',
+            advanced: true
         },
         folderPath: {
             type: 'text',
-            default: '<my_accounts>/files'
+            default: '<my_accounts>/files',
+            advanced: true
         },
         frequency: {
             type: 'text',
-            default: 'weekly'
+            default: 'weekly',
+            advanced: true
         },
         customField: {
             type: 'text',
             default: 'custom default value',
+            advanced: true
         }
     }
 ```
@@ -114,6 +118,7 @@ An account connector can define different sort of fields for its configuration f
 * __`type`__ (mandatory): field type
 * __`default`__ (optional): default value of the field (different from the placeholder)
 * __`placeholder`__ (optional): placeholder for compatible input (text type for example)
+* __`advanced`__ (optional): if true, this field will be considered as an advanced configuration field
 
 ### Field type property
 Here are all types available for fields (most of them are [HTML input types](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)):
