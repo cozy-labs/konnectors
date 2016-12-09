@@ -33,10 +33,10 @@ module.exports =
                 loginUrl:
                     type: "text"
                 token:
-                    type: "text"
-                    hidden: true
+                    type: "hidden"
                 folderPath:
                     type: "folder"
+                    advanced: true
 
             models: [Bill],
 

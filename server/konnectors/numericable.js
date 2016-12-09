@@ -248,7 +248,8 @@ module.exports = factory.createNew({
       type: 'password'
     },
     folderPath: {
-      type: 'folder'
+      type: 'folder',
+      advanced: true
     }
   },
 

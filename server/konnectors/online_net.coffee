@@ -40,6 +40,7 @@ module.exports =
             type: "password"
         folderPath:
             type: "folder"
+            advanced: true
     models:
         bill: Bill
 

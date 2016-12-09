@@ -250,6 +250,7 @@ module.exports = baseKonnector.createNew
             type: 'text'
         folderPath:
             type: 'folder'
+            advanced: true
 
     models: [Bill]
 
