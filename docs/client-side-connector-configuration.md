@@ -31,7 +31,7 @@ For a 'complex' color account connector:
 // my_connector.js
 
     ...
-    name: "My connector"
+    name: 'My connector',
     fields: ...
     models: ...
     ...
@@ -55,7 +55,7 @@ An account connector can define a category to be listed in. This category is sin
 // my_connector.js
 
     ...
-    name: "My connector"
+    name: 'My connector',
     fields: ...
     models: ...
     ...
@@ -69,3 +69,95 @@ __⚠️ Important notes:__
 The defined category must be authorized by the MyAccounts application in order to be listed in. You can see more about the authorized categories in the [MyAccounts server side configuration documentation](server-side-configuration.md).
 
 If the account connector define a category which is authorized, it will be used. Otherwise, (if not 'valid' or not defined as well) that will fallback to the default name, which is `others`.
+
+## Fields
+
+An account connector can define different sort of fields for its configuration form in the app. Each field is represented by a type and can provide a default value in some cases. Here is a fields definition example:
+
+```javascript
+// my_connector.js
+
+    ...
+    name: 'My connector',
+    fields: {
+        login: { // no default value expected
+            type: 'text'
+        },
+        password: { // no default value expected
+            type: 'password'
+        },
+        email: {
+            type: 'text',
+            placeholder: 'example@domain.fr'
+        },
+        calendar: {
+            type: 'text',
+            default: 'My connector calendar',
+            advanced: true
+        },
+        folderPath: {
+            type: 'text',
+            default: '<my_accounts>/files',
+            advanced: true
+        },
+        frequency: {
+            type: 'text',
+            default: 'weekly',
+            advanced: true
+        },
+        customField: {
+            type: 'text',
+            default: 'custom default value',
+            advanced: true
+        }
+    }
+```
+
+### Field properties
+
+* __`type`__ (mandatory): field type
+* __`default`__ (optional): default value of the field (different from the placeholder)
+* __`placeholder`__ (optional): placeholder for compatible input (text type for example)
+* __`advanced`__ (optional): if true, this field will be considered as an advanced configuration field
+
+### Field type property
+Here are all types available for fields (most of them are [HTML input types](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)):
+
+* text (by default if the type is incorrect)
+* password
+* hidden
+* url
+* email
+* tel
+* folder: custom type that will render a specific field with folders values from the cozy-files app as options
+
+### Available fields
+
+* login (__no default value expected__)
+* password (__no default value expected__)
+* calendar
+* folderPath
+* frequency
+
+But you can also use your own custom field like following:
+
+```javascript
+customField: {
+    type: 'text',
+    default: 'custom default value'
+}
+```
+
+### Variables available for default value
+These variables will be automatically replaced by the application at the configuration form display.
+
+* __`<my_accounts>`__: Localized (translated) myAccounts app name
+* __`<account>`__: Account name
+
+### Fallbacks for default values
+
+Some fields expect to have default values. If it's not the case, fallbacks will be used to get those. Here is the 'default value of these default value':
+
+* folderPath: `<my_accounts>/<account>`
+* calendar: `<account>`
+* frequency: 'weekly'

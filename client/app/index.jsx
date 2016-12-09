@@ -10,15 +10,18 @@ import ConnectedList from './components/ConnectedList'
 import AccountDialog from './components/AccountDialog'
 import UseCaseDialog from './components/UseCaseDialog'
 import UseCasesHelper from './lib/useCasesHelper'
+import AccountsHelper from './lib/accountsHelper'
 
 import './styles/index.styl'
 
 const lang = document.documentElement.getAttribute('lang') || 'en'
 const context = window.context || 'cozy'
+
 // accounts
-const accounts = window.initKonnectors
+const accounts = AccountsHelper.checkProperties(window.initKonnectors)
 const connectedAccounts = accounts.filter(a => a.accounts.length !== 0)
 const unconnectedAccounts = accounts.filter(a => a.accounts.length === 0)
+
 // use cases
 const useCasesHelper = new UseCasesHelper(context)
 const useCases = useCasesHelper.getUseCases()
