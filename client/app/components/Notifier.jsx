@@ -22,20 +22,22 @@ const store = createStore()
 
 class Notification extends Component {
   componentDidMount () {
+    this.close = this.close.bind(this)
     this.closeTimer = setTimeout(() => {
       this.beginClosing()
     }, 2000)
   }
 
   componentWillUnmount () {
+    this.base.removeEventListener('transitionend', this.close, false)
+    this.base.classList.remove('coz-notification--closing')
     if (this.closeTimer) {
       clearTimeout(this.closeTimer)
     }
   }
 
   beginClosing () {
-    const onTransitionEnd = () => this.close()
-    this.base.addEventListener('transitionend', onTransitionEnd, false)
+    this.base.addEventListener('transitionend', this.close, false)
     this.base.classList.add('coz-notification--closing')
   }
 
