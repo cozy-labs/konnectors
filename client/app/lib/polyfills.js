@@ -26,9 +26,10 @@ if (!Array.prototype.find) {
 }
 
 if (!Array.prototype.findIndex) {
+// eslint-disable-next-line
   Object.defineProperty(Array.prototype, 'findIndex', {
-    value: function(predicate) {
-      'use strict';
+    value: function (predicate) {
+      'use strict'
       if (this == null) {
         throw new TypeError('Array.prototype.findIndex called on null or undefined')
       }

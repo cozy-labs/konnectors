@@ -116,7 +116,7 @@ export const connectToStore = (mapStateToProps, mapStoreToProps) => {
         super(props, context)
         this.store = context.store
         this.state = Object.assign(
-          {}, 
+          {},
           mapStateToProps(this.store.getState()),
           mapStoreToProps(this.store, props)
         )
