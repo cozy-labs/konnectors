@@ -21,32 +21,32 @@ const createStore = () => {
 const store = createStore()
 
 class Notification extends Component {
-  componentDidMount() {
+  componentDidMount () {
     this.closeTimer = setTimeout(() => {
       this.beginClosing()
     }, 2000)
   }
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     if (this.closeTimer) {
       clearTimeout(this.closeTimer)
     }
   }
 
-  beginClosing() {
+  beginClosing () {
     const onTransitionEnd = () => this.close()
     this.base.addEventListener('transitionend', onTransitionEnd, false)
     this.base.classList.add('coz-notification--closing')
   }
 
-  close() {
+  close () {
     this.props.onClose()
   }
 
-  render() {
+  render () {
     const { message, type } = this.props
     return (
-      <div className={['coz-notification', 'coz-notification--'+type].join(' ')}>
+      <div className={['coz-notification', 'coz-notification--' + type].join(' ')}>
         <div className='coz-notification-title'>{message}</div>
       </div>
     )
@@ -54,36 +54,36 @@ class Notification extends Component {
 }
 
 export default class Notifier extends Component {
-  constructor(props, context) {
+  constructor (props, context) {
     super(props, context)
     this.state = {
       notifications: []
     }
   }
 
-  static info(msg) {
+  static info (msg) {
     store.dispatch({ type: 'info', msg })
   }
 
-  static warning(msg) {
+  static warning (msg) {
     store.dispatch({ type: 'warning', msg })
   }
 
-  static error(msg) {
+  static error (msg) {
     store.dispatch({ type: 'error', msg })
   }
 
-  componentDidMount() {
+  componentDidMount () {
     store.subscribe(this.notify.bind(this))
   }
 
-  notify(notification) {
+  notify (notification) {
     this.setState({
       notifications: [...this.state.notifications, notification]
     })
   }
 
-  handleClose(id) {
+  handleClose (id) {
     let idx
     this.state.notifications.forEach((n, i) => { if (n.id === id) idx = i }) // le find du pauvre...
     this.setState({
@@ -94,11 +94,11 @@ export default class Notifier extends Component {
     })
   }
 
-  render() {
+  render () {
     return (
-      <div className="coz-notifier">
+      <div className='coz-notifier'>
         {this.state.notifications.map(notif => (
-          <Notification type={notif.type} message={notif.msg} onClose={this.handleClose.bind(this, notif.id)}/>
+          <Notification type={notif.type} message={notif.msg} onClose={this.handleClose.bind(this, notif.id)} />
         ))}
       </div>
     )

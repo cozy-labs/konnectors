@@ -1,4 +1,5 @@
 /** @jsx h */
+/* global fetch */
 import { h, Component } from 'preact'
 
 export class AccountStore {
@@ -34,7 +35,7 @@ export class AccountStore {
   startAccountPoll (connectorId, timeout = 10000, interval = 500) {
     let endTime = Number(new Date()) + timeout
 
-    let checkCondition = function(resolve, reject) {
+    let checkCondition = function (resolve, reject) {
       return this.fetch('GET', `/konnectors/${connectorId}`)
         .then(response => response.text()).then(body => {
           let connector = JSON.parse(body)

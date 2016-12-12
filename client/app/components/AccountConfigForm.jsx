@@ -8,7 +8,6 @@ import Field from './Field'
 const mapObject = (obj, cb) => Object.keys(obj).map(k => cb(obj[k], k))
 
 const formConfig = ({ t, fields, slug }) => {
-  let type
   let values = {}
   Object.keys(fields).forEach(name => {
     if (fields[name].advanced) {
@@ -28,7 +27,7 @@ const AccountConfigForm = ({ t, fields, dirty, submit, submitting }) => (
   <div class='account-form'>
     {mapObject(fields, (field, name) => <Field label={t(name)} {...field} />)}
     <div class='account-form-controls'>
-      <button aria-busy={submitting ? 'true': 'false'} onClick={submit}>{t('my_accounts account config button')}</button>
+      <button aria-busy={submitting ? 'true' : 'false'} onClick={submit}>{t('my_accounts account config button')}</button>
     </div>
   </div>
 )
