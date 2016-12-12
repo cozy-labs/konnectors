@@ -85,7 +85,7 @@ export default class Notifier extends Component {
 
   handleClose (id) {
     let idx
-    this.state.notifications.forEach((n, i) => { if (n.id === id) idx = i }) // le find du pauvre...
+    this.state.notifications.forEach((n, i) => { if (n.id === id) idx = i })
     this.setState({
       notifications: [
         ...this.state.notifications.slice(0, idx),
@@ -98,7 +98,11 @@ export default class Notifier extends Component {
     return (
       <div className='coz-notifier'>
         {this.state.notifications.map(notif => (
-          <Notification type={notif.type} message={notif.msg} onClose={this.handleClose.bind(this, notif.id)} />
+          <Notification
+            type={notif.type}
+            message={notif.msg}
+            onClose={this.handleClose.bind(this, notif.id)}
+          />
         ))}
       </div>
     )

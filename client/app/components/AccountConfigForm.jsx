@@ -21,9 +21,19 @@ const formConfig = ({ t, fields, slug }) => {
 
 const AccountConfigForm = ({ t, fields, dirty, submit, submitting }) => (
   <div class='account-form'>
-    {Object.keys(fields).filter(name => !fields[name].advanced).map(name => <Field label={t(name)} {...fields[name]} />)}
+    {Object.keys(fields)
+      .filter(name => !fields[name].advanced)
+      .map(name => (
+        <Field label={t(name)} {...fields[name]} />
+      )
+    )}
     <div class='account-form-controls'>
-      <button aria-busy={submitting ? 'true' : 'false'} onClick={submit}>{t('my_accounts account config button')}</button>
+      <button
+        aria-busy={submitting ? 'true' : 'false'}
+        onClick={submit}
+      >
+        {t('my_accounts account config button')}
+      </button>
     </div>
   </div>
 )
