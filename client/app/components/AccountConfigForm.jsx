@@ -7,18 +7,17 @@ import Field from './Field'
 
 const mapObject = (obj, cb) => Object.keys(obj).map(k => cb(obj[k], k))
 
-const formConfig = ({ fields, slug }) => {
+const formConfig = ({ t, fields, slug }) => {
   let type
   let values = {}
-  // Object.keys(fields).forEach(name => {
-  //   if (name === 'folderPath') {
-  //     fields[name].type = 'hidden'
-  //     values[name] = `Administration/${slug}`
-  //   } else if (name === 'calendar') {
-  //     fields[name].type = 'hidden'
-  //     values[name] = `Mes Comptes/${slug}`
-  //   }
-  // })
+  Object.keys(fields).forEach(name => {
+    if (fields[name].advanced) {
+      fields[name].type = 'hidden'
+      if (fields[name].default) {
+        values[name] = fields[name].default.replace(/<my_accounts>/gi, t('my_accounts title'))
+      }
+    }
+  })
   return {
     fields,
     values

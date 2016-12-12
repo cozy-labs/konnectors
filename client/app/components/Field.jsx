@@ -9,10 +9,10 @@ const Field = (props) => {
       child => cloneElement(child, Object.assign(props, {selected: props.value, className: 'account-field-input'}))
     )
   } else {
-    const { type, hidden, placeholder, value, onChange, onBlur } = props
-    inputs = (<input type={hidden ? 'hidden' : type} placeholder={placeholder} className='account-field-input' value={value} onChange={onChange} onBlur={onBlur} />)
+    const { type, placeholder, value, onChange, onBlur } = props
+    inputs = (<input type={type} placeholder={placeholder} className='account-field-input' value={value} onChange={onChange} onBlur={onBlur} />)
   }
-  return props.hidden === true ? inputs : (
+  return props.type === 'hidden' ? inputs : (
     <FieldWrapper {...props}>
       {inputs}
     </FieldWrapper>
