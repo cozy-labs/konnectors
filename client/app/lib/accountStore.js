@@ -6,7 +6,7 @@ export class AccountStore {
     this.listeners = []
     this.state = {
       working: false,
-      accounts: accounts
+      connectors: accounts // TODO: rename accounts to connectors
     }
   }
 
@@ -31,20 +31,65 @@ export class AccountStore {
 
   }
 
-  connectAccount (slug, values) {
+  startAccountPoll (connectorId, timeout = 10000, interval = 500) {
+    let endTime = Number(new Date()) + timeout
+
+    let checkCondition = function(resolve, reject) {
+      return this.fetch('GET', `/konnectors/${connectorId}`)
+        .then(response => response.text()).then(body => {
+          let connector = JSON.parse(body)
+          if (!connector.isImporting) {
+            if (!connector.importErrorMessage) {
+              resolve(connector)
+            } else {
+              reject(new Error(connector.importErrorMessage))
+            }
+          } else if (Number(new Date()) < endTime) {
+            setTimeout(checkCondition, interval, resolve, reject)
+          } else {
+            reject(new Error('polling timed out'))
+          }
+        })
+    }.bind(this)
+    return new Promise((resolve, reject) => {
+      setTimeout(checkCondition, 500, resolve, reject)
+    })
+  }
+
+  connectAccount (connectorId, values) {
+    let connector = this.state.connectors.find(c => c.id === connectorId)
+    connector.accounts.push(values)
     this.setState({working: true})
-    return fetch(`/konnectors/${slug}`, {
-      method: 'PUT',
+    return this.fetch('PUT', `/konnectors/${connectorId}`, connector)
+      .then(response => {
+        if (response.status === 200) {
+          return this.startAccountPoll(connectorId)
+        } else {
+          this.setState({working: false})
+          return Promise.reject(response)
+        }
+      }).then(() => {
+        this.setState({working: false})
+        return Promise.resolve()
+      }).catch(error => {
+        this.setState({working: false})
+        return Promise.reject(error)
+      })
+  }
+
+  fetch (method, url, body) {
+    let params = {
+      method: method,
       credentials: 'same-origin',
       headers: {
         'Accept': 'application/json',
-        'ContentType': 'application/json'
-      },
-      body: JSON.stringify(values)
-    }).then(response => {
-      this.setState({working: false})
-      return response.status === 200 ? Promise.resolve(response) : Promise.reject(response)
-    })
+        'Content-Type': 'application/json'
+      }
+    }
+    if (body) {
+      params.body = JSON.stringify(body)
+    }
+    return fetch(url, params)
   }
 }
 

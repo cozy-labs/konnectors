@@ -72,13 +72,16 @@ export default translate()(
       return {
         onConnectAccount: (accountId, values) => {
           store.connectAccount(accountId, values)
-            .then(response => {
+            .then(() => {
               router.goBack()
               Notifier.info(t('my_accounts account config success'))
             })
-            .catch(response => {
-              router.goBack()
-              Notifier.error(t('my_accounts account config success'))
+            .catch(error => {
+              if (error.message === 'bad credentials') {
+                Notifier.error(t('my_accounts account config bad credentials'))
+              } else {
+                Notifier.error(t('my_accounts account config error'))
+              }
             })
         }
       }
