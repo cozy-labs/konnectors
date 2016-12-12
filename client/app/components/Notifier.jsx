@@ -84,8 +84,7 @@ export default class Notifier extends Component {
   }
 
   handleClose (id) {
-    let idx
-    this.state.notifications.forEach((n, i) => { if (n.id === id) idx = i })
+    let idx = this.state.notifications.findIndex(n => n.id === id)
     this.setState({
       notifications: [
         ...this.state.notifications.slice(0, idx),
