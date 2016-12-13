@@ -1,11 +1,9 @@
 /** @jsx h */
 import { h } from 'preact'
-import { translate } from '../plugins/preact-polyglot'
 import { withRouter } from 'react-router'
-import { connectToStore } from '../lib/accountStore'
 
-import Notifier from './Notifier'
-import AccountConfigForm from './AccountConfigForm'
+import AccountConnection from '../containers/AccountConnection'
+import AccountsManagement from '../containers/AccountsManagement'
 
 const CloseButton = withRouter(({ router }) => (
   <div class='close-button' role='close' onClick={router.goBack} />
@@ -25,7 +23,15 @@ const getIcon = (iconName, enableDefaultIcon) => {
   return icon
 }
 
-const AccountDialog = ({ t, router, item, submitting, onConnectAccount, iconName, enableDefaultIcon }) => (
+const AccountDialogContent = (props) => {
+  const isConnected = props.connector.accounts.length !== 0
+  if (isConnected) {
+    return <AccountsManagement {...props} />
+  }
+  return <AccountConnection {...props} />
+}
+
+const AccountDialog = ({ router, item, iconName, enableDefaultIcon }) => (
   <div role='dialog' class='account-dialog'>
     <div role='separator' onClick={router.goBack} />
     <div class='wrapper'>
@@ -42,48 +48,11 @@ const AccountDialog = ({ t, router, item, submitting, onConnectAccount, iconName
           <CloseButton />
         </div>
         <div class='dialog-content'>
-          <div>
-            <h3>Lorem ipsum</h3>
-          </div>
-          <div>
-            <h3>{t('my_accounts account config title', {name: item.name})}</h3>
-            <AccountConfigForm
-              fields={item.fields}
-              accountName={item.name}
-              onSubmit={values => onConnectAccount(item.id, values)}
-              submitting={submitting}
-            />
-          </div>
+          <AccountDialogContent connector={item} />
         </div>
       </div>
     </div>
   </div>
 )
 
-export default translate()(
-  connectToStore(
-    state => {
-      return {
-        submitting: state.working
-      }
-    },
-    (store, props) => {
-      const {t, router} = props
-      return {
-        onConnectAccount: (accountId, values) => {
-          store.connectAccount(accountId, values)
-            .then(() => {
-              router.goBack()
-              Notifier.info(t('my_accounts account config success'))
-            })
-            .catch(error => {
-              if (error.message === 'bad credentials') {
-                Notifier.error(t('my_accounts account config bad credentials'))
-              } else {
-                Notifier.error(t('my_accounts account config error'))
-              }
-            })
-        }
-      }
-    }
-)(withRouter(AccountDialog)))
+export default withRouter(AccountDialog)

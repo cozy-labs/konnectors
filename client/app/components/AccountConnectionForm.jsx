@@ -5,12 +5,12 @@ import { translate } from '../plugins/preact-polyglot'
 import statefulForm from '../lib/statefulForm'
 import Field from './Field'
 
-const formConfig = ({ t, fields, accountName }) => {
+const formConfig = ({ t, fields, slug }) => {
   let values = {}
   Object.keys(fields).forEach(name => {
     if (fields[name].default) {
       values[name] = fields[name].default.replace(/<my_accounts>/gi, t('my_accounts title'))
-                                         .replace(/<account>/gi, accountName)
+                                         .replace(/<account>/gi, slug)
     }
   })
   return {
@@ -19,7 +19,7 @@ const formConfig = ({ t, fields, accountName }) => {
   }
 }
 
-const AccountConfigForm = ({ t, fields, dirty, submit, submitting }) => (
+const AccountConnectionForm = ({ t, fields, dirty, submit, submitting }) => (
   <div class='account-form'>
     {Object.keys(fields)
       .filter(name => !fields[name].advanced)
@@ -39,5 +39,5 @@ const AccountConfigForm = ({ t, fields, dirty, submit, submitting }) => (
 )
 
 export default translate()(
-  statefulForm(props => formConfig(props))(AccountConfigForm)
+  statefulForm(props => formConfig(props))(AccountConnectionForm)
 )
