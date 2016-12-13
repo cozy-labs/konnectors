@@ -29,7 +29,7 @@ export class AccountStore {
   }
 
   unsubscribe (listener) {
-
+    this.listeners.splice(this.listeners.indexOf(listener), 1)
   }
 
   startAccountPoll (connectorId, timeout = 10000, interval = 500) {
@@ -120,9 +120,16 @@ export const connectToStore = (mapStateToProps, mapStoreToProps) => {
           mapStateToProps(this.store.getState()),
           mapStoreToProps(this.store, props)
         )
-        this.store.subscribe(newState => {
-          this.setState(mapStateToProps(newState))
-        })
+        this.handleStoreUpdate = this.handleStoreUpdate.bind(this)
+        this.store.subscribe(this.handleStoreUpdate)
+      }
+
+      componentDidUnmount () {
+        this.store.unsubscribe(this.handleStoreUpdate)
+      }
+
+      handleStoreUpdate (newState) {
+        this.setState(mapStateToProps(newState))
       }
 
       render () {
