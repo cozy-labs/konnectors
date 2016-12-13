@@ -9,13 +9,14 @@ export default {
       if (fields) {
         // check calendar field
         if (fields.calendar && !fields.calendar.default) {
-          fields.calendar.default = a.name
+          // <account> will be replaced by the matching account name
+          fields.calendar.default = '<account>'
         }
 
         // check folderPath field
         if (fields.folderPath && !fields.folderPath.default) {
           // <my_accounts> will be replaced by the localized app name
-          fields.folderPath.default = `<my_accounts>/${a.name}`
+          fields.folderPath.default = `<my_accounts>/<account>`
         }
 
         // check frequency field
