@@ -49,7 +49,7 @@ const AccountDialog = ({ t, router, item, submitting, onConnectAccount, iconName
             <h3>{t('my_accounts account config title', {name: item.name})}</h3>
             <AccountConfigForm
               fields={item.fields}
-              slug={item.slug}
+              accountName={item.name}
               onSubmit={values => onConnectAccount(item.id, values)}
               submitting={submitting}
             />
