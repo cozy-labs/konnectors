@@ -3,7 +3,7 @@ import { h } from 'preact'
 import { withRouter } from 'react-router'
 
 import AccountConnection from '../containers/AccountConnection'
-import AccountsManagement from '../containers/AccountsManagement'
+import AccountManagement from '../containers/AccountManagement'
 
 const CloseButton = withRouter(({ router }) => (
   <div class='close-button' role='close' onClick={router.goBack} />
@@ -23,16 +23,16 @@ const getIcon = (iconName, enableDefaultIcon) => {
   return icon
 }
 
-const AccountDialogContent = (props) => {
+const ConnectorDialogContent = (props) => {
   const isConnected = props.connector.accounts.length !== 0
   if (isConnected) {
-    return <AccountsManagement {...props} />
+    return <AccountManagement {...props} />
   }
   return <AccountConnection {...props} />
 }
 
-const AccountDialog = ({ router, item, iconName, enableDefaultIcon }) => (
-  <div role='dialog' class='account-dialog'>
+const ConnectorDialog = ({ router, item, iconName, enableDefaultIcon }) => (
+  <div role='dialog' class='connector-dialog'>
     <div role='separator' onClick={router.goBack} />
     <div class='wrapper'>
       <div role='contentinfo'>
@@ -48,11 +48,11 @@ const AccountDialog = ({ router, item, iconName, enableDefaultIcon }) => (
           <CloseButton />
         </div>
         <div class='dialog-content'>
-          <AccountDialogContent connector={item} />
+          <ConnectorDialogContent connector={item} />
         </div>
       </div>
     </div>
   </div>
 )
 
-export default withRouter(AccountDialog)
+export default withRouter(ConnectorDialog)

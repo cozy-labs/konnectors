@@ -3,7 +3,7 @@ import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 import { withRouter } from 'react-router'
 
-const AccountsManagement = ({ t, router, connector }) => (
+const AccountManagement = ({ t, router, connector }) => (
   <div class="accounts-management">
     <div class="accounts-list">
       <h3>Lorem ipsum</h3>
@@ -14,4 +14,4 @@ const AccountsManagement = ({ t, router, connector }) => (
   </div>
 )
 
-export default translate()(withRouter(AccountsManagement))
+export default translate()(withRouter(AccountManagement))

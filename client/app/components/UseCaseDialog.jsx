@@ -2,7 +2,7 @@
 import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 import { withRouter } from 'react-router'
-import AccountItem from './AccountItem'
+import ConnectorList from './ConnectorList'
 
 const CloseButton = withRouter(({ router }) => (
   <div class='close-button' role='close' onClick={router.goBack} />
@@ -36,18 +36,7 @@ const UseCaseDialog = ({ t, router, item, context }) => (
         <main>
           <h3>{t(`use-case ${item.slug} title`)}</h3>
           <p>{t(`use-case ${item.slug} description`)}</p>
-          <div class='accounts-list'>
-            {item.accounts.map(a =>
-              <AccountItem
-                title={a.name}
-                subtitle={t(a.category + ' category')}
-                iconName={a.slug}
-                slug={a.slug}
-                enableDefaultIcon
-                backgroundCSS={a.color.css}
-              />
-            )}
-          </div>
+          <ConnectorList connectors={item.accounts} />
         </main>
       </div>
     </div>

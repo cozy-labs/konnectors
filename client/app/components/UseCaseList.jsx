@@ -1,7 +1,7 @@
 /** @jsx h */
 import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
-import UseCaseItem from './AccountItem'
+import UseCaseItem from './ConnectorItem'
 
 // Fallback to get the item background image and avoid error if not found
 const getItemBackground = (item, context) => {
@@ -17,7 +17,7 @@ const getItemBackground = (item, context) => {
   return background
 }
 
-const UseCasesList = ({ t, useCases, context }) => (
+const UseCaseList = ({ t, useCases, context }) => (
   <div class='use-cases-list'>
     {useCases.map(u =>
       <UseCaseItem
@@ -30,4 +30,4 @@ const UseCasesList = ({ t, useCases, context }) => (
   </div>
 )
 
-export default translate()(UseCasesList)
+export default translate()(UseCaseList)

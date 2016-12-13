@@ -1,18 +1,18 @@
 /** @jsx h */
 import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
-import AccountItem from './AccountItem'
+import ConnectorItem from './ConnectorItem'
 
 const ConnectorList = ({ t, connectors }) => (
   <div class='connector-list'>
-    {connectors.map(a =>
-      <AccountItem
-        title={a.name}
-        subtitle={t(a.category + ' category')}
-        iconName={a.slug}
-        slug={a.slug}
+    {connectors.map(c =>
+      <ConnectorItem
+        title={c.name}
+        subtitle={t(c.category + ' category')}
+        iconName={c.slug}
+        slug={c.slug}
         enableDefaultIcon
-        backgroundCSS={a.color.css}
+        backgroundCSS={c.color.css}
       />
     )}
   </div>
