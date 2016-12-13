@@ -36,7 +36,7 @@ export class AccountStore {
     let endTime = Number(new Date()) + timeout
 
     let checkCondition = function (resolve, reject) {
-      return this.fetch('GET', `/konnectors/${connectorId}`)
+      return this.fetch('GET', `konnectors/${connectorId}`)
         .then(response => response.text()).then(body => {
           let connector = JSON.parse(body)
           if (!connector.isImporting) {
@@ -61,7 +61,7 @@ export class AccountStore {
     let connector = this.state.connectors.find(c => c.id === connectorId)
     connector.accounts.push(values)
     this.setState({working: true})
-    return this.fetch('PUT', `/konnectors/${connectorId}`, connector)
+    return this.fetch('PUT', `konnectors/${connectorId}`, connector)
       .then(response => {
         if (response.status === 200) {
           return this.startAccountPoll(connectorId)
