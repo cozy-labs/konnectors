@@ -1,13 +1,9 @@
 /** @jsx h */
 import { h } from 'preact'
-import { withRouter } from 'react-router'
 
+import Dialog from './Dialog'
 import AccountConnection from '../containers/AccountConnection'
 import AccountManagement from '../containers/AccountManagement'
-
-const CloseButton = withRouter(({ router }) => (
-  <div class='close-button' role='close' onClick={router.goBack} />
-))
 
 // Fallback to get the item icon and avoid error if not found
 // with a possible default icon
@@ -31,28 +27,14 @@ const ConnectorDialogContent = (props) => {
   return <AccountConnection {...props} />
 }
 
-const ConnectorDialog = ({ router, item, iconName, enableDefaultIcon }) => (
-  <div role='dialog' class='connector-dialog'>
-    <div role='separator' onClick={router.goBack} />
-    <div class='wrapper'>
-      <div role='contentinfo'>
-        <div
-          class='dialog-header'
-          style={{background: item.color.css || 'white'}}
-        >
-          <svg class='item-icon'>
-            <use
-              xlinkHref={getIcon(iconName || item.slug, enableDefaultIcon)}
-            />
-          </svg>
-          <CloseButton />
-        </div>
-        <div class='dialog-content'>
-          <ConnectorDialogContent connector={item} />
-        </div>
-      </div>
-    </div>
-  </div>
+const ConnectorDialog = ({ item, iconName, enableDefaultIcon }) => (
+  <Dialog
+    className='connector-dialog'
+    headerStyle={{background: item.color.css || 'white'}}
+    headerIcon={getIcon(iconName || item.slug, enableDefaultIcon)}
+  >
+    <ConnectorDialogContent connector={item} />
+  </Dialog>
 )
 
-export default withRouter(ConnectorDialog)
+export default ConnectorDialog
