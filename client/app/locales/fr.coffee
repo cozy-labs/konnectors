@@ -9,7 +9,7 @@ module.exports =
     'file error': "Le fichier n'a pas pu être créé/modifié/supprimé"
     'internal error': "Une erreur est survenue dans votre Cozy"
     'no bills retrieved': 'Pas de factures trouvées'
-    'not mobile token': 'Pour obtenir ces données, vous devez vous identifier avec votre numéro de téléphone mobile !'
+    'not mobile token': 'Pour obtenir ces données, vous devez vous identifier avec votre numéro de téléphone mobile.'
     'not fixe token': 'Pour obtenir ces données, vous devez vous identifier avec votre email.'
     'last import:': 'Dernière importation :'
     'save and import': 'Importer et sauvegarder'

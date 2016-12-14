@@ -68,7 +68,7 @@ function requestOrange(uri, token, callback) {
   connector.logger.info(uri);
 
   request.get(uri, { auth: { bearer: token }, json: true }, (err, res, body) => {
-    if (res.statusCode !== 200 && res.statusCode !== '200') {
+    if (res.statusCode.toString() !== '200') {
       err = `${res.statusCode} - ${res.statusMessage} ${err || ''}`;
       connector.logger.error(body);
     }
@@ -130,13 +130,13 @@ function saveFieldsInKonnector(requiredFields, entries, data, next) {
   //eslint-disable-next-line
   const Konnector = require('../models/konnector');
 
-  Konnector.all((err, konnectors) => {
+
+  Konnector.get(connector.slug, (err, konnector) => {
     if (err) {
       connector.logger.error(err);
-      return next('request error');
+      return next('internal error');
     }
 
-    const konnector = konnectors.filter(k => k.slug === connector.slug)[0];
     const accounts = konnector.accounts;
     const index = accounts.findIndex(account =>
         account.access_token === requiredFields.access_token);

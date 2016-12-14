@@ -336,8 +336,10 @@ target="_blank">
 
         connectButtonHtml = """
 <div class='connectButton'>
-<a href='#{connectUrl}' ><button>#{t 'Connect'}</button></a>
+<button onclick="window.open('#{connectUrl}','width=800,height=800');" >\
+#{t 'Connect'}</button></a>
 </div>"""
+
         connectButtonElem = $ connectButtonHtml
         @$('.fields').append connectButtonElem
 
