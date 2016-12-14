@@ -19,7 +19,7 @@ const formConfig = ({ t, fields, slug }) => {
   }
 }
 
-const AccountConnectionForm = ({ t, fields, dirty, submit, submitting }) => (
+const AccountConnectionForm = ({ t, fields, dirty, error, submit, submitting }) => (
   <div class='account-form'>
     {Object.keys(fields)
       .filter(name => !fields[name].advanced)
@@ -29,11 +29,15 @@ const AccountConnectionForm = ({ t, fields, dirty, submit, submitting }) => (
     )}
     <div class='account-form-controls'>
       <button
+        disabled={!dirty}
         aria-busy={submitting ? 'true' : 'false'}
         onClick={submit}
       >
         {t('my_accounts account config button')}
       </button>
+      {error === 'bad credentials' &&
+        <p class='errors'>{t('my_accounts account config bad credentials')}</p>
+      }
     </div>
   </div>
 )

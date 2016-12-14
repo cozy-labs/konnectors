@@ -7,7 +7,7 @@ import { connectToStore } from '../lib/accountStore'
 import Notifier from '../components/Notifier'
 import AccountConnectionForm from '../components/AccountConnectionForm'
 
-const AccountConnection = ({ t, router, connector, submitting, onConnectAccount }) => (
+const AccountConnection = ({ t, router, connector, onConnectAccount }) => (
   <div class="account-connection">
     <div>
       <h3>Lorem ipsum</h3>
@@ -17,36 +17,35 @@ const AccountConnection = ({ t, router, connector, submitting, onConnectAccount 
       <AccountConnectionForm
         fields={connector.fields}
         onSubmit={values => onConnectAccount(connector.id, values)}
-        submitting={submitting}
       />
     </div>
   </div>
 )
 
-export default translate()(
+export default translate()(withRouter(
   connectToStore(
     state => {
       return {
-        submitting: state.working
+
       }
     },
     (store, props) => {
       const {t, router} = props
       return {
-        onConnectAccount: (accountId, values) => {
-          store.connectAccount(accountId, values)
+        onConnectAccount: (connectorId, values) => {
+          return store.connectAccount(connectorId, values)
+            .catch(error => {
+              Notifier.error(t('my_accounts account config error'))
+              return Promise.reject(new Error(t('my_accounts account config error')))
+            })
+            .then(() => store.startConnectorPoll(connectorId))
             .then(() => {
               router.goBack()
               Notifier.info(t('my_accounts account config success'))
             })
-            .catch(error => {
-              if (error.message === 'bad credentials') {
-                Notifier.error(t('my_accounts account config bad credentials'))
-              } else {
-                Notifier.error(t('my_accounts account config error'))
-              }
-            })
+
         }
       }
     }
-)(withRouter(AccountConnection)))
+  )(AccountConnection)
+))
