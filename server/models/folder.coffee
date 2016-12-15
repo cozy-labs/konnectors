@@ -53,7 +53,6 @@ Folder.mkdir = (path, callback) ->
             Folder.createNewFolder {name, path}, callback
 
 
-
 Folder.mkdirp = (path, callback) ->
     recurseCreate = (err, folder) ->
         # Remove the initial `/` to prevent empty folder creation
