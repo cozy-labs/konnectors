@@ -10,7 +10,7 @@ import App from './components/App'
 import DiscoveryList from './components/DiscoveryList'
 import CategoryList from './components/CategoryList'
 import ConnectedList from './components/ConnectedList'
-import AccountDialog from './components/AccountDialog'
+import ConnectorDialog from './components/ConnectorDialog'
 import UseCaseDialog from './components/UseCaseDialog'
 import UseCasesHelper from './lib/useCasesHelper'
 import AccountsHelper from './lib/accountsHelper'
@@ -93,7 +93,7 @@ render((
                     context={context}
                     {...props}
                   />
-                  <AccountDialog
+                  <ConnectorDialog
                     item={accounts.find(a => a.slug === props.params.account)}
                     enableDefaultIcon
                     {...props}
@@ -113,7 +113,7 @@ render((
             <Route
               path=':account'
               component={(props) =>
-                <AccountDialog
+                <ConnectorDialog
                   item={accounts.find(a => a.slug === props.params.account)}
                   enableDefaultIcon
                   {...props}
@@ -128,7 +128,7 @@ render((
             <Route
               path=':account'
               component={(props) =>
-                <AccountDialog
+                <ConnectorDialog
                   item={accounts.find(u => u.slug === props.params.account)}
                   enableDefaultIcon
                   {...props}

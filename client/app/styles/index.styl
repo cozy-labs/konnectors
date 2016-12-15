@@ -69,7 +69,7 @@ aside
         vertical-align: middle
         fill: $red
 
-.accounts-list, .use-cases-list
+.connector-list, .use-cases-list
         display         flex
         flex-wrap       wrap
         margin          0 0 2em 3em
@@ -155,24 +155,36 @@ aside
             border-top-right-radius     inherit
 
         .dialog-content
-            width               90%
+            width               70%
             margin              auto
-            display             flex
 
-            > div
-                width           50%
-                padding         10px
+            .account-connection
+                display             flex
+
+                > div
+                    width           50%
+                    padding         10px
+
+        .account-form
+            margin-bottom   1em
+
+        .account-form.error
+            .account-field
+                input
+                    border      1px solid $red
+                    background  none
 
         // Onboarding form styles
         // TODO: move into cozy-ui ?
         .account-field
-            position  relative
+            position   relative
+            margin-top 1em
 
             // Managing input width with flex
             display         flex
             flex-direction  column
 
-            button[action="password-visibility"]
+            button.password-visibility
                 position    absolute
                 top         0
                 right       0
@@ -180,7 +192,6 @@ aside
             button.icon
                 background   none
                 padding      0em
-                padding-top  .7em
                 width        1.3em
                 height       1.3em
                 display      block
@@ -216,6 +227,8 @@ aside
                 &:focus
                     border          1px solid $blue
                     background      none
+                &:hover
+                    border          1px solid $grey-06
                 &.error
                     border          1px solid $red
                     background      none
@@ -272,7 +285,7 @@ aside
     &.use-case-dialog
         [role=contentinfo]
             flex-basis          75rem
-            > main
+            > div
                 > h3
                     font-size       32px
                     margin          1em 0em .5em 1.5em
@@ -286,7 +299,7 @@ aside
                     justify-content center
 
     // specific to account dialog
-    &.account-dialog
+    &.connector-dialog
         padding-top         .5em
         .dialog-header
             svg

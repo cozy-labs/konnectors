@@ -3,7 +3,7 @@ import { h } from 'preact'
 import { Link, withRouter } from 'react-router'
 import { translate } from '../plugins/preact-polyglot'
 
-const AccountItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white', enableDefaultIcon = false, router }) => (
+const ConnectorItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white', enableDefaultIcon = false, router }) => (
   <Link class='item-wrapper' to={`${router.location.pathname}/${slug}`}>
     <header class='item-header' style={{background: backgroundCSS}}>
       {iconName &&
@@ -31,4 +31,4 @@ const icon = (iconName, enableDefaultIcon) => {
   return icon
 }
 
-export default translate()(withRouter(AccountItem))
+export default translate()(withRouter(ConnectorItem))

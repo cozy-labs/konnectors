@@ -154,6 +154,7 @@
 
   "my_accounts account config title": "Connect your %{name} account:",
   "my_accounts account config button": "Connect",
+  "my_accounts account config show password": "Display password",
   "my_accounts account config success": "Account added successfully",
   "my_accounts account config bad credentials": "Sorry, you entered an incorrect login or password",
   "my_accounts account config error": "Apologies, our server had an hiccup, do you mind starting again?"

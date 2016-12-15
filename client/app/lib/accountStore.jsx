@@ -6,7 +6,6 @@ export class AccountStore {
   constructor (accounts) {
     this.listeners = []
     this.state = {
-      working: false,
       connectors: accounts // TODO: rename accounts to connectors
     }
   }
@@ -32,7 +31,7 @@ export class AccountStore {
     this.listeners.splice(this.listeners.indexOf(listener), 1)
   }
 
-  startAccountPoll (connectorId, timeout = 10000, interval = 500) {
+  startConnectorPoll (connectorId, timeout = 10000, interval = 500) {
     let endTime = Number(new Date()) + timeout
 
     let checkCondition = function (resolve, reject) {
@@ -57,24 +56,15 @@ export class AccountStore {
     })
   }
 
-  connectAccount (connectorId, values) {
+  connectAccount (connectorId, values, accountId = 0) {
     let connector = this.state.connectors.find(c => c.id === connectorId)
-    connector.accounts.push(values)
-    this.setState({working: true})
+    connector.accounts[accountId] = values
     return this.fetch('PUT', `konnectors/${connectorId}`, connector)
       .then(response => {
         if (response.status === 200) {
-          return this.startAccountPoll(connectorId)
-        } else {
-          this.setState({working: false})
-          return Promise.reject(response)
+          return response
         }
-      }).then(() => {
-        this.setState({working: false})
-        return Promise.resolve()
-      }).catch(error => {
-        this.setState({working: false})
-        return Promise.reject(error)
+        return Promise.reject(response)
       })
   }
 

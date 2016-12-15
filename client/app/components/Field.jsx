@@ -1,6 +1,7 @@
 /** @jsx h */
 import { h, cloneElement } from 'preact'
 import classNames from 'classnames'
+import { translate } from '../plugins/preact-polyglot'
 
 const Field = (props) => {
   let inputs
@@ -51,3 +52,34 @@ export const FieldWrapper = ({ required, label, dirty, touched, errors, children
     </div>
   )
 }
+
+export const PasswordField = translate()((props) => {
+  const { t, placeholder, value, onChange, onBlur } = props
+  let pwdInput = null
+
+  const toggleVisibility = () => {
+    pwdInput.setAttribute('type', pwdInput.type === 'password' ? 'text' : 'password')
+  }
+
+  return (
+    <FieldWrapper {...props}>
+      <button
+        type='button'
+        title={t('my_accounts account config show password')}
+        class='icon password-visibility'
+        onClick={toggleVisibility}
+      >
+        <svg><use xlinkHref={require('../assets/sprites/icon-eye-open.svg')} /></svg>
+      </button>
+      <input
+        type='password'
+        ref={(input) => { pwdInput = input }}
+        placeholder={placeholder}
+        className='account-field-input'
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+      />
+    </FieldWrapper>
+  )
+})
