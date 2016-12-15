@@ -27,7 +27,38 @@ Folder.allPath = (callback) ->
         callback err, folders
 
 
+Folder.isPresent = (fullPath, callback) ->
+    Folder.request "byFullPath", key: fullPath, (err, folders) ->
+        return callback err if err
+        callback null, folders?.length > 0
+
+
 Folder.createNewFolder = (folder, callback) ->
     Folder.create folder, (err, newFolder) ->
         return callback err if err
         callback null, newFolder
+
+
+Folder.mkdir = (path, callback) ->
+    return callback(null, {path}) if path.length is 0
+
+    Folder.isPresent path, (err, isPresent) ->
+        parts = path.split '/'
+        name  = parts.pop()
+        path  = parts.join '/'
+
+        if isPresent
+            callback null, {name, path}
+        else
+            Folder.createNewFolder {name, path}, callback
+
+
+Folder.mkdirp = (path, callback) ->
+    recurseCreate = (err, folder) ->
+        # Remove the initial `/` to prevent empty folder creation
+        if folder.path.substring(1).split('/').length > 1
+            Folder.mkdir folder.path, recurseCreate
+        else
+            Folder.mkdir folder.path, callback
+
+    Folder.mkdir path, recurseCreate
