@@ -3,7 +3,7 @@ import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 
 import statefulForm from '../lib/statefulForm'
-import Field from './Field'
+import Field, { PasswordField } from './Field'
 
 const formConfig = ({ t, fields, slug }) => {
   let values = {}
@@ -23,9 +23,12 @@ const AccountConnectionForm = ({ t, fields, dirty, error, submit, submitting }) 
   <div class='account-form'>
     {Object.keys(fields)
       .filter(name => !fields[name].advanced)
-      .map(name => (
-        <Field label={t(name)} {...fields[name]} />
-      )
+      .map(name => {
+        if (fields[name].type === 'password') {
+          return <PasswordField label={t(name)} {...fields[name]} />
+        }
+        return <Field label={t(name)} {...fields[name]} />
+      }
     )}
     <div class='account-form-controls'>
       <button

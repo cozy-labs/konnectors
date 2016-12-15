@@ -51,3 +51,29 @@ export const FieldWrapper = ({ required, label, dirty, touched, errors, children
     </div>
   )
 }
+
+export const PasswordField = (props) => {
+  const { placeholder, value, onChange, onBlur } = props
+  let pwdInput = null
+
+  const toggleVisibility = () => {
+    pwdInput.setAttribute('type', pwdInput.type === 'password' ? 'text' : 'password')
+  }
+
+  return (
+    <FieldWrapper {...props}>
+      <button type="button" title="Afficher le mot de passe" class="icon" onClick={toggleVisibility}>
+        <svg><use xlinkHref={require('../assets/sprites/icon-eye-open.svg')}/></svg>
+      </button>
+      <input
+        type='password'
+        ref={(input) => { pwdInput = input }}
+        placeholder={placeholder}
+        className='account-field-input'
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+      />
+    </FieldWrapper>
+  )
+}
