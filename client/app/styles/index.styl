@@ -168,6 +168,12 @@ aside
         .account-form
             margin-bottom   1em
 
+        .account-form.error
+            .account-field
+                input
+                    border      1px solid $red
+                    background  none
+
         // Onboarding form styles
         // TODO: move into cozy-ui ?
         .account-field
@@ -177,7 +183,7 @@ aside
             display         flex
             flex-direction  column
 
-            button[action="password-visibility"]
+            button.password-visibility
                 position    absolute
                 top         0
                 right       0
@@ -185,7 +191,6 @@ aside
             button.icon
                 background   none
                 padding      0em
-                padding-top  .7em
                 width        1.3em
                 height       1.3em
                 display      block
@@ -221,6 +226,8 @@ aside
                 &:focus
                     border          1px solid $blue
                     background      none
+                &:hover
+                    border          1px solid $grey-06
                 &.error
                     border          1px solid $red
                     background      none

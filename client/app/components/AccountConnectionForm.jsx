@@ -20,7 +20,7 @@ const formConfig = ({ t, fields, slug }) => {
 }
 
 const AccountConnectionForm = ({ t, fields, dirty, error, submit, submitting }) => (
-  <div class='account-form'>
+  <div class={'account-form' + (error === 'bad credentials' ? ' error' : '')}>
     {Object.keys(fields)
       .filter(name => !fields[name].advanced)
       .map(name => {

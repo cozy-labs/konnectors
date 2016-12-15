@@ -4,8 +4,8 @@ import { translate } from '../plugins/preact-polyglot'
 import { withRouter } from 'react-router'
 
 const AccountManagement = ({ t, router, connector }) => (
-  <div class="accounts-management">
-    <div class="accounts-list">
+  <div class='accounts-management'>
+    <div class='accounts-list'>
       <h3>Lorem ipsum</h3>
     </div>
     <div>

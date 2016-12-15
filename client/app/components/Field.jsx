@@ -1,6 +1,7 @@
 /** @jsx h */
 import { h, cloneElement } from 'preact'
 import classNames from 'classnames'
+import { translate } from '../plugins/preact-polyglot'
 
 const Field = (props) => {
   let inputs
@@ -52,8 +53,8 @@ export const FieldWrapper = ({ required, label, dirty, touched, errors, children
   )
 }
 
-export const PasswordField = (props) => {
-  const { placeholder, value, onChange, onBlur } = props
+export const PasswordField = translate()((props) => {
+  const { t, placeholder, value, onChange, onBlur } = props
   let pwdInput = null
 
   const toggleVisibility = () => {
@@ -62,8 +63,13 @@ export const PasswordField = (props) => {
 
   return (
     <FieldWrapper {...props}>
-      <button type="button" title="Afficher le mot de passe" class="icon" onClick={toggleVisibility}>
-        <svg><use xlinkHref={require('../assets/sprites/icon-eye-open.svg')}/></svg>
+      <button
+        type='button'
+        title={t('my_accounts account config show password')}
+        class='icon password-visibility'
+        onClick={toggleVisibility}
+      >
+        <svg><use xlinkHref={require('../assets/sprites/icon-eye-open.svg')} /></svg>
       </button>
       <input
         type='password'
@@ -76,4 +82,4 @@ export const PasswordField = (props) => {
       />
     </FieldWrapper>
   )
-}
+})
