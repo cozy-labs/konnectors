@@ -11,7 +11,8 @@ export default function statefulForm (mapPropsToFormConfig) {
           fields: this.configureFields(config),
           dirty: false,
           submit: this.handleSubmit.bind(this),
-          submitting: false
+          submitting: false,
+          error: null
         }
       }
 

@@ -16,6 +16,7 @@ const AccountConnection = ({ t, router, connector, onConnectAccount }) => (
       <h3>{t('my_accounts account config title', {name: connector.name})}</h3>
       <AccountConnectionForm
         fields={connector.fields}
+        connectorName={connector.name}
         onSubmit={values => onConnectAccount(connector.id, values)}
       />
     </div>
