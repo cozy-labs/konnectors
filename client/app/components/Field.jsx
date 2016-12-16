@@ -1,5 +1,5 @@
 /** @jsx h */
-import { h, cloneElement } from 'preact'
+import { h, cloneElement, Component } from 'preact'
 import classNames from 'classnames'
 import { translate } from '../plugins/preact-polyglot'
 
@@ -53,33 +53,47 @@ export const FieldWrapper = ({ required, label, dirty, touched, errors, children
   )
 }
 
-export const PasswordField = translate()((props) => {
-  const { t, placeholder, value, onChange, onBlur } = props
-  let pwdInput = null
-
-  const toggleVisibility = () => {
-    pwdInput.setAttribute('type', pwdInput.type === 'password' ? 'text' : 'password')
+class Password extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      visible: false
+    }
+    this.toggleVisibility = this.toggleVisibility.bind(this)
   }
 
-  return (
-    <FieldWrapper {...props}>
-      <button
-        type='button'
-        title={t('my_accounts account config show password')}
-        class='icon password-visibility'
-        onClick={toggleVisibility}
-      >
-        <svg><use xlinkHref={require('../assets/sprites/icon-eye-open.svg')} /></svg>
-      </button>
-      <input
-        type='password'
-        ref={(input) => { pwdInput = input }}
-        placeholder={placeholder}
-        className='account-field-input'
-        value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-      />
-    </FieldWrapper>
-  )
-})
+  toggleVisibility () {
+    this.setState({
+      visible: !this.state.visible
+    })
+  }
+
+  render (props, { visible }) {
+    const { t, placeholder, value, onChange, onBlur } = props
+    return (
+      <FieldWrapper {...props}>
+        <button
+          type='button'
+          title={t('my_accounts account config show password')}
+          class='icon password-visibility'
+          onClick={this.toggleVisibility}
+        >
+          {visible
+            ? <svg><use xlinkHref={require('../assets/sprites/icon-eye-closed.svg')} /></svg>
+            : <svg><use xlinkHref={require('../assets/sprites/icon-eye-open.svg')} /></svg>
+          }
+        </button>
+        <input
+          type={visible ? 'text' : 'password'}
+          placeholder={placeholder}
+          className='account-field-input'
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+        />
+      </FieldWrapper>
+    )
+  }
+}
+
+export const PasswordField = translate()(Password)
