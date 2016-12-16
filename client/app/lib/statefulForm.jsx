@@ -75,6 +75,7 @@ export default function statefulForm (mapPropsToFormConfig) {
           let defaut = config.fields[field].default || ''
           let value = config.values && config.values[field]
             ? config.values[field] : defaut
+          let options = config.fields[field].options || []
           fields[field] = Object.assign({}, config.fields[field], {
             value: value,
             dirty: false,
@@ -83,6 +84,7 @@ export default function statefulForm (mapPropsToFormConfig) {
             onChange: (event) => this.handleChange(field, event.target ? event.target : { value: event })
           })
           if (typeof value === 'boolean') fields[field].checked = value
+          if (fields[field].type === 'dropdown') fields[field].options = options
         })
         return fields
       }

@@ -3,7 +3,7 @@ import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 
 import statefulForm from '../lib/statefulForm'
-import Field, { PasswordField } from './Field'
+import Field, { PasswordField, DropdownField } from './Field'
 
 const formConfig = ({ t, fields, connectorName }) => {
   let values = {}
@@ -26,6 +26,9 @@ const AccountConnectionForm = ({ t, fields, dirty, error, submit, submitting }) 
       .map(name => {
         if (fields[name].type === 'password') {
           return <PasswordField label={t(name)} {...fields[name]} />
+        }
+        if (fields[name].type === 'dropdown') {
+          return <DropdownField label={t(name)} {...fields[name]} />
         }
         return <Field label={t(name)} {...fields[name]} />
       }
