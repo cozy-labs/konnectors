@@ -96,7 +96,7 @@ An account connector can define different sort of fields for its configuration f
             advanced: true
         },
         folderPath: {
-            type: 'text',
+            type: 'folder',
             default: '<my_accounts>/files',
             advanced: true
         },
