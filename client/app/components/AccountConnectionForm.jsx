@@ -5,7 +5,7 @@ import { translate } from '../plugins/preact-polyglot'
 import statefulForm from '../lib/statefulForm'
 import Field, { PasswordField, DropdownField } from './Field'
 
-const formConfig = ({ t, customView, fields, connectorName }) => {
+const formConfig = ({ t, customView, connectUrl, fields, connectorName }) => {
   let values = {}
   Object.keys(fields).forEach(name => {
     if (fields[name].default) {
@@ -15,18 +15,25 @@ const formConfig = ({ t, customView, fields, connectorName }) => {
   })
   return {
     customView,
+    connectUrl,
     fields,
     values
   }
 }
 
-const AccountConnectionForm = ({ t, customView, fields, dirty, error, submit, submitting }) => (
+
+const AccountConnectionForm = ({ t, customView, connectUrl, fields, dirty, error, submit, submitting }) => (
   <div class={'account-form' + (error ? ' error' : '')}>
     {customView &&
       <div class='coz-custom-view'
         dangerouslySetInnerHTML={{
           __html: customView.replace(/<%t (.*) %>/gi, (match, $1) => t($1))
         }} />
+    }
+    {connectUrl &&
+      <div class='coz-connect-url'>
+        <a href={connectUrl} role='button'>{t('oauth connect')}</a>
+      </div>
     }
     {Object.keys(fields)
       .filter(name => !fields[name].advanced)
@@ -40,18 +47,20 @@ const AccountConnectionForm = ({ t, customView, fields, dirty, error, submit, su
         return <Field label={t(name)} {...fields[name]} />
       }
     )}
-    <div class='account-form-controls'>
-      <button
-        disabled={!dirty}
-        aria-busy={submitting ? 'true' : 'false'}
-        onClick={submit}
-      >
-        {t('my_accounts account config button')}
-      </button>
-      {error === 'bad credentials' &&
-        <p class='errors'>{t('my_accounts account config bad credentials')}</p>
-      }
-    </div>
+    {!connectUrl &&
+      <div class='account-form-controls'>
+        <button
+          disabled={!dirty}
+          aria-busy={submitting ? 'true' : 'false'}
+          onClick={submit}
+        >
+          {t('my_accounts account config button')}
+        </button>
+        {error === 'bad credentials' &&
+          <p class='errors'>{t('my_accounts account config bad credentials')}</p>
+        }
+      </div>
+    }
   </div>
 )
 
