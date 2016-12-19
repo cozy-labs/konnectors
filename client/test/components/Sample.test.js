@@ -1,3 +1,4 @@
+/* global test, expect */
 'use strict'
 
 import React from 'react'
