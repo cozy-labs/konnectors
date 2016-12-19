@@ -16,7 +16,7 @@ const Field = (props) => {
       )
     )
   } else {
-    const { type, placeholder, value, onChange, onBlur } = props
+    const { type, placeholder, value, onChange, onInput } = props
     inputs = (
       <input
         type={type}
@@ -24,7 +24,7 @@ const Field = (props) => {
         className='account-field-input'
         value={value}
         onChange={onChange}
-        onBlur={onBlur}
+        onInput={onInput}
       />
     )
   }
@@ -63,11 +63,12 @@ export const PasswordField = translate()(
     }
   })(
     props => {
-      const { t, placeholder, value, onChange, onBlur, toggleVisibility, visible } = props
+      const { t, placeholder, value, onChange, onInput, toggleVisibility, visible } = props
       return (
         <FieldWrapper {...props}>
           <button
             type='button'
+            tabindex='-1'
             title={t('my_accounts account config show password')}
             class='icon password-visibility'
             onClick={toggleVisibility}
@@ -83,7 +84,7 @@ export const PasswordField = translate()(
             className='account-field-input'
             value={value}
             onChange={onChange}
-            onBlur={onBlur}
+            onInput={onInput}
           />
         </FieldWrapper>
       )

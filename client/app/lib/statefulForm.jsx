@@ -79,7 +79,7 @@ export default function statefulForm (mapPropsToFormConfig) {
             value: value,
             dirty: false,
             errors: [],
-            // si on ne reçoit pas un event, on considère que c'est une value (cas du datepicker)
+            onInput: (event) => this.handleTouch(field),
             onChange: (event) => this.handleChange(field, event.target ? event.target : { value: event })
           })
           if (typeof value === 'boolean') fields[field].checked = value
@@ -87,23 +87,34 @@ export default function statefulForm (mapPropsToFormConfig) {
         return fields
       }
 
+      handleTouch (field) {
+        if (this.state.fields[field].dirty === true) {
+          return
+        }
+        this.setState(prevState => {
+          return Object.assign({}, prevState, {
+            dirty: true,
+            fields: Object.assign({}, prevState.fields, {
+              [field]: Object.assign({}, prevState.fields[field], { dirty: true })
+            })
+          })
+        })
+      }
+
       handleChange (field, target) {
         let stateUpdate
         if (target.type && target.type === 'checkbox') {
           stateUpdate = {
             value: target.checked,
-            checked: target.checked,
-            dirty: true
+            checked: target.checked
           }
         } else {
           stateUpdate = {
-            value: target.value,
-            dirty: true
+            value: target.value
           }
         }
         this.setState(prevState => {
           return Object.assign({}, prevState, {
-            dirty: true,
             fields: Object.assign({}, prevState.fields, {
               [field]: Object.assign({}, prevState.fields[field], stateUpdate)
             })
