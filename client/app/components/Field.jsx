@@ -91,3 +91,20 @@ export const PasswordField = translate()(
     }
   )
 )
+
+export const DropdownField = translate()((props) => {
+  const { value, options } = props
+
+  return (
+    <FieldWrapper {...props}>
+      <select className='account-field-dropdown'>
+        {options.map(optionValue => {
+          return <option
+            value={optionValue}
+            selected={optionValue === value}
+          >{optionValue}</option>
+        })}
+      </select>
+    </FieldWrapper>
+  )
+})
