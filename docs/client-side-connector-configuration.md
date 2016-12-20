@@ -96,14 +96,15 @@ An account connector can define different sort of fields for its configuration f
             advanced: true
         },
         folderPath: {
-            type: 'text',
+            type: 'folder',
             default: '<my_accounts>/files',
             advanced: true
         },
         frequency: {
-            type: 'text',
+            type: 'dropdown',
             default: 'weekly',
-            advanced: true
+            advanced: true,
+            options: ['hourly', 'daily', 'weekly', 'monthly']
         },
         customField: {
             type: 'text',
@@ -119,6 +120,7 @@ An account connector can define different sort of fields for its configuration f
 * __`default`__ (optional): default value of the field (different from the placeholder)
 * __`placeholder`__ (optional): placeholder for compatible input (text type for example)
 * __`advanced`__ (optional): if true, this field will be considered as an advanced configuration field
+* __`options`__ (__for dropdown type ONLY__): array of all options for the dropdown (`<select>` HTML)
 
 ### Field type property
 Here are all types available for fields (most of them are [HTML input types](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)):
@@ -129,7 +131,8 @@ Here are all types available for fields (most of them are [HTML input types](htt
 * url
 * email
 * tel
-* folder: custom type that will render a specific field with folders values from the cozy-files app as options
+* dropdown: dropdown using the `<select>` HTML tag (need the `options` property to define the values list)
+* folder: custom dropdown type that will render a specific field with folders values from the cozy-files app as options
 
 ### Available fields
 
@@ -145,6 +148,7 @@ But you can also use your own custom field like following:
 customField: {
     type: 'text',
     default: 'custom default value'
+    // other field properties if needed
 }
 ```
 
@@ -160,4 +164,6 @@ Some fields expect to have default values. If it's not the case, fallbacks will 
 
 * folderPath: `<my_accounts>/<account>`
 * calendar: `<account>`
-* frequency: 'weekly'
+* frequency:
+    * `'weekly'` as default values
+    * `['hourly', 'daily', 'weekly', 'monthly']` as default options

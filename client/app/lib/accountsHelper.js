@@ -23,6 +23,10 @@ export default {
         if (fields.frequency && !fields.frequency.default) {
           fields.frequency.default = 'weekly'
         }
+        if (fields.frequency &&
+          (!fields.frequency.options || !fields.frequency.options.length)) {
+          fields.frequency.options = ['hourly', 'daily', 'weekly', 'monthly']
+        }
       }
     })
     return accounts
