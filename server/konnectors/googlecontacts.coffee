@@ -37,26 +37,20 @@ module.exports =
         css: '#0D7DC0'
 
     customView: """
-    <h6><%t konnector customview googlecontacts 4 %></h6>
+    <h2><%t konnector customview googlecontacts 4 %></h2>
     <p><%t konnector customview googlecontacts 1 %></p>
     <button id="connect-google"
     title="<%t konnector customview googlecontacts 2 %>" class="btn"
        onclick="window.open('#{GoogleToken.getAuthUrl()}',
        'Google OAuth',
        'toolbars=0,width=700,height=600,\
-       left=200,top=200,scrollbars=1,resizable=1');
-       var input = $('#googlecontacts-authCode0-input');
-       input.parents('.field').toggleClass('hidden');
-       input.attr('type', 'text');
-       input.val('');
-       $('#googlecontacts-accountName-input').text('--');
-       return false;"
+       left=200,top=200,scrollbars=1,resizable=1');"
        ><%t konnector customview googlecontacts 2 %></button>
     <p><%t konnector customview googlecontacts 3 %></p>
     """
     fields:
         authCode:
-            type: "hidden"
+            type: "text"
         accountName:
             type: "text"
         accessToken:
