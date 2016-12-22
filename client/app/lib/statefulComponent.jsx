@@ -25,7 +25,8 @@ const statefulComponent = (initialState, eventHandlers) => {
       constructor (props) {
         super(props)
         this.state = initialState
-        this.handlers = this.setupHandlers(eventHandlers)
+        this.handlers = eventHandlers(this.setState.bind(this))
+        //this.handlers = this.setupHandlers(eventHandlers)
       }
 
       setupHandlers (eventHandlers) {

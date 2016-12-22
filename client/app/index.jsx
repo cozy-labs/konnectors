@@ -22,7 +22,7 @@ const context = window.context || 'cozy'
 
 // accounts
 const accounts = AccountsHelper.checkProperties(window.initKonnectors)
-const store = new AccountStore(accounts)
+const store = new AccountStore(accounts, window.initFolders)
 
 const connectedAccounts = accounts.filter(a => a.accounts.length !== 0)
 const unconnectedAccounts = accounts.filter(a => a.accounts.length === 0)

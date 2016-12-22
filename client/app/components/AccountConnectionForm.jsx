@@ -19,8 +19,8 @@ const formConfig = ({ t, fields, connectorName }) => {
   }
 }
 
-const AccountConnectionForm = ({ t, fields, dirty, error, submit, submitting }) => (
-  <div class={'account-form' + (error ? ' error' : '')}>
+export const AccountFields = ({ t, fields }) => (
+  <div class='account-form-login'>
     {Object.keys(fields)
       .filter(name => !fields[name].advanced)
       .map(name => {
@@ -33,6 +33,12 @@ const AccountConnectionForm = ({ t, fields, dirty, error, submit, submitting }) 
         return <Field label={t(name)} {...fields[name]} />
       }
     )}
+  </div>
+)
+
+const AccountConnectionForm = ({ t, fields, dirty, error, submit, submitting }) => (
+  <div class={'account-form' + (error ? ' error' : '')}>
+    <AccountFields t={t} fields={fields} />
     <div class='account-form-controls'>
       <button
         disabled={!dirty}

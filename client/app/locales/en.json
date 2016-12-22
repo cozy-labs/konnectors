@@ -157,5 +157,9 @@
   "my_accounts account config show password": "Display password",
   "my_accounts account config success": "Account added successfully",
   "my_accounts account config bad credentials": "Sorry, you entered an incorrect login or password",
-  "my_accounts account config error": "Apologies, our server had an hiccup, do you mind starting again?"
+  "my_accounts account config error": "Apologies, our server had an hiccup, do you mind starting again?",
+
+  "my_accounts account": "Account",
+  "my_accounts interval": "Import interval",
+  "my_accounts folder": "Folder"
 }

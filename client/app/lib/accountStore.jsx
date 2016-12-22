@@ -3,10 +3,11 @@
 import { h, Component } from 'preact'
 
 export class AccountStore {
-  constructor (accounts) {
+  constructor (accounts, folders) {
     this.listeners = []
     this.state = {
-      connectors: accounts // TODO: rename accounts to connectors
+      connectors: accounts, // TODO: rename accounts to connectors
+      folders: folders
     }
   }
 
