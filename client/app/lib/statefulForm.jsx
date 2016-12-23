@@ -6,13 +6,11 @@ export default function statefulForm (mapPropsToFormConfig) {
     class StatefulForm extends Component {
       constructor (props) {
         super(props)
-        const config = mapPropsToFormConfig(props)
+        const config = mapPropsToFormConfig ? mapPropsToFormConfig(props) : props
         this.state = {
           fields: this.configureFields(config),
           dirty: false,
-          submit: this.handleSubmit.bind(this),
-          submitting: false,
-          error: null
+          submit: this.handleSubmit.bind(this)
         }
       }
 
@@ -125,20 +123,7 @@ export default function statefulForm (mapPropsToFormConfig) {
       }
 
       handleSubmit () {
-        if (this.props.onSubmit) {
-          this.setState({ submitting: true })
-          Promise.resolve(this.props.onSubmit(this.getData()))
-            .then(() => {
-              this.setState({ submitting: false })
-            }, error => {
-              this.setState({ submitting: false })
-              if (error.errors) {
-                this.assignErrors(error.errors)
-              } else {
-                this.setState({ error: error.message })
-              }
-            })
-        }
+        if (this.props.onSubmit) this.props.onSubmit(this.getData())
       }
 
       getData () {

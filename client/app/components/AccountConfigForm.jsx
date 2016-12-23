@@ -1,23 +1,10 @@
 /** @jsx h */
 import { h } from 'preact'
-import { translate } from '../plugins/preact-polyglot'
 
-import statefulForm from '../lib/statefulForm'
 import Field, { DropdownField } from './Field'
-import { AccountFields } from './AccountConnectionForm'
+import AccountLoginForm from './AccountLoginForm'
 
-const formConfig = ({ t, fields, values = {}, connectorName }) => {
-  fields.importInterval = {
-    type: 'text',
-    advanced: true
-  }
-  return {
-    fields,
-    values
-  }
-}
-
-const AccountConfigForm = ({ t, fields, folders, dirty, error, submit, submitting }) => (
+const AccountConfigForm = ({ t, customView, fields, dirty, error, submit, submitting }) => (
   <div class={'account-form' + (error ? ' error' : '')}>
     {fields.calendar &&
       <div>
@@ -28,11 +15,11 @@ const AccountConfigForm = ({ t, fields, folders, dirty, error, submit, submittin
     {fields.folderPath &&
       <div>
         <h3>{t('my_accounts folder')}</h3>
-        <DropdownField label={false} {...fields.folderPath} options={folders} />
+        <DropdownField label={false} {...fields.folderPath} />
       </div>
     }
     <h3>{t('my_accounts interval')}</h3>
-    <Field label={false} {...fields.importInterval}>
+    <Field label={false} {...fields.frequency}>
       <select className='account-field-dropdown'>
         <option value='none'>{t('none')}</option>
         <option value='hour'>{t('every hour')}</option>
@@ -42,10 +29,8 @@ const AccountConfigForm = ({ t, fields, folders, dirty, error, submit, submittin
       </select>
     </Field>
     <h3>{t('my_accounts account')}</h3>
-    <AccountFields t={t} fields={fields} />
+    <AccountLoginForm t={t} customView={customView} fields={fields} />
   </div>
 )
 
-export default translate()(
-  statefulForm(props => formConfig(props))(AccountConfigForm)
-)
+export default AccountConfigForm

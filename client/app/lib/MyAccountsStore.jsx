@@ -2,34 +2,37 @@
 /* global fetch */
 import { h, Component } from 'preact'
 
-export class AccountStore {
-  constructor (accounts, folders) {
-    this.listeners = []
-    this.state = {
-      connectors: accounts, // TODO: rename accounts to connectors
-      folders: folders
-    }
+export default class MyAccountsStore {
+  constructor (connectors, folders, context) {
+    this.connectors = connectors
+    this.folders = folders
+    this.useCases = require(`../contexts/${context}/index`).useCases
   }
 
-  getState () {
-    return this.state
+  getCategories () {
+    return this.connectors.map(a => a.category).filter((cat, idx, all) => all.indexOf(cat) === idx)
   }
 
-  setState (newState) {
-    this.state = Object.assign({}, this.state, newState)
-    this.notifyListeners(newState)
+  getUseCases () {
+    return this.useCases
   }
 
-  notifyListeners (newState) {
-    this.listeners.forEach(listener => listener(newState))
+  find (cb) {
+    return this.connectors.find(cb)
   }
 
-  subscribe (listener) {
-    this.listeners.push(listener)
+  findConnected () {
+    return this.connectors.filter(c => c.accounts.length !== 0)
   }
 
-  unsubscribe (listener) {
-    this.listeners.splice(this.listeners.indexOf(listener), 1)
+  findByCategory ({filter}) {
+    return filter === 'all' ? this.connectors
+      : this.connectors.filter(c => c.category === filter)
+  }
+
+  findByUseCase (slug) {
+    let useCase = this.useCases.find(u => u.slug === slug)
+    return useCase.connectors.map(c1 => this.find(c2 => c1.slug === c2.slug))
   }
 
   startConnectorPoll (connectorId, timeout = 10000, interval = 500) {
@@ -40,11 +43,7 @@ export class AccountStore {
         .then(response => response.text()).then(body => {
           let connector = JSON.parse(body)
           if (!connector.isImporting) {
-            if (!connector.importErrorMessage) {
-              resolve(connector)
-            } else {
-              reject(new Error(connector.importErrorMessage))
-            }
+            resolve(connector)
           } else if (Number(new Date()) < endTime) {
             setTimeout(checkCondition, interval, resolve, reject)
           } else {
@@ -58,7 +57,7 @@ export class AccountStore {
   }
 
   connectAccount (connectorId, values, accountId = 0) {
-    let connector = this.state.connectors.find(c => c.id === connectorId)
+    let connector = this.connectors.find(c => c.id === connectorId)
     connector.accounts[accountId] = values
     return this.fetch('PUT', `konnectors/${connectorId}`, connector)
       .then(response => {
@@ -67,6 +66,7 @@ export class AccountStore {
         }
         return Promise.reject(response)
       })
+      .then(() => this.startConnectorPoll(connectorId))
   }
 
   fetch (method, url, body) {
@@ -97,38 +97,5 @@ export class Provider extends Component {
 
   render ({children}) {
     return children && children[0] || null
-  }
-}
-
-export const connectToStore = (mapStateToProps, mapStoreToProps) => {
-  return (WrappedComponent) => {
-    class Connected extends Component {
-      constructor (props, context) {
-        super(props, context)
-        this.store = context.store
-        this.state = Object.assign(
-          {},
-          mapStateToProps(this.store.getState()),
-          mapStoreToProps(this.store, props)
-        )
-        this.handleStoreUpdate = this.handleStoreUpdate.bind(this)
-        this.store.subscribe(this.handleStoreUpdate)
-      }
-
-      componentDidUnmount () {
-        this.store.unsubscribe(this.handleStoreUpdate)
-      }
-
-      handleStoreUpdate (newState) {
-        this.setState(mapStateToProps(newState))
-      }
-
-      render () {
-        return (
-          <WrappedComponent {...this.props} {...this.state} />
-        )
-      }
-    }
-    return Connected
   }
 }
