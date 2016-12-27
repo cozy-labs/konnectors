@@ -78,7 +78,7 @@ export default function statefulForm (mapPropsToFormConfig) {
             value: value,
             dirty: false,
             errors: [],
-            onInput: (event) => this.handleTouch(field),
+            onInput: (event) => this.handleChange(field, event.target ? event.target : { value: event }),
             onChange: (event) => this.handleChange(field, event.target ? event.target : { value: event })
           })
           if (typeof value === 'boolean') fields[field].checked = value
@@ -87,34 +87,23 @@ export default function statefulForm (mapPropsToFormConfig) {
         return fields
       }
 
-      handleTouch (field) {
-        if (this.state.fields[field].dirty === true) {
-          return
-        }
-        this.setState(prevState => {
-          return Object.assign({}, prevState, {
-            dirty: true,
-            fields: Object.assign({}, prevState.fields, {
-              [field]: Object.assign({}, prevState.fields[field], { dirty: true })
-            })
-          })
-        })
-      }
-
       handleChange (field, target) {
         let stateUpdate
         if (target.type && target.type === 'checkbox') {
           stateUpdate = {
+            dirty: true,
             value: target.checked,
             checked: target.checked
           }
         } else {
           stateUpdate = {
+            dirty: true,
             value: target.value
           }
         }
         this.setState(prevState => {
           return Object.assign({}, prevState, {
+            dirty: true,
             fields: Object.assign({}, prevState.fields, {
               [field]: Object.assign({}, prevState.fields[field], stateUpdate)
             })
