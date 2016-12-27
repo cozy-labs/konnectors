@@ -4,9 +4,28 @@ import { h, Component } from 'preact'
 
 export default class MyAccountsStore {
   constructor (connectors, folders, context) {
+    this.listener = null
     this.connectors = connectors
     this.folders = folders
     this.useCases = require(`../contexts/${context}/index`).useCases
+  }
+
+  subscribeTo (connectorId, listener) {
+    this.listener = listener
+    return this.find(c => c.id === connectorId)
+  }
+
+  unsubscribe () {
+    this.listener = null
+  }
+
+  updateConnector (connector) {
+    this.connectors = this.connectors.map(
+      c => c.id === connector.id ? Object.assign({}, c, connector) : c
+    )
+    if (this.listener) {
+      this.listener(this.find(c => c.id === connector.id))
+    }
   }
 
   getCategories () {
@@ -35,6 +54,35 @@ export default class MyAccountsStore {
     return useCase.connectors.map(c1 => this.find(c2 => c1.slug === c2.slug))
   }
 
+  connectAccount (connectorId, values, accountId = 0) {
+    let connector = this.find(c => c.id === connectorId)
+    connector.accounts[accountId] = values
+    return this.putConnector(connector)
+      .then(() => this.startConnectorPoll(connector.id))
+  }
+
+  synchronize (connectorId) {
+    let connector = this.find(c => c.id === connectorId)
+    return this.putConnector(connector)
+      .then(() => this.startConnectorPoll(connector.id))
+  }
+
+  deleteAccount (connectorId, accountIdx) {
+    let connector = this.find(c => c.id === connectorId)
+    connector.accounts.splice(accountIdx, 1)
+    return this.putConnector(connector)
+      .then(() => this.updateConnector(connector))
+  }
+
+  putConnector (connector) {
+    return this.fetch('PUT', `konnectors/${connector.id}`, connector)
+      .then(response => {
+        return response.status === 200
+          ? response
+          : Promise.reject(response)
+      })
+  }
+
   startConnectorPoll (connectorId, timeout = 10000, interval = 500) {
     let endTime = Number(new Date()) + timeout
 
@@ -43,6 +91,7 @@ export default class MyAccountsStore {
         .then(response => response.text()).then(body => {
           let connector = JSON.parse(body)
           if (!connector.isImporting) {
+            this.updateConnector(connector)
             resolve(connector)
           } else if (Number(new Date()) < endTime) {
             setTimeout(checkCondition, interval, resolve, reject)
@@ -54,19 +103,6 @@ export default class MyAccountsStore {
     return new Promise((resolve, reject) => {
       setTimeout(checkCondition, 500, resolve, reject)
     })
-  }
-
-  connectAccount (connectorId, values, accountId = 0) {
-    let connector = this.connectors.find(c => c.id === connectorId)
-    connector.accounts[accountId] = values
-    return this.fetch('PUT', `konnectors/${connectorId}`, connector)
-      .then(response => {
-        if (response.status === 200) {
-          return response
-        }
-        return Promise.reject(response)
-      })
-      .then(() => this.startConnectorPoll(connectorId))
   }
 
   fetch (method, url, body) {

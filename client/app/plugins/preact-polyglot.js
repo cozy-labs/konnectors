@@ -44,16 +44,16 @@ const init = function (context, lang) {
 export class I18n extends Component {
   constructor (props) {
     super(props)
-    this.polyglot = init(props.context, props.lang)
+    this.polyglot = init(props.context, props.locale)
   }
 
   getChildContext () {
-    return { t: this.polyglot.t.bind(this.polyglot) }
+    return { t: this.polyglot.t.bind(this.polyglot), locale: this.props.locale }
   }
 
   componentWillReceiveProps (newProps) {
     if (newProps.locale !== this.props.locale) {
-      this.polyglot = init(newProps.context, newProps.lang)
+      this.polyglot = init(newProps.context, newProps.locale)
     }
   }
 

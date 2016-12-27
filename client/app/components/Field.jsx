@@ -93,15 +93,19 @@ export const PasswordField = translate()(
 )
 
 export const DropdownField = translate()((props) => {
-  const { value, options } = props
+  const { value, options, onChange, onInput } = props
 
   return (
     <FieldWrapper {...props}>
-      <select className='account-field-dropdown'>
+      <select
+        className='account-field-dropdown'
+        value={value}
+        onChange={onChange}
+        onInput={onInput}
+      >
         {options.map(optionValue => (
           <option
             value={optionValue}
-            selected={optionValue === value}
           >{optionValue}</option>
         ))}
       </select>

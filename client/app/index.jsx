@@ -25,7 +25,7 @@ const useCases = store.getUseCases()
 
 render((
   <Provider store={store}>
-    <I18n context={context} lang={lang}>
+    <I18n context={context} locale={lang}>
       <Router history={hashHistory}>
         <Route
           component={(props) =>
@@ -60,10 +60,7 @@ render((
                     context={context}
                     {...props}
                   />
-                  <ConnectorManagement
-                    connector={store.find(c => c.slug === props.params.account)}
-                    {...props}
-                  />
+                  <ConnectorManagement {...props} />
                 </div>}
             />
           </Route>
@@ -76,28 +73,14 @@ render((
                 connectors={store.findByCategory(props.params)} {...props}
               />}
           >
-            <Route
-              path=':account'
-              component={(props) =>
-                <ConnectorManagement
-                  connector={store.find(c => c.slug === props.params.account)}
-                  {...props}
-                />}
-            />
+            <Route path=':account' component={ConnectorManagement} />
           </Route>
           <Route
             path='/connected'
             component={(props) =>
               <ConnectedList connectors={store.findConnected()} {...props} />}
           >
-            <Route
-              path=':account'
-              component={(props) =>
-                <ConnectorManagement
-                  connector={store.find(c => c.slug === props.params.account)}
-                  {...props}
-                />}
-            />
+            <Route path=':account' component={ConnectorManagement} />
           </Route>
         </Route>
       </Router>

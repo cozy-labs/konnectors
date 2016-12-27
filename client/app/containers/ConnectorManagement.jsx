@@ -9,61 +9,110 @@ import Notifier from '../components/Notifier'
 export default class ConnectorManagement extends Component {
   constructor (props, context) {
     super(props, context)
-    const { name, fields } = props.connector
     this.store = this.context.store
+    const connector = this.store.find(c => c.slug === props.params.account)
+    this.store.subscribeTo(
+      connector.id,
+      refreshedConnector => this.setState({ connector: refreshedConnector })
+    )
+    const { name, fields } = connector
     this.state = {
+      connector,
+      isConnected: connector.accounts.length !== 0,
       selectedAccount: 0,
       fields: this.configureFields(fields, context.t, name),
       submitting: false,
+      deleting: false,
       error: null
     }
   }
 
   render () {
-    const { slug, color, name, customView, accounts } = this.props.connector
-    const { t } = this.context
-    const isConnected = accounts.length !== 0
-    const selectedAccount = accounts[this.state.selectedAccount]
+    const { slug, color, name, customView, accounts, lastImport } = this.state.connector
+    const { isConnected, selectedAccount } = this.state
     return (
       <ConnectorDialog slug={slug} color={color.css} enableDefaultIcon>
         {isConnected
           ? <AccountManagement
-              t={t}
               name={name}
               customView={customView}
+              lastImport={lastImport}
               accounts={accounts}
-              values={selectedAccount}
-              onSubmit={values => this.onConnectAccount(values)}
-              {...this.state} />
+              values={accounts[selectedAccount]}
+              synchronize={() => this.synchronize()}
+              deleteAccount={idx => this.deleteAccount(idx)}
+              onSubmit={values => this.connectAccount(values)}
+              {...this.state}
+              {...this.context} />
           : <AccountConnection
-              t={t}
               name={name}
               customView={customView}
-              onSubmit={values => this.onConnectAccount(values)}
-              {...this.state} />
+              onSubmit={values => this.connectAccount(values)}
+              {...this.state}
+              {...this.context} />
         }
       </ConnectorDialog>
     )
   }
 
-  onConnectAccount (values) {
-    const id = this.props.connector.id
-    const { t, router } = this.context
+  gotoParent () {
+    const router = this.context.router
+    let url = router.location.pathname
+    router.push(url.substring(0, url.lastIndexOf('/')))
+  }
+
+  connectAccount (values) {
+    const id = this.state.connector.id
+    const { t } = this.context
     this.setState({ submitting: true })
     this.store.connectAccount(id, values)
       .then(fetchedConnector => {
         this.setState({ submitting: false })
-        // this.store.updateConnector(fetchedConnector) ???
         if (fetchedConnector.importErrorMessage) {
           this.setState({ error: fetchedConnector.importErrorMessage })
         } else {
-          router.goBack()
+          this.gotoParent()
           Notifier.info(t('my_accounts account config success'))
         }
       })
       .catch(error => { // eslint-disable-line
         this.setState({ submitting: false })
         Notifier.error(t('my_accounts account config error'))
+      })
+  }
+
+  synchronize () {
+    const id = this.state.connector.id
+    const { t } = this.context
+    this.setState({ synching: true })
+    this.store.synchronize(id)
+      .then(fetchedConnector => {
+        this.setState({ synching: false })
+        if (fetchedConnector.importErrorMessage) {
+          this.setState({ error: fetchedConnector.importErrorMessage })
+        }
+      })
+      .catch(error => { // eslint-disable-line
+        this.setState({ synching: false })
+        Notifier.error(t('my_accounts account config error'))
+      })
+  }
+
+  deleteAccount (idx) {
+    const id = this.state.connector.id
+    const { t } = this.context
+    this.setState({ deleting: true })
+    this.store.deleteAccount(id, idx)
+      .then(() => {
+        this.setState({ deleting: false })
+        if (this.state.connector.accounts.length === 0) {
+          this.gotoParent()
+        }
+        Notifier.info(t('my_accounts account delete success'))
+      })
+      .catch(error => { // eslint-disable-line
+        this.setState({ deleting: false })
+        Notifier.error(t('my_accounts account delete error'))
       })
   }
 
@@ -78,6 +127,7 @@ export default class ConnectorManagement extends Component {
     }
     if (fields.folderPath && !fields.folderPath.options) {
       fields.folderPath.options = this.store.folders.map(f => f.path + '/' + f.name)
+      fields.folderPath.folders = this.store.folders
     }
     if (!fields.frequency) {
       fields.frequency = {
