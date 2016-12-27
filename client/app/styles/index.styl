@@ -176,7 +176,7 @@ aside
                 h3
                     margin 2em 0 0.5em
 
-                a
+                a:not([role=button])
                     color           $blue
                     text-transform  uppercase
                     text-decoration none
@@ -310,9 +310,11 @@ aside
             min-height        (40/base-font-size)em
             border-radius     4px
             background-color  $blue
+            font-family       "Source Sans Pro", sans-serif
             text-align        center
             text-transform    uppercase
             color             white
+            text-decoration   none
 
             &.cancel
                 background-color $grey-01

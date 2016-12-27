@@ -10,7 +10,7 @@ const folderLink = (folders, currentPath) => {
   return `/apps/files/#folders/${folder.id}`
 }
 
-const AccountConfigForm = ({ t, customView, fields, dirty, error, submit, submitting }) => (
+const AccountConfigForm = ({ t, customView, connectUrl, fields, dirty, error, submit, submitting }) => (
   <div class={'account-form' + (error ? ' error' : '')}>
     {fields.folderPath &&
       <div>
@@ -41,7 +41,12 @@ const AccountConfigForm = ({ t, customView, fields, dirty, error, submit, submit
       </select>
     </Field>
     <h3>{t('my_accounts account')}</h3>
-    <AccountLoginForm t={t} customView={customView} fields={fields} />
+    <AccountLoginForm
+      t={t}
+      customView={customView}
+      connectUrl={connectUrl}
+      fields={fields}
+    />
     {error === 'bad credentials' &&
       <p class='errors'>{t('my_accounts account config bad credentials')}</p>
     }

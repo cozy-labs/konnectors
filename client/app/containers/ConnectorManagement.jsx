@@ -6,6 +6,34 @@ import AccountConnection from '../components/AccountConnection'
 import AccountManagement from '../components/AccountManagement'
 import Notifier from '../components/Notifier'
 
+const prepareConnectURL = (connector) => {
+  let connectUrl = connector.connectUrl
+  if (!connectUrl)
+    return
+
+  // Based on the current code borrowed from legacy konnectors, we check
+  // if the url contains a redirect_uri or redirect_url string, we assume that
+  // this string is positionned at the end of the connrectURL. In the future
+  // we should quickly use an additionnal parameter indicating if the url needs
+  // a redirect or not.
+  const hasRedirect = !!(['redirect_uri=', 'redirect_url='].find((redirect) => {
+    return connectUrl.indexOf(redirect) !== -1
+  }))
+
+  if (hasRedirect) {
+    // Use Router instead of document ? or injected location ? How ?
+    const l = document.location
+    // Use function parameter in the future
+    const accountIndex = 0
+
+    const redirectUrl = `${l.origin}${l.pathname}/konnectors/`
+      + `${connector.id}/${accountIndex}/redirect`
+    connectUrl += encodeURIComponent(redirectUrl)
+  }
+
+  return connectUrl
+}
+
 export default class ConnectorManagement extends Component {
   constructor (props, context) {
     super(props, context)
@@ -36,6 +64,7 @@ export default class ConnectorManagement extends Component {
           ? <AccountManagement
               name={name}
               customView={customView}
+              connectUrl={prepareConnectURL(this.state.connector)}
               lastImport={lastImport}
               accounts={accounts}
               values={accounts[selectedAccount]}
@@ -47,6 +76,7 @@ export default class ConnectorManagement extends Component {
           : <AccountConnection
               name={name}
               customView={customView}
+              connectUrl={prepareConnectURL(this.state.connector)}
               onSubmit={values => this.connectAccount(values)}
               {...this.state}
               {...this.context} />

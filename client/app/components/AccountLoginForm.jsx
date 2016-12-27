@@ -3,13 +3,18 @@ import { h } from 'preact'
 
 import Field, { PasswordField, DropdownField } from './Field'
 
-const AccountLoginForm = ({ t, customView, fields }) => (
+const AccountLoginForm = ({ t, customView, connectUrl, fields }) => (
   <div class='account-form-login'>
     {customView &&
       <div class='coz-custom-view'
         dangerouslySetInnerHTML={{
           __html: customView.replace(/<%t (.*) %>/gi, (match, $1) => t($1))
         }} />
+    }
+    {connectUrl &&
+      <div class='coz-connect-url'>
+        <a href={connectUrl} role='button'>{t('oauth connect')}</a>
+      </div>
     }
     {Object.keys(fields)
       .filter(name => !fields[name].advanced)
