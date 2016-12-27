@@ -7,7 +7,7 @@ import AccountConfigForm from './AccountConfigForm'
 
 const AccountManagement = (props) => {
   const { t, locale, name, accounts, selectedAccount, lastImport, dirty, submit, submitting } = props
-  const { synchronize, deleteAccount } = props
+  const { selectAccount, addAccount, synchronize, deleteAccount } = props
   return (
     <div>
       <div class='account-management'>
@@ -16,13 +16,14 @@ const AccountManagement = (props) => {
             {accounts.map((account, key) => (
               <li class={selectedAccount === key ? 'selected' : ''}>
                 <a onClick={() => selectAccount(key)}>
-                  {account.hasOwnProperty('login')
+                  {account.login
                     ? account.login
                     : t('my_accounts account index', {index: key+1})}
                 </a>
               </li>
             ))}
           </ul>
+          <a onClick={() => addAccount()}>{t('my_accounts add_account button')}</a>
         </div>
         <div class='account-config'>
           <div>

@@ -167,6 +167,7 @@
   "my_accounts account config bad credentials": "Sorry, you entered an incorrect login or password",
   "my_accounts account config error": "Apologies, our server had an hiccup, do you mind starting again?",
   "my_accounts account index": "Account #%{index}",
+  "my_accounts add_account button": "Add account",
   "my_accounts activity": "Activity",
   "my_accounts activity desc": "Last synchronization: ",
   "my_accounts activity running": "in progress...",
@@ -181,5 +182,7 @@
   "my_accounts account": "Account",
   "my_accounts disconnect": "Disconnection",
   "my_accounts disconnect desc": "Your will be disconnected from this account, but imported data will be kept",
-  "my_accounts disconnect button": "Disconnect this account"
+  "my_accounts disconnect button": "Disconnect this account",
+  "my_accounts account delete success": "Account removed succesfully",
+  "my_accounts account delete error": "Apologies, our server had an hiccup, do you mind starting again?"
 }

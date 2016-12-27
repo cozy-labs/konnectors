@@ -68,9 +68,11 @@ export default class ConnectorManagement extends Component {
               lastImport={lastImport}
               accounts={accounts}
               values={accounts[selectedAccount] || {}}
+              selectAccount={idx => this.selectAccount(idx)}
+              addAccount={() => this.addAccount()}
               synchronize={() => this.synchronize()}
               deleteAccount={idx => this.deleteAccount(idx)}
-              onSubmit={values => this.connectAccount(values)}
+              onSubmit={values => this.updateAccount(selectedAccount, values)}
               {...this.state}
               {...this.context} />
           : <AccountConnection
@@ -91,6 +93,15 @@ export default class ConnectorManagement extends Component {
     router.push(url.substring(0, url.lastIndexOf('/')))
   }
 
+  selectAccount (idx) {
+    this.setState({ selectedAccount: idx })
+  }
+
+  addAccount () {
+    this.store.addAccount(this.state.connector.id, this.getDefaultValues())
+    this.selectAccount(this.state.connector.accounts.length - 1)
+  }
+
   connectAccount (values) {
     const id = this.state.connector.id
     const { t } = this.context
@@ -102,6 +113,25 @@ export default class ConnectorManagement extends Component {
           this.setState({ error: fetchedConnector.importErrorMessage })
         } else {
           this.gotoParent()
+          Notifier.info(t('my_accounts account config success'))
+        }
+      })
+      .catch(error => { // eslint-disable-line
+        this.setState({ submitting: false })
+        Notifier.error(t('my_accounts account config error'))
+      })
+  }
+
+  updateAccount (idx, values) {
+    const id = this.state.connector.id
+    const { t } = this.context
+    this.setState({ submitting: true })
+    this.store.updateAccount(id, idx, values)
+      .then(fetchedConnector => {
+        this.setState({ submitting: false })
+        if (fetchedConnector.importErrorMessage) {
+          this.setState({ error: fetchedConnector.importErrorMessage })
+        } else {
           Notifier.info(t('my_accounts account config success'))
         }
       })
@@ -137,6 +167,8 @@ export default class ConnectorManagement extends Component {
         this.setState({ deleting: false })
         if (this.state.connector.accounts.length === 0) {
           this.gotoParent()
+        } else {
+          this.selectAccount(0)
         }
         Notifier.info(t('my_accounts account delete success'))
       })
@@ -144,6 +176,14 @@ export default class ConnectorManagement extends Component {
         this.setState({ deleting: false })
         Notifier.error(t('my_accounts account delete error'))
       })
+  }
+
+  getDefaultValues () {
+    let defaults = {}
+    Object.keys(this.state.fields).map(k => {
+      defaults[k] = this.state.fields[k].default || ''
+    })
+    return defaults
   }
 
   // Set default values for advanced fields that will not be shown

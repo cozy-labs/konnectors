@@ -62,6 +62,19 @@ export default class MyAccountsStore {
       .then(() => this.startConnectorPoll(connector.id))
   }
 
+  addAccount (connectorId, values = {}) {
+    let connector = this.find(c => c.id === connectorId)
+    connector.accounts.push(values)
+    this.updateConnector(connector)
+  }
+
+  updateAccount (connectorId, accountIdx, values) {
+    let connector = this.find(c => c.id === connectorId)
+    connector.accounts[accountIdx] = values
+    return this.putConnector(connector)
+      .then(() => this.startConnectorPoll(connector.id))
+  }
+
   synchronize (connectorId) {
     let connector = this.find(c => c.id === connectorId)
     return this.putConnector(connector)
