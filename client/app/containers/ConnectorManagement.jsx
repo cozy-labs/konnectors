@@ -67,7 +67,7 @@ export default class ConnectorManagement extends Component {
               connectUrl={prepareConnectURL(this.state.connector)}
               lastImport={lastImport}
               accounts={accounts}
-              values={accounts[selectedAccount]}
+              values={accounts[selectedAccount] || {}}
               synchronize={() => this.synchronize()}
               deleteAccount={idx => this.deleteAccount(idx)}
               onSubmit={values => this.connectAccount(values)}

@@ -14,11 +14,8 @@ const AccountManagement = (props) => {
         <div class='account-list'>
           <ul>
             {accounts.map((account, key) => (
-              <li>
-                <a
-                  class={selectedAccount === key ? 'selected' : ''}
-                  onClick={() => selectAccount(key)}
-                >
+              <li class={selectedAccount === key ? 'selected' : ''}>
+                <a onClick={() => selectAccount(key)}>
                   {account.hasOwnProperty('login')
                     ? account.login
                     : t('my_accounts account index', {index: key+1})}

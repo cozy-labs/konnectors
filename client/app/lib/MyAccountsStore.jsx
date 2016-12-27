@@ -58,6 +58,7 @@ export default class MyAccountsStore {
     let connector = this.find(c => c.id === connectorId)
     connector.accounts[accountId] = values
     return this.putConnector(connector)
+      .then(() => this.refreshFolders())
       .then(() => this.startConnectorPoll(connector.id))
   }
 
@@ -96,6 +97,7 @@ export default class MyAccountsStore {
           } else if (Number(new Date()) < endTime) {
             setTimeout(checkCondition, interval, resolve, reject)
           } else {
+            this.updateConnector(connector)
             reject(new Error('polling timed out'))
           }
         })
@@ -103,6 +105,14 @@ export default class MyAccountsStore {
     return new Promise((resolve, reject) => {
       setTimeout(checkCondition, 500, resolve, reject)
     })
+  }
+
+  refreshFolders () {
+    return this.fetch('GET', 'folders')
+      .then(response => response.text()).then(body => {
+        this.folders = JSON.parse(body)
+        Promise.resolve()
+      })
   }
 
   fetch (method, url, body) {
