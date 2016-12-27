@@ -86,3 +86,24 @@ module.exports =
                             else
                                 handleNotification req.konnector, notifContent
                     res.status(200).send success: true
+
+
+    redirect: (req, res, next) ->
+        try
+            accounts = req.konnector.accounts or []
+            account = accounts[req.params.accountId] or {}
+            for k, v of req.query
+                account[k] = v
+
+            # Add redirection path, used by some konnector to build back the
+            # redirectUri
+            account.redirectPath = req.originalUrl
+
+            accounts[req.params.accountId] = account
+        catch e then return next e
+
+        req.konnector.updateFieldValues { accounts: accounts }, (err) ->
+            return next err if err
+
+            res.redirect '../../..' + \
+              "/#/category/#{req.konnector.category}/#{req.konnector.slug}"
