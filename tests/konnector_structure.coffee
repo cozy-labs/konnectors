@@ -55,5 +55,5 @@ describe 'Check all konnectors', ->
                                     for field of konnector.fields
                                         do(translation, field) ->
                                             it "#{field}", ->
-                                                unless field.type == "hidden"
+                                                unless konnector.fields[field].type == "hidden"
                                                     should.exist translation[field]
