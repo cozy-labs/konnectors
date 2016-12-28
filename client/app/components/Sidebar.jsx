@@ -5,8 +5,8 @@ import { translate } from '../plugins/preact-polyglot'
 
 const Sidebar = ({ t, categories, router }) => {
   let isCategoryView = router.location.pathname.match(/^\/category/) !== null
-  const i18nCategories
-    = categories.filter(c => c !== 'others')
+  const i18nCategories =
+    categories.filter(c => c !== 'others')
       .map(c => ({ slug: c, label: t(`${c} category`) }))
       .sort((a, b) => a.label.localeCompare(b.label))
 
