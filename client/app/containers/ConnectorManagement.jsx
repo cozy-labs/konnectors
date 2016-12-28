@@ -208,10 +208,6 @@ export default class ConnectorManagement extends Component {
     if (fields.frequency && !fields.frequency.default) {
       fields.frequency.default = 'week'
     }
-    if (fields.frequency &&
-      (!fields.frequency.options || !fields.frequency.options.length)) {
-      fields.frequency.options = ['hour', 'day', 'week', 'month']
-    }
     return fields
   }
 }
