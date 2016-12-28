@@ -97,7 +97,7 @@ export default class MyAccountsStore {
       })
   }
 
-  startConnectorPoll (connectorId, timeout = 10000, interval = 500) {
+  startConnectorPoll (connectorId, timeout = 30000, interval = 500) {
     let endTime = Number(new Date()) + timeout
 
     let checkCondition = function (resolve, reject) {

@@ -50,6 +50,7 @@ export default class ConnectorManagement extends Component {
       selectedAccount: 0,
       fields: this.configureFields(fields, context.t, name),
       submitting: false,
+      synching: false,
       deleting: false,
       error: null
     }
@@ -206,11 +207,11 @@ export default class ConnectorManagement extends Component {
       }
     }
     if (fields.frequency && !fields.frequency.default) {
-      fields.frequency.default = 'weekly'
+      fields.frequency.default = 'week'
     }
     if (fields.frequency &&
       (!fields.frequency.options || !fields.frequency.options.length)) {
-      fields.frequency.options = ['hourly', 'daily', 'weekly', 'monthly']
+      fields.frequency.options = ['hour', 'day', 'week', 'month']
     }
     return fields
   }

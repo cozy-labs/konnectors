@@ -6,7 +6,8 @@ import statefulForm from '../lib/statefulForm'
 import AccountConfigForm from './AccountConfigForm'
 
 const AccountManagement = (props) => {
-  const { t, locale, name, accounts, selectedAccount, lastImport, dirty, submit, submitting } = props
+  const { t, locale, name, accounts, selectedAccount, lastImport, dirty, submit } = props
+  const { submitting, synching, deleting } = props
   const { selectAccount, addAccount, synchronize, deleteAccount } = props
   return (
     <div>
@@ -30,12 +31,14 @@ const AccountManagement = (props) => {
             <h3>{t('my_accounts activity')}</h3>
             <p>
               {t('my_accounts activity desc')}
-              {submitting
+              {synching
                 ? t('my_accounts activity running')
                 : <TimeAgo datetime={lastImport} locale={locale} />
               }
             </p>
-            <a onClick={() => synchronize()}>{t('my_accounts activity button')}</a>
+            <button class='flat' disabled={synching} onClick={() => synchronize()}>
+              {t('my_accounts activity button')}
+            </button>
           </div>
           <AccountConfigForm {...props} />
           <div>
@@ -43,7 +46,7 @@ const AccountManagement = (props) => {
             <p>
               {t('my_accounts disconnect desc')}
             </p>
-            <button class='danger' onClick={() => deleteAccount(selectedAccount)}>
+            <button class='danger' disabled={deleting} onClick={() => deleteAccount(selectedAccount)}>
               {t('my_accounts disconnect button')}
             </button>
           </div>

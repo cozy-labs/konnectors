@@ -192,8 +192,7 @@ aside
             .account-list
                 width 25%
                 ul
-                    margin-top   2.4em
-                    margin-right 1em
+                    margin   2.4em 1em 0.5em 0
                 li
                     padding          0.5em 1em
                     color            $grey-08
@@ -328,6 +327,15 @@ aside
                 color            #ff5d47
                 margin           1em 0 3em
                 width            80%
+
+            &.flat
+                background      none
+                padding         0em
+                min-height      0
+                color           $blue
+                text-transform  uppercase
+                text-decoration none
+                cursor          pointer
 
             &[disabled]
             &[aria-disabled=true]
