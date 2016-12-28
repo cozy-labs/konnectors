@@ -8,8 +8,9 @@ import Notifier from '../components/Notifier'
 
 const prepareConnectURL = (connector) => {
   let connectUrl = connector.connectUrl
-  if (!connectUrl)
+  if (!connectUrl) {
     return
+  }
 
   // Based on the current code borrowed from legacy konnectors, we check
   // if the url contains a redirect_uri or redirect_url string, we assume that
@@ -26,8 +27,8 @@ const prepareConnectURL = (connector) => {
     // Use function parameter in the future
     const accountIndex = 0
 
-    const redirectUrl = `${l.origin}${l.pathname}/konnectors/`
-      + `${connector.id}/${accountIndex}/redirect`
+    const redirectUrl = `${l.origin}${l.pathname}/konnectors/` +
+      `${connector.id}/${accountIndex}/redirect`
     connectUrl += encodeURIComponent(redirectUrl)
   }
 
@@ -63,24 +64,24 @@ export default class ConnectorManagement extends Component {
       <ConnectorDialog slug={slug} color={color.css} enableDefaultIcon>
         {isConnected
           ? <AccountManagement
-              name={name}
-              customView={customView}
-              connectUrl={prepareConnectURL(this.state.connector)}
-              lastImport={lastImport}
-              accounts={accounts}
-              values={accounts[selectedAccount] || {}}
-              selectAccount={idx => this.selectAccount(idx)}
-              addAccount={() => this.addAccount()}
-              synchronize={() => this.synchronize()}
-              deleteAccount={idx => this.deleteAccount(idx)}
-              onSubmit={values => this.updateAccount(selectedAccount, values)}
-              {...this.state}
-              {...this.context} />
+            name={name}
+            customView={customView}
+            connectUrl={prepareConnectURL(this.state.connector)}
+            lastImport={lastImport}
+            accounts={accounts}
+            values={accounts[selectedAccount] || {}}
+            selectAccount={idx => this.selectAccount(idx)}
+            addAccount={() => this.addAccount()}
+            synchronize={() => this.synchronize()}
+            deleteAccount={idx => this.deleteAccount(idx)}
+            onSubmit={values => this.updateAccount(selectedAccount, values)}
+            {...this.state}
+            {...this.context} />
           : <AccountConnection
-              connectUrl={prepareConnectURL(this.state.connector)}
-              onSubmit={values => this.connectAccount(values)}
-              {...this.state}
-              {...this.context} />
+            connectUrl={prepareConnectURL(this.state.connector)}
+            onSubmit={values => this.connectAccount(values)}
+            {...this.state}
+            {...this.context} />
         }
       </ConnectorDialog>
     )

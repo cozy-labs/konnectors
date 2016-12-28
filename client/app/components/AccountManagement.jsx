@@ -6,7 +6,7 @@ import statefulForm from '../lib/statefulForm'
 import AccountConfigForm from './AccountConfigForm'
 
 const AccountManagement = (props) => {
-  const { t, locale, name, accounts, selectedAccount, lastImport, dirty, submit } = props
+  const { t, locale, accounts, selectedAccount, lastImport, dirty, submit } = props
   const { submitting, synching, deleting } = props
   const { selectAccount, addAccount, synchronize, deleteAccount } = props
   return (
@@ -19,7 +19,7 @@ const AccountManagement = (props) => {
                 <a onClick={() => selectAccount(key)}>
                   {account.login
                     ? account.login
-                    : t('my_accounts account index', {index: key+1})}
+                    : t('my_accounts account index', {index: key + 1})}
                 </a>
               </li>
             ))}

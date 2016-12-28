@@ -1,6 +1,5 @@
-/** @jsx h */
 /* global fetch */
-import { h, Component } from 'preact'
+import { Component } from 'preact'
 
 export default class MyAccountsStore {
   constructor (connectors, folders, context) {

@@ -24,7 +24,8 @@ const scope = 'user_events'
 const connector = module.exports = baseKonnector.createNew({
   name: 'Facebook Events',
   slug: 'facebook_events',
-  customView: '<a href=${getOAuthProxyUrl()} target="_blank" ><%t konnector facebook_events connect %></a>',
+
+  customView: '<a href=${getOAuthProxyUrl()} target="_blank" ><%t konnector facebook_events connect %></a>', // eslint-disable-line
 
   category: 'social',
   color: {
@@ -55,7 +56,7 @@ const connector = module.exports = baseKonnector.createNew({
 
 })
 
-function getOAuthProxyUrl () {
+function getOAuthProxyUrl () { // eslint-disable-line
   const baseUri = 'https://jacquarg.github.io/proxy_redirect/facebook_events/'
   const params = {
     appId,

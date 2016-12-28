@@ -44,8 +44,8 @@ render((
               path=':useCase'
               component={(props) =>
                 <UseCaseDialog
-                item={useCases.find(u => u.slug === props.params.useCase)}
-                connectors={store.findByUseCase(props.params.useCase)}
+                  item={useCases.find(u => u.slug === props.params.useCase)}
+                  connectors={store.findByUseCase(props.params.useCase)}
                   context={context}
                   {...props}
                 />}
