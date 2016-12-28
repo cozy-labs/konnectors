@@ -17,6 +17,8 @@ const appSecret = 'a04e8cf918a382ea0b19cf1b6fbc2506'
 
 const scope = 'user_events'
 
+const oAuthProxyUrl = getOAuthProxyUrl()
+
 /*
  * The goal of this connector is to fetch event from facebook and store them
  * in the Cozy
@@ -24,8 +26,7 @@ const scope = 'user_events'
 const connector = module.exports = baseKonnector.createNew({
   name: 'Facebook Events',
   slug: 'facebook_events',
-
-  customView: '<a href=${getOAuthProxyUrl()} target="_blank" ><%t konnector facebook_events connect %></a>', // eslint-disable-line
+  customView: `<a href=${oAuthProxyUrl} target="_blank" ><%t konnector facebook_events connect %></a>`,
 
   category: 'social',
   color: {

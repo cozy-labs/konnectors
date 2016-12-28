@@ -139,14 +139,6 @@ function buildCallbackUrl (requiredFields, callback) {
   })
 }
 
-/**
-* return connection url with all params
-*/
-function getConnectUrl () { // eslint-disable-line
-  const baseUrl = `${connectUrl}/authorize?`
-  return `${baseUrl}response_type=${type}&client_id=${clientId}&scope=${scope}&state=${state}&nonce=${nonce}`
-}
-
 // Save konnector's fieldValues during fetch process.
 function saveTokenInKonnector (requiredFields, entries, data, next) {
   connector.logger.info('saveTokenInKonnector')
