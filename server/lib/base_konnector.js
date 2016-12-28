@@ -5,7 +5,6 @@ const fetcher = require('./fetcher')
 
 module.exports = {
 
-
   /*
    * Add common features to given konnector:
    *
@@ -18,18 +17,18 @@ module.exports = {
    * level.
    */
   createNew: function (konnector) {
-    var slug = slugify(konnector.slug || konnector.name);
-    slug = slug.replace(/(-|\.)/g, '_');
+    var slug = slugify(konnector.slug || konnector.name)
+    slug = slug.replace(/(-|\.)/g, '_')
 
     var logger = printit({
       prefix: konnector.name,
       date: true
-    });
+    })
 
     var modelsObj = {}
     konnector.models.forEach((model) => {
       modelsObj[model.displayName.toLowerCase()] = model
-    });
+    })
 
     return _.assignIn(konnector, {
       slug: slug,
@@ -38,23 +37,23 @@ module.exports = {
       models: modelsObj,
 
       fetch: function (requiredFields, callback) {
-        var importer = fetcher.new();
+        var importer = fetcher.new()
         konnector.fetchOperations.forEach((operation) => {
-          importer.use(operation);
-        });
-        importer.args(requiredFields, {}, {});
+          importer.use(operation)
+        })
+        importer.args(requiredFields, {}, {})
         importer.fetch((err, fields, entries) => {
           if (err) {
-            konnector.logger.error('Import failed.');
-            callback(err);
+            konnector.logger.error('Import failed.')
+            callback(err)
           } else {
-            konnector.logger.info('Import succeeded.');
-            callback(null, entries.notifContent);
+            konnector.logger.info('Import succeeded.')
+            callback(null, entries.notifContent)
           }
-        });
+        })
       }
 
-    });
+    })
   }
 
 }
