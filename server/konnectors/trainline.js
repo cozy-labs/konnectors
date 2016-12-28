@@ -19,8 +19,7 @@ const logger = require('printit')({
 })
 
 module.exports = baseKonnector.createNew({
-  name: 'Trainline (Captain Train)',
-  slug: 'trainline',
+  name: 'Trainline',
   vendorLink: 'www.captaintrain.com',
 
   category: 'transport',
