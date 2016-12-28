@@ -1,6 +1,7 @@
 cozydb = require 'cozydb'
 
-module.exports = EDFConsumptionStatement = cozydb.getModel 'ConsumptionStatement',
+module.exports =
+  EDFConsumptionStatement = cozydb.getModel 'ConsumptionStatement',
     contractNumber: String # Contract linked to this consumption
     billNumber: String # bill linked to this consumption.
     start: String # start date of the statement period.

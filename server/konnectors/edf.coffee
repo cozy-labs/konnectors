@@ -1160,7 +1160,14 @@ K = module.exports = require('../lib/base_konnector').createNew
 
     # TODO : get one edeliaClientId: 'text'
 
-    models: [EDFClient, EDFContract, EDFPaymentTerms, EDFHome, EDFConsumptionStatement, EDFBill]
+    models: [
+        EDFClient,
+        EDFContract,
+        EDFPaymentTerms,
+        EDFHome,
+        EDFConsumptionStatement,
+        EDFBill
+    ]
 
     fetchOperations: [
         prepareEntries
