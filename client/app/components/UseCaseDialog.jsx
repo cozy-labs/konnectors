@@ -19,14 +19,14 @@ const getItemBackground = (item, context) => {
   return background
 }
 
-const UseCaseDialog = ({ t, item, context }) => (
+const UseCaseDialog = ({ t, item, connectors, context }) => (
   <Dialog
     className='use-case-dialog'
     headerStyle={{background: getItemBackground(item, context)}}
   >
     <h3>{t(`use-case ${item.slug} title`)}</h3>
     <p>{t(`use-case ${item.slug} description`)}</p>
-    <ConnectorList connectors={item.accounts} />
+    <ConnectorList connectors={connectors} />
   </Dialog>
 )
 

@@ -9,11 +9,11 @@ import { h, Component } from 'preact'
  * Example:
  * const ToggleButton = statefulComponent(initialState = {
  *   on: false
- * }, eventHandlers = {
- *   toggle: (e, state) => {
- *     return { on: !state.on }
+ * }, eventHandlers = setState => ({
+ *   toggle: () => {
+ *     setState(state => ({ on: !state.on })
  *   }
- * })(
+ * }))(
  *   ({ on, toggle }) => (
  *     <button class={on ? 'on' : 'off'} onClick={toggle}>Go!</button>
  *   )
@@ -25,19 +25,7 @@ const statefulComponent = (initialState, eventHandlers) => {
       constructor (props) {
         super(props)
         this.state = initialState
-        this.handlers = this.setupHandlers(eventHandlers)
-      }
-
-      setupHandlers (eventHandlers) {
-        let fn
-        let handlers = {}
-        Object.keys(eventHandlers).forEach(propName => {
-          fn = e => {
-            this.setState(eventHandlers[propName](e, this.state))
-          }
-          handlers[propName] = fn.bind(this)
-        })
-        return handlers
+        this.handlers = eventHandlers(this.setState.bind(this))
       }
 
       render () {

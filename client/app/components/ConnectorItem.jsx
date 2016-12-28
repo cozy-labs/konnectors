@@ -3,7 +3,7 @@ import { h } from 'preact'
 import { Link, withRouter } from 'react-router'
 import { translate } from '../plugins/preact-polyglot'
 
-const ConnectorItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white', enableDefaultIcon = false, router }) => (
+const ConnectorItem = ({ title, subtitle, connected, slug, iconName, backgroundCSS = 'white', enableDefaultIcon = false, router }) => (
   <Link class='item-wrapper' to={`${router.location.pathname}/${slug}`}>
     <header class='item-header' style={{background: backgroundCSS}}>
       {iconName &&
@@ -14,6 +14,11 @@ const ConnectorItem = ({ title, subtitle, slug, iconName, backgroundCSS = 'white
     </header>
     <p class='item-title'>{title}</p>
     {subtitle && <p class='item-subtitle'>{subtitle}</p>}
+    {connected &&
+      <svg class='item-connected'>
+        <use xlinkHref={require('../assets/sprites/icon-check.svg')} />
+      </svg>
+    }
   </Link>
 )
 

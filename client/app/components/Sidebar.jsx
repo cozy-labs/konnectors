@@ -5,6 +5,11 @@ import { translate } from '../plugins/preact-polyglot'
 
 const Sidebar = ({ t, categories, router }) => {
   let isCategoryView = router.location.pathname.match(/^\/category/) !== null
+  const i18nCategories =
+    categories.filter(c => c !== 'others')
+      .map(c => ({ slug: c, label: t(`${c} category`) }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+
   return (
     <aside>
       <h4>{t('my_accounts title')}</h4>
@@ -31,16 +36,23 @@ const Sidebar = ({ t, categories, router }) => {
           </Link>
           {isCategoryView &&
             <ul class='submenu'>
-              <Link to='/category/all' activeClassName='router-link-active'>
-                {t('all category')}
-              </Link>
-              {categories.map(category => (
+              <li>
+                <Link to='/category/all' activeClassName='router-link-active'>
+                  {t('all category')}
+                </Link>
+              </li>
+              {i18nCategories.map(category => (
                 <li>
-                  <Link to={`/category/${category}`} activeClassName='router-link-active'>
-                    {t(`${category} category`)}
+                  <Link to={`/category/${category.slug}`} activeClassName='router-link-active'>
+                    {category.label}
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link to='/category/others' activeClassName='router-link-active'>
+                  {t('others category')}
+                </Link>
+              </li>
             </ul>
           }
         </li>

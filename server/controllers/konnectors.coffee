@@ -18,7 +18,7 @@ module.exports =
                 res.sendStatus 404
             else
                 konnector.injectEncryptedFields()
-
+                konnector.appendConfigData()
                 konnector.checkProperties()
 
                 # Add customView field

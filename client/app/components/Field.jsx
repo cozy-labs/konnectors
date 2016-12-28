@@ -45,7 +45,7 @@ export const FieldWrapper = ({ required, label, dirty, touched, errors, children
   })
   return (
     <div className={classes}>
-      <label>{label}</label>
+      {label && <label>{label}</label>}
       {children}
       {errors.length !== 0 && errors.map((err, i) => (
         <small key={i} className='account-field-error'>{err}</small>
@@ -57,11 +57,11 @@ export const FieldWrapper = ({ required, label, dirty, touched, errors, children
 export const PasswordField = translate()(
   statefulComponent({
     visible: false
-  }, {
-    toggleVisibility: (e, state) => {
-      return { visible: !state.visible }
+  }, (setState) => ({
+    toggleVisibility: () => {
+      setState(state => ({ visible: !state.visible }))
     }
-  })(
+  }))(
     props => {
       const { t, placeholder, value, onChange, onInput, toggleVisibility, visible } = props
       return (
@@ -71,7 +71,7 @@ export const PasswordField = translate()(
             tabindex='-1'
             title={t('my_accounts account config show password')}
             class='icon password-visibility'
-            onClick={toggleVisibility}
+            onClick={() => toggleVisibility()}
           >
             {visible
               ? <svg><use xlinkHref={require('../assets/sprites/icon-eye-closed.svg')} /></svg>
@@ -93,17 +93,21 @@ export const PasswordField = translate()(
 )
 
 export const DropdownField = translate()((props) => {
-  const { value, options } = props
+  const { value, options, onChange, onInput } = props
 
   return (
     <FieldWrapper {...props}>
-      <select className='account-field-dropdown'>
-        {options.map(optionValue => {
-          return <option
+      <select
+        className='account-field-dropdown'
+        value={value}
+        onChange={onChange}
+        onInput={onInput}
+      >
+        {options.map(optionValue => (
+          <option
             value={optionValue}
-            selected={optionValue === value}
           >{optionValue}</option>
-        })}
+        ))}
       </select>
     </FieldWrapper>
   )

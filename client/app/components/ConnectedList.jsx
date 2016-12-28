@@ -3,10 +3,10 @@ import { h } from 'preact'
 import { translate } from '../plugins/preact-polyglot'
 import ConnectorList from './ConnectorList'
 
-const ConnectedList = ({ t, accounts, children }) => (
+const ConnectedList = ({ t, connectors, children }) => (
   <div class='content'>
     <h1>{t('my_accounts connected title')}</h1>
-    <ConnectorList connectors={accounts} />
+    <ConnectorList connectors={connectors} />
     {children}
   </div>
 )

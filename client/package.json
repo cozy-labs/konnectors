@@ -3,9 +3,10 @@
     "classnames": "^2.2.5",
     "node-polyglot": "2.0.0",
     "normalize.css": "5.0.0",
-    "preact": "^6.4.0",
+    "preact": "^7.1.0",
     "preact-compat": "^3.9.2",
-    "react-router": "^3.0.0"
+    "react-router": "^3.0.0",
+    "timeago-react": "^1.0.7"
   },
   "devDependencies": {
     "autoprefixer": "6.5.1",
