@@ -77,8 +77,6 @@ export default class ConnectorManagement extends Component {
               {...this.state}
               {...this.context} />
           : <AccountConnection
-              name={name}
-              customView={customView}
               connectUrl={prepareConnectURL(this.state.connector)}
               onSubmit={values => this.connectAccount(values)}
               {...this.state}
