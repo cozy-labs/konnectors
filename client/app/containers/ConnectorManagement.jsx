@@ -74,6 +74,7 @@ export default class ConnectorManagement extends Component {
             addAccount={() => this.addAccount()}
             synchronize={() => this.synchronize()}
             deleteAccount={idx => this.deleteAccount(idx)}
+            cancel={() => this.gotoParent()}
             onSubmit={values => this.updateAccount(selectedAccount, values)}
             {...this.state}
             {...this.context} />
