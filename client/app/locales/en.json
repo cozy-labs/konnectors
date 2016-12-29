@@ -183,6 +183,7 @@
   "my_accounts disconnect": "Disconnection",
   "my_accounts disconnect desc": "Your will be disconnected from this account, but imported data will be kept",
   "my_accounts disconnect button": "Disconnect this account",
+  "my_accounts delete button": "Delete this account",
   "my_accounts account delete success": "Account removed succesfully",
   "my_accounts account delete error": "Apologies, our server had an hiccup, do you mind starting again?"
 }

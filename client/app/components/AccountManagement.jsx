@@ -9,6 +9,7 @@ const AccountManagement = (props) => {
   const { t, locale, accounts, selectedAccount, lastImport, dirty, submit } = props
   const { submitting, synching, deleting } = props
   const { selectAccount, addAccount, synchronize, deleteAccount } = props
+  const isLoginFilled = !!props.values.login
   return (
     <div>
       <div class='account-management'>
@@ -41,7 +42,8 @@ const AccountManagement = (props) => {
             </button>
           </div>
           <AccountConfigForm {...props} />
-          <div>
+          {isLoginFilled
+          ? <div>
             <h3>{t('my_accounts disconnect')}</h3>
             <p>
               {t('my_accounts disconnect desc')}
@@ -50,6 +52,12 @@ const AccountManagement = (props) => {
               {t('my_accounts disconnect button')}
             </button>
           </div>
+          : <div>
+            <button class='danger' disabled={deleting} onClick={() => deleteAccount(selectedAccount)}>
+              {t('my_accounts delete button')}
+            </button>
+          </div>}
+
         </div>
       </div>
       <div class='account-management-controls'>
