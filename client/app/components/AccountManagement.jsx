@@ -6,7 +6,7 @@ import statefulForm from '../lib/statefulForm'
 import AccountConfigForm from './AccountConfigForm'
 
 const AccountManagement = (props) => {
-  const { t, locale, accounts, selectedAccount, lastImport, dirty, submit } = props
+  const { t, locale, accounts, selectedAccount, lastImport, dirty, submit, cancel } = props
   const { submitting, synching, deleting } = props
   const { selectAccount, addAccount, synchronize, deleteAccount } = props
   const isLoginFilled = !!props.values.login
@@ -61,7 +61,7 @@ const AccountManagement = (props) => {
         </div>
       </div>
       <div class='account-management-controls'>
-        <button class='cancel'>
+        <button class='cancel' onClick={cancel}>
           {t('my_accounts account cancel button')}
         </button>
         <button
