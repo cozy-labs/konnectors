@@ -9,6 +9,8 @@ module.exports =
     'file error': 'The file could not be created/modified/deleted'
     'internal error': 'An error occured in your Cozy'
     'no bills retrieved': 'No bills retrieved'
+    'not mobile token': 'To get these data, you have to sing-in with your mobile phone number.'
+    'not fixe token': 'To get these data, you have to sing-in with your email.'
     'last import:': 'Last import:'
     'save and import': 'Import and save'
     'auto import': 'Automatic import'
@@ -47,6 +49,11 @@ module.exports =
     'refreshToken': "Refresh Token"
     'code': "Authorization code"
     'redirectPath': "Path of the redirect URL"
+    'access_token': 'Access token'
+    'lastGeoPoint': "Last GeoPoint downloaded"
+    'lastPhoneCommunicationLog': "Last PhoneCommunicationLog downloaded"
+    'lastVideoStream': "Last VideoStream downloaded"
+
 
     'home headline': """
     With Konnectors you can retrieve many data and save them into your Cozy.
@@ -143,6 +150,10 @@ module.exports =
     'konnector description maif': "Maif invites you to download some data in your Cozy (societary, home, claims, ...)."
     'konnector customview maif': "To do that<ol><li>use the 'connect' button to connect on your Maif account,</li><li>select 'every day' as update schedule,</li></li>click on 'Import and Save'."
     'konnector description edf': "EDF invites you to download your bills, consumption statements, contracts, payment terms,  and data about your client's relation, ... If you use the EDF e.quilibre service, the data will be richer."
+    'konnector description orange_mobile': "Orange (France) invites you to download your communication log and the geolocation of your Orange Mobile phone in your Cozy. Notice that this transmission can take up to a few weeks to start."
+    'konnector customview orange_mobile': "To do that: <ol><li>use the 'connect' button to connect on your Orange Mobile account with your <b>mobile phone number</b>,</li><li>select 'every hour' as update schedule,</li><li>then click on 'Import and Save'.</li></ol>"
+    'konnector description orange_vod': "Orange (France) invites you to download the film and video watching history of your LiveBox in your Cozy. Notice that this transmission can take up to a few weeks to start."
+    'konnector customview orange_vod': "To do that: <ol><li>use the 'connect' button to connect on your Orange account with your <b>mobile phone number</b>,</li><li>select 'every hour' as update schedule,</li><li>then click on 'Import and Save'.</li></ol>"
 
     # Konnectors' notifications
     'notification import error': 'an error occurred during import of data'
@@ -170,6 +181,9 @@ module.exports =
     'notification contracts': "%{smart_count} new contract imported |||| %{smart_count} new contracts imported"
     'notification clients': "%{smart_count} new client's informations imported"
     'notification paymenttermss': "%{smart_count} new payment term imported |||| %{smart_count} new payment term imported"
+    'notification geopoints': "%{smart_count} new geolocation point imported |||| %{smart_count} new geolocation points imported"
+    'notification phonecommunicationlogs': "%{smart_count} new call and sms log imported |||| %{smart_count} new call and sms logs imported"
+    'notification videostreams': "%{smart_count} new film and video watching log imported |||| %{smart_count} new video and film watching logs imported"
 
 
     "konnector birthdays birthday": "Birthday of"

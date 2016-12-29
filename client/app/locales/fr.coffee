@@ -9,6 +9,8 @@ module.exports =
     'file error': "Le fichier n'a pas pu être créé/modifié/supprimé"
     'internal error': "Une erreur est survenue dans votre Cozy"
     'no bills retrieved': 'Pas de factures trouvées'
+    'not mobile token': 'Pour obtenir ces données, vous devez vous identifier avec votre numéro de téléphone mobile.'
+    'not fixe token': 'Pour obtenir ces données, vous devez vous identifier avec votre email.'
     'last import:': 'Dernière importation :'
     'save and import': 'Importer et sauvegarder'
     'auto import': 'Importation automatique'
@@ -47,7 +49,10 @@ module.exports =
     'refreshToken': "Mettre à jour le token"
     'code': "Code d'autorisation"
     'redirectPath': "Chemin de l'URL de redirection"
-
+    'access_token': 'Access token'
+    'lastGeoPoint': "Dernier GeoPoint téléchargé"
+    'lastPhoneCommunicationLog': "Dernier PhoneCommunicationLog téléchargé"
+    'lastVideoStream': "Dernier VideoStream téléchargé"
 
     'home headline': """
     Konnectors vous permet de récupérer de nombreuses données et de les intégrer à votre Cozy.
@@ -145,7 +150,10 @@ module.exports =
     'konnector description maif': "La Maif vous propose de télécharger automatiquement des données vous concernant (sociétaire, foyer, véhicule, sinistre, ...) dans votre Cozy."
     'konnector customview maif': "Pour cela <ol> <li>connectez-vous à votre compte en ligne Maif via le bouton 'connect',</li><li>sélectionnez 'Tous les jours' comme fréquence de mise à jour,</li><li>cliquez sur 'importer et sauvegarder'.</li></ol>"
     'konnector description edf': "EDF vous propose de télécharger automatiquement vos factures, données de consommation, des données à propos de votre relation client, de vos contrats, modalités de paiement... dans votre Cozy. Pour cela, indiquez l'e-mail et le mot de passe de votre compte client EDF ci-dessous, sélectionnez 'Tous les jours' comme fréquence de mise à jour, puis cliquez sur 'importer et sauvegarder'. (Notez bien que la copie des données que vous allez récupérer est sous votre responsabilité)"
-
+    'konnector description orange_mobile': "Orange vous propose de télécharger automatiquement le journal d'appel de votre mobile, ainsi que son historique de géolocalisation dans votre Cozy. Attention, cette transmission expérimentale de données a un délais d'activation, qui peut être de quelques semaines pour les données de journal d'appel."
+    'konnector customview orange_mobile': "Pour cela : <ol><li>connectez-vous à votre compte en ligne Orange via le bouton 'connect' puis indiquez votre <b>numéro de mobile</b> Orange et votre mot de passe Orange,</li><li>sélectionnez 'Toutes les heures' comme fréquence de mise à jour,</li><li>puis cliquez sur 'importer et sauvegarder'.</li></ol>"
+    'konnector description orange_vod': "Orange vous propose de télécharger automatiquement l'historique des film et vidéo que vous avez regarder via la VoD ou votre LiveBox, dans votre Cozy. Attention, cette transmission expérimentale de données a un délais d'activation, qui peut être de quelques semaines."
+    'konnector customview orange_vod': "Pour cela : <ol><li>connectez-vous à votre compte en ligne Orange via le bouton 'connect' puis indiquez votre <b>l'adresse email</b> de votre compte Orange et votre mot de passe Orange,</li><li>sélectionnez 'Toutes les semaines' comme fréquence de mise à jour,</li><li>puis cliquez sur 'importer et sauvegarder'.</li></ol>"
 
     # Konnectors' notifications
     'notification import error': "une erreur est survenue pendant l'importation des données"
@@ -172,6 +180,10 @@ module.exports =
     'notification contracts': "%{smart_count} nouveau contrat importé |||| %{smart_count} nouveaux contrats importés"
     'notification clients': "%{smart_count} nouvelle informations client importée |||| %{smart_count}  nouvelles informations client importées"
     'notification paymenttermss': "%{smart_count} modalité de paiement importée |||| %{smart_count} modalités de paiement importées"
+    'notification geopoints': "%{smart_count} nouveau point de geolocalisation importé |||| %{smart_count} nouveaux points de géolocalisation importés"
+    'notification phonecommunicationlogs': "%{smart_count} nouvelle entré de journal d'appel importée |||| %{smart_count} nouvelles entrées de journal d'appel importés"
+    'notification videostreams': "%{smart_count} nouveau film ou vidéo vu. |||| %{smart_count} nouveaux films ou vidéos vus."
+
 
     "konnector birthdays birthday": "Anniversaire de"
 
