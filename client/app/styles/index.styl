@@ -22,7 +22,8 @@ aside
     background-color    $grey-01
     box-shadow: inset   -1px 0 0 0 $grey-01-alpha
     // to put back to cozy-ui
-    overflow            scroll
+    overflow            auto
+    overflow-x          hidden
 
     h4
         font-weight: normal
@@ -31,6 +32,7 @@ aside
         margin: 0
 
 [role="navigation"]
+    width: 13.75em
     a
         display: block
         text-decoration: none
@@ -43,11 +45,12 @@ aside
             background-color: $grey-01-alpha
 
     .submenu
-        margin-left: 3em
+        margin: .5em 0 0 3em
 
         a
             padding: 0.5em 1em
             color: $grey-08
+            margin: 0
 
         .router-link-active
             color: white
