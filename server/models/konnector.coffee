@@ -247,7 +247,6 @@ Konnector::cleanFieldValues = ->
         password = JSON.parse @password
         @password = JSON.stringify [password]
 
-<<<<<<< HEAD
 
 # Authorized Categories for konnectors
 Konnector::checkProperties = ->
@@ -271,12 +270,3 @@ Konnector::checkProperties = ->
             @color.hex = '#A7B5C6'
         if not @color.css
             @color.css = '#A7B5C6'
-=======
-# Tells if the konnector still has encrypted valued
-Konnector::hasEncryptedPassword = ->
-    @_passwordStillEncrypted? and @_passwordStillEncrypted
-
-Konnector::shallRaiseEncryptedFieldsError = ->
-    return @hasEncryptedPassword() and \
-    JSON.stringify(@accounts) isnt '[]'
->>>>>>> 9fe27e1... Warn the user that the password cannot be decrypted. Fixes #503 (#538)

@@ -114,7 +114,7 @@
     "Frank Rousseau",
     "Gara64",
     "Godinez Pablo",
-    "Guillaume Jacquard",
+    "Guillaume Jacquart",
     "Joseph Silvestre",
     "Luc Chaffard",
     "m4dz",
@@ -208,6 +208,15 @@
     },
     "Contact": {
       "description": "Create contacts from vendors or extract data from contact (for example to create birthdays)."
+    },
+    "GeoPoint": {
+      "description": "Import your geolocation in your Cozy."
+    },
+    "PhoneCommunicationLog": {
+      "description": "Import call and sms history in your Cozy."
+    },
+    "VideoStream": {
+      "description": "Import history of the video and film you have seen."
     },
     "MaifUser": {
       "description": "Maif information about you and your insurances contracts."
