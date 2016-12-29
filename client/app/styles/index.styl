@@ -11,106 +11,106 @@ base-font-size = 16
 
 [role=application]
     @extend $app-2panes-toolbar
-    background-color: #ffffff
+    background-color #ffffff
 
     h1
-        font-size: 2em
-        margin: 1.5em 2em 1em
+        font-size 2em
+        margin    1.5em 2em 1em
 
 
 aside
-    background-color    $grey-01
-    box-shadow: inset   -1px 0 0 0 $grey-01-alpha
-    // to put back to cozy-ui
-    overflow            auto
-    overflow-x          hidden
+    background-color $grey-01
+    box-shadow       inset -1px 0 0 0 $grey-01-alpha
+    //               to put back to cozy-ui
+    overflow         auto
+    overflow-x       hidden
 
     h4
-        font-weight: normal
-        font-size: 1.5em
-        padding: 1em 1.5em
-        margin: 0
+        font-weight normal
+        font-size   1.5em
+        padding     1em
+        margin      0
 
 [role="navigation"]
-    width: 13.75em
+    width 13.75em
     a
-        display: block
-        text-decoration: none
-        color: $red
-        flex: 1
-        padding: 1em 1.5em
-        margin: 0.25em 0
+        display         block
+        text-decoration none
+        color           $red
+        flex            1
+        padding         .75em 1.5em
+        margin          .5em 0
 
         &:hover:not(.router-link-active)
-            background-color: $grey-01-alpha
+            background-color $grey-01-alpha
 
     .submenu
-        margin: .5em 0 0 3em
+        margin .5em 0 0 3em
 
         a
-            padding: 0.5em 1em
-            color: $grey-08
-            margin: 0
+            padding 0.5em 1em
+            color   $grey-08
+            margin  0
 
         .router-link-active
-            color: white
-            background-color: $grey-08
-            border-radius: 4px 0 0 4px
+            color            white
+            background-color $grey-08
+            border-radius    4px 0 0 4px
 
     .router-link-active
-        background-color: $red
-        color: white
+        background-color $red
+        color            white
 
         svg
-            fill: white
+            fill white
 
     svg
-        width: 1.5em
-        height: 1.5em
-        margin-right: 0.5em
-        display: inline-block
-        vertical-align: middle
-        fill: $red
+        width          1.5em
+        height         1.5em
+        margin-right   0.5em
+        display        inline-block
+        vertical-align middle
+        fill           $red
 
 .connector-list, .use-cases-list
-        display         flex
-        flex-wrap       wrap
-        margin          0 0 2em 3em
+        display   flex
+        flex-wrap wrap
+        margin    0 0 2em 3em
 
 .item-wrapper
-        width               19em
-        position            relative
-        border-radius       4px
-        background-color    white
-        box-shadow          0 2px 6px 0 rgba(0, 0, 0, 0.15)
-        padding-bottom      1em
-        margin              .7em
-        cursor              pointer
-        text-decoration     none
-        transition          .2s ease all
+        width            19em
+        position         relative
+        border-radius    4px
+        background-color white
+        box-shadow       0 2px 6px 0 rgba(0, 0, 0, 0.15)
+        padding-bottom   1em
+        margin           .7em
+        cursor           pointer
+        text-decoration  none
+        transition       .2s ease all
         &:hover
-            box-shadow          0 4px 12px 0 rgba(0, 0, 0, 0.25)
-            transform           scale(1.05)
-            transition          .2s ease all
+            box-shadow 0 4px 12px 0 rgba(0, 0, 0, 0.25)
+            transform  scale(1.05)
+            transition .2s ease all
         .item-header
-            border-radius       4px 4px 0px 0px
-            height              9em
-            position            relative
+            border-radius 4px 4px 0px 0px
+            height        9em
+            position      relative
             .item-icon
-                border-radius   4px 4px 0px 0px
-                width           14em
-                height          4em
-                margin          2.5em
+                border-radius 4px 4px 0px 0px
+                width         14em
+                height        4em
+                margin        2.5em
         .item-title
-            padding             0em .5em
-            font-size           20px
-            margin              .5em
-            color               black
+            padding   0em .5em
+            font-size 20px
+            margin    .5em
+            color     black
         .item-subtitle
-            font-size           14px
-            padding             0em 1em
-            margin              0em .5em
-            color               $grey-06
+            font-size 14px
+            padding   0em 1em
+            margin    0em .5em
+            color     $grey-06
         .item-connected
             position absolute
             width    24px
@@ -124,45 +124,45 @@ aside
     @extend $dialog
 
     [role=separator]
-        cursor pointer
+        cursor           pointer
         background-color rgba(78, 91, 105, 0.75)
 
     .wrapper
         min-height 100vh
-        padding 3em 1em
+        padding    3em 1em
         box-sizing border-box
 
     .close-button
-        height                  3em
-        width                   3em
-        cursor                  pointer
-        position                absolute
-        right                   4em
-        top                     3.5em
+        height   3em
+        width    3em
+        cursor   pointer
+        position absolute
+        right    4em
+        top      3.5em
         &:after, &:before
-            position            absolute
-            content             ' '
-            height              3em
-            width               2px
-            background-color    white
-            margin              0em 1.5em
+            position         absolute
+            content          ' '
+            height           3em
+            width            2px
+            background-color white
+            margin           0em 1.5em
         &:after
-            transform: rotate(-45deg);
+            transform rotate(-45deg);
         &:before
-            transform: rotate(45deg);
+            transform rotate(45deg);
 
     [role=contentinfo]
-        overflow            initial
-        flex-direction      column
-        border              none
-        flex-basis          80rem
-        box-shadow          0 6px 18px 0 rgba(0, 0, 0, 0.22), 0 1px 3px 0 rgba(0, 0, 0, 0.16)
+        overflow       initial
+        flex-direction column
+        border         none
+        flex-basis     80rem
+        box-shadow     0 6px 18px 0 rgba(0, 0, 0, 0.22), 0 1px 3px 0 rgba(0, 0, 0, 0.16)
 
         .dialog-header
-            height                      10em
-            overflow                    hidden
-            border-top-left-radius      inherit
-            border-top-right-radius     inherit
+            height                  10em
+            overflow                hidden
+            border-top-left-radius  inherit
+            border-top-right-radius inherit
 
         .dialog-content
 
@@ -184,43 +184,43 @@ aside
 
             .account-connection
                 > div
-                    width   50%
+                    width 50%
 
             .account-management
-                width               70%
-                margin              auto
+                width  70%
+                margin auto
 
             .account-description
                 background-color $grey-01
                 padding          0 2em 0 15%
                 > p
-                    margin-top   2em
+                    margin-top 2em
 
             .account-login
-                padding          0 15% 0 2em
+                padding 0 15% 0 2em
 
             .account-list
                 width 25%
                 ul
                     margin 2.4em 1em 0.5em 0
                 li
-                    padding          0.5em 1em
-                    color            $grey-08
-                    font-weight      bold
-                    text-overflow    ellipsis
-                    white-space      nowrap
-                    overflow         hidden
+                    padding       0.5em 1em
+                    color         $grey-08
+                    font-weight   bold
+                    text-overflow ellipsis
+                    white-space   nowrap
+                    overflow      hidden
                     &.selected
                         background-color $grey-01
                         a
-                            color        $grey-08
+                            color $grey-08
 
             .account-config
                 .account-field
                     max-width 80%
 
         .account-form
-            margin-bottom   1em
+            margin-bottom 1em
 
         .account-form.error
             .account-field
@@ -231,35 +231,35 @@ aside
         // Onboarding form styles
         // TODO: move into cozy-ui ?
         .account-field
-            position   relative
-            margin     1em 0 0.5em
+            position relative
+            margin   1em 0 0.5em
 
             // Managing input width with flex
             display         flex
             flex-direction  column
 
             button.password-visibility
-                position    absolute
-                top         0
-                right       0
+                position absolute
+                top      0
+                right    0
 
             button.icon
-                background   none
-                padding      0em
-                width        1.3em
-                height       1.3em
-                display      block
+                background none
+                padding    0em
+                width      1.3em
+                height     1.3em
+                display    block
 
                 svg
-                    width   1.3em
-                    height  1.3em
+                    width  1.3em
+                    height 1.3em
 
             label
-                display           block
-                text-transform    uppercase
-                color             $grey-05
-                font-size         .9em
-                padding           .55em 0
+                display        block
+                text-transform uppercase
+                color          $grey-05
+                font-size      .9em
+                padding        .55em 0
 
             .error-label
                 display none
@@ -268,33 +268,34 @@ aside
             input[type=text]
             input[type=password]
             select
-                display         inline-block
-                padding         0.75em 0.75em 0.9em
-                border-radius   4px
-                box-sizing      border-box
-                border          1px solid $grey-03
-                background      #f5f5f5
-                color           black
+                display       inline-block
+                padding       0.75em 0.75em 0.9em
+                border-radius 4px
+                box-sizing    border-box
+                border        1px solid $grey-03
+                background    #f5f5f5
+                color         black
                 &::placeholder
-                    color       $grey-07
-                    font-size   1.05em
+                    color     $grey-07
+                    font-size 1.05em
                 &:focus
-                    border          1px solid $blue
-                    background      none
+                    border     1px solid $blue
+                    background none
                 &:hover
-                    border          1px solid $grey-06
+                    border 1px solid $grey-06
                 &.error
-                    border          1px solid $red
-                    background      none
+                    border     1px solid $red
+                    background none
 
             select
                 -moz-appearance     none
                 -webkit-appearance  none
                 appearance          none
-                &::-ms-expand { display: none }
                 background-image    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16px' height='16px'><polyline points='14.764,4.966 8.053,11.677 1.342,4.966'/></svg>")
                 background-position right 8px center
                 background-repeat   no-repeat
+                &::-ms-expand
+                    display none
 
         .account-form-controls
             margin-top 2em
@@ -358,28 +359,28 @@ aside
                 position relative
 
                 &::after
-                    position static
-                    width      (16/base-font-size)em
-                    height     (16/base-font-size)em
-                    margin-left (8/base-font-size)em
+                    position     static
+                    width        (16/base-font-size)em
+                    height       (16/base-font-size)em
+                    margin-left  (8/base-font-size)em
                     margin-right (-24/base-font-size)em
-                    @extend    $icon-spinner-white
+                    @extend      $icon-spinner-white
 
 
         .errors
-            color  $red
+            color $red
     // specific to use case dialog
     &.use-case-dialog
         [role=contentinfo]
-            flex-basis          75rem
+            flex-basis 75rem
             > div
                 > h3
-                    font-size       32px
-                    margin          1em 0em .5em 1.5em
+                    font-size 32px
+                    margin    1em 0em .5em 1.5em
 
                 > p
-                    margin-left     3em
-                    margin-bottom   2em
+                    margin-left   3em
+                    margin-bottom 2em
                 .accounts-list
                     margin-bottom   5em
                     margin-left     .5em
@@ -387,12 +388,12 @@ aside
 
     // specific to account dialog
     &.connector-dialog
-        padding-top         .5em
+        padding-top .5em
         .dialog-header
             svg
-                height      6em
-                width       100%
-                margin      2em 0em
+                height 6em
+                width  100%
+                margin 2em 0em
 
 // Onboarding notification styles
 // TODO: move into cozy-ui ?
@@ -401,34 +402,28 @@ notification-width = (546/base-font-size)em
     z-index 100
 
 .coz-notification
-    display block
-    position absolute
-
-    top (16/base-font-size)em
-
-    left 0
-    margin 0 (16/base-font-size)em
-
-    border-radius (10/base-font-size)em
+    display          block
+    position         absolute
+    top              (16/base-font-size)em
+    left             0
+    margin           0 (16/base-font-size)em
+    border-radius    (10/base-font-size)em
     background-color #2bba40
-    box-shadow 0 (6/base-font-size)em (18/base-font-size)em 0 rgba(50, 54, 63, 0.23)
+    box-shadow       0 (6/base-font-size)em (18/base-font-size)em 0 rgba(50, 54, 63, 0.23)
+    box-sizing       border-box
+    padding          1em
+    color            white
 
-    box-sizing border-box
-    padding 1em
-
-    color white
-
-    // When only a title is displayed
-    min-height: (96/base-font-size)em
-    padding-left (96/base-font-size)em
-    background-image url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path fill='#FFFFFF' fill-rule='evenodd' d='M24,48 C37.254834,48 48,37.254834 48,24 C48,10.745166 37.254834,0 24,0 C10.745166,0 0,10.745166 0,24 C0,37.254834 10.745166,48 24,48 Z M13.4142136,24.5857864 C12.633165,23.8047379 11.366835,23.8047379 10.5857864,24.5857864 C9.80473785,25.366835 9.80473785,26.633165 10.5857864,27.4142136 L17.5857864,34.4142136 C18.366835,35.1952621 19.633165,35.1952621 20.4142136,34.4142136 L35.4142136,19.4142136 C36.1952621,18.633165 36.1952621,17.366835 35.4142136,16.5857864 C34.633165,15.8047379 33.366835,15.8047379 32.5857864,16.5857864 L19,30.1715729 L13.4142136,24.5857864 Z'/></svg>")
-    background-repeat no-repeat
+    //                  When only a title is displayed
+    min-height          (96/base-font-size)em
+    padding-left        (96/base-font-size)em
+    background-image    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path fill='#FFFFFF' fill-rule='evenodd' d='M24,48 C37.254834,48 48,37.254834 48,24 C48,10.745166 37.254834,0 24,0 C10.745166,0 0,10.745166 0,24 C0,37.254834 10.745166,48 24,48 Z M13.4142136,24.5857864 C12.633165,23.8047379 11.366835,23.8047379 10.5857864,24.5857864 C9.80473785,25.366835 9.80473785,26.633165 10.5857864,27.4142136 L17.5857864,34.4142136 C18.366835,35.1952621 19.633165,35.1952621 20.4142136,34.4142136 L35.4142136,19.4142136 C36.1952621,18.633165 36.1952621,17.366835 35.4142136,16.5857864 C34.633165,15.8047379 33.366835,15.8047379 32.5857864,16.5857864 L19,30.1715729 L13.4142136,24.5857864 Z'/></svg>")
+    background-repeat   no-repeat
     background-position (24/base-font-size)em center
 
-    transition top 0.5s
+    transition                 top 0.5s
     transition-timing-function ease-out
-
-    cursor pointer
+    cursor                     pointer
 
     .coz-notification-title
         font-weight bold
@@ -438,12 +433,12 @@ notification-width = (546/base-font-size)em
     background-image url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'><path fill='#FFFFFF' fill-rule='evenodd' d='M24,48 C37.254834,48 48,37.254834 48,24 C48,10.745166 37.254834,0 24,0 C10.745166,0 0,10.745166 0,24 C0,37.254834 10.745166,48 24,48 Z M22.4965402,13.1030164 C23.3271937,11.6654101 24.6721035,11.6623183 25.5044703,13.1030164 L35.4961011,30.3969836 C36.3266815,31.8345899 35.6568766,33 33.9920699,33 L14.0079301,33 C12.3466962,33 11.6715912,31.8376817 12.5040311,30.3969836 L22.4965402,13.1030164 Z M22.5792265,18.4260768 C22.5354709,17.6384763 23.1362228,17 23.9297104,17 L24.0702896,17 C24.8598969,17 25.464841,17.6328625 25.4207735,18.4260768 L25.0554191,25.0024554 C25.024812,25.553384 24.5561352,26 24,26 C23.4477153,26 22.9752049,25.5536886 22.9445809,25.0024554 L22.5792265,18.4260768 Z M22.5,29 C22.5,28.1715729 23.1657972,27.5 24,27.5 C24.8284271,27.5 25.5,28.1657972 25.5,29 C25.5,29.8284271 24.8342028,30.5 24,30.5 C23.1715729,30.5 22.5,29.8342028 22.5,29 Z'/></svg>")
 
 .coz-notification--closing
-    top: -25%
+    top                        -25%
     transition-timing-function ease-in
 
-@media all and (min-width: notification-width)
+@media all and (min-width notification-width)
     .coz-notification
-        left 50%
-        max-width notification-width
+        left        50%
+        max-width   notification-width
         margin-left -(notification-width/2)
-        width 100%
+        width       100%

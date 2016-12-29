@@ -19,3 +19,6 @@ trim_trailing_whitespace = false
 
 [*.pug]
 trim_trailing_whitespace = false
+
+[*.styl]
+indent_size = 4
