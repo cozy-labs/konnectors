@@ -510,7 +510,7 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
             if errorCode and errorCode isnt '0'
                 K.logger.error getF result, 'ns:msgReponse', \
                     'ns:enteteSortie' , 'ent:libelleRetour'
-                callback() # Continue, whitout error.
+                return callback() # Continue, whitout error.
 
             listeEcheances = getF(result["ns:msgReponse"], "ns:corpsSortie", \
                 "ns:calendrierDePaiement")["ns:listeEcheances"]
@@ -1195,7 +1195,7 @@ K = module.exports = require('../lib/base_konnector').createNew
     name: 'EDF'
     slug: 'edf'
     description: 'konnector description edf'
-    vendorLink: 'https://particulier.edf.fr/fr'
+    vendorLink: 'https://particulier.edf.fr'
 
     fields:
         email: 'text'
