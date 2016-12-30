@@ -8,6 +8,7 @@ localization = require '../lib/localization_manager'
 
 localization = require '../lib/localization_manager'
 
+fetcher = require '../lib/fetcher'
 updateOrCreate = require '../lib/update_or_create'
 File = require '../models/file'
 Folder = require '../models/folder'
@@ -52,6 +53,11 @@ getEDFToken = (requiredFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
 
+        errorCode = getF(result, 'ns:enteteSortie', 'ent:codeRetour')
+        if errorCode and errorCode isnt '0000'
+            K.logger.error getF result, \
+                'ns:enteteSortie', 'ent:libelleRetour '
+
         token = getF result['ns:msgReponse'], 'ns:corpsSortie', 'ns:jeton'
 
         if token?
@@ -82,6 +88,14 @@ fetchListerContratClientParticulier = (reqFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
         try
+            errorCode = getF result, 'tns:EnteteSortie', 'tns:CodeErreur'
+            if errorCode and errorCode isnt 'PSC0000'
+                K.logger.error getF result, \
+                    'tns:EnteteSortie', 'tns:LibelleErreur'
+
+                return callback 'request error'
+
+
             client =
                 vendor: 'EDF'
                 docTypeVersion: K.docTypeVersion
@@ -314,6 +328,14 @@ fetchVisualiserPartenaire = (requiredFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
         try
+            errorCode = getF result, 'ns:enteteSortie', 'ent:codeRetour'
+            if errorCode and errorCode isnt '0'
+                K.logger.error getF result, \
+                    'tns:enteteSortie', 'tns:libelleRetour'
+
+                return callback() # Continue on error.
+
+
             partnerElem = getF result["ns:msgReponse"], \
                         "ns:corpsSortie", "ns:partenaire"
             client = {}
@@ -380,6 +402,15 @@ fetchVisualiserAccordCommercial = (requiredFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
         try
+            errorCode = getF result, 'ns:enteteSortie', 'ent:codeErreur'
+            if errorCode and errorCode isnt '0'
+                K.logger.error getF result, \
+                    'tns:enteteSortie', 'tns:libelleErreur'
+
+                return callback() # Continue on error.
+
+
+
             acoElem = getF result["ns:msgReponse"], "ns:corpsSortie", \
                 "ns:listeAccordCommerciaux", "ns:acordcommercial"
 
@@ -474,6 +505,14 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
     edfRequestPost path, body, (err, result) ->
         return callback err if err
         try
+            # Does API send an error ?
+            errorCode = getF result, 'ns:msgReponse', 'ns:enteteSortie', \
+                 'ent:codeRetour'
+            if errorCode and errorCode isnt '0'
+                K.logger.error getF result, 'ns:msgReponse', \
+                    'ns:enteteSortie' , 'ent:libelleRetour'
+                return callback() # Continue, whitout error.
+
             listeEcheances = getF(result["ns:msgReponse"], "ns:corpsSortie", \
                 "ns:calendrierDePaiement")["ns:listeEcheances"]
 
@@ -600,6 +639,15 @@ fetchVisualiserHistoConso = (requiredFields, entries, data, callback) ->
             return callback err if err
 
             try
+
+                errorCode = getF result, 'ns:enteteSortie', 'ent:codeRetour'
+                if errorCode and errorCode isnt '0'
+                    K.logger.error getF result, \
+                        'tns:enteteSortie', 'tns:libelleRetour'
+
+                return callback() # Continue on error.
+
+
                 unless "ns:corpsSortie" of result["ns:msgReponse"]
                     K.logger.info "No histoConsos to fetch"
                     return callback null, []
@@ -687,12 +735,12 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
     K.logger.info "fetchEdeliaToken"
     request.post 'https://api.edelia.fr/authorization-server/oauth/token',
         form:
-            client_id: requiredFields.edeliaClientId
+            client_id:
+                'sha1pae0Pahngee6uwiphooDie7thaiquahf2xohd6IeFeiphi9ziu0uw3am'
             grant_type: 'edf_sso'
             jeton_sso: data.edfToken
             bp: entries.clients[0].clientId
-            # TODO : one procedure per contract !!!
-            pdl: entries.contracts[0].pdl
+            pdl: data.contract.pdl
         json: true
     , (err, response, result) ->
         if err
@@ -702,7 +750,6 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
 
         K.logger.info 'Fetched edelia token'
         data.edeliaToken = result.access_token
-        data.contract = entries.contracts[0]
         callback()
 
 
@@ -722,7 +769,7 @@ fetchEdeliaProfile = (requiredFields, entries, data, callback) ->
             if obj.errorCode and obj.errorCode is "403"
                 data.noEdelia = true
                 K.logger.warn "No edelia: #{obj.errorDescription}"
-                throw null
+                throw new Error('no edelia')
 
             doc =
                 pdl: data.pdl
@@ -856,6 +903,9 @@ requiredFields, entries, data, callback) ->
 
             objs.forEach (obj) ->
                 statement = data.consumptionStatementByYear[obj.year]
+                unless statement
+                    K.logger.warn "No yearly statement for #{obj.date.year}"
+                    return
                 statement.similarHomes =
                     site: obj.energies.site
                     average: obj.energies.similarHomes.SH_AVERAGE_CONSUMING
@@ -890,6 +940,10 @@ fetchEdeliaElecIndexes = (requiredFields, entries, data, callback) ->
             objs.forEach (obj) ->
                 statement = data
                     .consumptionStatementByMonth[obj.date.slice(0, 7)]
+                unless statement
+                    K.logger.warn "No monthly statement for\
+                     #{obj.date.slice(0, 7)}"
+                    return
 
                 statement.statements = statement.statements || []
                 statement.statements.push obj
@@ -982,6 +1036,7 @@ fetchEdeliaMonthlyGasConsumptions = (requiredFields, entries, data, callback) ->
 
         callback error
 
+
 fetchEdeliaSimilarHomeYearlyGasComparisions = (
 requiredFields, entries, data, callback) ->
     return callback() if data.noEdelia or data.noGas
@@ -1005,6 +1060,10 @@ requiredFields, entries, data, callback) ->
 
             objs.forEach (obj) ->
                 statement = data.consumptionStatementByYear[obj.year]
+                unless statement
+                    K.logger.warn "No yearly statement for #{obj.date.year}"
+                    return
+
                 statement.similarHomes =
                     site: obj.energies.site
                     average: obj.energies.similarHomes.SH_AVERAGE_CONSUMING
@@ -1040,7 +1099,10 @@ fetchEdeliaGasIndexes = (requiredFields, entries, data, callback) ->
             objs.forEach (obj) ->
                 statement = data
                     .consumptionStatementByMonth[obj.date.slice(0, 7)]
-
+                unless statement
+                    K.logger.warn "No monthly statement for\
+                     #{obj.date.slice(0, 7)}"
+                    return
                 statement.statements = statement.statements || []
                 statement.statements.push obj
 
@@ -1143,13 +1205,42 @@ displayData = (requiredFields, entries, data, next) ->
 
     next()
 
+fetchEdeliaData = (requiredFields, entries, data, next) ->
+    async.eachSeries entries.contracts, (contract, callback) ->
+        data.contract = contract
+        importer = fetcher.new()
+        operations = [
+            fetchEdeliaToken
+            fetchEdeliaProfile
+            fetchEdeliaMonthlyElecConsumptions
+            fetchEdeliaSimilarHomeYearlyElecComparisions
+            fetchEdeliaElecIndexes
+            fetchEdeliaMonthlyGasConsumptions
+            fetchEdeliaSimilarHomeYearlyGasComparisions
+            fetchEdeliaGasIndexes
+        ]
+        operations.forEach (operation) -> importer.use operation
+        importer.args requiredFields, entries, data
+        importer.fetch (err, fields, entries) ->
+            if err
+                K.logger.error 'Error while fetching Edelia data'
+                K.logger.error err
+                # Continue on error.
+            callback()
+    , next
+
 # Konnector
 K = module.exports = require('../lib/base_konnector').createNew
     name: 'EDF'
     slug: 'edf'
     description: 'konnector description edf'
+<<<<<<< HEAD
     vendorLink: 'https://particulier.edf.fr/fr'
     category: 'energy',
+=======
+    vendorLink: 'https://particulier.edf.fr'
+
+>>>>>>> ebe8132... EDF konnector: Fix error with nom mensualities accounts. (#617)
     fields:
         email:
             type: "text"
@@ -1164,6 +1255,7 @@ K = module.exports = require('../lib/base_konnector').createNew
         'consumption'
     ]
 
+<<<<<<< HEAD
     # TODO : get one edeliaClientId: 'text'
 
     models: [
@@ -1174,6 +1266,9 @@ K = module.exports = require('../lib/base_konnector').createNew
         EDFConsumptionStatement,
         EDFBill
     ]
+=======
+    models: [Client, Contract, PaymentTerms, Home, ConsumptionStatement, Bill]
+>>>>>>> ebe8132... EDF konnector: Fix error with nom mensualities accounts. (#617)
 
     fetchOperations: [
         prepareEntries
@@ -1186,15 +1281,7 @@ K = module.exports = require('../lib/base_konnector').createNew
         fetchRecupereDocumentContractuelListx
         fetchVisualiserHistoConso
 
-        # Deactivate Edelia, while clientId isn't ready.
-        #fetchEdeliaToken
-        #fetchEdeliaProfile
-        #fetchEdeliaMonthlyElecConsumptions
-        #fetchEdeliaSimilarHomeYearlyElecComparisions
-        #fetchEdeliaElecIndexes
-        #fetchEdeliaMonthlyGasConsumptions
-        #fetchEdeliaSimilarHomeYearlyGasComparisions
-        #fetchEdeliaGasIndexes
+        fetchEdeliaData
 
         updateOrCreate logger, EDFClient, ['clientId', 'vendor']
         updateOrCreate logger, EDFContract, ['number', 'vendor']
@@ -1205,7 +1292,6 @@ K = module.exports = require('../lib/base_konnector').createNew
         updateOrCreate logger, EDFBill, ['vendor', 'number']
         saveMissingBills
         buildNotifContent
-        #displayData
     ]
 
 # Helpers
@@ -1257,13 +1343,7 @@ _edfRequestPost = (path, body, callback) ->
         return callback 'request error' if err
         parser.parseString data, (err, result) ->
             return callback 'request error' if err
-            errorCode = getF result['ns:msgReponse'], \
-                        'ns:enteteSortie', 'ent:codeErreur'
-
-            if errorCode is '0' # means success.
-                errorCode = null
-
-            callback errorCode, result
+            callback null, result
 
 
 getEdelia = (accessToken, path, callback) ->
