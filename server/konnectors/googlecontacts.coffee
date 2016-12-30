@@ -39,13 +39,13 @@ module.exports =
     customView: """
     <h2><%t konnector customview googlecontacts 4 %></h2>
     <p><%t konnector customview googlecontacts 1 %></p>
-    <button id="connect-google"
+    <a id="connect-google" role="button"
     title="<%t konnector customview googlecontacts 2 %>" class="btn"
        onclick="window.open('#{GoogleToken.getAuthUrl()}',
        'Google OAuth',
        'toolbars=0,width=700,height=600,\
        left=200,top=200,scrollbars=1,resizable=1');"
-       ><%t konnector customview googlecontacts 2 %></button>
+       ><%t konnector customview googlecontacts 2 %></a>
     <p><%t konnector customview googlecontacts 3 %></p>
     """
     fields:
