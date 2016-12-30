@@ -26,7 +26,8 @@ const oAuthProxyUrl = getOAuthProxyUrl()
 const connector = module.exports = baseKonnector.createNew({
   name: 'Facebook Events',
   slug: 'facebook_events',
-  customView: `<a href=${oAuthProxyUrl} target="_blank" ><%t konnector facebook_events connect %></a>`,
+  customView: `<a href=${oAuthProxyUrl} target="_blank" role="button">` +
+    `<%t konnector facebook_events connect %></a>`,
 
   category: 'social',
   color: {
