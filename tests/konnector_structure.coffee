@@ -32,6 +32,11 @@ describe 'Check all konnectors', ->
                             konnector.fields[fieldName].should.be.an.Object
                             should.exist konnector.fields[fieldName].type
 
+                    it "at least one declared dataType", ->
+                        should.exist konnector.dataType
+                        konnector.dataType.should.be.an.Array
+                        konnector.dataType.length.should.be.aboveOrEqual(1)
+
                     it "models", ->
                         should.exist konnector.models
 
