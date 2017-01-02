@@ -167,3 +167,47 @@ Some fields expect to have default values. If it's not the case, fallbacks will 
 * frequency:
     * `'weekly'` as default values
     * `['hourly', 'daily', 'weekly', 'monthly']` as default options
+
+## Data types
+
+A connector must specify which kinds of data it will be able to retrieve from its related service. These types are used to inform the user (information displayed on the connector modal) about his retrieved data when using a connector. Here is an example of data types declaration:
+
+```javascript
+// my_connector.js
+
+    ...
+    name: 'My connector',
+    dataTypes: [
+        'refund',
+        'bill'
+    ]
+    ...
+```
+
+### Available types
+Here is the list of dataTypes values that can be used when defining a connector:
+
+* activity
+* heartbeat
+* calendar
+* commit
+* consumption
+* contact
+* contract
+* travelDate
+* event
+* bill
+* stepsNumber
+* podcast
+* weight
+* bloodPressure
+* appointment
+* refund
+* sleepTime
+* courseMaterial
+* temperature
+* tweet
+
+__⚠️ Important notes:__
+
+If a declared data type is out of this list, it simplely won't be displayed in the related connector modal.
