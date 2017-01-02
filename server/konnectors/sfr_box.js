@@ -45,6 +45,9 @@ const connector = module.exports = baseKonnector.createNew({
       advanced: true
     }
   },
+  dataType: [
+    'bill'
+  ],
   models: [Bill],
   fetchOperations: [
     getToken,

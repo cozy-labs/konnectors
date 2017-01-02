@@ -65,6 +65,11 @@ module.exports =
         folderPath:
             type: "folder"
             advanced: true
+
+    dataType: [
+        'bill'
+    ]
+
     models:
         phonebill: PhoneBill
 

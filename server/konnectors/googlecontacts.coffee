@@ -58,6 +58,10 @@ module.exports =
         refreshToken:
             type: "hidden"
 
+    dataType: [
+        'contact'
+    ]
+
     models:
         contact: Contact
 

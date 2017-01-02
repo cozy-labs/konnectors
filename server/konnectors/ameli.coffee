@@ -252,6 +252,10 @@ module.exports = baseKonnector.createNew
             type: 'folder'
             advanced: true
 
+    dataType: [
+        'refund'
+    ]
+
     models: [Bill]
 
     fetchOperations: [

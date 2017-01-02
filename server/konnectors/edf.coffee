@@ -1157,6 +1157,11 @@ K = module.exports = require('../lib/base_konnector').createNew
         folderPath:
             type: "folder"
             advanced: true
+    dataType: [
+        'bill',
+        'contract',
+        'consumption'
+    ]
 
     # TODO : get one edeliaClientId: 'text'
 

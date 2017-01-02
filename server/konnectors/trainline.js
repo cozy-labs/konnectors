@@ -41,6 +41,10 @@ module.exports = baseKonnector.createNew({
     }
   },
 
+  dataType: [
+    'bill'
+  ],
+
   models: [Bill],
 
   fetchOperations: [

@@ -34,6 +34,10 @@ const connector = module.exports = baseKonnector.createNew({
     }
   },
 
+  dataType: [
+    'appointment'
+  ],
+
   models: [Event],
 
   fetchOperations: [

@@ -38,6 +38,10 @@ module.exports =
                     type: "folder"
                     advanced: true
 
+            dataType: [
+                'bill'
+            ]
+
             models: [Bill],
 
             fetchOperations: [

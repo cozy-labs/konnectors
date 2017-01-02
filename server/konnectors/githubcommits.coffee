@@ -38,6 +38,11 @@ module.exports =
             type: "text"
         password:
             type: "password"
+
+    dataType: [
+        'commit'
+    ]
+
     models:
         commit: Commit
 

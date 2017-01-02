@@ -50,6 +50,11 @@ module.exports =
         folderPath:
             type: "folder"
             advanced: true
+
+    dataType: [
+        'bill'
+    ]
+
     models:
         internetbill: InternetBill
 

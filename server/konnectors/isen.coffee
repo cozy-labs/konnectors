@@ -37,6 +37,11 @@ module.exports =
     fields:
         email:
             type: "text"
+
+    dataType: [
+        'calendar',
+        'courseMaterial'
+    ]
     models:
         file: File
         folder: Folder

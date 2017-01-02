@@ -52,6 +52,11 @@ const connector = module.exports = baseKonnector.createNew({
     }
   },
 
+  dataType: [
+    'bill',
+    'travelDate'
+  ],
+
   models: [Event, Bill],
 
   fetchOperations: [

@@ -416,6 +416,10 @@ module.exports = {
     }
   },
 
+  dataType: [
+    'contact'
+  ],
+
   models: {
     contact: Contact
   },

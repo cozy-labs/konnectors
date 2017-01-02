@@ -43,6 +43,11 @@ module.exports =
     fields:
         apikey:
             type: "text"
+
+    dataType: [
+        'activity'
+    ]
+
     models:
         activities: RescueTimeActivity
 

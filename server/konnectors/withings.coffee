@@ -84,6 +84,15 @@ module.exports =
             type: "text"
         password:
             type: "password"
+
+    dataType: [
+        'weight',
+        'sleepTime',
+        'stepsNumber',
+        'heartbeat',
+        'bloodPressure'
+    ]
+
     models:
         scalemeasure: Weight
         heartbeat: HeartBeat

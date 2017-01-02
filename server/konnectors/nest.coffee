@@ -61,6 +61,11 @@ module.exports =
             type: "text"
         password:
             type: "password"
+
+    dataType: [
+        'temperature'
+    ]
+
     models:
         nestTemperature: Temperature
 

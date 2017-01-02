@@ -33,6 +33,9 @@ const connector = module.exports = factory.createNew({
       advanced: true
     }
   },
+  dataType: [
+    'bill'
+  ],
   models: [Bill],
   fetchOperations: [
     logIn,
