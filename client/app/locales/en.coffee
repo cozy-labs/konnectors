@@ -23,7 +23,7 @@ module.exports =
     'login': 'Login'
     'password': 'Password'
     'email': 'Email'
-    'bank_identifier': 'Bank identifier (optional)'
+    'bank_identifier': "Label used for the reimboursement bank operations (C.P.A.M, Caisse primaire d'assurance maladie...)"
     'accessToken': 'Access token'
     'accessTokenSecret': 'Access token secret'
     'consumerKey': 'Consumer Key'
