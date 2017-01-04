@@ -33,6 +33,10 @@ const connector = module.exports = baseKonnector.createNew({
     }
   },
 
+  dataType: [
+    'calendar'
+  ],
+
   models: [Event],
 
   fetchOperations: [

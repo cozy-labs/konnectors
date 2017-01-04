@@ -171,7 +171,8 @@ aside
                 display flex
 
                 h3
-                    margin 2em 0 0.5em
+                    margin 2em 0 .5em
+                    font-size(24px)
 
                 a:not([role=button])
                     color           $blue
@@ -195,6 +196,24 @@ aside
                 padding          0 2em 0 15%
                 > p
                     margin-top 2em
+
+            .account-datas
+                display     flex
+                flex-wrap   wrap
+                align-items stretch
+                padding-top .5em
+
+            .account-data
+                flex           30% 0 0
+                padding-bottom 1em
+                text-align     center
+
+            .account-dataIcon
+                display    block
+                width      100%
+                max-width  em(50px)
+                max-height em(50px)
+                margin     0 auto 1.5em
 
             .account-login
                 padding 0 15% 0 2em

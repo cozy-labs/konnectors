@@ -48,6 +48,11 @@ module.exports =
             type: "text"
         accessTokenSecret:
             type: "password"
+
+    dataType: [
+        'tweet'
+    ]
+
     models:
         tweets: TwitterTweet
     modelNames: ["TwitterTweet"]

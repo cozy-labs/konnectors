@@ -128,6 +128,10 @@ module.exports = factory.createNew({
     }
   },
 
+  dataType: [
+    'bill'
+  ],
+
   models: [Bill],
 
   fetchOperations: [

@@ -49,6 +49,11 @@ const connector = module.exports = factory.createNew({
     }
   },
 
+  dataType: [
+    'bill',
+    'contact'
+  ],
+
   models: [MaifUser],
   fetchOperations: [
     refreshToken,

@@ -41,6 +41,11 @@ module.exports =
         folderPath:
             type: "folder"
             advanced: true
+
+    dataType: [
+        'bill'
+    ]
+
     models:
         bill: Bill
 

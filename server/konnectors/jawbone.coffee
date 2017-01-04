@@ -61,6 +61,11 @@ module.exports =
         password:
             type: "password"
 
+    dataType: [
+        'stepsNumber',
+        'sleepTime'
+    ]
+
     models:
         moves: Steps
         sleeps: Sleep

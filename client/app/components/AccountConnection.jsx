@@ -3,12 +3,23 @@ import { h } from 'preact'
 import statefulForm from '../lib/statefulForm'
 
 import AccountLoginForm from './AccountLoginForm'
+import DataItem from './DataItem'
 
 const AccountConnection = ({ t, connector, connectUrl, fields, dirty, error, submit, submitting }) => {
   const { name, customView, description } = connector
   return (
     <div class='account-connection'>
       <div class='account-description'>
+        <h3>{t('dataType title')}</h3>
+        <ul class='account-datas'>
+          {connector.dataType.map(data =>
+            <DataItem
+              dataType={data}
+              hex={connector.color.hex}
+            />
+          )}
+        </ul>
+        <p>{connector.name + t('dataType disclaimer')}</p>
         <p>{t(description)}</p>
       </div>
       <div class='account-login'>

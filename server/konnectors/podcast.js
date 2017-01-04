@@ -54,6 +54,10 @@ const connector = module.exports = baseKonnector.createNew({
     }
   },
 
+  dataType: [
+    'podcast'
+  ],
+
   fetchOperations: [
     init,
     parseFeed,
