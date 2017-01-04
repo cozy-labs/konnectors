@@ -3,8 +3,8 @@ node_modules/
 
 
 # Locales
-locales/
-!locales/en.json
+**/locales/*
+!**/locales/en.json
 
 
 # Default
