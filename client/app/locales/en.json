@@ -187,7 +187,7 @@
   "my_accounts account delete success": "Account removed succesfully",
   "my_accounts account delete error": "Apologies, our server had an hiccup, do you mind starting again?",
 
-  "dataType title": "Your Cozy retrieve the following data:",
+  "dataType title": "Your Cozy retrieves the following data:",
   "dataType disclaimer": " won't access any data in your Cozy",
   "dataType activity": "Your activities",
   "dataType hearbeat": "Your heartbeats",
