@@ -10,6 +10,8 @@ const AccountConnection = ({ t, connector, connectUrl, fields, dirty, error, sub
   return (
     <div class='account-connection'>
       <div class='account-description'>
+        <h3>{t('my_accounts title description')}</h3>
+        <p>{t(description)}</p>
         <h3>{t('dataType title')}</h3>
         <ul class='account-datas'>
           {connector.dataType.map(data =>
@@ -19,8 +21,7 @@ const AccountConnection = ({ t, connector, connectUrl, fields, dirty, error, sub
             />
           )}
         </ul>
-        <p>{connector.name + t('dataType disclaimer')}</p>
-        <p>{t(description)}</p>
+        <p>{connector.name + ' ' + t('dataType disclaimer')}</p>
       </div>
       <div class='account-login'>
         <h3>{t('my_accounts account config title', {name: name})}</h3>
