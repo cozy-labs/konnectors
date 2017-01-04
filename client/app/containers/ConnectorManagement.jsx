@@ -12,6 +12,7 @@ let AUTHORIZED_DATATYPE = [
   'stepsNumber', 'podcast', 'weight', 'bloodPressure', 'appointment',
   'refund', 'sleepTime', 'courseMaterial', 'temperature', 'tweet'
 ]
+let isValidType = (type) => AUTHORIZED_DATATYPE.indexOf(type) !== -1
 
 const prepareConnectURL = (connector) => {
   let connectUrl = connector.connectUrl
@@ -53,7 +54,7 @@ export default class ConnectorManagement extends Component {
     )
     const { name, fields } = connector
     this.state = {
-      connector: this.checkProperties(connector),
+      connector: this.sanitize(connector),
       isConnected: connector.accounts.length !== 0,
       selectedAccount: 0,
       fields: this.configureFields(fields, context.t, name),
@@ -194,18 +195,13 @@ export default class ConnectorManagement extends Component {
     return defaults
   }
 
-  checkProperties (connector) {
+  sanitize (connector) {
     // remove invalid dataType declaration
-    // (valid = present in AUTHORIZED_DATATYPE)
-    let checkedTypes = []
-    for (let dType of connector.dataType) {
-      if (AUTHORIZED_DATATYPE.find(function (t) {
-        return t === dType
-      })) { checkedTypes.push(dType) }
-    }
-    connector.dataType = checkedTypes
-
-    return connector
+    return Object.assign({}, connector,
+      {
+        dataType: connector.dataType.filter(isValidType)
+      }
+    )
   }
 
   // Set default values for advanced fields that will not be shown
