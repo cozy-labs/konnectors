@@ -6,6 +6,14 @@ import AccountConnection from '../components/AccountConnection'
 import AccountManagement from '../components/AccountManagement'
 import Notifier from '../components/Notifier'
 
+let AUTHORIZED_DATATYPE = [
+  'activity', 'heartbeat', 'calendar', 'commit',
+  'consumption', 'contact', 'contract', 'travelDate', 'event', 'bill',
+  'stepsNumber', 'podcast', 'weight', 'bloodPressure', 'appointment',
+  'refund', 'sleepTime', 'courseMaterial', 'temperature', 'tweet'
+]
+let isValidType = (type) => AUTHORIZED_DATATYPE.indexOf(type) !== -1
+
 const prepareConnectURL = (connector) => {
   let connectUrl = connector.connectUrl
   if (!connectUrl) {
@@ -46,7 +54,7 @@ export default class ConnectorManagement extends Component {
     )
     const { name, fields } = connector
     this.state = {
-      connector,
+      connector: this.sanitize(connector),
       isConnected: connector.accounts.length !== 0,
       selectedAccount: 0,
       fields: this.configureFields(fields, context.t, name),
@@ -185,6 +193,15 @@ export default class ConnectorManagement extends Component {
       defaults[k] = this.state.fields[k].default || ''
     })
     return defaults
+  }
+
+  sanitize (connector) {
+    // remove invalid dataType declaration
+    return Object.assign({}, connector,
+      {
+        dataType: connector.dataType.filter(isValidType)
+      }
+    )
   }
 
   // Set default values for advanced fields that will not be shown
