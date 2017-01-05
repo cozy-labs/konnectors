@@ -23,7 +23,7 @@ module.exports =
     'login': 'Identifiant'
     'password': 'Mot de passe'
     'email': 'Mail'
-    'bank_identifier': 'Identifiant bancaire (optionnel)'
+    'bank_identifier': "Libellé des opérations bancaires de remboursement (C.P.A.M, Caisse primaire d'assurance maladie...)"
     'accessToken': 'Access token'
     'accessTokenSecret': 'Access token secret'
     'consumerKey': 'Consumer Key'
