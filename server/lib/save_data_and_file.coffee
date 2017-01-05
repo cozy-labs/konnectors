@@ -19,6 +19,9 @@ module.exports = (log, model, options, tags) ->
         entriesToSave = entries.filtered or entries.fetched
         path = requiredFields.folderPath
 
+        normalizedPath = if path.charAt(0) is '/' \
+            then path else "/#{path}"
+
         # For each entry...
         async.eachSeries entriesToSave, (entry, callback) ->
             if (entry.date not instanceof moment)
@@ -31,8 +34,9 @@ module.exports = (log, model, options, tags) ->
             createFileAndSaveData = (entry, entryLabel) ->
                 # Legacy code: Date is not used in File Model
                 pdfurl = entry.pdfurl
-                Folder.mkdirp path, ->
-                    File.createNew fileName, path, pdfurl, tags, onCreated
+                Folder.mkdirp normalizedPath, ->
+                    File.createNew fileName, normalizedPath, pdfurl, tags,
+                        onCreated
 
             onCreated = (err, file) ->
                 if err
@@ -79,7 +83,7 @@ module.exports = (log, model, options, tags) ->
         , (err) ->
             opts =
                 entries: entries.fetched
-                folderPath: path
+                folderPath: normalizedPath
                 nameOptions: options
                 tags: tags
                 model: model
