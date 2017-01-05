@@ -21,7 +21,7 @@ const AccountConnection = ({ t, connector, connectUrl, fields, dirty, error, sub
             />
           )}
         </ul>
-        <p>{connector.name + ' ' + t('dataType disclaimer')}</p>
+        <p>{` ${connector.name} ${t('dataType disclaimer')} `}</p>
       </div>
       <div class='account-login'>
         <h3>{t('my_accounts account config title', {name: name})}</h3>
