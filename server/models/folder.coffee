@@ -1,5 +1,7 @@
 americano = require 'cozydb'
 async = require 'async'
+log = require('printit')
+    prefix: 'konnectors'
 
 # Folder model is used to list the list of available folders in the user's
 # Cozy. It's required for konnectors that download files like bill PDFs.
@@ -36,6 +38,8 @@ Folder.isPresent = ({name, path}, callback) ->
 Folder.createNewFolder = (folder, callback) ->
     Folder.create folder, (err, newFolder) ->
         return callback err if err
+        path = if newFolder.path? then newFolder.path else '/'
+        log.info "Folder #{path}/#{newFolder.name} successfully created."
         callback null, newFolder
 
 
