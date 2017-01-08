@@ -84,7 +84,6 @@ function requestOrange(uri, token, callback) {
 
 function downloadVod(requiredFields, entries, data, next) {
   connector.logger.info('Downloading vod data from Orange...');
-
   let uri = `${API_ROOT}/data/vod`;
   if (requiredFields.lastGeoPoint) {
     uri += `?start=${requiredFields.lastVideoStream.slice(0, 19)}`;
@@ -92,7 +91,6 @@ function downloadVod(requiredFields, entries, data, next) {
 
   requestOrange(uri, requiredFields.access_token, (err, body) => {
     if (err) { return next(err); }
-
     entries.videostreams = [];
     body.forEach((vod) => {
       if (vod.ts && requiredFields.lastVideoStream < vod.ts) {
@@ -102,16 +100,34 @@ function downloadVod(requiredFields, entries, data, next) {
 
       entries.videostreams.push({
         docType: 'VideoStream',
-        docTypeVersion: connector.doctypeVersion,
-        title: vod.title,
-        subTitle: vod.subtitle,
-        price: vod.cost,
+        docTypeVersion: connector.docTypeypeVersion,
+        content: {
+          type: vod.cont_type,
+          title: vod.cont_title,
+          subTitle: vod.cont_subtitle,
+          duration: vod.cont_duration,
+          quality: vod.cont_format,
+          publicationYear: vod.prod_dt,
+          country: vod.prod_nat,
+          id: vod.cont_id,
+          longId: vod.src_id,
+          adultLevel: vod.adult_level === 'none' ? undefined : vod.adult_level,
+          csaCode: vod.csa_code,
+        },
+        price: vod.price,
         timestamp: vod.ts,
-        viewingDuration: vod.dur ? Math.round(Number(vod.dur) * 60) : undefined,
-        fromOffer: vod.offer,
-        quality: vod.format, // empty, HD or SD.
+        viewingDuration: vod.use_duration ? Math.round(Number(vod.use_duration) * 60) : undefined,
+        details: {
+          offer: vod.offer,
+          offerName: vod.offer_name,
+          service: vod.service,
+          network: vod.net,
+          techno: vod.techno,
+          device: vod.device,
+          platform: vod.platf,
+        },
         action: vod.action,  // visualisation or command
-        clientId: vod.I_mail || vod.I_ADSL,
+        clientId: vod.line_id,
       });
     });
 
