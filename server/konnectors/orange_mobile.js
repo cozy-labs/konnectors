@@ -101,7 +101,7 @@ function downloadGeoloc(requiredFields, entries, data, next) {
 
       entries.geopoints.push({
         docType: 'GeoPoint',
-        docTypeVersion: connector.doctypeVersion,
+        docTypeVersion: connector.docTypeVersion,
         msisdn: point.msisdn,
         timestamp: point.ts,
         longitude: point.loc[0],
@@ -152,7 +152,7 @@ function downloadCRA(requiredFields, entries, data, next) {
 
         entries.phonecommunicationlogs.push({
           docType: 'PhoneCommunicationLog',
-          docTypeVersion: connector.doctypeVersion,
+          docTypeVersion: connector.docTypeVersion,
           timestamp: cra.time,
           msisdn: cra.msisdn,
           partner: cra.partner,
