@@ -4,6 +4,7 @@
 const request = require('request');
 const cheerio = require('cheerio');
 const async = require('async');
+const moment = require('moment');
 
 const filterExisting = require('../lib/filter_existing');
 const localization = require('../lib/localization_manager');
@@ -90,7 +91,6 @@ function logIn(requiredFields, bills, data, next) {
       }
       log.info('Login succeeded');
       log.info('Fetch trips info');
-
       const tripsOptions = {
         method: 'GET',
         jar: true,
@@ -116,6 +116,9 @@ function getTrips(requiredFields, bills, data, next) {
                   .map((i, element) => $(element).data('target'))
                   .get()
                   .map(trip => trip.replace('#trip-', ''));
+
+  const maybeNext = $('a[class="btn pagination__next"]').attr('href');
+
   log.info(`Found ${tripsId.length} uber trips`);
   const fetchedBills = [];
   async.eachSeries(tripsId, (tripId, callback) => {
@@ -179,7 +182,23 @@ function getTrips(requiredFields, bills, data, next) {
     if (err) {
       return next(err);
     }
-    bills.fetched = fetchedBills;
+    if (typeof bills.fetched === 'undefined') {
+      bills.fetched = fetchedBills;
+    } else {
+      bills.fetched.concat(fetchedBills);
+    }
+
+    // Check if there is a next page
+    if (typeof maybeNext !== 'undefined') {
+      return request(`https://riders.uber.com/trips${maybeNext}`, (err, res, body) => {
+        if (err) {
+          log.error(err);
+          return next(err);
+        }
+        data.tripsPage = body;
+        return getTrips(requiredFields, bills, data, next);
+      });
+    }
     log.info('Bills succesfully fetched');
     return next();
   });
