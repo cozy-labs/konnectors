@@ -165,7 +165,7 @@ function getTrips(requiredFields, bills, data, next) {
         }
 
         const bill = {
-          date: new Date(parsedBody[0].invoice_date),
+          date: moment(new Date(parsedBody[0].invoice_date)),
           amount: parseFloat(amount),
           type: 'Taxi',
           pdfurl: `https://riders.uber.com/invoice-gen${parsedBody[0].document_path}`,
