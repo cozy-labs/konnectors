@@ -154,6 +154,7 @@ module.exports =
     'konnector customview orange_mobile': "Pour cela : <ol><li>connectez-vous à votre compte en ligne Orange via le bouton 'connect' puis indiquez votre <b>numéro de mobile</b> Orange et votre mot de passe Orange,</li><li>sélectionnez 'Toutes les heures' comme fréquence de mise à jour,</li><li>puis cliquez sur 'importer et sauvegarder'.</li></ol>"
     'konnector description orange_vod': "Orange vous propose de télécharger automatiquement l'historique des film et vidéo que vous avez regarder via la VoD ou votre LiveBox, dans votre Cozy. Attention, cette transmission expérimentale de données a un délais d'activation, qui peut être de quelques semaines."
     'konnector customview orange_vod': "Pour cela : <ol><li>connectez-vous à votre compte en ligne Orange via le bouton 'connect' puis indiquez votre <b>l'adresse email</b> de votre compte Orange et votre mot de passe Orange,</li><li>sélectionnez 'Toutes les semaines' comme fréquence de mise à jour,</li><li>puis cliquez sur 'importer et sauvegarder'.</li></ol>"
+    'konnector description malakoff_mederic': "Importez vos remboursements Malakoff Mederic dans votre Cozy."
 
     # Konnectors' notifications
     'notification import error': "une erreur est survenue pendant l'importation des données"
@@ -170,6 +171,7 @@ module.exports =
     'notification rescuetime': "%{smart_count} nouvelle activité importée |||| %{smart_count} nouvelles activités importées"
     'notification birthdays creation': "%{smart_count} nouvel anniversaire créé. |||| %{smart_count} nouveaux anniversaires créés."
     'notification ameli': "%{smart_count} nouveau remboursement importé |||| %{smart_count} nouveaux remboursement importés"
+    'notification malakoff_mederic': "%{smart_count} nouveau remboursement importé |||| %{smart_count} nouveaux remboursement importés"
     'notification podcast': "%{smart_count} nouveau podcast importé |||| %{smart_count} nouveaux podcasts importés"
     'notification isen': "%{smart_count} nouveau support de cours importé |||| %{smart_count} nouveaux supports de cours importés"
     'notification isen event changed': "Attention, l'intervention %{description} se déroulera le %{newDate} au lieu du %{oldDate}"
