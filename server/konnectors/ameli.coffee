@@ -134,6 +134,10 @@ parsePage = (requiredFields, healthBills, data, next) ->
             # Each bloc represents a month that includes 0 to n reimbursement
             $('.blocParMois').each ->
 
+                # It would be too easy to get the full date at the same place
+                year = $($(this).find('.rowdate .mois').get(0)).text()
+                year = year.split(' ')[1]
+
                 $('[id^=lignePaiement' + i++ + ']').each ->
 
                     amount = $($(this).find('.col-montant').get(0)).text()
@@ -142,7 +146,7 @@ parsePage = (requiredFields, healthBills, data, next) ->
 
                     month = $($(this).find('.col-date .mois').get(0)).text()
                     day = $($(this).find('.col-date .jour').get(0)).text()
-                    date = day + ' ' + month
+                    date = "#{day} #{month} #{year}"
                     moment.locale 'fr'
                     date = moment(date, 'Do MMMM YYYY')
 
@@ -253,4 +257,3 @@ module.exports = baseKonnector.createNew
         customLinkBankOperation,
         buildNotification
     ]
-
