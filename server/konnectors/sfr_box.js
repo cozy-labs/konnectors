@@ -44,7 +44,7 @@ const connector = module.exports = baseKonnector.createNew({
     linkBankOperation({
       log,
       model: Bill,
-      identifier: 'SFR FIXE',
+      identifier: ['SFR FIXE','SFR ADSL'],
       minDateDelta: 4,
       maxDateDelta: 20,
       amountDelta: 0.1,
