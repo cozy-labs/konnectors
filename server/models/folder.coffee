@@ -1,5 +1,7 @@
 americano = require 'cozydb'
-
+async = require 'async'
+log = require('printit')
+    prefix: 'konnectors'
 
 # Folder model is used to list the list of available folders in the user's
 # Cozy. It's required for konnectors that download files like bill PDFs.
@@ -27,8 +29,8 @@ Folder.allPath = (callback) ->
         callback err, folders
 
 
-Folder.isPresent = (fullPath, callback) ->
-    Folder.request "byFullPath", key: fullPath, (err, folders) ->
+Folder.isPresent = ({name, path}, callback) ->
+    Folder.request "byFullPath", key: "#{path}/#{name}", (err, folders) ->
         return callback err if err
         callback null, folders?.length > 0
 
@@ -36,17 +38,15 @@ Folder.isPresent = (fullPath, callback) ->
 Folder.createNewFolder = (folder, callback) ->
     Folder.create folder, (err, newFolder) ->
         return callback err if err
+        path = if newFolder.path? then newFolder.path else '/'
+        log.info "Folder #{path}/#{newFolder.name} successfully created."
         callback null, newFolder
 
 
-Folder.mkdir = (path, callback) ->
-    return callback(null, {path}) if path.length is 0
+Folder.mkdir = ({name, path}, callback) ->
+    return callback(null, {path}) if name.length is 0
 
-    Folder.isPresent path, (err, isPresent) ->
-        parts = path.split '/'
-        name  = parts.pop()
-        path  = parts.join '/'
-
+    Folder.isPresent {name, path}, (err, isPresent) ->
         if isPresent
             callback null, {name, path}
         else
@@ -54,11 +54,18 @@ Folder.mkdir = (path, callback) ->
 
 
 Folder.mkdirp = (path, callback) ->
-    recurseCreate = (err, folder) ->
-        # Remove the initial `/` to prevent empty folder creation
-        if folder.path.substring(1).split('/').length > 1
-            Folder.mkdir folder.path, recurseCreate
-        else
-            Folder.mkdir folder.path, callback
+    cleanPath = if path.charAt(0) is '/' then path.substring(1) else path
+    return callback new Error 'empty path' if cleanPath.length is 0
 
-    Folder.mkdir path, recurseCreate
+    folders = cleanPath.split '/'
+
+    createFolder = (folder, callback) ->
+        folderIndex = folders.indexOf folder
+        Folder.mkdir \
+            {name: folder,
+            # [''].concat() adds en empty element to have a leading '/' in
+            # the final string.
+            path: [''].concat(folders.slice(0, folderIndex)).join('/')},
+            callback
+
+    async.eachSeries folders, createFolder, callback
