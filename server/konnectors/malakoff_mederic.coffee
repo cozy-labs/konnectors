@@ -1,10 +1,6 @@
-cozydb = require 'cozydb'
 request = require 'request'
 moment = require 'moment'
 cheerio = require 'cheerio'
-fs = require 'fs'
-async = require 'async'
-File = require '../models/file'
 Bill = require '../models/bill'
 baseKonnector = require '../lib/base_konnector'
 filterExisting = require '../lib/filter_existing'
@@ -75,11 +71,14 @@ logIn = (requiredFields, billInfos, data, next) ->
 
             # Log in
             request checkOption, (err, res, body) ->
-                if err or res.statusCode >= 400
+                if err
                     log.error err
                     return next 'request error'
+                else if res.statusCode >= 400
+                    log.error 'Authentication error'
+                    return next 'request error'
                 # The body should not contain LOGON_KO
-                if body.indexOf('LOGON_KO') > -1
+                else if body.indexOf('LOGON_KO') > -1
                     log.error 'Authentication error'
                     return next 'bad credentials'
 
@@ -117,7 +116,6 @@ parsePage = (requiredFields, healthBills, data, next) ->
 
         dateText = $(this).find('.dateEmission').text()
         date = dateText.split('Emis le ')[1].split('aux')[0]
-        console.log 'date : ' + date
 
         pdfUrl = $(this).find('#tbsRembExportPdf').attr('href')
         pdfUrl = "#{domain}#{pdfUrl}"
@@ -133,7 +131,6 @@ parsePage = (requiredFields, healthBills, data, next) ->
     next()
 
 
-
 buildNotification = (requiredFields, healthBills, data, next) ->
     log.info "Import finished"
     notifContent = null
@@ -144,18 +141,6 @@ buildNotification = (requiredFields, healthBills, data, next) ->
 
     next()
 
-customLinkBankOperation = (requiredFields, healthBills, data, next) ->
-    identifier = 'MALAKOFF MEDERIC'
-    bankIdentifier = requiredFields.bank_identifier
-    identifier = bankIdentifier if bankIdentifier? and bankIdentifier isnt ""
-
-    linkBankOperation(
-        log: log
-        model:  Bill
-        identifier: identifier
-        dateDelta: 10
-        amountDelta: 0.1
-    )(requiredFields, healthBills, data, next)
 
 fileOptions =
     vendor: 'malakoff mederic'
@@ -178,6 +163,12 @@ module.exports = baseKonnector.createNew
         parsePage,
         filterExisting(log, Bill),
         saveDataAndFile(log, Bill, fileOptions, ['health', 'bill']),
-        customLinkBankOperation,
+        linkBankOperation({
+          log: log
+          model: Bill
+          dateDelta: 10
+          amountDelta: 0.1
+          identifier = 'MALAKOFF MEDERIC'
+        }),
         buildNotification
     ]
