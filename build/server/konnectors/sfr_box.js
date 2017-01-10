@@ -37,7 +37,7 @@ var connector = module.exports = baseKonnector.createNew({
   fetchOperations: [getToken, logIn, fetchBillingInfo, parsePage, customFilterExisting, customSaveDataAndFile, linkBankOperation({
     log: log,
     model: Bill,
-    identifier: 'SFR FIXE',
+    identifier: ['SFR FIXE', 'SFR ADSL'],
     minDateDelta: 4,
     maxDateDelta: 20,
     amountDelta: 0.1

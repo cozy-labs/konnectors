@@ -52,7 +52,7 @@ var connector = module.exports = baseKonnector.createNew({
   fetchOperations: [getHiddenInputs, logIn, parsePage, customFilterExisting, customSaveDataAndFile, linkBankOperation({
     log: log,
     model: Bill,
-    identifier: 'VENTE PRIVEE.COM',
+    identifier: ['VENTE PRIVEE.COM', 'WWW.VENTE-PRIVEE.COM'],
     minDateDelta: 4,
     maxDateDelta: 20,
     amountDelta: 0.1

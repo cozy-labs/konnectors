@@ -50,6 +50,8 @@ module.exports = {
     data = {
       lastAutoImport: null,
       importErrorMessage: null,
+      lastImport: null,
+      lastSuccess: null,
       accounts: [],
       password: null
     };
@@ -118,7 +120,7 @@ module.exports = {
       if (err) {
         return next(err);
       }
-      return res.redirect('../../../#konnector/' + req.konnector.slug);
+      return res.status(200).send("<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"utf-8\">\n</head>\n<body>\n    <script type=\"text/javascript\">\n        window.onload = function() {\n            //refreshParent;\n            window.opener.location.reload();\n            setTimeout(function() {\n                window.close();\n            }, 500);\n        };\n    </script>\n</body>\n</html>");
     });
   }
 };

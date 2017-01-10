@@ -71,5 +71,14 @@ module.exports = {
   },
   maifuser: {
     all: cozydb.defaultRequests.all
+  },
+  geopoint: {
+    all: cozydb.defaultRequests.all
+  },
+  phonecommunicationlog: {
+    all: cozydb.defaultRequests.all
+  },
+  videostream: {
+    all: cozydb.defaultRequests.all
   }
 };

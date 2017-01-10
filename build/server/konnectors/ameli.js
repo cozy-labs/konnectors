@@ -137,6 +137,9 @@ parsePage = function(requiredFields, healthBills, data, next) {
       $ = cheerio.load(body);
       i = 0;
       $('.blocParMois').each(function() {
+        var year;
+        year = $($(this).find('.rowdate .mois').get(0)).text();
+        year = year.split(' ')[1];
         return $('[id^=lignePaiement' + i++ + ']').each(function() {
           var amount, attrInfos, bill, date, day, detailsUrl, idPaiement, indexGroupe, indexPaiement, label, lineId, month, naturePaiement, tokens;
           amount = $($(this).find('.col-montant').get(0)).text();
@@ -144,7 +147,7 @@ parsePage = function(requiredFields, healthBills, data, next) {
           amount = parseFloat(amount);
           month = $($(this).find('.col-date .mois').get(0)).text();
           day = $($(this).find('.col-date .jour').get(0)).text();
-          date = day + ' ' + month;
+          date = day + " " + month + " " + year;
           moment.locale('fr');
           date = moment(date, 'Do MMMM YYYY');
           label = $($(this).find('.col-label').get(0)).text();

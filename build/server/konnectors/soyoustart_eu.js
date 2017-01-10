@@ -11,8 +11,8 @@ link = 'www.soyoustart.com';
 
 api = {
   endpoint: 'soyoustart-eu',
-  appKey: '',
-  appSecret: ''
+  appKey: 'kuioqDT4j2Ouse1e',
+  appSecret: '3q7hbodiQCVA5qze3ZLtA1qFlOemNJjP'
 };
 
 connector = module.exports = baseOVHKonnector.createNew(api, name, slug, link);
