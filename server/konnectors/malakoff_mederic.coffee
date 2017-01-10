@@ -168,7 +168,7 @@ module.exports = baseKonnector.createNew
           model: Bill
           dateDelta: 10
           amountDelta: 0.1
-          identifier = 'MALAKOFF MEDERIC'
+          identifier: 'MALAKOFF MEDERIC'
         }),
         buildNotification
     ]
