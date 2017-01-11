@@ -143,7 +143,7 @@ buildNotification = (requiredFields, healthBills, data, next) ->
 
 
 fileOptions =
-    vendor: 'malakoff mederic'
+    vendor: 'Malakoffmederic'
     dateFormat: 'YYYYMMDD'
 
 
