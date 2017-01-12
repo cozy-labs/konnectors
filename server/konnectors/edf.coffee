@@ -513,8 +513,16 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
                     'ns:enteteSortie' , 'ent:libelleRetour'
                 return callback() # Continue, whitout error.
 
-            listeEcheances = getF(result["ns:msgReponse"], "ns:corpsSortie", \
-                "ns:calendrierDePaiement")["ns:listeEcheances"]
+            listeEcheances = getF result["ns:msgReponse"], "ns:corpsSortie"
+            , "ns:calendrierDePaiement"
+
+            if not (listeEcheances and
+            listeEcheances['ns:listeEcheances'] and
+            listeEcheances['ns:listeEcheances'].length > 0)
+                K.logger.warn 'No payment schedules'
+                return callback() # Continue whithout errors.
+
+            listeEcheances = listeEcheances["ns:listeEcheances"]
 
             # TODO : if no gaz and elec !?
             paymentSchedules = listeEcheances.map (echeance) ->
@@ -754,7 +762,7 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
 
 
 fetchEdeliaProfile = (requiredFields, entries, data, callback) ->
-    K.logger.info "fetchEdeliaMonthlyProfile"
+    K.logger.info "fetchEdeliaProfile"
     getEdelia data.edeliaToken, '/sites/-/profiles/simple?ts=' +
     new Date().toISOString(), (err, response, obj) ->
         error = null
@@ -1137,7 +1145,8 @@ buildNotifContent = (requiredFields, entries, data, next) ->
 
             addedList.push message
 
-    entries.notifContent = addedList.join ', '
+    if addedList.length > 0 # avoid empty message, as join always return String
+        entries.notifContent = addedList.join ', '
 
     next()
 
@@ -1176,7 +1185,8 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
                 return cb err if err
 
                 binaryBill = new Buffer base64String, 'base64'
-                name = "#{moment(bill.date).format('YYYY-MM')}-factureEDF.pdf"
+                name = moment(bill.date).format('YYYY-MM-DD')
+                name += '-facture_EDF.pdf'
                 file = new File
                     name: name
                     mime: "application/pdf"
@@ -1222,7 +1232,7 @@ fetchEdeliaData = (requiredFields, entries, data, next) ->
         operations.forEach (operation) -> importer.use operation
         importer.args requiredFields, entries, data
         importer.fetch (err, fields, entries) ->
-            if err
+            if err and err.message isnt 'no edelia'
                 K.logger.error 'Error while fetching Edelia data'
                 K.logger.error err
                 # Continue on error.
