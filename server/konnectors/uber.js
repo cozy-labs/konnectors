@@ -86,7 +86,7 @@ function logIn(requiredFields, bills, data, next) {
       if (res.statuCode >= 400) {
         log.error('Login failed');
         const err = `Status code: ${res.statusCode}`;
-        log.error(err);
+        log.error('request error');
         return next(err);
       }
       log.info('Login succeeded');
@@ -193,7 +193,7 @@ function getTrips(requiredFields, bills, data, next) {
       return request(`https://riders.uber.com/trips${maybeNext}`, (err, res, body) => {
         if (err) {
           log.error(err);
-          return next(err);
+          return next('request error');
         }
         data.tripsPage = body;
         return getTrips(requiredFields, bills, data, next);
