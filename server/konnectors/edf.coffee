@@ -512,11 +512,11 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
                     'ns:enteteSortie' , 'ent:libelleRetour'
                 return callback() # Continue, whitout error.
 
-            listeEcheances = getF(result["ns:msgReponse"], "ns:corpsSortie", "ns:calendrierDePaiement");
+            listeEcheances = getF result["ns:msgReponse"], "ns:corpsSortie", "ns:calendrierDePaiement"
 
-            if not (listeEcheances
-                and listeEcheances['ns:listeEcheances']
-                and listeEcheances['ns:listeEcheances'].length > 0)
+            if not (listeEcheances and
+            listeEcheances['ns:listeEcheances'] and
+            listeEcheances['ns:listeEcheances'].length > 0)
                 K.logger.warn 'No payment schedules'
                 return callback() # Continue whithout errors.
 
@@ -760,7 +760,7 @@ fetchEdeliaToken = (requiredFields, entries, data, callback) ->
 
 
 fetchEdeliaProfile = (requiredFields, entries, data, callback) ->
-    K.logger.info "fetchEdeliaMonthlyProfile"
+    K.logger.info "fetchEdeliaProfile"
     getEdelia data.edeliaToken, '/sites/-/profiles/simple?ts=' +
     new Date().toISOString(), (err, response, obj) ->
         error = null
@@ -1228,7 +1228,7 @@ fetchEdeliaData = (requiredFields, entries, data, next) ->
         operations.forEach (operation) -> importer.use operation
         importer.args requiredFields, entries, data
         importer.fetch (err, fields, entries) ->
-            if err
+            if err and err.message isnt 'no edelia'
                 K.logger.error 'Error while fetching Edelia data'
                 K.logger.error err
                 # Continue on error.
