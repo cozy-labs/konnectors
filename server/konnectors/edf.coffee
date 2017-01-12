@@ -512,8 +512,15 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
                     'ns:enteteSortie' , 'ent:libelleRetour'
                 return callback() # Continue, whitout error.
 
-            listeEcheances = getF(result["ns:msgReponse"], "ns:corpsSortie", \
-                "ns:calendrierDePaiement")["ns:listeEcheances"]
+            listeEcheances = getF(result["ns:msgReponse"], "ns:corpsSortie", "ns:calendrierDePaiement");
+
+            if not (listeEcheances
+                and listeEcheances['ns:listeEcheances']
+                and listeEcheances['ns:listeEcheances'].length > 0)
+                K.logger.warn 'No payment schedules'
+                return callback() # Continue whithout errors.
+
+            listeEcheances = listeEcheances["ns:listeEcheances"];
 
             # TODO : if no gaz and elec !?
             paymentSchedules = listeEcheances.map (echeance) ->
