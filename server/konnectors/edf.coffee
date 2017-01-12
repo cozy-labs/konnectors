@@ -512,7 +512,8 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
                     'ns:enteteSortie' , 'ent:libelleRetour'
                 return callback() # Continue, whitout error.
 
-            listeEcheances = getF result["ns:msgReponse"], "ns:corpsSortie", "ns:calendrierDePaiement"
+            listeEcheances = getF result["ns:msgReponse"], "ns:corpsSortie"
+            , "ns:calendrierDePaiement"
 
             if not (listeEcheances and
             listeEcheances['ns:listeEcheances'] and
@@ -520,7 +521,7 @@ fetchVisualiserCalendrierPaiement = (requiredFields, entries, data, callback) ->
                 K.logger.warn 'No payment schedules'
                 return callback() # Continue whithout errors.
 
-            listeEcheances = listeEcheances["ns:listeEcheances"];
+            listeEcheances = listeEcheances["ns:listeEcheances"]
 
             # TODO : if no gaz and elec !?
             paymentSchedules = listeEcheances.map (echeance) ->
@@ -1143,7 +1144,8 @@ buildNotifContent = (requiredFields, entries, data, next) ->
 
             addedList.push message
 
-    entries.notifContent = addedList.join ', '
+    if addedList.length > 0 # avoid empty message, as join always return String
+        entries.notifContent = addedList.join ', '
 
     next()
 
@@ -1182,7 +1184,8 @@ saveMissingBills = (requiredFields, entries, data, callback) ->
                 return cb err if err
 
                 binaryBill = new Buffer base64String, 'base64'
-                name = "#{moment(bill.date).format('YYYY-MM')}-factureEDF.pdf"
+                name = moment(bill.date).format('YYYY-MM-DD')
+                name += '-facture_EDF.pdf'
                 file = new File
                     name: name
                     mime: "application/pdf"
