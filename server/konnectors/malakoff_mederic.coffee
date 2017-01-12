@@ -94,7 +94,7 @@ logIn = (requiredFields, billInfos, data, next) ->
                 # Get the reimbursements
                 request options, (err, res, body) ->
                     if err
-                        logger.error err
+                        log.error err
                         return next 'request error'
 
                     data.html = body
@@ -111,7 +111,7 @@ parsePage = (requiredFields, healthBills, data, next) ->
 
     $('.headerRemboursements').each ->
         amount = $(this).find('.montant').text()
-        amount = amount.replace(' €', '')
+        amount = amount.replace(' €', '').replace(',', '.')
         amount = parseFloat amount
 
         dateText = $(this).find('.dateEmission').text()
@@ -135,10 +135,9 @@ buildNotification = (requiredFields, healthBills, data, next) ->
     log.info "Import finished"
     notifContent = null
     if healthBills?.filtered?.length > 0
-        localizationKey = 'notification malakoff'
+        localizationKey = 'notification bills'
         options = smart_count: healthBills.filtered.length
         healthBills.notifContent = localization.t localizationKey, options
-
     next()
 
 
