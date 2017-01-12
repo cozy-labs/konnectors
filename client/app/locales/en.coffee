@@ -154,6 +154,7 @@ module.exports =
     'konnector customview orange_mobile': "To do that: <ol><li>use the 'connect' button to connect on your Orange Mobile account with your <b>mobile phone number</b>,</li><li>select 'every hour' as update schedule,</li><li>then click on 'Import and Save'.</li></ol>"
     'konnector description orange_vod': "Orange (France) invites you to download the film and video watching history of your LiveBox in your Cozy. Notice that this transmission can take up to a few weeks to start."
     'konnector customview orange_vod': "To do that: <ol><li>use the 'connect' button to connect on your Orange account with your <b>mobile phone number</b>,</li><li>select 'every hour' as update schedule,</li><li>then click on 'Import and Save'.</li></ol>"
+    'konnector description malakoff_mederic': "Import your Malakoff Mederic reimbursements in your Cozy."
 
     # Konnectors' notifications
     'notification import error': 'an error occurred during import of data'
@@ -170,6 +171,7 @@ module.exports =
     'notification rescuetime': "%{smart_count} new activity imported |||| %{smart_count} new activities imported"
     'notification birthdays creation': "%{smart_count} new birthday created |||| %{smart_count} new birthdays created"
     'notification ameli': "%{smart_count} new reimbursement imported |||| %{smart_count} new reimbursements imported"
+    'notification malakoff_mederic': "%{smart_count} new reimbursement imported |||| %{smart_count} new reimbursements imported"
     'notification podcast': "%{smart_count} new podcast imported |||| %{smart_count} new podcasts imported"
     'notification isen': "%{smart_count} new course material imported |||| %{smart_count} new course materials imported"
     'notification isen event changed': "Careful, the intervention %{description} will take place on %{newDate} instead of %{oldDate}"

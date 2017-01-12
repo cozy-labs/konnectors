@@ -42,6 +42,7 @@ The connectors marked with :x: are known as currently broken.
 | Free                    | PDF  | ZeHiro                                                | :white_check_mark:                                                                            |
 | Free Mobile             | PDF  | ZeHiro                                                | :white_check_mark:                                                                            |
 | Github                  | PDF  | doubleface                                            | :white_check_mark:                                                                            |
+| Malakoff Mederic        | PDF  | Gara64                                                | :white_check_mark:                                                                            |
 | Materiel.net            | PDF  | nicofrand                                             | :white_check_mark:                                                                            |
 | Numéricable             | PDF  | nicofrand                                             | :white_check_mark:                                                                            |
 | OVH CA                  | PDF  | Chocobozzz                                            | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/370))                |
