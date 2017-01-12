@@ -72,7 +72,7 @@ function login(requiredFields, entries, data, next) {
   request(options, (err) => {
     if (err) {
       logger.error(err);
-      return next(err);
+      return next('request error');
     }
 
     // Signin form
@@ -95,7 +95,7 @@ function login(requiredFields, entries, data, next) {
     client.post(signinPath, signinForm, (err, res, body) => {
       if (err) {
         logger.error(err);
-        return next(err);
+        return next('request error');
       }
       logger.info('Connected');
       if (res.statusCode === 422) {
@@ -111,7 +111,7 @@ function login(requiredFields, entries, data, next) {
       client.get(`${baseUrl}api/v5/pnrs`, (err, res, body) => {
         if (err) {
           logger.error(err);
-          return next(err);
+          return next('request error');
         }
         // We check there are bills
         if (body.proofs && body.proofs.length > 0) {
@@ -228,7 +228,7 @@ function fetchBills(requiredFields, entries, data, next) {
     let linkedPNR = [data.pnrs.find(pnr => pnr.id === proof.pnr_id)];
     try {
       linkedPNR = data.pnrs.filter(
-        pnr => typeof pnr.proof_ids !== 'undefined' && pnr.proof_ids.indexOf(proof.id) !== -1
+        pnr => pnr.proof_ids instanceof Array && pnr.proof_ids.indexOf(proof.id) !== -1
       );
     } catch (e) {
       // We do nothing with the error as linkedPNR is set anyway.
