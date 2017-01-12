@@ -72,7 +72,7 @@ function login(requiredFields, entries, data, next) {
   request(options, (err) => {
     if (err) {
       logger.error(err);
-      return next(err);
+      return next('request error');
     }
 
     // Signin form
@@ -95,9 +95,9 @@ function login(requiredFields, entries, data, next) {
     client.post(signinPath, signinForm, (err, res, body) => {
       if (err) {
         logger.error(err);
-        return next(err);
+        return next('request error');
       }
-
+      logger.info('Connected');
       if (res.statusCode === 422) {
         return next('bad credentials');
       }
@@ -111,7 +111,7 @@ function login(requiredFields, entries, data, next) {
       client.get(`${baseUrl}api/v5/pnrs`, (err, res, body) => {
         if (err) {
           logger.error(err);
-          return next(err);
+          return next('request error');
         }
         // We check there are bills
         if (body.proofs && body.proofs.length > 0) {
@@ -228,7 +228,7 @@ function fetchBills(requiredFields, entries, data, next) {
     let linkedPNR = [data.pnrs.find(pnr => pnr.id === proof.pnr_id)];
     try {
       linkedPNR = data.pnrs.filter(
-        pnr => pnr.proof_ids.indexOf(proof.id) !== -1
+        pnr => pnr.proof_ids instanceof Array && pnr.proof_ids.indexOf(proof.id) !== -1
       );
     } catch (e) {
       // We do nothing with the error as linkedPNR is set anyway.
@@ -261,6 +261,7 @@ function fetchBills(requiredFields, entries, data, next) {
         pdfurl: proof.url,
         type: 'train',
         vendor: 'Captain Train',
+        system,
         date: moment(proof.created_at).hours(0)
                                       .minutes(0)
                                       .seconds(0)
@@ -305,7 +306,30 @@ function fetchBills(requiredFields, entries, data, next) {
     }
   }
 
-  entries.fetched = bills;
+  const filteredBills = [];
+  // Recombine the bill list so that each entry.url is unique
+  for (const bill of bills) {
+    // Ensure the bill is not already in the list.
+    const sameUrlBills = filteredBills.filter(b =>
+        (b.pdfurl === bill.pdfurl && b.system === bill.system));
+    if (sameUrlBills.length === 0) {
+      const sameBill = bills.filter(b => (b.pdfurl === bill.pdfurl))
+                            .filter(b => (b.system === bill.system));
+      const newBill = {
+        amount: sameBill.reduce((amount, b) => (amount + b.amount), 0),
+        pdfurl: bill.pdfurl,
+        date: bill.date,
+        type: 'train',
+        vendor: 'Captain Train',
+      };
+      if (typeof bill.isRefund !== 'undefined') {
+        newBill.isRefund = bill.isRefund;
+      }
+      filteredBills.push(newBill);
+    }
+  }
+
+  entries.fetched = filteredBills;
   next();
 }
 
