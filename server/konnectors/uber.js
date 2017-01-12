@@ -85,9 +85,8 @@ function logIn(requiredFields, bills, data, next) {
       }
       if (res.statuCode >= 400) {
         log.error('Login failed');
-        const err = `Status code: ${res.statusCode}`;
-        log.error('request error');
-        return next(err);
+        log.error(`Login failed due to request error (status code: ${res.statusCode}`);
+        return next('request error');
       }
       log.info('Login succeeded');
       log.info('Fetch trips info');
