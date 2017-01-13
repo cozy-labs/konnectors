@@ -74,8 +74,9 @@ File.createNew = (fileName, path, url, tags, callback) ->
     clearTmpFile = (cb) ->
         log.info "Deleting file: #{filePath}"
         fs.unlink filePath, (err) ->
-            callback err, null if err?
-            cb()
+            log.error err
+            cb err
+
 
     # Attach binary to newly created file.
     attachBinary = (newFile) ->
@@ -84,7 +85,9 @@ File.createNew = (fileName, path, url, tags, callback) ->
                 log.error err
                 callback err
             else
-                clearTmpFile  ->
+                clearTmpFile (err) ->
+                    if err?
+                        callback err, null
                     File.find newFile.id, (err, file) ->
                         callback err, file
 
@@ -116,12 +119,13 @@ File.createNew = (fileName, path, url, tags, callback) ->
             catch err
                 log.error err
                 clearTmpFile ->
-                    callback err
+                    callback err, null
         else
+            log.error "Wrong url: #{url}"
             if res?
                 log.error res.statusCode, res.body
             clearTmpFile ->
-                callback new Error 'Cannot download file, wrong url'
+                callback 'wrong url', null
 
     stream.pipe fs.createWriteStream filePath
 
