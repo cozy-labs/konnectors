@@ -48,7 +48,8 @@ function loginAndParseBillsList(fields, bills, data, next) {
     };
     request(options, (err, res) => {
       if (err) {
-        return next(err);
+        log.error(err);
+        return next('request error');
       }
       // TODO : Improve test;
       if (res.statusCode === 200) {
@@ -65,7 +66,7 @@ function loginAndParseBillsList(fields, bills, data, next) {
 
         $('div.darty_sous_bloc_new_ec').each((i, element) => {
           let billId = $('div.darty_sous_bloc_header_spacing_new_ec > span.red', element).text().trim();
-          billId = billId.replace(/\r\n/g, '').replace(/ /g, '').replace(/\/[A-Z]+/, '');
+          billId = billId.replace(/( |\r\n|\/[A-Z]+)/g, '');
 
           const date = $('div > span.label > strong.red', element).text();
           const pdfurl = $('div.parc_facture_cell_new_ec > a.darty_sous_bloc_action_link_new_ec', element).attr('href');
@@ -75,8 +76,7 @@ function loginAndParseBillsList(fields, bills, data, next) {
               number: billId,
               pdfurl: `${host}${pdfurl}`,
               date: moment(date.replace(/-.*/, '').trim(), 'DD/MM/YYYY'),
-              type: 'shop',
-              vendor: 'darty'
+              type: 'shop'
             });
           }
         });
@@ -108,7 +108,7 @@ function parseAmountForBills(fields, bills, data, next) {
       pdfParser.on('pdfParser_dataError', (errData) => {
         log.error(errData.parserError);
         log.error(`pdf parse error for bill ${bill.number}`);
-        return callback('pdf parse error');
+        return callback('parsing error');
       });
       pdfParser.on('pdfParser_dataReady', () => {
         log.info(`pdf parsed for bill ${bill.number}`);
@@ -117,7 +117,7 @@ function parseAmountForBills(fields, bills, data, next) {
 
         const line = rawContent.match(/Montant réglé par :[ A-Za-z]*([0-9,]+) *€/);
         if (line === null) {
-          log.info('No amount found, please contact a maintener');
+          log.info('No amount found, please contact a maintainer');
           // We don't want to stop because we don't find an amount
           // We just skip this bill
           return callback(null, null);
