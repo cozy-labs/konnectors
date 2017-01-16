@@ -74,7 +74,8 @@ File.createNew = (fileName, path, url, tags, callback) ->
     clearTmpFile = (cb) ->
         log.info "Deleting file: #{filePath}"
         fs.unlink filePath, (err) ->
-            log.error err
+            if err?
+                log.error err
             cb err
 
 
