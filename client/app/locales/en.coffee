@@ -134,7 +134,7 @@ module.exports =
     'konnector description ameli': "Import your Ameli reimbursements in your Cozy. The login here is only the 13 first digits."
     'konnector description voyages_sncf': "Import your Voyages-SNCF bills and events in your Cozy."
     'konnector description darty': "Import all your Darty bills in your Cozy."
-    'konnector description doctolib': "Import you Doctolib appointments in your Cozy."
+    'konnector description doctolib': "Import your Doctolib appointments in your Cozy."
     'konnector customview googlecontacts 4': "Initialize or reset this konnector"
     'konnector customview googlecontacts 1': "1. Press \"connect your google account\" button to connect to your Google account and authorize your Cozy to access to it. Google will provide you with a complex string. Once you get it copy it in your clipboard, we will use it in second step."
     'konnector customview googlecontacts 2': "Connect your Google account"
