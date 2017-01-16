@@ -60,6 +60,12 @@ module.exports =
             lastSuccess: null
             accounts: []
             password: null
+            importInterval: 'none'
+
+        ## Remove the konnector from the poller
+        poller = require "../lib/poller"
+        log.info "Removing konnector #{req.konnector.slug} from the poller"
+        poller.remove req.konnector
 
         req.konnector.updateAttributes data, (err, konnector) ->
             return next err if err

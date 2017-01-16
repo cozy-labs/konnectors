@@ -145,15 +145,18 @@ class KonnectorPoller
         @createTimeout konnector, nextUpdate
 
 
+    remove: (konnector) ->
+        if @timeouts[konnector.slug]?
+            clearTimeout @timeouts[konnector.slug]
+            delete @timeouts[konnector.slug]
+
     # Update import timeout and nextUpdates for a given konnector.
     # This function should be called after a modification or a creation
     # of a connector.
     add: (startDate, konnector, callback=null) ->
 
         # If there is already a timeout for this konnector, destroy it.
-        if @timeouts[konnector.slug]?
-            clearTimeout @timeouts[konnector.slug]
-            delete @timeouts[konnector.slug]
+        @remove konnector
 
         if konnector.importInterval isnt 'none'
             if konnector.shallRaiseEncryptedFieldsError()
