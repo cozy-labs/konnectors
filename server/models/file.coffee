@@ -70,6 +70,15 @@ File.createNew = (fileName, path, url, tags, callback) ->
         class: getFileClass mime
         mime: mime
 
+    # Clear the temporary file
+    clearTmpFile = (cb) ->
+        log.info "Deleting file: #{filePath}"
+        fs.unlink filePath, (err) ->
+            if err?
+                log.error err
+            cb err
+
+
     # Attach binary to newly created file.
     attachBinary = (newFile) ->
         newFile.attachBinary filePath, "name": "file", (err) ->
@@ -77,7 +86,9 @@ File.createNew = (fileName, path, url, tags, callback) ->
                 log.error err
                 callback err
             else
-                fs.unlink filePath, ->
+                clearTmpFile (err) ->
+                    if err?
+                        callback err, null
                     File.find newFile.id, (err, file) ->
                         callback err, file
 
@@ -89,6 +100,11 @@ File.createNew = (fileName, path, url, tags, callback) ->
 
     log.info "Downloading file at #{url}..."
     stream = request options, (err, res, body) ->
+        if err?
+            log.error err
+            clearTmpFile ->
+                callback err, null
+
         if res?.statusCode is 200
             # Once done create file metadata then attach binary to file.
             try
@@ -102,11 +118,15 @@ File.createNew = (fileName, path, url, tags, callback) ->
                     else
                         attachBinary newFile
             catch err
-                callback err
+                log.error err
+                clearTmpFile ->
+                    callback err, null
         else
+            log.error "Wrong url: #{url}"
             if res?
                 log.error res.statusCode, res.body
-            callback new Error 'Cannot download file, wrong url'
+            clearTmpFile ->
+                callback 'wrong url', null
 
     stream.pipe fs.createWriteStream filePath
 
