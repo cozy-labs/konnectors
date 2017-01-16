@@ -85,7 +85,7 @@ function logIn(requiredFields, bills, data, next) {
       }
       if (res.statuCode >= 400) {
         log.error('Login failed');
-        log.error(`Login failed due to request error (status code: ${res.statusCode}`);
+        log.error(`Login failed due to request error (status code: ${res.statusCode})`);
         return next('request error');
       }
       log.info('Login succeeded');
@@ -116,7 +116,7 @@ function getTrips(requiredFields, bills, data, next) {
                   .get()
                   .map(trip => trip.replace('#trip-', ''));
 
-  const maybeNext = $('a[class="btn pagination__next"]').attr('href');
+  const maybeNext = $('a.btn pagination__next').attr('href');
 
   log.info(`Found ${tripsId.length} uber trips`);
   const fetchedBills = [];
