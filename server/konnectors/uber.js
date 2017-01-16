@@ -2,7 +2,7 @@
 const request = require('request')
 const cheerio = require('cheerio')
 const async = require('async')
-
+const moment = require('moment')
 const filterExisting = require('../lib/filter_existing')
 const localization = require('../lib/localization_manager')
 const saveDataAndFile = require('../lib/save_data_and_file')
@@ -130,6 +130,9 @@ function getTrips (requiredFields, bills, data, next) {
                   .get()
                   .map(trip => trip.replace('#trip-', ''))
   log.info(`Found ${tripsId.length} uber trips`)
+  const maybeNext = $('a.btn.pagination__next').attr('href')
+
+  log.info(`Found ${tripsId.length} uber trips`)
   const fetchedBills = []
   async.eachSeries(tripsId, (tripId, callback) => {
     const tripOption = {
@@ -178,7 +181,7 @@ function getTrips (requiredFields, bills, data, next) {
         }
 
         const bill = {
-          date: new Date(parsedBody[0].invoice_date),
+          date: moment(new Date(parsedBody[0].invoice_date)),
           amount: parseFloat(amount),
           type: 'Taxi',
           pdfurl: `https://riders.uber.com/invoice-gen${parsedBody[0].document_path}`,
@@ -192,7 +195,23 @@ function getTrips (requiredFields, bills, data, next) {
     if (err) {
       return next(err)
     }
-    bills.fetched = fetchedBills
+    if (typeof bills.fetched === 'undefined') {
+      bills.fetched = fetchedBills
+    } else {
+      bills.fetched.concat(fetchedBills)
+    }
+
+    // Check if there is a next page
+    if (typeof maybeNext !== 'undefined') {
+      return request(`https://riders.uber.com/trips${maybeNext}`, (err, res, body) => {
+        if (err) {
+          log.error(err)
+          return next('request error')
+        }
+        data.tripsPage = body
+        return getTrips(requiredFields, bills, data, next)
+      })
+    }
     log.info('Bills succesfully fetched')
     return next()
   })
