@@ -133,6 +133,7 @@ module.exports =
     'konnector description birthdays': "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts. Si un tag est donné, seuls les contacts taggés avec celui-ci seront pris en compte."
     'konnector description ameli': "Importez vos remboursements Ameli dans votre Cozy. L'identifiant doit être constitué des 13 premiers chiffres de votre numéro de sécurité sociale."
     'konnector description voyages_sncf': "Importez vos factures et événements Voyages-SNCF dans votre Cozy."
+    'konnector description darty': "Importez toutes vos factures Darty dans votre Cozy."
     'konnector description doctolib': "Importez vos rendez-vous Doctolib dans votre Cozy."
     'konnector customview googlecontacts 4': "Initialiser ou réinitialiser ce konnector"
     'konnector customview googlecontacts 1': "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2."
