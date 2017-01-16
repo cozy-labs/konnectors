@@ -5,6 +5,7 @@ module.exports =
     'key not found': 'Key not found'
     'request error': 'A request to the website failed, please read the logs.'
     'parsing error': 'The result could not be parsed.'
+    'wrong url': 'The file could not be downloaded, the url is wrong'
     'encrypted fields': 'The passwords are still encrypted, no import can be done. Please log out of your Cozy, log in again and restart Konnectors'
     'file error': 'The file could not be created/modified/deleted'
     'internal error': 'An error occured in your Cozy'
