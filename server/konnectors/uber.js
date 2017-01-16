@@ -116,7 +116,7 @@ function getTrips(requiredFields, bills, data, next) {
                   .get()
                   .map(trip => trip.replace('#trip-', ''));
 
-  const maybeNext = $('a.btn pagination__next').attr('href');
+  const maybeNext = $('a.btn.pagination__next').attr('href');
 
   log.info(`Found ${tripsId.length} uber trips`);
   const fetchedBills = [];
