@@ -32,6 +32,7 @@
     "nest-api": "0.0.5",
     "node-polyglot": "2.0.0",
     "ovh": "2.0.1",
+    "pdf2json": "1.1.7",
     "pixl-xml": "1.0.10",
     "pngjs-image": "0.11.7",
     "printit": "0.1.20",
