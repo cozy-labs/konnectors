@@ -263,7 +263,7 @@ action=getFacture&format=dl&l="
     # YYYYMM_freemobile_NNNNNNNNNN.pdf (NN..NN is line number)
     # - Import overall pdf with name YYYYMM_freemobile.pdf
 
-    isMultiline = $('div[class="consommation"]').length > 1
+    isMultiline = $('div.infosConso').length > 1
     $('div.factLigne.is-hidden').each ->
         amount = $($(this).find('.montant')).text()
         amount = amount.replace '€', ''
