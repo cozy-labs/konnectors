@@ -1,17 +1,9 @@
 'use strict'
 
-const _ = require('lodash');
-const printit = require('printit');
-const slugify = require('cozy-slug');
-const fetcher = require('./fetcher');
-let pkg = {};
-try {
-  // Build mode
-  pkg = require('../../../package.json');
-} catch (e) {
-  // Dev mode
-  pkg = require('../../package.json');
-}
+const _ = require('lodash')
+const printit = require('printit')
+const slugify = require('cozy-slug')
+const fetcher = require('./fetcher')
 
 module.exports = {
 
@@ -44,7 +36,6 @@ module.exports = {
       slug: slug,
       description: `konnector description ${slug}`,
       logger: logger,
-      docTypeVersion: docTypeVersion,
       models: modelsObj,
 
       fetch: function (requiredFields, callback) {
