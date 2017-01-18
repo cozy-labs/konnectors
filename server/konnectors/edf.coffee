@@ -5,9 +5,6 @@ moment = require 'moment'
 cozydb = require 'cozydb'
 localization = require '../lib/localization_manager'
 
-
-localization = require '../lib/localization_manager'
-
 fetcher = require '../lib/fetcher'
 updateOrCreate = require '../lib/update_or_create'
 File = require '../models/file'
@@ -1244,13 +1241,8 @@ K = module.exports = require('../lib/base_konnector').createNew
     name: 'EDF'
     slug: 'edf'
     description: 'konnector description edf'
-<<<<<<< HEAD
     vendorLink: 'https://particulier.edf.fr/fr'
     category: 'energy',
-=======
-    vendorLink: 'https://particulier.edf.fr'
-
->>>>>>> ebe8132... EDF konnector: Fix error with nom mensualities accounts. (#617)
     fields:
         email:
             type: "text"
@@ -1265,7 +1257,6 @@ K = module.exports = require('../lib/base_konnector').createNew
         'consumption'
     ]
 
-<<<<<<< HEAD
     # TODO : get one edeliaClientId: 'text'
 
     models: [
@@ -1276,9 +1267,6 @@ K = module.exports = require('../lib/base_konnector').createNew
         EDFConsumptionStatement,
         EDFBill
     ]
-=======
-    models: [Client, Contract, PaymentTerms, Home, ConsumptionStatement, Bill]
->>>>>>> ebe8132... EDF konnector: Fix error with nom mensualities accounts. (#617)
 
     fetchOperations: [
         prepareEntries
