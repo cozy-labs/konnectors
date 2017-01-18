@@ -130,10 +130,6 @@ module.exports =
         req.konnector.updateFieldValues { accounts: accounts }, (err) ->
             return next err if err
 
-<<<<<<< HEAD
-            res.redirect '../../..' + \
-              "/#/category/#{req.konnector.category}/#{req.konnector.slug}"
-=======
             res.status(200).send """<!DOCTYPE html>
 <html>
 <head>
@@ -152,4 +148,3 @@ module.exports =
 </body>
 </html>
 """
->>>>>>> 963e648... Konnector Orange mesinfos (#573)
