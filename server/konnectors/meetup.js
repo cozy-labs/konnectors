@@ -1,17 +1,17 @@
-'use strict';
+'use strict'
 
-const request = require('request').defaults({ jar: true });
-const cheerio = require('cheerio');
-const ical = require('./ical_feed');
-const Event = require('../models/event');
+const request = require('request').defaults({ jar: true })
+const cheerio = require('cheerio')
+const ical = require('./ical_feed')
+const Event = require('../models/event')
 
 const logger = require('printit')({
   prefix: 'Meetup',
-  date: true,
-});
+  date: true
+})
 
-const REQUEST_ERROR_KEY = 'request error';
-const baseKonnector = require('../lib/base_konnector');
+const REQUEST_ERROR_KEY = 'request error'
+const baseKonnector = require('../lib/base_konnector')
 
 /**
  * The goal of this konnector is to fetch the iCal of the user with his Meetup events
@@ -31,16 +31,16 @@ module.exports = baseKonnector.createNew({
     login,
     logout
   ]
-});
+})
 
-function login(requiredFields, billInfos, data, next) {
+function login (requiredFields, billInfos, data, next) {
   request('https://secure.meetup.com/login/', (err, res, body) => {
     if (err) {
-      logger.error(err);
-      return next(REQUEST_ERROR_KEY);
+      logger.error(err)
+      return next(REQUEST_ERROR_KEY)
     }
 
-    const token = cheerio.load(body)('input[name=token]').val();
+    const token = cheerio.load(body)('input[name=token]').val()
     const opts = {
       method: 'POST',
       url: 'https://secure.meetup.com/fr-FR/login/',
@@ -57,64 +57,63 @@ function login(requiredFields, billInfos, data, next) {
         op: 'login',
         apiAppName: ''
       }
-    };
+    }
     request(opts, (err, res) => {
       if (err) {
-        logger.error(err);
-        return next(REQUEST_ERROR_KEY);
+        logger.error(err)
+        return next(REQUEST_ERROR_KEY)
       } else if (res.statusCode === 200) {
         // 200 if credentials are incorrect
-        return next('bad credentials');
+        return next('bad credentials')
       } else if (res.statusCode === 302 && res.headers.location) {
-        logger.info('Connected');
+        logger.info('Connected')
         request(res.headers.location, (err, res, body) => {
           if (err) {
-            return next(err);
+            return next(err)
           }
-          sendToICalKonnector(body, requiredFields.calendar, next);
-        });
+          sendToICalKonnector(body, requiredFields.calendar, next)
+        })
       }
-    });
-  });
+    })
+  })
 }
 
-
-function sendToICalKonnector(body, calendar, next) {
-  const $ = cheerio.load(body);
+function sendToICalKonnector (body, calendar, next) {
+  const $ = cheerio.load(body)
   const icalUrls = $('ul[data-filter="going"] > li > a.export-feed-option').map((i, elem) => (
     $(elem).attr('href')
   )).get().filter((url) => {
-    let matches = true;
+    let matches = true
     // We do not want to get the rss feed
     if (url.match(/rss/)) {
-      matches = false;
+      matches = false
     }
     // We do not want to get the google feed
     if (url.match(/google/)) {
-      matches = false;
+      matches = false
     }
     // We do not want to get the webcal feed
     if (url.match(/webcal/)) {
-      matches = false;
+      matches = false
     }
-    return matches;
-  });
+    return matches
+  })
   if (typeof icalUrls !== 'undefined' && icalUrls.length > 0) {
-    ical.fetch({ url: icalUrls[0], calendar }, next);
+    ical.fetch({ url: icalUrls[0], calendar }, next)
   } else {
-    logger.info('No feed found');
-    next('no feed');
+    logger.info('No feed found')
+    next('no feed')
   }
 }
 
-function logout(requiredFields, billInfos, data, next) {
+function logout (requiredFields, billInfos, data, next) {
   request('https://www.meetup.com/fr-FR/logout/', (err, res) => {
     if (err) {
-      return next(err);
+      return next(err)
     }
     if (res.statusCode === 302) {
-      logger.info('Disconnected');
+      logger.info('Disconnected')
     }
-    return next();
-  });
+    return next()
+  })
 }

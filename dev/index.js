@@ -1,4 +1,4 @@
-import connector from './connector';
-import data from './data';
+import connector from './connector'
+import data from './data'
 
-export { connector, data };
+export { connector, data }

@@ -114,7 +114,7 @@ function login (requiredFields, entries, data, next) {
         logger.error(err)
         return next(err)
       }
-      logger.info('Connected');
+      logger.info('Connected')
       if (res.statusCode === 422) {
         return next('bad credentials')
       }

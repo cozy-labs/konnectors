@@ -1,20 +1,19 @@
-'use strict';
+'use strict'
 
-const request = require('request');
-const localization = require('../lib/localization_manager');
-const baseKonnector = require('../lib/base_konnector');
-const updateOrCreate = require('../lib/update_or_create');
+const request = require('request')
+const localization = require('../lib/localization_manager')
+const baseKonnector = require('../lib/base_konnector')
+const updateOrCreate = require('../lib/update_or_create')
 
-const GeoPoint = require('../models/geopoint');
-const PhoneCommunicationLog = require('../models/phonecommunicationlog');
+const GeoPoint = require('../models/geopoint')
+const PhoneCommunicationLog = require('../models/phonecommunicationlog')
 
-const API_ROOT = 'https://mesinfos.orange-labs.fr';
+const API_ROOT = 'https://mesinfos.orange-labs.fr'
 
 const logger = require('printit')({
   prefix: 'Orange Mobile',
   date: true
-});
-
+})
 
 /*
  * The goal of this connector is to fetch event from facebook and store them
@@ -28,7 +27,7 @@ const connector = module.exports = baseKonnector.createNew({
   fields: {
     access_token: 'hidden',
     lastGeoPoint: 'hidden',
-    lastPhoneCommunicationLog: 'hidden',
+    lastPhoneCommunicationLog: 'hidden'
   },
 
   models: [GeoPoint, PhoneCommunicationLog],
@@ -40,64 +39,64 @@ const connector = module.exports = baseKonnector.createNew({
     updateOrCreate(logger, GeoPoint, ['msisdn', 'timestamp']),
     updateOrCreate(logger, PhoneCommunicationLog, ['msisdn', 'timestamp']),
     saveFieldsInKonnector,
-    buildNotifContent,
-  ],
+    buildNotifContent
+  ]
 
-});
+})
 
-function checkToken(requiredFields, entries, data, next) {
-  const token = requiredFields.access_token;
-  if (!token) { return next('token not found'); }
+function checkToken (requiredFields, entries, data, next) {
+  const token = requiredFields.access_token
+  if (!token) { return next('token not found') }
 
   try {
-    let payload = token.split('.')[1];
-    payload = JSON.parse(new Buffer(payload, 'base64').toString());
+    let payload = token.split('.')[1]
+    payload = JSON.parse(new Buffer(payload, 'base64').toString())
 
     if (payload.token_type !== 'mobile') {
-      connector.logger.error(`Wronk token_type for this konnector: ${payload.token_type}`);
-      return next('not mobile token');
+      connector.logger.error(`Wronk token_type for this konnector: ${payload.token_type}`)
+      return next('not mobile token')
     }
 
-    next();
+    next()
   } catch (e) {
-    connector.logger.error(`Unexpected token format: ${e}`);
-    next('token not found');
+    connector.logger.error(`Unexpected token format: ${e}`)
+    next('token not found')
   }
 }
 
-function requestOrange(uri, token, callback) {
-  connector.logger.info(uri);
+function requestOrange (uri, token, callback) {
+  connector.logger.info(uri)
 
   request.get(uri, { auth: { bearer: token }, json: true }, (err, res, body) => {
     if (res.statusCode.toString() !== '200') {
-      err = `${res.statusCode} - ${res.statusMessage} ${err || ''}`;
-      connector.logger.error(body);
+      err = `${res.statusCode} - ${res.statusMessage} ${err || ''}`
+      connector.logger.error(body)
     }
 
     if (err) {
-      connector.logger.error(`Download failed: ${err}`);
-      return callback(err);
+      connector.logger.error(`Download failed: ${err}`)
+      return callback(err)
     }
-    callback(null, body);
-  });
+    callback(null, body)
+  })
 }
 
-function downloadGeoloc(requiredFields, entries, data, next) {
-  connector.logger.info('Downloading geoloc data from Orange...');
+function downloadGeoloc (requiredFields, entries, data, next) {
+  connector.logger.info('Downloading geoloc data from Orange...')
 
-  let uri = `${API_ROOT}/data/loc`;
+  let uri = `${API_ROOT}/data/loc`
   if (requiredFields.lastGeoPoint) {
-    uri += `?start=${requiredFields.lastGeoPoint.slice(0, 19)}`;
+    uri += `?start=${requiredFields.lastGeoPoint.slice(0, 19)}`
   }
 
   requestOrange(uri, requiredFields.access_token, (err, body) => {
-    if (err) { return next(err); }
-    entries.geopoints = [];
+    if (err) { return next(err) }
+    entries.geopoints = []
     body.forEach((point) => {
       if (point.ts && requiredFields.lastGeoPoint < point.ts) {
-        requiredFields.lastGeoPoint = point.ts;
+        requiredFields.lastGeoPoint = point.ts
       }
-      if (point.err) { return; }
+      if (point.err) { return }
 
       entries.geopoints.push({
         docType: 'GeoPoint',
@@ -106,47 +105,47 @@ function downloadGeoloc(requiredFields, entries, data, next) {
         timestamp: point.ts,
         longitude: point.loc[0],
         latitude: point.loc[1],
-        radius: point.rad,
-      });
-    });
+        radius: point.rad
+      })
+    })
 
-    next();
-  });
+    next()
+  })
 }
 
-function downloadCRA(requiredFields, entries, data, next) {
-  connector.logger.info('Downloading CRA data from Orange...');
+function downloadCRA (requiredFields, entries, data, next) {
+  connector.logger.info('Downloading CRA data from Orange...')
 
-  let uri = `${API_ROOT}/data/cra`;
+  let uri = `${API_ROOT}/data/cra`
   if (requiredFields.lastPhoneCommunicationLog) {
-    uri += `?start=${requiredFields.lastPhoneCommunicationLog.slice(0, 19)}`;
+    uri += `?start=${requiredFields.lastPhoneCommunicationLog.slice(0, 19)}`
   }
 
   requestOrange(uri, requiredFields.access_token, (err, body) => {
-    if (err) { return next(err); }
+    if (err) { return next(err) }
 
     // map SMS_C for further concat in one SMS object.
     const smsCByTs = body.filter(cra => cra.desc.indexOf('SMS_C') === 0)
       .reduce((agg, smsC) => {
-        agg[smsC.ts] = smsC;
-        return agg;
-      }, {});
+        agg[smsC.ts] = smsC
+        return agg
+      }, {})
 
-    entries.phonecommunicationlogs = [];
+    entries.phonecommunicationlogs = []
 
     body.forEach((cra) => {
       try {
         if (cra.time && requiredFields.lastPhoneCommunicationLog < cra.time) {
-          requiredFields.lastPhoneCommunicationLog = cra.time;
+          requiredFields.lastPhoneCommunicationLog = cra.time
         }
-        if (cra.err || cra.desc.indexOf('SMS_C') === 0) { return; }
+        if (cra.err || cra.desc.indexOf('SMS_C') === 0) { return }
 
         if (cra.desc.indexOf('SMS ') === 0) {
           // Try to merge informations
-          const smsC = smsCByTs[cra.ts];
+          const smsC = smsCByTs[cra.ts]
           if (smsC) {
-            cra.length = smsC.units;
-            cra.chipType = 'c';
+            cra.length = smsC.units
+            cra.chipType = 'c'
           }
         }
 
@@ -162,21 +161,20 @@ function downloadCRA(requiredFields, entries, data, next) {
           latitude: cra.loc ? cra.loc[1] : undefined,
           networkType: cra.net_lbl,
           type: cra.desc,
-          endCause: cra.end_cause,
-        });
+          endCause: cra.end_cause
+        })
       } catch (e) {
-        connector.logger.error('While parsing CRA.');
-        connector.logger.error(e);
+        connector.logger.error('While parsing CRA.')
+        connector.logger.error(e)
       }
-    });
-    next();
-  });
+    })
+    next()
+  })
 }
 
-
 // Save konnector's fieldValues during fetch process.
-function saveFieldsInKonnector(requiredFields, entries, data, next) {
-  connector.logger.info('saveFieldsInKonnector');
+function saveFieldsInKonnector (requiredFields, entries, data, next) {
+  connector.logger.info('saveFieldsInKonnector')
 
   // Disable eslint because we can't require models/konnector at the top
   // of this file (or Konnector will be empty). It's because in the require
@@ -186,33 +184,32 @@ function saveFieldsInKonnector(requiredFields, entries, data, next) {
 
   Konnector.get(connector.slug, (err, konnector) => {
     if (err) {
-      connector.logger.error(err);
-      return next('internal error');
+      connector.logger.error(err)
+      return next('internal error')
     }
 
-    const accounts = konnector.accounts;
+    const accounts = konnector.accounts
     const index = accounts.findIndex(account =>
-        account.access_token === requiredFields.access_token);
-    accounts[index] = requiredFields;
-    konnector.updateFieldValues({ accounts }, next);
-  });
+        account.access_token === requiredFields.access_token)
+    accounts[index] = requiredFields
+    konnector.updateFieldValues({ accounts }, next)
+  })
 }
 
-
-function buildNotifContent(requiredFields, entries, data, next) {
+function buildNotifContent (requiredFields, entries, data, next) {
   // data.updated: we don't speak about update, because we don't now if the
   // update actually changes the data or not.
 
   // Signal all add of document.
-  const addedList = [];
+  const addedList = []
   Object.keys(data.created).forEach((docsName) => {
-    const count = data.created[docsName];
+    const count = data.created[docsName]
     if (count > 0) {
       addedList.push(localization.t(
-        `notification ${docsName}`, { smart_count: count }));
+        `notification ${docsName}`, { smart_count: count }))
     }
-  });
+  })
 
-  entries.notifContent = addedList.join(', ');
-  next();
+  entries.notifContent = addedList.join(', ')
+  next()
 }
