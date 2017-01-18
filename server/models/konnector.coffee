@@ -248,6 +248,15 @@ Konnector::cleanFieldValues = ->
         @password = JSON.stringify [password]
 
 
+# Tells if the konnector still has encrypted valued
+Konnector::hasEncryptedPassword = ->
+    @_passwordStillEncrypted? and @_passwordStillEncrypted
+
+Konnector::shallRaiseEncryptedFieldsError = ->
+    return @hasEncryptedPassword() and \
+    JSON.stringify(@accounts) isnt '[]'
+
+
 # Authorized Categories for konnectors
 Konnector::checkProperties = ->
     # check if category is correctly defined
