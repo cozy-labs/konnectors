@@ -651,8 +651,8 @@ fetchVisualiserHistoConso = (requiredFields, entries, data, callback) ->
                 if errorCode and errorCode isnt '0'
                     K.logger.error getF result, \
                         'tns:enteteSortie', 'tns:libelleRetour'
-
-                return callback() # Continue on error.
+                    # Continue on error.
+                    return callback()
 
 
                 unless "ns:corpsSortie" of result["ns:msgReponse"]
