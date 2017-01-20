@@ -151,10 +151,13 @@ module.exports = baseKonnector.createNew
     vendorLink: "http://www.malakoffmederic.com/index.jsp"
 
     fields:
-        login: "text"
-        password: "password"
-        folderPath: "folder"
-
+        login:
+            type: "text"
+        password:
+            type: "password"
+        folderPath:
+            type: "folder"
+    dataType: ['health', 'bill']
     models: [Bill]
 
     fetchOperations: [
