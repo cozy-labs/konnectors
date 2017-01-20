@@ -25,10 +25,14 @@ const connector = module.exports = baseKonnector.createNew({
 
   connectUrl: 'https://mesinfos.orange-labs.fr/auth?redirect_url=',
   fields: {
-    access_token: 'hidden',
-    lastVideoStream: 'hidden'
+    access_token: {
+      type: 'hidden'
+    },
+    lastVideoStream: {
+      type: 'hidden'
+    }
   },
-
+  dataType: ['clientId', 'timestamp'],
   models: [VideoStream],
 
   fetchOperations: [
