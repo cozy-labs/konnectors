@@ -56,6 +56,7 @@
   "error occurred during import:": "An error occurred during the last import:",
   "import server error": "Server error occured while importing.",
   "open selected folder": "Open selected folder",
+  "konnector description darty": "Import all your Darty bills in your Cozy.",
   "konnector description meetup": "Synchronize your Meetup calendar with your Cozy. This konnector requires the Calendar application.",
   "konnector description trainline": "Download your train vouchers from Trainline. This konnector requires the Files application to store the bill PDF files.",
   "konnector description edf": "EDF invites you to download your bills, consumption statements, contracts, payment terms,  and data about your client's relation, ... If you use the EDF e.quilibre service, the data will be richer.",

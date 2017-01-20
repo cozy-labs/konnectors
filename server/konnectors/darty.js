@@ -167,11 +167,20 @@ module.exports = baseKonnector.createNew({
   name: 'Darty',
   vendorLink: 'http://www.darty.com',
   fields: {
-    login: 'email',
-    password: 'password',
-    folderPath: 'folder'
+    login: {
+      type: 'email'
+    },
+    password: {
+      type: 'password'
+    },
+    folderPath: {
+      type: 'folder',
+      advanced: true
+    }
   },
-
+  dataType: [
+    'bill'
+  ],
   models: [Bill],
 
   fetchOperations: [
