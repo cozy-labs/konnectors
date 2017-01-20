@@ -21,11 +21,17 @@ module.exports = baseKonnector.createNew({
   vendorLink: 'http://www.meetup.com',
 
   fields: {
-    login: 'text',
-    password: 'password',
-    calendar: 'text'
+    login: {
+      type: 'text'
+    },
+    password: {
+      type: 'password'
+    },
+    calendar: {
+      type: 'text'
+    }
   },
-
+  dataType: ['event'],
   models: [Event],
   fetchOperations: [
     login,
