@@ -130,21 +130,5 @@ module.exports =
         req.konnector.updateFieldValues { accounts: accounts }, (err) ->
             return next err if err
 
-            res.status(200).send """<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-</head>
-<body>
-    <script type="text/javascript">
-        window.onload = function() {
-            //refreshParent;
-            window.opener.location.reload();
-            setTimeout(function() {
-                window.close();
-            }, 500);
-        };
-    </script>
-</body>
-</html>
-"""
+            res.status(200).send res.redirect '../../..' + \
+                "/#/category/#{req.konnector.category}/#{req.konnector.slug}"
