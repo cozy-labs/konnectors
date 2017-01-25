@@ -35,7 +35,7 @@ const prepareConnectURL = (connector) => {
     // Use function parameter in the future
     const accountIndex = 0
 
-    const redirectUrl = `${l.origin}${l.pathname}/konnectors/` +
+    const redirectUrl = `${l.origin}${l.pathname}konnectors/` +
       `${connector.id}/${accountIndex}/redirect`
     connectUrl += encodeURIComponent(redirectUrl)
   }
