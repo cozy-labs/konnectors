@@ -24,6 +24,12 @@ const connector = module.exports = baseKonnector.createNew({
   customView: '<%t konnector customview orange_vod %>',
 
   connectUrl: 'https://mesinfos.orange-labs.fr/auth?redirect_url=',
+
+  color: {
+    hex: '#FF7900',
+    css: '#FF7900'
+  },
+
   fields: {
     access_token: {
       type: 'hidden'

@@ -1243,6 +1243,9 @@ K = module.exports = require('../lib/base_konnector').createNew
     description: 'konnector description edf'
     vendorLink: 'https://particulier.edf.fr/fr'
     category: 'energy',
+    color:
+        hex: '#FE5815'
+        css: '#FE5815'
     fields:
         email:
             type: "text"
