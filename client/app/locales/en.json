@@ -78,7 +78,7 @@
   "konnector description jawbone": "Download Move and Sleep Data from Jawbone CSV file.",
   "konnector description rescuetime": "Download all your activities from Rescue Time",
   "konnector description withings": "Download all your measures from your Withings account.",
-  "konnector description twitter": "Download all your tweets published on Twitter. This konnector requires two\nidentifiers and two secret keys. They can be generated on the <a\nhref=\"https://apps.twitter.com/ target=\"_blank\">Twitter app dashboard</a>. There you will\nbe able to create an app. They will give you credentials for this app. The\ncurrent konnector will use them to connect to Twitter and fetch your data.",
+  "konnector description twitter": "Download all your tweets published on Twitter. This konnector requires two\nidentifiers and two secret keys. They can be generated on the [Twitter app dashboard](https://apps.twitter.com/). There you will\nbe able to create an app. They will give you credentials for this app. The\ncurrent konnector will use them to connect to Twitter and fetch your data.",
   "konnector description digital ocean": "Download all your Digital Ocean Bills. This konnector requires the Files application to store the bill PDF files.",
   "konnector description sosh": "Download all your Sosh Bills. This konnector requires the Files application to store the bill PDF files.",
   "konnector description electrabel": "Download all you Electrabel Bills. This konnector requires the Files application to store the bill PDF files.",
