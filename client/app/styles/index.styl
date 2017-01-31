@@ -10,7 +10,7 @@
 base-font-size = 16
 
 [role=application]
-    @extend $app-2panes-toolbar
+    @extend $app-2panes-sticky
     background-color #ffffff
 
     h1
@@ -30,6 +30,7 @@ aside
         font-size   1.5em
         padding     1em
         margin      0
+
 
 [role="navigation"]
     width 13.75em
@@ -72,51 +73,80 @@ aside
         vertical-align middle
         fill           $red
 
+@media (max-width: (1023/basefont)rem)
+    aside
+        box-shadow inset 0 1px 0 0 $grey-01-alpha
+
+        h4
+            display none
+
+    [role="navigation"]
+        width           100%
+        display         flex
+        justify-content space-around
+
+        a
+            text-align center
+            font-size(10px)
+
+            svg
+                display block
+                margin  0 auto em(5px)
+
+        .submenu
+            display none
+
 .connector-list, .use-cases-list
-        display   flex
-        flex-wrap wrap
-        margin    0 0 2em 3em
+    display          flex
+    flex-wrap        wrap
+    justify-content  center
+    margin           0 3em 2em
 
 .item-wrapper
-        width            19em
-        position         relative
-        border-radius    4px
-        background-color white
-        box-shadow       0 2px 6px 0 rgba(0, 0, 0, 0.15)
-        padding-bottom   1em
-        margin           .7em
-        cursor           pointer
-        text-decoration  none
-        transition       .2s ease all
-        &:hover
-            box-shadow 0 4px 12px 0 rgba(0, 0, 0, 0.25)
-            transform  scale(1.05)
-            transition .2s ease all
-        .item-header
-            border-radius 4px 4px 0px 0px
-            height        9em
+    flex             1 1 auto
+    min-width        19em
+    position         relative
+    border-radius    4px
+    background-color white
+    box-shadow       0 2px 6px 0 rgba(0, 0, 0, 0.15)
+    padding-bottom   1em
+    margin           .7em
+    cursor           pointer
+    text-decoration  none
+    transition       .2s ease all
+    &:hover
+        box-shadow 0 4px 12px 0 rgba(0, 0, 0, 0.25)
+        transform  scale(1.05)
+        transition .2s ease all
+    .item-header
+        position      relative
+        border-radius 4px 4px 0px 0px
+        height        9em
+        .item-icon
             position      relative
-            .item-icon
-                border-radius 4px 4px 0px 0px
-                width         14em
-                height        4em
-                margin        2.5em
-        .item-title
-            padding   0em .5em
-            font-size 20px
-            margin    .5em
-            color     black
-        .item-subtitle
-            font-size 14px
-            padding   0em 1em
-            margin    0em .5em
-            color     $grey-06
-        .item-connected
-            position absolute
-            width    24px
-            height   24px
-            bottom   1em
-            right    1em
+            display       block
+            border-radius 4px 4px 0px 0px
+            width         14em
+            height        4em
+            margin        0 auto
+            top           50%
+            transform     translateY(-50%)
+    .item-title
+        padding   0em .5em
+        font-size 20px
+        margin    .5em
+        color     black
+    .item-subtitle
+        font-size 14px
+        padding   0em 1em
+        margin    0em .5em
+        color     $grey-06
+    .item-connected
+        position absolute
+        width    24px
+        height   24px
+        bottom   1em
+        right    1em
 
 
 // Global styles for dialog
