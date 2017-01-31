@@ -4,8 +4,12 @@ import { h } from 'preact'
 import Field, { DropdownField } from './Field'
 import AccountLoginForm from './AccountLoginForm'
 
-const folderLink = (folders, currentPath) => {
-  let folder = folders.find(f => f.path + '/' + f.name === currentPath)
+// Ensure that path has a / as first character
+const sanitizePath = path => path.charAt(0) === '/' ? path : `/${path}`
+
+const folderLink = (path, folders) => {
+  path = sanitizePath(path)
+  let folder = folders.find(f => f.path + '/' + f.name === path)
   if (!folder) return
   return `/apps/files/#folders/${folder.id}`
 }
@@ -17,7 +21,7 @@ const AccountConfigForm = ({ t, customView, connectUrl, fields, dirty, error, su
         <h3>{t('my_accounts location')}</h3>
         <p>{t('my_accounts location desc')}</p>
         <DropdownField label={false} {...fields.folderPath} />
-        <a href={folderLink(fields.folderPath.folders, fields.folderPath.value)}>
+        <a href={folderLink(fields.folderPath.value, fields.folderPath.folders)}>
           {t('my_accounts location button')}
         </a>
       </div>
