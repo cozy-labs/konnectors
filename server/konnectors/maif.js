@@ -37,6 +37,11 @@ const connector = module.exports = factory.createNew({
   // connectUrl: '${getConnectUrl()}&redirect_uri=',
   connectUrl: `${connectUrl}/authorize?response_type=${type}&client_id=${clientId}&scope=${scope}&state=${state}&nonce=${nonce}&redirect_uri=`,
 
+  color: {
+    hex: '#007858',
+    css: '#007858'
+  },
+
   fields: {
     code: {
       type: 'hidden' // To get the Auth code returned on the redirection.

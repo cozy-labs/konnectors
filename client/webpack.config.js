@@ -151,6 +151,6 @@ module.exports = {
     ]
   },
   stylus: {
-    use: [require('cozy-ui/lib/stylus')()]
+    use: [require('cozy-ui/stylus')()]
   }
 }

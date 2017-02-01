@@ -122,7 +122,11 @@ export default class ConnectorManagement extends Component {
           this.setState({ error: fetchedConnector.importErrorMessage })
         } else {
           this.gotoParent()
-          Notifier.info(t('my_accounts account config success'))
+          if (values.folderPath) {
+            Notifier.info(t('my_accounts account config success'), t('my_accounts account config details') + values.folderPath)
+          } else {
+            Notifier.info(t('my_accounts account config success'))
+          }
         }
       })
       .catch(error => { // eslint-disable-line
