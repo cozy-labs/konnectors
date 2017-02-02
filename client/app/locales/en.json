@@ -6,7 +6,7 @@
   "notification homes": "%{smart_count} home description imported |||| %{smart_count} home descriptions imported",
   "notification consumptionstatements": "%{smart_count} new consumption statement imported |||| %{smart_count} new consumption statements imported",
   "notification contracts": "%{smart_count} new contract imported |||| %{smart_count} new contracts imported",
-  "notification clients": "%{smart_count} new client's informations imported",
+  "notification clients": "%{smart_count} new client's information imported |||| %{smart_count} new clients' information imported",
   "notification paymenttermss": "%{smart_count} new payment term imported |||| %{smart_count} new payment terms imported",
   "redirectPath": "Path of the redirect URL",
   "token not found": "The token could not be retrieved",
