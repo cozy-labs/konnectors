@@ -102,9 +102,19 @@ aside
     justify-content  center
     margin           0 3em 2em
 
+    &::before
+    &::after
+        content    ''
+        flex       0 1 22em
+        order      2
+        margin     .7em
+
+@media (max-width: (1023/basefont)rem)
+    .connector-list, .use-cases-list
+        margin 0 1em 1em
+
 .item-wrapper
-    flex             1 1 auto
-    min-width        19em
+    flex             0 1 22em
     position         relative
     border-radius    4px
     background-color white
