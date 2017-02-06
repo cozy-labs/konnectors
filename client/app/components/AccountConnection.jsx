@@ -6,7 +6,7 @@ import AccountLoginForm from './AccountLoginForm'
 import DataItem from './DataItem'
 import ReactMarkdown from 'react-markdown'
 
-const AccountConnection = ({ t, connector, connectUrl, fields, dirty, error, submit, submitting }) => {
+const AccountConnection = ({ t, connector, fields, dirty, error, submit, submitting }) => {
   const { name, customView, description } = connector
   return (
     <div class='account-connection'>
@@ -37,10 +37,8 @@ const AccountConnection = ({ t, connector, connectUrl, fields, dirty, error, sub
           <AccountLoginForm
             t={t}
             customView={customView}
-            connectUrl={connectUrl}
             fields={fields}
           />
-          {!connectUrl &&
             <div class='account-form-controls'>
               <button
                 disabled={!dirty}
@@ -53,7 +51,6 @@ const AccountConnection = ({ t, connector, connectUrl, fields, dirty, error, sub
                 <p class='errors'>{t('my_accounts account config bad credentials')}</p>
               }
             </div>
-          }
         </div>
       </div>
     </div>

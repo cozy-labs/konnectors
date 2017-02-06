@@ -56,7 +56,7 @@ export default class MyAccountsStore {
   connectAccount (connectorId, values, accountId = 0) {
     let connector = this.find(c => c.id === connectorId)
     connector.accounts[accountId] = values
-    return this.putConnector(connector)
+    return this.importConnector(connector)
       .then(() => this.refreshFolders())
       .then(() => this.startConnectorPoll(connector.id))
   }
@@ -71,24 +71,37 @@ export default class MyAccountsStore {
     let connector = this.find(c => c.id === connectorId)
     connector.accounts[accountIdx] = values
     return this.putConnector(connector)
-      .then(() => this.startConnectorPoll(connector.id))
   }
 
   synchronize (connectorId) {
     let connector = this.find(c => c.id === connectorId)
-    return this.putConnector(connector)
+    return this.importConnector(connector)
       .then(() => this.startConnectorPoll(connector.id))
   }
 
   deleteAccount (connectorId, accountIdx) {
     let connector = this.find(c => c.id === connectorId)
     connector.accounts.splice(accountIdx, 1)
-    return this.putConnector(connector)
+    return this.importConnector(connector)
       .then(() => this.updateConnector(connector))
   }
 
   putConnector (connector) {
     return this.fetch('PUT', `konnectors/${connector.id}`, connector)
+      .then(response => {
+        return response.status === 200
+          ? response.text()
+          : Promise.reject(response)
+      })
+      .then((body) => {
+        let connector = JSON.parse(body)
+        this.updateConnector(connector)
+        return connector
+      })
+  }
+
+  importConnector (connector) {
+    return this.fetch('POST', `konnectors/${connector.id}/import`, connector)
       .then(response => {
         return response.status === 200
           ? response
