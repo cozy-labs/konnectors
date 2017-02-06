@@ -107,14 +107,6 @@ aside
     justify-content  flex-start
     margin           0 3em 2em
 
-    // &::before
-    // &::after
-    //     content    ''
-    //     flex       1
-    //     order      2
-    //     margin     .7em
-    //     min-width  19em
-
 @media (max-width: (1023/basefont)rem)
     .connector-list, .use-cases-list
         margin 0 1em 1em
@@ -168,27 +160,27 @@ $item-margin = .7em
 
 @media (min-width: 40em)
     .item-wrapper
-        flex 0 1 'calc(50% - %s * 2)' % $item-margin
+        flex-basis 'calc(50% - %s * 2)' % $item-margin
 
 @media (min-width: 64em)
     .item-wrapper
-        flex 0 1 'calc(50% - %s * 2)' % $item-margin
+        flex-basis 'calc(50% - %s * 2)' % $item-margin
 
 @media (min-width: 80em)
     .item-wrapper
-        flex 0 1 'calc(33.333% - %s * 2)' % $item-margin
+        flex-basis 'calc(33.333% - %s * 2)' % $item-margin
 
 @media (min-width: 96em)
     .item-wrapper
-        flex 0 1 'calc(25% - %s * 2)' % $item-margin
+        flex-basis 'calc(25% - %s * 2)' % $item-margin
 
 @media (min-width: 112em)
     .item-wrapper
-        flex 0 1 'calc(20% - %s * 2)' % $item-margin
+        flex-basis 'calc(20% - %s * 2)' % $item-margin
 
 @media (min-width: 128em)
     .item-wrapper
-        flex 0 1 'calc(16.666% - %s * 2)' % $item-margin
+        flex-basis 'calc(16.666% - %s * 2)' % $item-margin
 
 
 // Global styles for dialog
