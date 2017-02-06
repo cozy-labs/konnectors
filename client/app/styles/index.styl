@@ -17,6 +17,11 @@ base-font-size = 16
         font-size 2em
         margin    1.5em 2em 1em
 
+@media (max-width: (1023/basefont)rem)
+    [role=application]
+        h1
+            font-size 1.5em
+            margin    1em 1em .5em
 
 aside
     background-color $grey-01
@@ -99,28 +104,31 @@ aside
 .connector-list, .use-cases-list
     display          flex
     flex-wrap        wrap
-    justify-content  center
+    justify-content  flex-start
     margin           0 3em 2em
 
-    &::before
-    &::after
-        content    ''
-        flex       0 1 22em
-        order      2
-        margin     .7em
+    // &::before
+    // &::after
+    //     content    ''
+    //     flex       1
+    //     order      2
+    //     margin     .7em
+    //     min-width  19em
 
 @media (max-width: (1023/basefont)rem)
     .connector-list, .use-cases-list
         margin 0 1em 1em
 
+$item-margin = .7em
+
 .item-wrapper
-    flex             0 1 22em
+    flex             1 1 'calc(100% - %s * 2)' % $item-margin
     position         relative
     border-radius    4px
     background-color white
     box-shadow       0 2px 6px 0 rgba(0, 0, 0, 0.15)
+    margin           $item-margin
     padding-bottom   1em
-    margin           .7em
     cursor           pointer
     text-decoration  none
     transition       .2s ease all
@@ -157,6 +165,30 @@ aside
         height   24px
         bottom   1em
         right    1em
+
+@media (min-width: 40em)
+    .item-wrapper
+        flex 0 1 'calc(50% - %s * 2)' % $item-margin
+
+@media (min-width: 64em)
+    .item-wrapper
+        flex 0 1 'calc(50% - %s * 2)' % $item-margin
+
+@media (min-width: 80em)
+    .item-wrapper
+        flex 0 1 'calc(33.333% - %s * 2)' % $item-margin
+
+@media (min-width: 96em)
+    .item-wrapper
+        flex 0 1 'calc(25% - %s * 2)' % $item-margin
+
+@media (min-width: 112em)
+    .item-wrapper
+        flex 0 1 'calc(20% - %s * 2)' % $item-margin
+
+@media (min-width: 128em)
+    .item-wrapper
+        flex 0 1 'calc(16.666% - %s * 2)' % $item-margin
 
 
 // Global styles for dialog
