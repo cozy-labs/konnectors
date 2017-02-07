@@ -63,9 +63,6 @@ function getContacts (requiredFields, entries, data, next) {
       } else {
         data.contacts = contacts
       }
-      data.contacts = contacts.filter(contact =>
-        _.includes(contact.tags, requiredFields.tag)
-      )
       connector.logger.info('Contacts retrieved.')
     }
     next(err)
