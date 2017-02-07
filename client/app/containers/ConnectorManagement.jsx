@@ -215,7 +215,7 @@ export default class ConnectorManagement extends Component {
       fields.calendar.default = connectorName
     }
     if (fields.folderPath && !fields.folderPath.default) {
-      fields.folderPath.default = t('my_accounts title') + '/' + connectorName
+      fields.folderPath.default = '/' + t('my_accounts title') + '/' + connectorName
     }
     if (fields.folderPath && !fields.folderPath.options) {
       fields.folderPath.options = this.store.folders.map(f => f.path + '/' + f.name)
