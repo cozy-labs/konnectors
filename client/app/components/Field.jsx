@@ -105,14 +105,12 @@ export const DropdownField = translate()((props) => {
         onChange={onChange}
         onInput={onInput}
       >
-
         {dropdownFieldOptions.map(optionValue => (
           <option
             value={optionValue}
             selected={optionValue === {value}}
           >{optionValue}</option>
         ))}
-
       </select>
     </FieldWrapper>
   )
