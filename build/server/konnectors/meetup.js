@@ -20,6 +20,10 @@ module.exports = baseKonnector.createNew({
   name: 'Meetup',
   vendorLink: 'http://www.meetup.com',
 
+  color: {
+    hex: '#ED1C40',
+    css: '#ED1C40'
+  },
   fields: {
     login: {
       type: 'text'

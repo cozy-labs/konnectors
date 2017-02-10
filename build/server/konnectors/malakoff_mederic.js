@@ -151,6 +151,10 @@ fileOptions = {
 module.exports = baseKonnector.createNew({
   name: "Malakoff Mederic",
   vendorLink: "http://www.malakoffmederic.com/index.jsp",
+  color: {
+    hex: '#D4951A',
+    css: '#D4951A'
+  },
   fields: {
     login: {
       type: "text"
