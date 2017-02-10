@@ -53,8 +53,8 @@ module.exports =
 
     category: 'energy'
     color:
-        hex: '#8C979B'
-        css: '#8C979B'
+        hex: '#95A2AA'
+        css: '#95A2AA'
 
     fields:
         email:

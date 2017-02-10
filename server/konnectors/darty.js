@@ -166,6 +166,10 @@ function buildNotifContent (requiredFields, entries, data, next) {
 module.exports = baseKonnector.createNew({
   name: 'Darty',
   vendorLink: 'http://www.darty.com',
+  color: {
+    hex: '#EB1C24',
+    css: '#EB1C24'
+  },
   fields: {
     login: {
       type: 'email'

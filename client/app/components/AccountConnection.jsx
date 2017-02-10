@@ -4,6 +4,7 @@ import statefulForm from '../lib/statefulForm'
 
 import AccountLoginForm from './AccountLoginForm'
 import DataItem from './DataItem'
+import ReactMarkdown from 'react-markdown'
 
 const AccountConnection = ({ t, connector, connectUrl, fields, dirty, error, submit, submitting }) => {
   const { name, customView, description } = connector
@@ -11,7 +12,14 @@ const AccountConnection = ({ t, connector, connectUrl, fields, dirty, error, sub
     <div class='account-connection'>
       <div class='account-description'>
         <h3>{t('my_accounts title description')}</h3>
-        <p>{t(description)}</p>
+        <p>
+          <ReactMarkdown
+            source={
+              t(description)
+            }
+            renderers={{Link: props => <a href={props.href} target='_blank'>{props.children}</a>}}
+          />
+        </p>
         <h3>{t('dataType title')}</h3>
         <ul class='account-datas'>
           {connector.dataType.map(data =>

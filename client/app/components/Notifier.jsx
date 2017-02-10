@@ -46,10 +46,11 @@ class Notification extends Component {
   }
 
   render () {
-    const { message, type } = this.props
+    const { message, details, type } = this.props
     return (
       <div className={['coz-notification', 'coz-notification--' + type].join(' ')}>
         <div className='coz-notification-title'>{message}</div>
+        <div className='coz-notification-details'>{details}</div>
       </div>
     )
   }
@@ -63,8 +64,8 @@ export default class Notifier extends Component {
     }
   }
 
-  static info (msg) {
-    store.dispatch({ type: 'info', msg })
+  static info (msg, details) {
+    store.dispatch({ type: 'info', msg, details })
   }
 
   static warning (msg) {
@@ -102,6 +103,7 @@ export default class Notifier extends Component {
           <Notification
             type={notif.type}
             message={notif.msg}
+            details={notif.details}
             onClose={this.handleClose.bind(this, notif.id)}
           />
         ))}

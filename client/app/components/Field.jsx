@@ -94,6 +94,8 @@ export const PasswordField = translate()(
 
 export const DropdownField = translate()((props) => {
   const { value, options, onChange, onInput } = props
+  let valueInOptions = options.indexOf(value) !== -1
+  let dropdownFieldOptions = valueInOptions ? options : [value].concat(options)
 
   return (
     <FieldWrapper {...props}>
@@ -103,9 +105,10 @@ export const DropdownField = translate()((props) => {
         onChange={onChange}
         onInput={onInput}
       >
-        {options.map(optionValue => (
+        {dropdownFieldOptions.map(optionValue => (
           <option
             value={optionValue}
+            selected={optionValue === {value}}
           >{optionValue}</option>
         ))}
       </select>
