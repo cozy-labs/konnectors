@@ -1,3 +1,5 @@
+'use strict';
+
 /* Update or create each document in the entries[model.displayName] Array.
   Document are updated if one document in base, with the same value for the
   fields specified in filter param is in database.
@@ -6,7 +8,6 @@
   @param filter a list of field to look at to find similar
   @param options to be used later.
 */
-'use strict';
 
 var async = require('async');
 
@@ -27,13 +28,11 @@ module.exports = function (log, model, filter, options) {
     data.created[modelName] = 0;
 
     model.all(function (err, docs) {
-
       if (err) {
         return next(err);
       };
 
       async.eachSeries(news, function (entry, cb) {
-
         var toUpdate = docs.find(function (doc) {
           return filter.reduce(function (good, k) {
             return good && doc[k] === entry[k];

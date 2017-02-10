@@ -9,7 +9,7 @@ var moment = require('moment');
 var uuid = require('uuid');
 var cozydb = require('cozydb');
 var factory = require('../lib/base_konnector');
-var MaifUser = require('../models/maifuser');
+var MaifUser = require('../models/maif/user');
 
 var connectUrl = 'https://connect.maif.fr/connect';
 var apikey = 'eeafd0bd-a921-420e-91ce-3b52ee5807e8';
@@ -34,12 +34,22 @@ if (nonce === '') {
 var connector = module.exports = factory.createNew({
   name: 'MAIF',
   customView: '<%t konnector customview maif %>',
-  connectUrl: getConnectUrl() + '&redirect_uri=',
+  // connectUrl: '${getConnectUrl()}&redirect_uri=',
+  connectUrl: connectUrl + '/authorize?response_type=' + type + '&client_id=' + clientId + '&scope=' + scope + '&state=' + state + '&nonce=' + nonce + '&redirect_uri=',
 
   fields: {
-    code: 'hidden', // To get the Auth code returned on the redirection.
-    redirectPath: 'hidden',
-    refreshToken: 'hidden' },
+    code: {
+      type: 'hidden' // To get the Auth code returned on the redirection.
+    },
+    redirectPath: {
+      type: 'hidden'
+    },
+    refreshToken: {
+      type: 'hidden' // refreshToken
+    }
+  },
+
+  dataType: ['bill', 'contact'],
 
   models: [MaifUser],
   fetchOperations: [refreshToken, saveTokenInKonnector, fetchData, createOrUpdateInDB]
@@ -126,14 +136,6 @@ function buildCallbackUrl(requiredFields, callback) {
     }
     callback(error, url);
   });
-}
-
-/**
-* return connection url with all params
-*/
-function getConnectUrl() {
-  var baseUrl = connectUrl + '/authorize?';
-  return baseUrl + 'response_type=' + type + '&client_id=' + clientId + '&scope=' + scope + '&state=' + state + '&nonce=' + nonce;
 }
 
 // Save konnector's fieldValues during fetch process.

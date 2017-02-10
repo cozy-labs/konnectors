@@ -25,11 +25,17 @@ var connector = module.exports = baseKonnector.createNew({
 
   connectUrl: 'https://mesinfos.orange-labs.fr/auth?redirect_url=',
   fields: {
-    access_token: 'hidden',
-    lastGeoPoint: 'hidden',
-    lastPhoneCommunicationLog: 'hidden'
+    access_token: {
+      type: 'hidden'
+    },
+    lastGeoPoint: {
+      type: 'hidden'
+    },
+    lastPhoneCommunicationLog: {
+      type: 'hidden'
+    }
   },
-
+  dataType: ['msisdn', 'timestamp'],
   models: [GeoPoint, PhoneCommunicationLog],
 
   fetchOperations: [checkToken, downloadGeoloc, downloadCRA, updateOrCreate(logger, GeoPoint, ['msisdn', 'timestamp']), updateOrCreate(logger, PhoneCommunicationLog, ['msisdn', 'timestamp']), saveFieldsInKonnector, buildNotifContent]
