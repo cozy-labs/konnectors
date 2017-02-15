@@ -17,5 +17,20 @@
     "figure": "facture-telephonique-lg.jpg",
     "color": {"css": "#1FA8F1"},
     "important": true
+  },
+  {
+    "slug": "fai-bills",
+    "connectors": [{
+      "slug": "bouyguesbox"
+    }, {
+      "slug": "free"
+    }, {
+      "slug": "numericable"
+    }, {
+      "slug": "sfr_box"
+    }],
+    "figure": "facture-fournisseur-internet-lg.jpg",
+    "color": {"css": "#1FA8F1"},
+    "important": true
   }]
 }
