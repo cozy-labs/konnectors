@@ -49,7 +49,8 @@ The connectors marked with :x: are known as currently broken.
 | OVH CA                  | PDF  | Chocobozzz                                            | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/370))                |
 | OVH EU                  | PDF  | Chocobozzz                                            | :warning: ([issue on first import](https://github.com/cozy-labs/konnectors/issues/212))       |
 | SoYouStart CA           | PDF  | Chocobozzz                                            | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/372))                |
-| SoYouStart EU           | PDF  | Chocobozzz                                            | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/371))                |
+| SoYouStart EU           | PDF  | Chocobozzz                                            | :white_check_mark:
+|
 | Kimsufi CA              | PDF  | Chocobozzz                                            | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/374))                |
 | Kimsufi EU              | PDF  | Chocobozzz                                            | :x: ([needs an app token](https://github.com/cozy-labs/konnectors/issues/373))                |
 | Runabove                | PDF  | Chocobozzz                                            | :warning: ([issue on first import](https://github.com/cozy-labs/konnectors/issues/212))       |
