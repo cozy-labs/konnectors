@@ -37,6 +37,7 @@ The connectors marked with :x: are known as currently broken.
 | Bouygues Box            | PDF  | doubleface                                            | :x: ([#498](https://github.com/cozy-labs/konnectors/issues/498))                              |
 | Bouygues Telecom Mobile | PDF  | doubleface                                            | :x: ([#498](https://github.com/cozy-labs/konnectors/issues/498)                               |
 | Captain Train           | PDF  | ZeHiro                                                | :white_check_mark:                                                                            |
+| Darty                   | PDF  | ZeHiro                                                | :white_check_mark:                                                                            |
 | Digital Ocean           | PDF  | Frank Rousseau                                        | :white_check_mark:                                                                            |
 | Direct Energie          | PDF  | bnjbvr                                                | :white_check_mark:                                                                            |
 | Electrabel              | PDF  | ZeHiro (looking for a maintainer with credentials)    | :white_check_mark:                                                                            |
