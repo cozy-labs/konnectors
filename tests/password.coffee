@@ -88,6 +88,33 @@ describe 'Injecting/Removing encrypted fields', ->
             expected = JSON.stringify [password: 'azerty']
             @konnector.password.should.equal expected
 
+    describe 'Removing fieldsi [object format for fields]', ->
+
+        it 'When I call removeEncryptedFields on the connector object', ->
+            @konnector = new Konnector
+                slug: 'test'
+                accounts: [
+                    username: "myname"
+                    password: "azerty"
+                ]
+                password: '[{"password": "azerty"}]'
+            @fields =
+                username:
+                    type: "text"
+                password:
+                    type: "password"
+            @konnector.removeEncryptedFields @fields
+
+        it 'then the fields Values should not contain any password', ->
+            accountKeys = Object.keys @konnector.accounts[0]
+            for name, value of @fields
+                if value is 'password'
+                    accountKeys.should.not.containEql name
+
+        it 'and the password field should be filled', ->
+            expected = JSON.stringify [password: 'azerty']
+            @konnector.password.should.equal expected
+
     describe 'Removing fields [multiple passwords]', ->
 
         it 'When I call removeEncryptedFields on the connector object', ->
