@@ -87,7 +87,7 @@ module.exports =
     import: (req, res, next) ->
         # Don't run a new import if an import is already running.
         if req.konnector.isImporting
-            res.send 400, message: 'konnector is importing'
+            res.status(400).send message: 'konnector is importing'
         else
 
             # Extract date information.
