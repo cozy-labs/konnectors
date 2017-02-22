@@ -21,7 +21,7 @@ const AccountConfigForm = ({ t, customView, connectUrl, fields, dirty, error, su
         <h3>{t('my_accounts location')}</h3>
         <p>{t('my_accounts location desc')}</p>
         <DropdownField label={false} {...fields.folderPath} />
-        <a href={folderLink(fields.folderPath.value, fields.folderPath.folders)}>
+        <a href={folderLink(fields.folderPath.value, fields.folderPath.folders)} target='_blank'>
           {t('my_accounts location button')}
         </a>
       </div>
