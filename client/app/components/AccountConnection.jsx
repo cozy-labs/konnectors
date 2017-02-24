@@ -39,18 +39,18 @@ const AccountConnection = ({ t, connector, fields, dirty, error, submit, submitt
             customView={customView}
             fields={fields}
           />
-            <div class='account-form-controls'>
-              <button
-                disabled={!dirty}
-                aria-busy={submitting ? 'true' : 'false'}
-                onClick={submit}
-              >
-                {t('my_accounts account config button')}
-              </button>
-              {error === 'bad credentials' &&
-                <p class='errors'>{t('my_accounts account config bad credentials')}</p>
-              }
-            </div>
+          <div class='account-form-controls'>
+            <button
+              disabled={!dirty}
+              aria-busy={submitting ? 'true' : 'false'}
+              onClick={submit}
+            >
+              {t('my_accounts account config button')}
+            </button>
+            {error === 'bad credentials' &&
+              <p class='errors'>{t('my_accounts account config bad credentials')}</p>
+            }
+          </div>
         </div>
       </div>
     </div>

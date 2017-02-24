@@ -112,7 +112,7 @@ export default class ConnectorManagement extends Component {
 
   connectAccount (values) {
     if (this.state.connector.connectUrl) {
-      return this.connectAccountOAuth(values);
+      return this.connectAccountOAuth(values)
     }
 
     const id = this.state.connector.id
@@ -141,7 +141,7 @@ export default class ConnectorManagement extends Component {
   connectAccountOAuth (values) {
     return this._updateAccount(0, values)
       .then(() => {
-          window.location = prepareConnectURL(this.state.connector)
+        window.location = prepareConnectURL(this.state.connector)
       })
   }
 
@@ -149,10 +149,9 @@ export default class ConnectorManagement extends Component {
     const { t } = this.context
     this._updateAccount(idx, values)
       .then(() => {
-          Notifier.info(t('my_accounts account config success'))
+        Notifier.info(t('my_accounts account config success'))
       })
   }
-
 
   _updateAccount (idx, values) {
     const id = this.state.connector.id
@@ -169,7 +168,6 @@ export default class ConnectorManagement extends Component {
         return Promise.reject(error)
       })
   }
-
 
   synchronize () {
     const id = this.state.connector.id

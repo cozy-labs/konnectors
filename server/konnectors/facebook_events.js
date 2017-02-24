@@ -17,7 +17,6 @@ const appSecret = 'a04e8cf918a382ea0b19cf1b6fbc2506'
 
 const scope = 'user_events'
 
-const oAuthProxyUrl = getOAuthProxyUrl()
 
 /*
  * The goal of this connector is to fetch event from facebook and store them
@@ -108,11 +107,10 @@ function saveTokenInKonnector (requiredFields, entries, data, callback) {
       return callback('internal error')
     }
 
-    requiredFields.accessToken = data.accessToken;
-    konnector.updateFieldValues({ accounts: [requiredFields] }, callback);
-  });
+    requiredFields.accessToken = data.accessToken
+    konnector.updateFieldValues({ accounts: [requiredFields] }, callback)
+  })
 }
-
 
 function downloadData (requiredFields, entries, data, next) {
   connector.logger.info('Downloading events data from Facebook...')
