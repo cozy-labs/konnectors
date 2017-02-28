@@ -1,7 +1,7 @@
 /** @jsx h */
 import { h } from 'preact'
 
-import Field, { PasswordField, DropdownField } from './Field'
+import Field, { PasswordField, DropdownField, CheckboxField } from './Field'
 
 const AccountLoginForm = ({ t, customView, fields }) => (
   <div class='account-form-login'>
@@ -20,6 +20,11 @@ const AccountLoginForm = ({ t, customView, fields }) => (
         if (fields[name].type === 'dropdown') {
           return <DropdownField label={t(name)} {...fields[name]} />
         }
+
+        if (fields[name].type === 'checkbox') {
+          return <CheckboxField label={t(name)} {...fields[name]} />
+        }
+
         return <Field label={t(name)} {...fields[name]} />
       }
     )}
