@@ -49,12 +49,10 @@ remarks are welcome.
       "bills": {
         "description": "Required to save the bills data",
         "type": "io.cozy.bills",
-        "verbs": ["GET", "POST"]
       },
       "files": {
         "description": "Required to save the bills pdf",
         "type": "io.cozy.files",
-        "verbs": ["GET", "POST"]
       },
     },
     "developer": {
