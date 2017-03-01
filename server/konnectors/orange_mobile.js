@@ -49,7 +49,9 @@ const connector = module.exports = baseKonnector.createNew({
       type: 'hidden'
     }
   },
-  dataType: ['msisdn', 'timestamp'], // TODO
+
+  importInterval: 'hour',
+  dataType: ['geopoint', 'phonecommunicationlog'],
   models: [GeoPoint, PhoneCommunicationLog],
 
   fetchOperations: [
