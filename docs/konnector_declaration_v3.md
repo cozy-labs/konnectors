@@ -17,7 +17,7 @@ remarks are welcome.
  - The konnectors will be installed using npm. Any source usable by npm is possible : github, gist, gitlab, bitbucket (git)
    or a tar.gz somewhere on the internet (but not file addresse). More information here : https://docs.npmjs.com/cli/install
  - A konnector package will need the following items :
-    - An index.js which will be run by the stack in a securised container
+    - An index.js (or any file referenced by "main" section of package.json) which will be run by the stack in a securised container
     - The dependencies need to be bundled an built with it (no dependencies are installed by the stack)
     - a cozy-client-js served and updated by the stack will be accessible to the index.js file.
     - shared dependencies (the server/lib and server/models directories) will be copied by the stack in the konnector repository
