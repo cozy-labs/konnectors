@@ -227,5 +227,9 @@
   "dataType sleepTime": "Your sleep time",
   "dataType courseMaterial": "Your course materials",
   "dataType temperature": "Your temperature data",
-  "dataType tweet": "Your tweets"
+  "dataType tweet": "Your tweets",
+  "konnector description orange_vod": "Les données mises à disposition par Orange via ce connecteur contiennent la liste des films que vous avez visionnés  à partir du 01/01/2015 en VOD payante ou gratuite (Replay TV) à partir de votre Livebox (à l’exception des contenus « adulte »). Vous pourrez utiliser ces données dans différentes applications de votre Cozy, par exemple « La Musique de mes Films » (disponibilité prochaine sur le Cozy Store)",
+  "konnector customview orange_vod": "<ul><li>Dès que vous vous serez connecté, une demande d’extraction de vos données sera émise vers le système d’information d’Orange.</li><li>Ces données seront disponibles sous 15 jours.</li><li>Par la suite, vos données seront mises à jour automatiquement dans votre Cozy, à intervalles de 15 jours.</li></ul>",
+  "not fixe token": "To get these data, you have to sing-in with your email.",
+  "notification videostreams": "%{smart_count} new film and video watching log imported |||| %{smart_count} new video and film watching logs imported"
 }

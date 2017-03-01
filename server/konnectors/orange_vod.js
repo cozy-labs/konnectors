@@ -38,8 +38,9 @@ const connector = module.exports = baseKonnector.createNew({
       type: 'hidden'
     }
   },
-  dataType: ['clientId', 'timestamp'],
+  dataType: ['videostream'],
   models: [VideoStream],
+  importInterval: 'day',
 
   fetchOperations: [
     checkToken,
