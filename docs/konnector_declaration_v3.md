@@ -28,6 +28,7 @@ remarks are welcome.
 {
   "version": "1.0.0",
     "name": "Trainline",
+    "type": "node",
     "icon": "./trainline.svg"
     "slug": "trainline",
     "description": "Get all the bill from trainline",
@@ -61,6 +62,9 @@ remarks are welcome.
     }
 }
 ```
+
+The "node" type is the default type of konnector (and the only one at the moment). It may be
+possible in the future to propose weboob konnectors for example.
 
  - Since the konnectors will be needed to be in their own repository, we will propose to the maintainers to create their own repository with
  their konnector or else it will be created in cozy-labs, I suppose.
