@@ -121,6 +121,13 @@ module.exports =
         req.konnector.updateFieldValues { accounts: accounts }, (err) ->
             return next err if err
 
+            req.konnector.import (err, notifContent) ->
+                if err?
+                    log.error err
+                else
+                    handleNotification req.konnector, notifContent
+
+
             res.status(200).send """<!DOCTYPE html>
 <html>
 <head>
@@ -129,18 +136,7 @@ module.exports =
 <body>
     <script type="text/javascript">
         window.onload = function() {
-            //refreshParent;
-            if(window.opener){
-              window.opener.location.reload();
-              setTimeout(function() {
-                  window.close();
-              }, 500);
-            }
-            else {
-              window.location.href =
-                  "../../../#/category/#{req.konnector.category}/" +
-                        "#{req.konnector.slug}"
-            }
+            window.location.href = "../../../#/connected"
         };
     </script>
 </body>
@@ -176,5 +172,3 @@ decorateKonnector = (konnector) ->
         konnector.connectUrl = konnectorModule.connectUrl
 
     return konnector
-
-
