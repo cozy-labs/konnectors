@@ -74,7 +74,6 @@ export default class ConnectorManagement extends Component {
           ? <AccountManagement
             name={name}
             customView={customView}
-            connectUrl={prepareConnectURL(this.state.connector)}
             lastImport={lastImport}
             accounts={accounts}
             values={accounts[selectedAccount] || {}}
@@ -112,6 +111,10 @@ export default class ConnectorManagement extends Component {
   }
 
   connectAccount (values) {
+    if (this.state.connector.connectUrl) {
+      return this.connectAccountOAuth(values)
+    }
+
     const id = this.state.connector.id
     const { t } = this.context
     this.setState({ submitting: true })
@@ -135,22 +138,34 @@ export default class ConnectorManagement extends Component {
       })
   }
 
+  connectAccountOAuth (values) {
+    return this._updateAccount(0, values)
+      .then(() => {
+        window.location = prepareConnectURL(this.state.connector)
+      })
+  }
+
   updateAccount (idx, values) {
+    const { t } = this.context
+    this._updateAccount(idx, values)
+      .then(() => {
+        Notifier.info(t('my_accounts account config success'))
+      })
+  }
+
+  _updateAccount (idx, values) {
     const id = this.state.connector.id
     const { t } = this.context
     this.setState({ submitting: true })
-    this.store.updateAccount(id, idx, values)
+    return this.store.updateAccount(id, idx, values)
       .then(fetchedConnector => {
         this.setState({ submitting: false })
-        if (fetchedConnector.importErrorMessage) {
-          this.setState({ error: fetchedConnector.importErrorMessage })
-        } else {
-          Notifier.info(t('my_accounts account config success'))
-        }
+        return fetchedConnector
       })
       .catch(error => { // eslint-disable-line
         this.setState({ submitting: false })
         Notifier.error(t('my_accounts account config error'))
+        return Promise.reject(error)
       })
   }
 
