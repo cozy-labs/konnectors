@@ -8,6 +8,8 @@ import ReactMarkdown from 'react-markdown'
 
 const AccountConnection = ({ t, connector, fields, dirty, error, submit, submitting }) => {
   const { name, customView, description } = connector
+  // If there is no field displayed, the form is dirty by default.
+  dirty = dirty || Object.values(fields).every(field => field.type === 'hidden' || field.advanced)
   return (
     <div class='account-connection'>
       <div class='account-description'>
