@@ -31,6 +31,13 @@ const connector = module.exports = baseKonnector.createNew({
   },
 
   fields: {
+    frequency: {
+      type: 'dropdown',
+      default: 'hourly',
+      advanced: true,
+      options: ['hourly', 'daily', 'weekly', 'monthly']
+    },
+
     orangeGeolocOptin: {
       type: 'checkbox'
     },
@@ -50,7 +57,6 @@ const connector = module.exports = baseKonnector.createNew({
     }
   },
 
-  importInterval: 'hour',
   dataType: ['geopoint', 'phonecommunicationlog'],
   models: [GeoPoint, PhoneCommunicationLog],
 
@@ -64,9 +70,8 @@ const connector = module.exports = baseKonnector.createNew({
     updateOrCreate(logger, PhoneCommunicationLog, ['msisdn', 'timestamp']),
     saveFieldsInKonnector,
     buildNotifContent,
-    highlightErrors,
-  ],
-
+    highlightErrors
+  ]
 })
 
 function checkToken (requiredFields, entries, data, next) {
@@ -107,7 +112,7 @@ function setGeolocOptin (requiredFields, entries, data, next) {
         }
         connector.logger.info(`Just set: ${body.result}`)
         next()
-    })
+      })
   } else {
     next()
   }
@@ -118,24 +123,23 @@ function checkGeolocOptinState (requiredFields, entries, data, next) {
 
   requestOrange(`${API_ROOT}/profile/locopt`, requiredFields.access_token,
     (err, res) => {
+      // Default: set as no optin.
+      requiredFields.orangeGeolocOptin = false
+      requiredFields.orangeGeolocOptinPreviousState = false
 
-    // Default: set as no optin.
-    requiredFields.orangeGeolocOptin = false
-    requiredFields.orangeGeolocOptinPreviousState = false
+      if (err) {
+        connector.logger.error(`Can't check orange Geoloc opt-in: ${err}`)
+        data.errors.push('checking orange optin error')
+        // Continue on errors
+      }
 
-    if (err) {
-      connector.logger.error(`Can't check orange Geoloc opt-in: ${err}`)
-      data.errors.push('checking orange optin error')
-      // Continue on errors
-    }
+      if (!err && res && res.result === 'geolc opt-in') {
+        requiredFields.orangeGeolocOptin = true
+        requiredFields.orangeGeolocOptinPreviousState = true
+      }
 
-    if (!err && res && res.result === 'geolc opt-in') {
-      requiredFields.orangeGeolocOptin = true
-      requiredFields.orangeGeolocOptinPreviousState = true
-    }
-
-    next()
-  })
+      next()
+    })
 }
 
 function downloadGeoloc (requiredFields, entries, data, next) {

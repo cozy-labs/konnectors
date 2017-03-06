@@ -31,6 +31,12 @@ const connector = module.exports = baseKonnector.createNew({
   },
 
   fields: {
+    frequency: {
+      type: 'dropdown',
+      default: 'weekly',
+      advanced: true,
+      options: ['hourly', 'daily', 'weekly', 'monthly']
+    },
     access_token: {
       type: 'hidden'
     },
@@ -40,7 +46,6 @@ const connector = module.exports = baseKonnector.createNew({
   },
   dataType: ['videostream'],
   models: [VideoStream],
-  importInterval: 'day',
 
   fetchOperations: [
     checkToken,

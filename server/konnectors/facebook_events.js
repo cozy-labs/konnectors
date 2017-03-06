@@ -17,7 +17,6 @@ const appSecret = 'a04e8cf918a382ea0b19cf1b6fbc2506'
 
 const scope = 'user_events'
 
-
 /*
  * The goal of this connector is to fetch event from facebook and store them
  * in the Cozy
