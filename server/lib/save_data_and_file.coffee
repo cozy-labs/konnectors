@@ -36,8 +36,10 @@ module.exports = (log, model, options, tags) ->
                 pdfurl = entry.pdfurl
 
                 Folder.mkdirp normalizedPath, ->
+                    if options.requestoptions
+                        options.requestoptions.entry = entry
                     File.createNew fileName, normalizedPath, pdfurl, tags,
-                        onCreated
+                        onCreated, options.requestoptions
 
             onCreated = (err, file) ->
                 if err
