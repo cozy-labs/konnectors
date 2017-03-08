@@ -52,7 +52,10 @@ function fetchBills(requiredFields, bills, data, next) {
     // getting the login token in the login form
     var $ = cheerio.load(body);
     var loginToken = $('#credentials_recover_account__token').val();
-    if (loginToken === undefined) return Promise.reject('Could not get the login token');
+    if (loginToken === undefined) {
+      connector.logger.error('Could not get the login token');
+      return Promise.reject('parsing error');
+    }
     return loginToken;
   }).then(function (loginToken) {
     connector.logger.info('The login token is ' + loginToken);
@@ -108,7 +111,8 @@ function fetchBills(requiredFields, bills, data, next) {
       connector.logger.info('App access token is ' + accessToken);
       return accessToken;
     } else {
-      return Promise.reject('Problem fetching the access token');
+      connector.logger.error('Problem fetching the access token');
+      return Promise.reject('parsing error');
     }
   }).then(function () {
     // Now get the list of folders

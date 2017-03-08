@@ -54,7 +54,10 @@ function fetchBills (requiredFields, bills, data, next) {
     // getting the login token in the login form
     const $ = cheerio.load(body)
     const loginToken = $('#credentials_recover_account__token').val()
-    if (loginToken === undefined) return Promise.reject('Could not get the login token')
+    if (loginToken === undefined) {
+      connector.logger.error('Could not get the login token')
+      return Promise.reject('parsing error')
+    }
     return loginToken
   })
   .then(loginToken => {
@@ -114,7 +117,8 @@ function fetchBills (requiredFields, bills, data, next) {
       connector.logger.info('App access token is ' + accessToken)
       return accessToken
     } else {
-      return Promise.reject('Problem fetching the access token')
+      connector.logger.error('Problem fetching the access token')
+      return Promise.reject('parsing error')
     }
   })
   .then(() => {
