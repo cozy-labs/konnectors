@@ -81,6 +81,14 @@ function fetchBills(requiredFields, bills, data, next) {
     var xsrfcookie = j.getCookies('https://secure.digiposte.fr/login_check').find(function (cookie) {
       return cookie.key === 'XSRF-TOKEN';
     });
+
+    // if no xsrf token is found, then we have bad credential
+    if (xsrfcookie) {
+      xsrfToken = xsrfcookie.value;
+    } else {
+      return Promise.reject('bad credentials');
+    }
+
     xsrfToken = xsrfcookie.value;
     connector.logger.info('XSRF token is ' + xsrfToken);
     if (xsrfcookie) return xsrfToken;else return Promise.reject('Problem fetching the xsrf-token');
@@ -225,6 +233,7 @@ function fetchBills(requiredFields, bills, data, next) {
       next(null, localization.t(localizationKey, options));
     }
   }).catch(function (err) {
+    connector.logger.error(err);
     next(err);
   });
 }

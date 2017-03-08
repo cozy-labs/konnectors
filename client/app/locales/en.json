@@ -71,6 +71,7 @@
   "konnector customview maif": "To do that<ol><li>use the 'connect' button to connect on your Maif account,</li><li>select 'every day' as update schedule,</li></li>click on 'Import and Save'.",
   "konnector description bouygues": "Download all your phone bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files.",
   "konnector description bouygues box": "Download all your internet bills from Bouygues Telecom. This konnector requires the Files application to store the bill PDF files.",
+  "konnector description digiposte": "Download all your bills from the Digiposte service. This konnector requires the Files application to store the bill PDF files.",
   "konnector description sfr_box": "Download all your internet bills from SFR or Red. This konnector requires the Files application to store the bill PDF files.",
   "konnector description sfr_mobile": "Download all your mobile bills from SFR or Red. This konnector requires the Files application to store the bill PDF files.",
   "konnector description github": "Download all your Github Bills. This konnector requires the Files application to store the bill PDF files.",

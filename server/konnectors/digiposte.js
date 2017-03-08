@@ -84,6 +84,14 @@ function fetchBills (requiredFields, bills, data, next) {
     connector.logger.info('Getting the XSRF token')
     const xsrfcookie = j.getCookies('https://secure.digiposte.fr/login_check')
       .find(cookie => cookie.key === 'XSRF-TOKEN')
+
+    // if no xsrf token is found, then we have bad credential
+    if (xsrfcookie) {
+      xsrfToken = xsrfcookie.value
+    } else {
+      return Promise.reject('bad credentials')
+    }
+
     xsrfToken = xsrfcookie.value
     connector.logger.info('XSRF token is ' + xsrfToken)
     if (xsrfcookie) return xsrfToken
@@ -231,6 +239,7 @@ function fetchBills (requiredFields, bills, data, next) {
     }
   })
   .catch(err => {
+    connector.logger.error(err)
     next(err)
   })
 }
