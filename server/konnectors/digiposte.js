@@ -98,7 +98,10 @@ function fetchBills (requiredFields, bills, data, next) {
     xsrfToken = xsrfcookie.value
     connector.logger.info('XSRF token is ' + xsrfToken)
     if (xsrfcookie) return xsrfToken
-    else return Promise.reject('Problem fetching the xsrf-token')
+    else {
+      connector.logger.error('Problem fetching the xsrf-token')
+      return Promise.reject('token not found')
+    }
   })
   .then(() => {
     // Now get the access token
@@ -118,7 +121,7 @@ function fetchBills (requiredFields, bills, data, next) {
       return accessToken
     } else {
       connector.logger.error('Problem fetching the access token')
-      return Promise.reject('parsing error')
+      return Promise.reject('token not found')
     }
   })
   .then(() => {
