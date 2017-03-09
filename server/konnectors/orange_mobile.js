@@ -25,9 +25,10 @@ const connector = module.exports = baseKonnector.createNew({
 
   connectUrl: 'https://mesinfos.orange-labs.fr/auth?redirect_url=',
 
+  category: 'telecom',
   color: {
-    hex: '#FF7900',
-    css: '#FF7900'
+    hex: '#FF6600',
+    css: '#FF6600'
   },
 
   fields: {

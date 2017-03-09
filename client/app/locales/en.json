@@ -237,6 +237,7 @@
   "orangeGeolocOptinPreviousState": "orangeGeolocOptinPreviousState",
   "setting orange optin error": "Technical error, can't set your choice for the geolocation service.",
   "checking orange optin error": "Technical error, can't check your choice about the geolocation service of Orange",
-  "no orange geoloc optin": "No geopoint data, as you opt-out for Orange geolocation service."
+  "no orange geoloc optin": "No geopoint data, as you opt-out for Orange geolocation service.",
+  "frequency": "Synchronization frequency"
 
 }

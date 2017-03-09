@@ -143,8 +143,6 @@ export const CheckboxField = translate()((props) => {
       )
   }
 
-  // ({ required, label, dirty, touched, errors, children }) => {
-
   var classes = classNames('account-field', {
     'account-field--required': required === true,
     'account-field--error': errors.length !== 0,
