@@ -18,34 +18,7 @@ module.exports =
             else if not konnector?
                 res.sendStatus 404
             else
-
-                konnector.injectEncryptedFields()
-                konnector.appendConfigData()
-                konnector.checkProperties()
-
-                if konnector.shallRaiseEncryptedFieldsError()
-                    konnector.importErrorMessage = 'encrypted fields'
-                else
-                    konnector.injectEncryptedFields()
-
-                # Add customView field
-                konnectorModule = require(
-                    path.join(
-                        '..',
-                        'konnectors',
-                        konnector.slug
-                    )
-                )
-                if konnectorModule.default?
-                    konnectorModule = konnectorModule.default
-
-                if konnectorModule.customView?
-                    konnector.customView = konnectorModule.customView
-
-                if konnectorModule.connectUrl?
-                    konnector.connectUrl = konnectorModule.connectUrl
-
-                req.konnector = konnector
+                req.konnector = decorateKonnector konnector
                 next()
 
 
@@ -76,6 +49,24 @@ module.exports =
             return next err if err
 
             res.status(204).send konnector
+
+    update: (req, res, next) ->
+        # Don't update connector if an import is already running.
+        if req.konnector.isImporting
+            res.send 400, message: 'konnector is importing'
+
+        else
+            # Extract date information. # Why ?
+            if req.body.date?
+                if req.body.date isnt ''
+                    date = req.body.date
+                delete req.body.date
+
+            req.konnector.updateFieldValues req.body, (err, updated) ->
+                if err?
+                    next err
+                else
+                    res.status(200).send decorateKonnector updated
 
 
     # Start import for a given konnector. Change state of the konnector during
@@ -130,6 +121,13 @@ module.exports =
         req.konnector.updateFieldValues { accounts: accounts }, (err) ->
             return next err if err
 
+            req.konnector.import (err, notifContent) ->
+                if err?
+                    log.error err
+                else
+                    handleNotification req.konnector, notifContent
+
+
             res.status(200).send """<!DOCTYPE html>
 <html>
 <head>
@@ -138,20 +136,39 @@ module.exports =
 <body>
     <script type="text/javascript">
         window.onload = function() {
-            //refreshParent;
-            if(window.opener){
-              window.opener.location.reload();
-              setTimeout(function() {
-                  window.close();
-              }, 500);
-            }
-            else {
-              window.location.href =
-                  "../../../#/category/#{req.konnector.category}/" +
-                        "#{req.konnector.slug}"
-            }
+            window.location.href = "../../../#/connected"
         };
     </script>
 </body>
 </html>
 """
+
+
+decorateKonnector = (konnector) ->
+    konnector.injectEncryptedFields()
+    konnector.appendConfigData()
+    konnector.checkProperties()
+
+    if konnector.shallRaiseEncryptedFieldsError()
+        konnector.importErrorMessage = 'encrypted fields'
+    else
+        konnector.injectEncryptedFields()
+
+    # Add customView field
+    konnectorModule = require(
+        path.join(
+            '..',
+            'konnectors',
+            konnector.slug
+        )
+    )
+    if konnectorModule.default?
+        konnectorModule = konnectorModule.default
+
+    if konnectorModule.customView?
+        konnector.customView = konnectorModule.customView
+
+    if konnectorModule.connectUrl?
+        konnector.connectUrl = konnectorModule.connectUrl
+
+    return konnector

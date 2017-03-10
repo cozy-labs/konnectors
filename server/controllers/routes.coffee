@@ -13,8 +13,11 @@ module.exports =
 
     'konnectors/:konnectorId':
         get: konnectors.show
-        put: konnectors.import
+        put: konnectors.update
         delete: konnectors.remove
+
+    'konnectors/:konnectorId/import':
+        post: konnectors.import
 
     'konnectors/:konnectorId/:accountId/redirect':
         get: konnectors.redirect

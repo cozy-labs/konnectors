@@ -115,3 +115,45 @@ export const DropdownField = translate()((props) => {
     </FieldWrapper>
   )
 })
+
+export const CheckboxField = translate()((props) => {
+  const { value, onChange, onInput, required, label, dirty, touched, errors } = props
+  let input
+
+  if (value) {
+    input = (
+      <input
+        type='checkbox'
+        className='account-field-input-checkbox'
+        value={value}
+        checked='checked'
+        onChange={onChange}
+        onInput={onInput}
+      />
+      )
+  } else {
+    input = (
+      <input
+        type='checkbox'
+        className='account-field-input-checkbox'
+        value={value}
+        onChange={onChange}
+        onInput={onInput}
+      />
+      )
+  }
+
+  var classes = classNames('account-field', {
+    'account-field--required': required === true,
+    'account-field--error': errors.length !== 0,
+    'account-field--dirty': dirty === true || touched === true
+  })
+  return (
+    <div className={classes}>
+      {label && <label>{input} {label}</label>}
+      {errors.length !== 0 && errors.map((err, i) => (
+        <small key={i} className='account-field-error'>{err}</small>
+      ))}
+    </div>
+  )
+})

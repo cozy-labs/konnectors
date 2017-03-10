@@ -56,13 +56,9 @@
   "error occurred during import:": "An error occurred during the last import:",
   "import server error": "Server error occured while importing.",
   "open selected folder": "Open selected folder",
-  "konnector customview orange_mobile": "To do that: <ol><li>use the 'connect' button to connect on your Orange Mobile account with your <b>mobile phone number</b>,</li><li>select 'every hour' as update schedule,</li><li>then click on 'Import and Save'.</li></ol>",
-  "konnector customview orange_vod": "To do that: <ol><li>use the 'connect' button to connect on your Orange account with your <b>mobile phone number</b>,</li><li>select 'every hour' as update schedule,</li><li>then click on 'Import and Save'.</li></ol>",
   "konnector description darty": "Import all your Darty bills in your Cozy.",
   "konnector description malakoff_mederic": "Import your Malakoff Mederic reimbursements in your Cozy.",
   "konnector description meetup": "Synchronize your Meetup calendar with your Cozy. This konnector requires the Calendar application.",
-  "konnector description orange_mobile": "Orange (France) invites you to download your communication log and the geolocation of your Orange Mobile phone in your Cozy. Notice that this transmission can take up to a few weeks to start.",
-  "konnector description orange_vod": "Orange (France) invites you to download the film and video watching history of your LiveBox in your Cozy. Notice that this transmission can take up to a few weeks to start.",
   "konnector description trainline": "Download your train vouchers from Trainline. This konnector requires the Files application to store the bill PDF files.",
   "konnector description edf": "EDF invites you to download your bills, consumption statements, contracts, payment terms,  and data about your client's relation, ... If you use the EDF e.quilibre service, the data will be richer.",
   "konnector description free": "Download all your internet bills from Free. This konnector requires the Files application to store the bill PDF files.",
@@ -227,5 +223,21 @@
   "dataType sleepTime": "Your sleep time",
   "dataType courseMaterial": "Your course materials",
   "dataType temperature": "Your temperature data",
-  "dataType tweet": "Your tweets"
+  "dataType tweet": "Your tweets",
+  "konnector description orange_vod": "Les données mises à disposition par Orange via ce connecteur contiennent la liste des films que vous avez visionnés  à partir du 01/01/2015 en VOD payante ou gratuite (Replay TV) à partir de votre Livebox (à l’exception des contenus « adulte »). Vous pourrez utiliser ces données dans différentes applications de votre Cozy, par exemple « La Musique de mes Films » (disponibilité prochaine sur le Cozy Store)",
+  "konnector customview orange_vod": "<ul><li>Dès que vous vous serez connecté, une demande d’extraction de vos données sera émise vers le système d’information d’Orange.</li><li>Ces données seront disponibles sous 15 jours.</li><li>Par la suite, vos données seront mises à jour automatiquement dans votre Cozy, à intervalles de 15 jours.</li></ul>",
+  "not fixe token": "To get these data, you have to sing-in with your email.",
+  "notification videostreams": "%{smart_count} new film and video watching log imported |||| %{smart_count} new video and film watching logs imported",
+  "konnector description orange_mobile": "Les données mises à disposition par Orange via ce connecteur contiennent les comptes rendus des appels émis et reçus depuis votre mobile à partir du 01/07/2016. De plus, dans le cadre du pilote « Mes Infos », Orange vous offre aussi la possibilité de localiser votre téléphone mobile de manière régulière. Le recueil de ces données nécessite votre accord explicite. Cet accord pourra être révoqué à tout moment via ce même connecteur de données. Vous pourrez utiliser ces données dans différentes applications de votre Cozy Cloud, par exemple « Mapping My Life » (disponibilité prochaine sur le Cozy Store).",
+
+  "konnector customview orange_mobile": "<span style='font-size: 90%;'><p style='margin: 0;'>En cliquant sur « Accepter », vous donnerez votre accord pour qu’une localisation de votre téléphone mobile soit effectuée à compter de ce jour, deux fois par heure. Les informations recueillies  contiendront uniquement : </p><ul><li>- la date et l’heure de cette localisation ;</li><li>- les coordonnées géographiques de l’antenne radio à laquelle le mobile est rattaché  au moment de la localisation.</li></ul><p style='margin-top: 0;'>Les données récoltées par Orange après votre accord seront accessibles uniquement dans le Cozy Cloud qui vous a été attribué dans le cadre du pilote « Mes Infos ».</p></span><span style='font-size: 80%;'><p style='margin: 0;'>Elles viendront compléter les informations de localisation déjà présentes dans les comptes rendus d’appels, qui incluent votre numéro, celui de votre correspondant, l’heure et la durée de l’appel, ainsi que la localisation géographique de l’antenne radio à laquelle le mobile était rattaché au moment de l’appel.</p><ul><li>Dès que vous vous serez connecté, une demande d’extraction de vos données sera émise vers le système d’information d’Orange.</li><li>Ces données seront disponibles sous 15 jours.</li><li>Par la suite, vos données seront mises à jour automatiquement dans votre Cozy, à intervalles de 15 jours.</li></ul></span>",
+  "notification geopoints": "%{smart_count} new geolocation point imported |||| %{smart_count} new geolocation points imported",
+  "notification phonecommunicationlogs": "%{smart_count} new call and sms log imported |||| %{smart_count} new call and sms logs import",
+  "orangeGeolocOptin": "Yes, I agree that Orange geolocalise regularly my mobile phone in the scope of the MesInfos pilote",
+  "orangeGeolocOptinPreviousState": "orangeGeolocOptinPreviousState",
+  "setting orange optin error": "Technical error, can't set your choice for the geolocation service.",
+  "checking orange optin error": "Technical error, can't check your choice about the geolocation service of Orange",
+  "no orange geoloc optin": "No geopoint data, as you opt-out for Orange geolocation service.",
+  "frequency": "Synchronization frequency"
+
 }
