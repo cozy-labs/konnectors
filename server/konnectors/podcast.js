@@ -273,8 +273,8 @@ function createTrackIfNotPresent (trackName, fileID, callback) {
 
     for (const track of tracks) {
       // Not Darude - Sandstorm
-      if (track.metas.title === trackName &&
-        track.ressource.fileID === fileID) {
+      if (track.metas && track.metas.title === trackName &&
+        track.ressource && track.ressource.fileID === fileID) {
         alreadyExists++
         return callback()
       }
