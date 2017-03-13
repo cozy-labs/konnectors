@@ -242,9 +242,11 @@ function createFileIfNotPresent (filename, path, url, callback) {
       callback(err)
     }
 
-    for (const file of files) {
-      if (file.name === filename && file.path === path) {
-        return callback(null, file)
+    if (files) {
+      for (const file of files) {
+        if (file.name === filename && file.path === path) {
+          return callback(null, file)
+        }
       }
     }
 
