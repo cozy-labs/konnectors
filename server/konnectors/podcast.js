@@ -207,7 +207,7 @@ function createFolderIfNotPresent (foldername, folderpath, callback) {
   Folder.all((err, folders) => {
     if (err) {
       log.error(err)
-      callback(err)
+      return callback(err)
     }
 
     for (const folder of folders) {
@@ -223,7 +223,7 @@ function createFolderIfNotPresent (foldername, folderpath, callback) {
       connector.logger.info(`${foldername} folder created.`)
       if (err) {
         log.error(err)
-        callback(err)
+        return callback(err)
       }
       return callback()
     })
@@ -239,14 +239,12 @@ function createFileIfNotPresent (filename, path, url, callback) {
   File.all({}, (err, files) => {
     if (err) {
       log.error(err)
-      callback(err)
+      return callback(err)
     }
 
-    if (files) {
-      for (const file of files) {
-        if (file.name === filename && file.path === path) {
-          return callback(null, file)
-        }
+    for (const file of files) {
+      if (file.name === filename && file.path === path) {
+        return callback(null, file)
       }
     }
 
@@ -270,7 +268,7 @@ function createTrackIfNotPresent (trackName, fileID, callback) {
   Track.request('all', (err, tracks) => {
     if (err) {
       log.error(err)
-      callback(err)
+      return callback(err)
     }
 
     for (const track of tracks) {
