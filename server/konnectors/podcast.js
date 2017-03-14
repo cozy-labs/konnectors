@@ -207,7 +207,7 @@ function createFolderIfNotPresent (foldername, folderpath, callback) {
   Folder.all((err, folders) => {
     if (err) {
       log.error(err)
-      callback(err)
+      return callback(err)
     }
 
     for (const folder of folders) {
@@ -223,7 +223,7 @@ function createFolderIfNotPresent (foldername, folderpath, callback) {
       connector.logger.info(`${foldername} folder created.`)
       if (err) {
         log.error(err)
-        callback(err)
+        return callback(err)
       }
       return callback()
     })
@@ -239,7 +239,7 @@ function createFileIfNotPresent (filename, path, url, callback) {
   File.all({}, (err, files) => {
     if (err) {
       log.error(err)
-      callback(err)
+      return callback(err)
     }
 
     for (const file of files) {
@@ -268,13 +268,13 @@ function createTrackIfNotPresent (trackName, fileID, callback) {
   Track.request('all', (err, tracks) => {
     if (err) {
       log.error(err)
-      callback(err)
+      return callback(err)
     }
 
     for (const track of tracks) {
       // Not Darude - Sandstorm
-      if (track.metas.title === trackName &&
-        track.ressource.fileID === fileID) {
+      if (track.metas && track.metas.title === trackName &&
+        track.ressource && track.ressource.fileID === fileID) {
         alreadyExists++
         return callback()
       }
