@@ -146,7 +146,8 @@ module.exports =
               }, 500);
             }
             else {
-              window.location.href = "../../../#/category/#{req.konnector.category}/#{req.konnector.slug}"
+              window.location.href = "../../../#/category/"
+                + "#{req.konnector.category}/#{req.konnector.slug}"
             }
         };
     </script>

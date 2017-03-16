@@ -30,7 +30,15 @@ let loaders = [
     exclude: /node_modules/,
     loader: 'babel-loader',
     query: {
-      presets: ['es2015'],
+      presets: [
+        ['env', {
+          'targets': {
+            'chrome': 42,
+            'browsers': ['last 2 versions']
+          },
+          'useBuiltIns': true
+        }]
+      ],
       plugins: [['transform-react-jsx', { 'pragma': 'h' }]]
     }
   },
