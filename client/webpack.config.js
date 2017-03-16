@@ -31,12 +31,12 @@ let loaders = [
     loader: 'babel-loader',
     query: {
       presets: [
-        ["env", {
-          "targets": {
-            "chrome": 42,
-            "browsers": ["last 2 versions"]
+        ['env', {
+          'targets': {
+            'chrome': 42,
+            'browsers': ['last 2 versions']
           },
-          "useBuiltIns": true
+          'useBuiltIns': true
         }]
       ],
       plugins: [['transform-react-jsx', { 'pragma': 'h' }]]
