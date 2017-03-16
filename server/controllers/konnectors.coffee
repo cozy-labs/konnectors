@@ -136,7 +136,10 @@ module.exports =
 <body>
     <script type="text/javascript">
         window.onload = function() {
-            window.location.href = "../../../#/connected"
+          window.opener.location = "../../../#/connected";
+          setTimeout(function() {
+              window.close();
+          }, 500);
         };
     </script>
 </body>

@@ -141,7 +141,7 @@ export default class ConnectorManagement extends Component {
   connectAccountOAuth (values) {
     return this._updateAccount(0, values)
       .then(() => {
-        window.location = prepareConnectURL(this.state.connector)
+        window.open(prepareConnectURL(this.state.connector), 'width=800,height=800')
       })
   }
 
