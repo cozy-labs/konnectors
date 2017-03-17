@@ -3,6 +3,7 @@ americano = require 'cozydb'
 request = require 'request'
 moment = require 'moment'
 mimetype = require 'mimetype'
+_ = require 'lodash'
 Binary = require './binary'
 log = require('printit')
     prefix: 'konnectors'
@@ -43,7 +44,7 @@ File.isPresent = (fullPath, callback) ->
 # Create a new File object that will be displayed inside the file application.
 # The binary attached to the file is downloaded from a given url.
 # Given tags are associated with the newly created file.
-File.createNew = (fileName, path, url, tags, callback) ->
+File.createNew = (fileName, path, url, tags, callback, requestoptions) ->
     now = moment().toISOString()
     filePath = "/tmp/#{fileName}"
     mime = mimetype.lookup(fileName) || 'application/pdf'
@@ -93,10 +94,17 @@ File.createNew = (fileName, path, url, tags, callback) ->
                         callback err, file
 
     # Save file in a tmp folder while attachBinary supports stream.
-    options =
-        uri: url
-        method: 'GET'
-        jar: true
+    options = {}
+    if requestoptions
+        options = requestoptions
+        if _.isFunction options.form
+            options.form = options.form(options.entry)
+        options.uri = url
+    else
+        options =
+            uri: url
+            method: 'GET'
+            jar: true
 
     log.info "Downloading file at #{url}..."
     stream = request options, (err, res, body) ->
