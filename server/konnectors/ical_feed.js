@@ -51,7 +51,7 @@ const connector = module.exports = baseKonnector.createNew({
 
 function downloadFile (requiredFields, entries, data, next) {
   connector.logger.info('Downloading ICS file...')
-  request.get(requiredFields.url, (err, res, body) => {
+  request.get({url: requiredFields.url, headers: {'User-Agent': 'request'}}, function (err, res, body) {
     if (err) {
       connector.logger.error('Download failed.')
       return next('request error')
