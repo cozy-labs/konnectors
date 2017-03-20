@@ -91,9 +91,10 @@ Konnector::removeEncryptedFields = (fields) ->
 
     for account in @accounts
         passwords = {}
-        for name, type of fields when type is "password"
-            passwords[name] = account[name]
-            delete account[name]
+        for name, type of fields
+            if type is "password" or type.type is "password"
+                passwords[name] = account[name]
+                delete account[name]
         password.push passwords
 
     @password = JSON.stringify password
