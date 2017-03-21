@@ -136,11 +136,10 @@ Konnector.prototype.removeEncryptedFields = function(fields) {
     passwords = {};
     for (name in fields) {
       type = fields[name];
-      if (!(type === "password")) {
-        continue;
+      if (type === "password" || type.type === "password") {
+        passwords[name] = account[name];
+        delete account[name];
       }
-      passwords[name] = account[name];
-      delete account[name];
     }
     password.push(passwords);
   }

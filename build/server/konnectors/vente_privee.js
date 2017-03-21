@@ -89,21 +89,19 @@ function getHiddenInputs(requiredFields, bills, data, next) {
       if (err) {
         next(err);
       } else {
-        (function () {
-          var $ = cheerio.load(body);
+        var $ = cheerio.load(body);
 
-          $('body').find('input[type=\'hidden\']').each(function a() {
-            obj[$(this).attr('name')] = $(this).val();
-          });
+        $('body').find('input[type=\'hidden\']').each(function a() {
+          obj[$(this).attr('name')] = $(this).val();
+        });
 
-          // adding login/pwd
-          obj['PortalTheme.CountryTheme.CouleurTexte'] = 'black';
-          obj.Mail = requiredFields.login;
-          obj.Password = requiredFields.password;
+        // adding login/pwd
+        obj['PortalTheme.CountryTheme.CouleurTexte'] = 'black';
+        obj.Mail = requiredFields.login;
+        obj.Password = requiredFields.password;
 
-          data.inputs = obj;
-          next();
-        })();
+        data.inputs = obj;
+        next();
       }
       return true;
     });

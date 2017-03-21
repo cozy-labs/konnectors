@@ -17,8 +17,6 @@ var appSecret = 'a04e8cf918a382ea0b19cf1b6fbc2506';
 
 var scope = 'user_events';
 
-var oAuthProxyUrl = getOAuthProxyUrl();
-
 /*
  * The goal of this connector is to fetch event from facebook and store them
  * in the Cozy
@@ -26,7 +24,6 @@ var oAuthProxyUrl = getOAuthProxyUrl();
 var connector = module.exports = baseKonnector.createNew({
   name: 'Facebook Events',
   slug: 'facebook_events',
-  customView: '<a href=' + oAuthProxyUrl + ' target="_blank" role="button">' + '<%t konnector facebook_events connect %></a>',
 
   category: 'social',
   color: {
@@ -34,13 +31,13 @@ var connector = module.exports = baseKonnector.createNew({
     css: '#395185'
   },
 
+  connectUrl: getOAuthProxyUrl(),
   fields: {
     accessToken: {
-      type: 'text'
+      type: 'hidden'
     },
     calendar: {
-      type: 'text',
-      advanced: true
+      type: 'text'
     }
   },
 
@@ -94,30 +91,14 @@ function saveTokenInKonnector(requiredFields, entries, data, callback) {
   var Konnector = require('../models/konnector');
   /* eslint-enable global-require */
   // TODO: should work:
-  // Konnector.get(connector.slug, function(err, konnector) {
-  Konnector.all(function (err, konnectors) {
+  Konnector.get(connector.slug, function (err, konnector) {
     if (err) {
       connector.logger.error('Can\'t fetch konnector instances: ' + err.msg);
-      return callback(err);
-    }
-    var konnector = null;
-    try {
-      konnector = konnectors.filter(function (k) {
-        return k.slug === connector.slug;
-      })[0];
-
-      // Find which account we are using now.
-      var currentAccount = konnector.accounts.filter(function (account) {
-        return account.accessToken === requiredFields.accessToken;
-      })[0];
-
-      currentAccount.accessToken = data.accessToken;
-    } catch (e) {
-      connector.logger.error("Can't fetch konnector instances");
-      return callback(e);
+      return callback('internal error');
     }
 
-    return konnector.updateAttributes({ accounts: konnector.accounts }, callback);
+    requiredFields.accessToken = data.accessToken;
+    konnector.updateFieldValues({ accounts: [requiredFields] }, callback);
   });
 }
 

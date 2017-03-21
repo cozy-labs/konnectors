@@ -1,7 +1,5 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var async = require('async');
 var cheerio = require('cheerio');
 var moment = require('moment-timezone');
@@ -405,21 +403,15 @@ function getEventsOld(orderInformations, events, callback) {
     // This is a page composed of many orders.
     // Recursively fetch them individually.
     if ($subOrders.length !== 0) {
-      var _ret = function () {
-        var subOrdersUris = [];
-        $subOrders.each(function forEachSubOrders() {
-          var $subOrder = $(this);
-          subOrdersUris.push($subOrder.attr('href'));
-        });
+      var subOrdersUris = [];
+      $subOrders.each(function forEachSubOrders() {
+        var $subOrder = $(this);
+        subOrdersUris.push($subOrder.attr('href'));
+      });
 
-        return {
-          v: async.eachSeries(subOrdersUris, function (subOrderUri, cb) {
-            getEvents(subOrderUri, events, cb);
-          }, callback)
-        };
-      }();
-
-      if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+      return async.eachSeries(subOrdersUris, function (subOrderUri, cb) {
+        getEvents(subOrderUri, events, cb);
+      }, callback);
     }
 
     // We'll parse french dates

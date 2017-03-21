@@ -97,31 +97,29 @@ function login(requiredFields, billInfos, data, next) {
       // If there are are several pages, parse all the pages to retrieve all the
       // bills
       if (nbPages > 1) {
-        (function () {
-          var totalPagesParsed = 0;
-          var billsList = $(billsTableSelector);
-          var _fetchPageFromIndex = function _fetchPageFromIndex(idx) {
-            var pageOptions = Object.create(billsOptions);
-            pageOptions.url += '?page=' + idx;
-            logger.info('Fetching page ' + idx + ' of ' + nbPages + '\u2026');
-            fetchBillPageBillsList(pageOptions, function (rows) {
-              // We now reinsert the rows in the first page's list
-              if (rows) {
-                billsList.append(rows);
-              }
+        var totalPagesParsed = 0;
+        var billsList = $(billsTableSelector);
+        var _fetchPageFromIndex = function _fetchPageFromIndex(idx) {
+          var pageOptions = Object.create(billsOptions);
+          pageOptions.url += '?page=' + idx;
+          logger.info('Fetching page ' + idx + ' of ' + nbPages + '\u2026');
+          fetchBillPageBillsList(pageOptions, function (rows) {
+            // We now reinsert the rows in the first page's list
+            if (rows) {
+              billsList.append(rows);
+            }
 
-              if (++totalPagesParsed === nbPages - 1) {
-                logger.info('All bills pages fetched');
-                data.html = $.html();
-                next();
-              }
-            });
-          };
+            if (++totalPagesParsed === nbPages - 1) {
+              logger.info('All bills pages fetched');
+              data.html = $.html();
+              next();
+            }
+          });
+        };
 
-          for (var pageIndex = 2; pageIndex <= nbPages; ++pageIndex) {
-            _fetchPageFromIndex(pageIndex);
-          }
-        })();
+        for (var pageIndex = 2; pageIndex <= nbPages; ++pageIndex) {
+          _fetchPageFromIndex(pageIndex);
+        }
       } else {
         data.html = body;
         next();

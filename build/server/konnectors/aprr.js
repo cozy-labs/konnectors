@@ -85,23 +85,21 @@ function getHiddenInputs(requiredFields, bills, data, next) {
       if (err) {
         next(err);
       } else {
-        (function () {
-          var $ = cheerio.load(body);
+        var $ = cheerio.load(body);
 
-          $('body').find('input[type=\'hidden\']').each(function a() {
-            obj[$(this).attr('name')] = $(this).val();
-          });
+        $('body').find('input[type=\'hidden\']').each(function a() {
+          obj[$(this).attr('name')] = $(this).val();
+        });
 
-          // adding login/pwd
-          obj.ctl00$PlaceHolderMain$TextBoxLogin = requiredFields.login;
-          obj.ctl00$PlaceHolderMain$TextBoxPass = requiredFields.password;
-          obj['ctl00$PlaceHolderMain$ImageButtonConnection.x'] = Math.floor(Math.random() * 10 + 1);
-          obj['ctl00$PlaceHolderMain$ImageButtonConnection.y'] = Math.floor(Math.random() * 10 + 1);
+        // adding login/pwd
+        obj.ctl00$PlaceHolderMain$TextBoxLogin = requiredFields.login;
+        obj.ctl00$PlaceHolderMain$TextBoxPass = requiredFields.password;
+        obj['ctl00$PlaceHolderMain$ImageButtonConnection.x'] = Math.floor(Math.random() * 10 + 1);
+        obj['ctl00$PlaceHolderMain$ImageButtonConnection.y'] = Math.floor(Math.random() * 10 + 1);
 
-          data.inputs = obj;
+        data.inputs = obj;
 
-          next();
-        })();
+        next();
       }
       return true;
     });

@@ -219,7 +219,7 @@ function createFolderIfNotPresent(foldername, folderpath, callback) {
   Folder.all(function (err, folders) {
     if (err) {
       log.error(err);
-      callback(err);
+      return callback(err);
     }
 
     var _iteratorNormalCompletion2 = true;
@@ -256,7 +256,7 @@ function createFolderIfNotPresent(foldername, folderpath, callback) {
       connector.logger.info(foldername + ' folder created.');
       if (err) {
         log.error(err);
-        callback(err);
+        return callback(err);
       }
       return callback();
     });
@@ -272,7 +272,7 @@ function createFileIfNotPresent(filename, path, url, callback) {
   File.all({}, function (err, files) {
     if (err) {
       log.error(err);
-      callback(err);
+      return callback(err);
     }
 
     var _iteratorNormalCompletion3 = true;
@@ -322,7 +322,7 @@ function createTrackIfNotPresent(trackName, fileID, callback) {
   Track.request('all', function (err, tracks) {
     if (err) {
       log.error(err);
-      callback(err);
+      return callback(err);
     }
 
     var _iteratorNormalCompletion4 = true;
@@ -334,7 +334,7 @@ function createTrackIfNotPresent(trackName, fileID, callback) {
         var track = _step4.value;
 
         // Not Darude - Sandstorm
-        if (track.metas.title === trackName && track.ressource.fileID === fileID) {
+        if (track.metas && track.metas.title === trackName && track.ressource && track.ressource.fileID === fileID) {
           alreadyExists++;
           return callback();
         }

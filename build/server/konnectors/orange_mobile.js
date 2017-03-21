@@ -25,12 +25,28 @@ var connector = module.exports = baseKonnector.createNew({
 
   connectUrl: 'https://mesinfos.orange-labs.fr/auth?redirect_url=',
 
+  category: 'telecom',
   color: {
-    hex: '#FF7900',
-    css: '#FF7900'
+    hex: '#FF6600',
+    css: '#FF6600'
   },
 
   fields: {
+    frequency: {
+      type: 'dropdown',
+      default: 'hourly',
+      advanced: true,
+      options: ['hourly', 'daily', 'weekly', 'monthly']
+    },
+
+    orangeGeolocOptin: {
+      type: 'checkbox'
+    },
+    // hack, to distinguish user change, and Orange changes.
+    orangeGeolocOptinPreviousState: {
+      type: 'hidden',
+      default: false
+    },
     access_token: {
       type: 'hidden'
     },
@@ -41,11 +57,11 @@ var connector = module.exports = baseKonnector.createNew({
       type: 'hidden'
     }
   },
-  dataType: ['msisdn', 'timestamp'],
+
+  dataType: ['geopoint', 'phonecommunicationlog'],
   models: [GeoPoint, PhoneCommunicationLog],
 
-  fetchOperations: [checkToken, downloadGeoloc, downloadCRA, updateOrCreate(logger, GeoPoint, ['msisdn', 'timestamp']), updateOrCreate(logger, PhoneCommunicationLog, ['msisdn', 'timestamp']), saveFieldsInKonnector, buildNotifContent]
-
+  fetchOperations: [checkToken, setGeolocOptin, checkGeolocOptinState, downloadGeoloc, downloadCRA, updateOrCreate(logger, GeoPoint, ['msisdn', 'timestamp']), updateOrCreate(logger, PhoneCommunicationLog, ['msisdn', 'timestamp']), saveFieldsInKonnector, buildNotifContent, highlightErrors]
 });
 
 function checkToken(requiredFields, entries, data, next) {
@@ -70,26 +86,62 @@ function checkToken(requiredFields, entries, data, next) {
   }
 }
 
-function requestOrange(uri, token, callback) {
-  connector.logger.info(uri);
+function setGeolocOptin(requiredFields, entries, data, next) {
+  // if user change, set token.
+  if (requiredFields.orangeGeolocOptin !== requiredFields.orangeGeolocOptinPreviousState) {
+    connector.logger.info('Setting geoloc optin for Orange...');
+    var setOpt = requiredFields.orangeGeolocOptin ? 'in' : 'out';
+    requestOrange(API_ROOT + '/profile/locopt?opt=' + setOpt, requiredFields.access_token, function (err, body) {
+      if (err) {
+        connector.logger.error('While setting geoloc optin: ' + err);
+        data.errors = data.errors || [];
+        data.errors.push('setting orange optin error');
 
-  request.get(uri, { auth: { bearer: token }, json: true }, function (err, res, body) {
-    if (res.statusCode.toString() !== '200') {
-      err = res.statusCode + ' - ' + res.statusMessage + ' ' + (err || '');
-      connector.logger.error(body);
-    }
+        // continue on error (to fetch CRA data at least)
+        return next();
+      }
+      connector.logger.info('Just set: ' + body.result);
+      next();
+    });
+  } else {
+    next();
+  }
+}
+
+function checkGeolocOptinState(requiredFields, entries, data, next) {
+  connector.logger.info('Check geoloc opt-in state for Orange...');
+
+  requestOrange(API_ROOT + '/profile/locopt', requiredFields.access_token, function (err, res) {
+    // Default: set as no optin.
+    requiredFields.orangeGeolocOptin = false;
+    requiredFields.orangeGeolocOptinPreviousState = false;
 
     if (err) {
-      connector.logger.error('Download failed: ' + err);
-      return callback(err);
+      connector.logger.error('Can\'t check orange Geoloc opt-in: ' + err);
+      data.errors.push('checking orange optin error');
+      // Continue on errors
     }
-    callback(null, body);
+
+    if (!err && res && res.result === 'geolc opt-in') {
+      requiredFields.orangeGeolocOptin = true;
+      requiredFields.orangeGeolocOptinPreviousState = true;
+    }
+
+    next();
   });
 }
 
 function downloadGeoloc(requiredFields, entries, data, next) {
+  if (!requiredFields.orangeGeolocOptin) {
+    connector.logger.info('No geoloc optin, skiping');
+    data.errors = data.errors || [];
+    data.errors.push('no orange geoloc optin');
+    return next();
+  }
+
   connector.logger.info('Downloading geoloc data from Orange...');
 
+  // TODO: don't download if opt out.
   var uri = API_ROOT + '/data/loc';
   if (requiredFields.lastGeoPoint) {
     uri += '?start=' + requiredFields.lastGeoPoint.slice(0, 19);
@@ -227,4 +279,31 @@ function buildNotifContent(requiredFields, entries, data, next) {
 
   entries.notifContent = addedList.join(', ');
   next();
+}
+
+function highlightErrors(requiredFields, entries, data, next) {
+  if (data.errors && data.errors.length) {
+    var errors = data.errors.map(localization.t).join(' - ');
+    next(errors);
+  } else {
+    next();
+  }
+}
+
+// // // // //
+// Helpers //
+
+function requestOrange(uri, token, callback) {
+  request.get(uri, { auth: { bearer: token }, json: true }, function (err, res, body) {
+    if (res.statusCode.toString() !== '200') {
+      err = res.statusCode + ' - ' + res.statusMessage + ' ' + (err || '');
+      connector.logger.error(body);
+    }
+
+    if (err) {
+      connector.logger.error('Download failed: ' + err);
+      return callback(err);
+    }
+    callback(null, body);
+  });
 }
