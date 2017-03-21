@@ -29,7 +29,10 @@ module.exports = function(log, model, options, tags) {
         var pdfurl;
         pdfurl = entry.pdfurl;
         return Folder.mkdirp(normalizedPath, function() {
-          return File.createNew(fileName, normalizedPath, pdfurl, tags, onCreated);
+          if (options.requestoptions) {
+            options.requestoptions.entry = entry;
+          }
+          return File.createNew(fileName, normalizedPath, pdfurl, tags, onCreated, options.requestoptions);
         });
       };
       onCreated = function(err, file) {
