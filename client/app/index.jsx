@@ -1,4 +1,4 @@
-import './lib/polyfills'
+import 'babel-polyfill'
 /** @jsx h */
 import { h, render } from 'preact'
 import { Router, Route, Redirect, hashHistory } from 'react-router'
