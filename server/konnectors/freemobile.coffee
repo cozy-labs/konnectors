@@ -92,7 +92,7 @@ module.exports =
             .use(filterExisting log, PhoneBill)
             .use(saveDataAndFile log, PhoneBill, {
                 vendor: 'freemobile',
-                others: ['phonenumber']
+                others: ['titulaire', 'phonenumber']
             }, ['facture'])
             .use(linkBankOperation
                 log: log
@@ -142,7 +142,7 @@ prepareLogIn = (requiredFields, billInfos, data, next) ->
     request options, (err, res, body) ->
         if err?
             log.error "Cannot connect to Free Mobile : #{homeUrl}"
-            next err
+            return next err
         loginPageData = body
         data.imageUrlAndPosition = []
         $ = cheerio.load loginPageData
@@ -180,11 +180,15 @@ logIn = (requiredFields, billInfos, data, next) ->
     # do)
     uniqueLogin = unifyLogin transcodedLogin
 
+
+    # Ensure the download of the small image takes at least 4s
+    timerDownload = Math.round(4 / uniqueLogin.length * 1000)
+
     # Each small image is downloaded. The small image is the image downloaded
     # when the user clicks on the image keyboard
-    async.eachSeries uniqueLogin, getSmallImage, (err) ->
+    async.eachSeries uniqueLogin, getSmallImage(timerDownload), (err) ->
         if err?
-            next err
+            return next err
         #As trancodedLogin is an array, it is changed into a string
         login =""
         for i in transcodedLogin
@@ -213,7 +217,7 @@ logIn = (requiredFields, billInfos, data, next) ->
                 log.error "No 302" if res.statusCode isnt 302
                 log.error "No password" if not requiredFields.password?
                 log.error "No login" if not requiredFields.login?
-                next 'bad credentials'
+                return next 'bad credentials'
 
             options =
                 method: 'GET'
@@ -223,14 +227,14 @@ logIn = (requiredFields, billInfos, data, next) ->
                     referer : homeUrl
             request options, (err, res, body) ->
                 if err?
-                    next err
+                    return next err
 		# We check that there is no connection form (the statusCode is
                 # always 302 even if the credential are wrong)
                 $ = cheerio.load body
                 connectionForm = $('#form_connect')
                 if connectionForm.length isnt 0
                     log.error "Authentification error"
-                    next 'bad credentials'
+                    return next 'bad credentials'
                 next()
 
 
@@ -242,7 +246,7 @@ getBillPage = (requiredFields, billInfos, data, next) ->
         jar: true
     request options, (err, res, body) ->
         if err?
-            next err
+            return next err
         data.html = body
         next()
 
@@ -264,6 +268,7 @@ action=getFacture&format=dl&l="
     # - Import overall pdf with name YYYYMM_freemobile.pdf
 
     isMultiline = $('div.infosConso').length > 1
+    log.info 'Multi line detected' if isMultiline
     $('div.factLigne.is-hidden').each ->
         amount = $($(this).find('.montant')).text()
         amount = amount.replace '€', ''
@@ -282,8 +287,14 @@ date=" + data_fact_date + "&multi=" + data_fact_multi
             vendor: 'Free Mobile'
             type: 'phone'
 
+        number = $(this).find('div.titulaire > span.numero').text()
+        $(this).find('div.titulaire > span.numero').remove()
+        titulaire = $(this).find('div.titulaire').text().replace /(\n|\r)/g, ''
+        titulaire = titulaire.trim()
+
         if isMultiline and not data_fact_multi
-            bill.phonenumber = data_fact_ligne
+            bill.phonenumber = number
+            bill.titulaire = titulaire
 
         bill.pdfurl = pdfUrl if date.year() > 2011
 
@@ -297,7 +308,7 @@ getImageAndIdentifyNumber = (imageInfo, callback) ->
     # download all the sounds, like a browser would do
     getSound imageInfo.position, (err) ->
         if err?
-            callback err, null
+            return callback err, null
         options =
             method: 'GET'
             jar: true
@@ -306,7 +317,7 @@ getImageAndIdentifyNumber = (imageInfo, callback) ->
         # We dowload the image located at imageInfo.imagePath
         request options, (err, res, body) ->
             if err?
-                callback err, null
+                return callback err, null
             pngjs.loadImage body, (err, resultImage) ->
                 if resultImage.getWidth() < 24 or resultImage.getHeight() < 28
                     callback 'Wrong image size', null
@@ -339,7 +350,7 @@ getSound = (position, callback) ->
             referer: baseUrl+"sound/soundmanager2_flash9.swf"
     request options, (err, res, body) ->
         if err?
-            callback err
+            return callback err
         callback null
 
 
@@ -402,15 +413,16 @@ unifyLogin = (login) ->
 
 
 # Small images are downloaded like a browser woulds do.
-getSmallImage = (digit, callback) ->
-    baseUrl = "https://mobile.free.fr/moncompte/"
-    options =
-        method: 'GET'
-        jar: true
-        url: "#{baseUrl}chiffre.php?pos=#{digit}&small=1"
+getSmallImage = (timer) ->
+    (digit, callback) ->
+        baseUrl = "https://mobile.free.fr/moncompte/"
+        options =
+            method: 'GET'
+            jar: true
+            url: "#{baseUrl}chiffre.php?pos=#{digit}&small=1"
 
-    request options, (err, res, body) ->
-        if err?
-            callback err
-        #Timer is necessary otherwise the connection is not possible
-        setTimeout callback, 600, null
+        request options, (err, res, body) ->
+            if err?
+                return callback err
+            #Timer is necessary otherwise the connection is not possible
+            setTimeout callback, timer, null
