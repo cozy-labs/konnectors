@@ -233,6 +233,9 @@
     },
     "User": {
       "description": "The user's timezone is required to import properly events."
+    },
+    "Track": {
+      "description": "Tracks imported by the podcast connector"
     }
   }
 }
