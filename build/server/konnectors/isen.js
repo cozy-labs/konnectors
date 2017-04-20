@@ -14,7 +14,7 @@ ical = require('cozy-ical');
 
 vcal = require('cozy-ical').VCalendar;
 
-NotificationHelper = require('cozy-notifications-helper');
+NotificationHelper = require('cozy-notifhications-helper');
 
 Folder = require('../models/folder');
 
