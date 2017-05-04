@@ -13,7 +13,7 @@ const AccountConnection = ({ t, connector, fields, dirty, error, submit, submitt
   return (
     <div class='account-connection'>
       <div class='account-description'>
-        <h3>{t('my_accounts title description')}</h3>
+        <h3>{t('title description')}</h3>
         <p>
           <ReactMarkdown
             source={
@@ -34,7 +34,7 @@ const AccountConnection = ({ t, connector, fields, dirty, error, submit, submitt
         <p>{` ${connector.name} ${t('dataType disclaimer')} `}</p>
       </div>
       <div class='account-login'>
-        <h3>{t('my_accounts account config title', {name: name})}</h3>
+        <h3>{t('account config title', {name: name})}</h3>
         <div class={'account-form' + (error ? ' error' : '')}>
           <AccountLoginForm
             t={t}
@@ -47,10 +47,10 @@ const AccountConnection = ({ t, connector, fields, dirty, error, submit, submitt
               aria-busy={submitting ? 'true' : 'false'}
               onClick={submit}
             >
-              {t('my_accounts account config button')}
+              {t('account config button')}
             </button>
             {error === 'bad credentials' &&
-              <p class='errors'>{t('my_accounts account config bad credentials')}</p>
+              <p class='errors'>{t('account config bad credentials')}</p>
             }
           </div>
         </div>

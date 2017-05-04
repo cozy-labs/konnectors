@@ -12,7 +12,7 @@ const Sidebar = ({ t, categories, router }) => {
 
   return (
     <aside>
-      <h4>{t('my_accounts title')}</h4>
+      <h4>{t('title')}</h4>
       <ul role='navigation'>
         <li>
           <Link to='/discovery' activeClassName='router-link-active'>
@@ -21,7 +21,7 @@ const Sidebar = ({ t, categories, router }) => {
                 xlinkHref={require('../assets/sprites/icon-discovery.svg')}
               />
             </svg>
-            {t('my_accounts discovery title')}
+            {t('discovery title')}
           </Link>
         </li>
         <li>
@@ -32,7 +32,7 @@ const Sidebar = ({ t, categories, router }) => {
                 xlinkHref={require('../assets/sprites/icon-category.svg')}
               />
             </svg>
-            {t('my_accounts category title')}
+            {t('category title')}
           </Link>
           {isCategoryView &&
             <ul class='submenu'>
@@ -63,7 +63,7 @@ const Sidebar = ({ t, categories, router }) => {
                 xlinkHref={require('../assets/sprites/icon-connected.svg')}
               />
             </svg>
-            {t('my_accounts connected title')}
+            {t('connected title')}
           </Link>
         </li>
       </ul>
