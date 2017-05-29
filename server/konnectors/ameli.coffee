@@ -72,10 +72,11 @@ logIn = (requiredFields, billInfos, data, next) ->
 
             # Second request to authenticate
             request loginOptions, (err, res, body) ->
+                $ = cheerio.load body
                 if err
                     log.error err
                     next 'bad credentials'
-                else if body.indexOf('Connexion à mon compte') > -1
+                else if $("#id_lien_deco").length != 1
                     log.error 'Authentication error'
                     next 'bad credentials'
                 else
