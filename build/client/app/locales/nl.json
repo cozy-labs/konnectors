@@ -1,7 +1,21 @@
 {
-  "bad credentials": "Verkeerde inloggegevens. Controleer de verbinder velden en importeer opnieuw.",
+  "error.LOGIN_FAILED": "Bad credentials. Check the konnector fields and run the connection again.",
+  "error.UNKNOWN_ERROR": "Something unexpected happened while running the connector",
+  "error.JOB_TIMEOUT": "The connector execution was too long",
   "code": "Autorisatiecode",
   "encrypted fields": "De wachtwoorden zijn nog steeds versleuteld, er kan niet worden geïmporteerd. Log alsjeblieft uit op Cozy, log daarna weer in en herstart Verbinders",
+  "field": {
+    "password": {
+      "visibility": {
+        "hide": "Hide",
+        "show": "Show",
+        "title": {
+          "hide": "Hide password",
+          "show": "Show password"
+        }
+      }
+    }
+  },
   "internal error": "Er is een fout opgetreden in jouw Cozy",
   "notification homes": "%{smart_count} woningbeschrijving geïmporteerd |||| %{smart_count} woningbeschrijvingen geïmporteerd",
   "notification consumptionstatements": "%{smart_count} nieuw verbruiksoverzicht geïmporteerd |||| %{smart_count} nieuwe verbruiksoverzichten geïmporteerd",
@@ -56,62 +70,19 @@
   "error occurred during import:": "Er is een fout opgetreden tijdens de laatste import.",
   "import server error": "Er is een server fout opgetreden tijdens het importeren.",
   "open selected folder": "Open de geselecteerde map",
-  "konnector description darty": "Importeer al jouw Darty rekeningen in jouw Cozy.",
-  "konnector description malakoff_mederic": "Importeer jouw Malakoff Mederic declaraties in jouw Cozy.",
-  "konnector description meetup": "Synchroniseer jouw Meetup kalender met jouw Cozy. Deze verbinder heeft de Kalender toepassing nodig.",
-  "konnector description trainline": "Download jouw treinkaartjes van Trainline. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description edf": "EDF nodigt je uit om jouw rekeningen, verbruiksoverzichten, contracten, betalingstermijnen en klant relatie gegevens te downloaden. Als je de EDF e.quillibre dienst gebruikt, worden de gegevens nor rijker.",
-  "konnector description free": "Download jouw internet facturen van Free. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description free mobile": "Download jouw telefoonrekeningen van Free Mobile. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description maif": "Maif nodigt je uit om sommige gegevens in jouw Cozy te downloaden (societary, inboedel, schade, ...)",
+  "konnector default base folder": "/Administrative/%{name}",
   "konnector customview maif": "Om dat te doen<ol><li>gebruik de 'verbinden' knop om te verbinden met jouw Maif account,</li><li>selecteer 'elke dag' als bijwerk schema,</li></li>klik op 'Importen en Opslaan'.",
-  "konnector description bouygues": "Download jouw telefoonrekeningen van Bouygues Telecom. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description bouygues box": "Download jouw rekeningen van Bouygues Telecom. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description digiposte": "Download all your bills from the Digiposte service. This konnector requires the Files application to store the bill PDF files.",
-  "konnector description sfr_box": "Download jouw internet rekeningen van SFR of Red. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description sfr_mobile": "Download jouw mobiel rekeningen van SFR of Red. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description github": "Download jouw Github rekeningen. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description github commits": "Sla informatie op van al jou Github Commits.",
-  "konnector description jawbone": "Download beweeg en slaap gegevens van jouw Jawbone CVS bestand.",
-  "konnector description rescuetime": "Download al jouw activiteiten van Rescue Time",
-  "konnector description withings": "Download al jouw metingen van jouw Withings account.",
-  "konnector description twitter": "Download al jouw tweets die je op Twitter gepubliceerd hebt. Deze verbinder heeft twee identifiacties en twee geheime sleutels. Deze kunnen gegenereerd worden op het [Twitter app dashboard](https://apps.twitter.com/). Daar je je een app creëren. Ze zullen je de inloggegevens geven voor deze app. De huidige verbinder gebruikt deze om contact te maken met Twitter en jouw data op te halen.",
-  "konnector description digital ocean": "Download jouw rekeningen van Digital Ocean. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description sosh": "Download jouw rekeningen van Sosh. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description electrabel": "Download jouw rekeningen van Electrabel. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description orange": "Download jouw rekeningen van Orange. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description nest": "Sla de huidige temperatuur op zoals gemeten door jouw Nest thermostaat.",
-  "konnector description numericable": "Download jouw rekeningen van Numéricable. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description virgin_mobile": "Download jouw rekeningen van Virgin Mobile. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description online_net": "Download jouw rekeningen van Online.net. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description ovh_eu": "Download jouw rekeningen van OVH Europa. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.<br/>\nTijdens de eerste import zullen we een koppeling genereren van waaruit je je jouw OVH Europa inloggegevens in kunt vullen.",
-  "konnector description ovh_ca": "Download jouw rekeningen van OVH Noord Amerika. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.<br/>\nTijdens de eerste import zullen we een koppeling genereren van waaruit je je jouw OVH Noord Amerika inloggegevens in kunt vullen.",
-  "konnector description runabove": "Download jouw rekeningen van RunAbove. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.<br/>\nTijdens de eerste import zullen we een koppeling genereren van waaruit je je jouw RunAbove inloggegevens in kunt vullen.",
-  "konnector description kimsufi_eu": "Download jouw rekeningen van Kimsufi. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.<br/>\nTijdens de eerste import zullen we een koppeling genereren van waaruit je je jouw Kimsufi inloggegevens in kunt vullen.",
-  "konnector description kimsufi_ca": "Download jouw rekeningen van Kimsufi Noord Amerika. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.<br/>\nTijdens de eerste import zullen we een koppeling genereren van waaruit je je jouw Kimsufi Noord Amerika inloggegevens in kunt vullen.",
-  "konnector description soyoustart_eu": "Download jouw rekeningen van SoYouStart Europa. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.<br/>\nTijdens de eerste import zullen we een koppeling genereren van waaruit je je jouw SoYouStart Europa inloggegevens in kunt vullen.",
-  "konnector description soyoustart_ca": "Download jouw rekeningen van SoYouStart Noord Amerika. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.<br/>\nTijdens de eerste import zullen we een koppeling genereren van waaruit je je jouw SoYouStart Noord Amerika inloggegevens in kunt vullen.",
-  "konnector description isen": "Studenten van ISEN ingenieursschool kunnen hun cursus materiaal en kalender importeren.",
-  "konnector description ical_feed": "Download en importeer een remote lcal bestand (.ics).",
-  "konnector description birthdays": "Maak gebeurtenissen in jouw kalender for de verjaardag van elk van je contacten. Als er een vlag is opgegeven, worden alleen contacten met die vlag meegenomen.",
-  "konnector description googlecontacts": "Importeer jouw Google contacten in jouw Cozy door google's API.",
-  "konnector description linkedin": "Importeer jouw LinkedIn contacten in jouw Cozy.",
-  "konnector description ameli": "Importeer jouw Ameli terugbetalingen in jouw Cozy. De inlognaam hier is alleen de eerste 13 karakters.",
-  "konnector description voyages_sncf": "Importeer jouw Vayages-SNCF rekeningen en gebeurtenissen in jouw Cozy.",
-  "konnector description doctolib": "Importeer jouw Doctolib afspraken in jouw Cozy.",
   "konnector customview googlecontacts 4": "Initialiseer of herstel dit account",
   "konnector customview googlecontacts 1": "1. Klik op de \"Verbind met jouw Google account\" knop om te verbinden met jouw Google account en om jouw Cozy toegang te geven. Google zal je een complexe tekst teruggeven. Als je die krijgt, kopieer deze dan naar het klembord, we hebben het nodig in stap 2.",
   "konnector customview googlecontacts 2": "Verbind met jouw Google account",
   "konnector customview googlecontacts 3": "2. Plak de tekst in het Auth code veld. Druk dan op de 'importeer en sla op' knop om het synchroniseren te starten. De accountnaam zal automatisch aangepast worden.",
-  "konnector description directenergie": "Download al jouw renekingen van de Franse energie maatschappij Direct Energie.",
-  "konnector description captain_train": "Download al jouw rekeningen van de treinkaartjes verkoper Captain Train. Deze verbinder kan alleen normale authenticatie gebruiken (e-mail/wachtwoord) en geen Facebook/Google log in. Deze verbinder maakt geen gebeurtenissen aan in jouw kalender. Hiervoor bezoek je  jouw Captain Train account (<a href=\"https://www.captaintrain.com/preferences/calendars\" target\"_blank\">hier</a>) en gebruik je de teruggegeven Ical feed koppeling met de Lcal feed verbinder(<a href=\"#konnector/ical_feed\">hier</a>).",
-  "konnector description facebook_events": "Importeer jouw Facebook gebeurtenissen in jouw Cozy. Om dit op te zetten, klik op Verbinden, om in te loggen bij Facebook.",
   "konnector facebook_events connect": "Verbinden",
-  "konnector description aprr": "Download jouw rekeningen van APRR webpagina (account bij telepeage). Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description vente_privee": "Download jouw rekeningen van de vente-privee.com webpagina. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description uber": "Download jouw rekeningen van de Uber webpagina. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
-  "konnector description podcast": "Download jouw favoriete geluids podcasts van een RSS feed. Deze import kan even duren.",
-  "konnector description materiel_net": "Download jouw rekeningen van Materiel.net. Deze verbinder vereist de Bestanden toepassing om PDF facturen op te slaan.",
+  "konnector installation timeout error": "Konnector installation timed out.",
+  "intent.service.initialization.error": "Service failed to initialize. Sorry for the inconvenience.",
+  "intent.service.account.creation.error": "Unable to create account, an error occurred.",
+  "intent.service.error.cause": "Cause: %{error}",
+  "intent.service.cancel": "Cancel",
+  "intent.service.terminate": "Terminate",
   "notification import error": "er is een fout opgetreden tijden het importeren van gegevens",
   "notification malakoff_mederic": "%{smart_count} nieuwe declaratie geïmporteerd |||| %{smart_count} nieuwe declaraties geïmporteerd",
   "notification prefix": "Verbinder %{name}:",
@@ -149,11 +120,11 @@
   "url": "Doel URL",
   "tag": "Vlag",
 
-  "my_accounts title": "Mijn accounts",
-  "my_accounts category title": "Categorieën",
-  "my_accounts discovery title": "Ontdekking",
-  "my_accounts connected title": "Verbonden",
-  "my_accounts coming_soon": "Komt binnenkort!",
+  "title": "Data Connect",
+  "category title": "Categories",
+  "discovery title": "Discovery",
+  "connected title": "Connected",
+  "coming_soon": "Coming soon!",
 
   "none": "Geen schema geselecteerd",
   "every hour": "Elk uur",
@@ -163,6 +134,7 @@
 
   "all category": "Allemaal",
   "health category": "Gezondheid",
+  "insurance category": "Insurance",
   "transport category": "Transport",
   "social category": "Sociaal",
   "isp category": "ISP",
@@ -172,73 +144,145 @@
   "productivity category": "Productiviteit",
   "others category": "Andere",
 
-  "my_accounts account config title": "Verbind met jouw %{name} account:",
-  "my_accounts account config button": "Verbinden",
-  "my_accounts account cancel button": "Annuleren",
-  "my_accounts account save button": "Opslaan",
-  "my_accounts account config show password": "Toon wachtwoord",
-  "my_accounts account config success": "Account succesvol toegevoegd",
-  "my_accounts account config bad credentials": "Sorry, je hebt een onjuiste inlognaam of wachtwoord gebruikt",
-  "my_accounts account config error": "Verontschuldigingen, onze server had een probleem, vind je het erg om opnieuw te beginnen?",
-  "my_accounts account config details": "Je kunt de gegevens in de Bestanden app vinden op deze locatie:",
-  "my_accounts account index": "Account #%{index}",
-  "my_accounts add_account button": "Voeg een account toe",
-  "my_accounts activity": "Activiteit",
-  "my_accounts activity desc": "Laatste synchronisatie:",
-  "my_accounts activity running": "bezig...",
-  "my_accounts activity button": "Synchroniseer nu",
-  "my_accounts location": "Locatie",
-  "my_accounts location desc": "Je vind jouw bestanden in de volgende map in de Bestanden toepassing",
-  "my_accounts location button": "Open deze map in Bestanden",
-  "my_accounts calendar": "Kalender",
-  "my_accounts calendar desc": "Je vind jouw gebeurtenissen in de volgende kalender in de Kalender toepassing",
-  "my_accounts frequency": "Synchronisatie frequentie",
-  "my_accounts frequency desc": "Jouw bestanden worden toegevoegd aan jouw Cozy met de volgende frequentie",
-  "my_accounts account": "Account",
-  "my_accounts disconnect": "Verbroken verbinding",
-  "my_accounts disconnect desc": "De verbinding met dit account wordt verbroken, maar geïmporteerde gegevens zullen worden bewaard",
-  "my_accounts disconnect button": "Verbreek de verbinding met dit account",
-  "my_accounts delete button": "Verwijder dit account",
-  "my_accounts account delete success": "Account succesvol verwijderd",
-  "my_accounts account delete error": "Verontschuldigingen, onze server had een probleem, vind je het erg om opnieuw te beginnen?",
-  "my_accounts title description": "Beschrijving van deze verbinder",
+  "account config title": "Connect your %{name} account:",
+  "account cancel button": "Cancel",
+  "account save button": "Save",
+  "account config show password": "Display password",
+  "account config success": "Account added successfully",
+  "account config error": "Apologies, our server had an hiccup, do you mind starting again?",
+  "account config details": "Find your datas in the Files app at this location: ",
+  "account update success": "Account updated successfully",
+  "account index": "Account #%{index}",
+  "add_account button": "Add account",
+  "activity": "Activity",
+  "activity desc": "Last synchronization: ",
+  "activity running": "in progress...",
+  "activity button": "Synchronize now",
+  "config": {
+    "location": {
+      "title": "Location",
+      "desc": "You will find your files in the following folder in the Files application",
+      "button": "Open this folder in Files"
+    },
+    "calendar": {
+      "title": "Calendar",
+      "desc": "You will find your events in the following calendar in the Calendar application"
+    },
+    "frequency": {
+      "title": "Synchronization frequency",
+      "desc": "Your files will be added to your Cozy at the following frequency"
+    },
+    "account": {
+      "title": "Account"
+    }
+  },
+  "disconnect": "Disconnection",
+  "disconnect desc": "Your will be disconnected from this account, but imported data will be kept",
+  "disconnect button": "Disconnect this account",
+  "delete button": "Delete this account",
+  "account delete success": "Account removed succesfully",
+  "account delete error": "Apologies, our server had an hiccup, do you mind starting again?",
+  "account": {
+    "connection": {
+      "account": {
+        "title": "Account"
+      },
+      "title": "Connect your %{name} account to your Cozy",
+      "update": {
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "security": "Your login and password will be stored in your Cozy. Nobody will access it!",
+      "data": {
+        "title": "Collected data:",
+        "service": {
+          "description": "Service description:"
+        }
+      },
+      "login": {
+        "password": {
+          "placeholder": "The password you use to connect to the service"
+        },
+        "submit": "Connect",
+        "error": {
+          "bad_credentials": "Sorry, you entered an incorrect login or password"
+        }
+      }
+    },
+    "connected": {
+      "title": "Your %{name} account is connected!",
+      "description": "Congratulations! Your %{name} account is now linked to your Cozy. So many new opportunities opens to you.",
+      "ongoingSync": "Your bills are syncing and will be aviable in the following folder:",
+      "textLinkToBillsFolder": "Open the folder into Cozy Drive",
+      "buttonAccountConfig": "Access my account configuration",
+      "buttonBackToServicesList": "Back to the list of services"
+    }
+  },
+  "working": "Loading",
+  "voting text": "You don't find the connector you were looking for? Please tell us!",
 
-  "dataType title": "Jouw Cozy heeft de volgende gegevens opgehaald:",
-  "dataType disclaimer": "zal geen gegevens raadplagen in jouw Cozy",
-  "dataType activity": "Jouw activiteiten",
-  "dataType heartbeat": "Jouw hartslagen",
-  "dataType calendar": "Jouw kalenders",
-  "dataType commit": "Jouw commits",
-  "dataType consumption": "Jouw verbruik",
-  "dataType contact": "Jouw contacten",
-  "dataType contract": "Jouw contacten",
-  "dataType travelDate": "Jouw reis gegevens",
-  "dataType event": "Jouw gebeurtenissen",
-  "dataType bill": "Jouw rekeningen",
-  "dataType stepsNumber": "Jouw aantal stappen",
-  "dataType podcast": "Jouw podcasts",
-  "dataType weight": "Jouw gewichten",
-  "dataType bloodPressure": "Jouw bloeddruk",
-  "dataType appointment": "Jouw afspraken",
-  "dataType refund": "Jouw terugbetalingen",
-  "dataType sleepTime": "Jouw slaap tijden",
-  "dataType courseMaterial": "Jouw cursus materiaal",
-  "dataType temperature": "Jouw temperatuur gegevens",
-  "dataType tweet": "Jouw tweets",
-  "konnector description orange_vod": "This connector will download data from your Orange account on your Cozy. It will automatically download the list of movies you downloaded in free (TV Replay) or paid VOD from 01/01/2015 (adult contents are not included). You will be able to use these data in different apps in your Cozy, for example 'My Movies Music' (available soon on the Cozy Store).",
-  "konnector customview orange_vod": "<ul><li>Once connected, a demand to extract your data will be sent to Orange information system.</li><li>These data will be available within 15 days.</li><li>You data will be updated automatically, every 15 days.</li></ul>",
-  "not fixe token": "To get these data, you have to sing-in with your email.",
-  "notification videostreams": "%{smart_count} new film and video watching log imported |||| %{smart_count} new video and film watching logs imported",
-  "konnector description orange_mobile": "Data sent by Orange via this connector are reports on the call to sent and received from July 1st 2017. As you are part of the 'MesInfos' program, Orange will give you the possibility to locate your phone regularly. Data collection need your explicit consent. This consent is revocable at any time via this connector. You will be able to use your data in any Cozy app, for example 'Mapping My Life' (available soon on the Cozy Store).",
+  "dataType": {
+    "none": "%{name} won't access any data in your Cozy",
+    "activity": "Your activities",
+    "heartbeat": "Your heartbeats",
+    "calendar": "Your calendars",
+    "commit": "Your commits",
+    "consumption": "Your consumption",
+    "contact": "Your contacts",
+    "contract": "Your contracts",
+    "travelDate": "Your travel dates",
+    "event": "Your events",
+    "bill": "Your bills",
+    "stepsNumber": "Your number of steps",
+    "podcast": "Your podcasts",
+    "weight": "Your weights",
+    "bloodPressure": "Your blood pressure",
+    "appointment": "Your appointments",
+    "refund": "Your refunds",
+    "sleepTime": "Your sleep time",
+    "courseMaterial": "Your course materials",
+    "temperature": "Your temperature data",
+    "tweet": "Your tweets",
+    "videostream": "Your videos",
+    "phonecommunicationlog": "Your phone communications log",
+    "geopoint": "Your geolocations"
+  },
+  "konnector customview orange_vod": "<ul><li>Wanneer verbonden, zal er een aanvraag verstuurd worden naar het Orange informatiesysteem om jouw gegevens op te sturen.</li><li>Deze gegevens zullen beschikbaar zijn binnen 15 dagen.</li><li>Jouw gegevens zullen automatisch bijgewerkt worden, lke 15 dagen.</li></ul>",
+  "not fixe token": "Om deze gegevens te krijgen, moet je inloggen met jouw e-mail adres.",
+  "notification videostreams": "%{smart_count} logbestand van een nieuwe film of video geïmporteerd |||| %{smart_count} logbestanden met nieuwe films en videos geïmporteerd",
 
-  "konnector customview orange_mobile": "<span style='font-size: 90%;'><p style='margin: 0;'>By clicking on 'Agree', you give your consent to collect your phone's position, every 30 minutes. Information gathered will on be</p><ul><li>- date and time of this location ;</li><li>- location data of the closest radio antenna at the time of collect.</li></ul><p style='margin-top: 0;'>Data gathered by Orange with your consent will only be accessible on your Cozy.</p></span><span style='font-size: 80%;'><p style='margin: 0;'>They will be added to location data found in call minutes that include your number, your correspondant number, the time and duration of the call and the location of the closest radio antenna of your phone a the time of the call.</p><ul><li>Once connected, a demand of data extraction will be sent to Orange IT.</li><li>These data will be available within 15 days.</li><li>Following this, your data will be automatically updated in your Cozy every 2 weeks.</li></ul></span>",
-  "notification geopoints": "%{smart_count} new geolocation point imported |||| %{smart_count} new geolocation points imported",
-  "notification phonecommunicationlogs": "%{smart_count} new call and sms log imported |||| %{smart_count} new call and sms logs import",
-  "orangeGeolocOptin": "Yes, I agree that Orange geolocalise regularly my mobile phone in the scope of the MesInfos pilote",
+  "konnector customview orange_mobile": "<span style='font-size: 90%;'><p style='margin: 0;'>Door te klikken op 'Akkoord', geef je toestemming om de locatie van jouw telefoon te verzamelen, elke 30 minuten. De informatie die wordt verzameld is</p><ul><li>- datum en tijd van deze lokatie ;</li><li>- lokatie van de dichtsbijzijnde antennamast ten tijde van het verzamelen.</li></ul><p style='margin-top: 0;'>De gegevens die worden opgehaald door Orange met jouw toestemming zal alleen beschikbaar zijn op jouw Cozy.</p></span><span style='font-size: 80%;'><p style='margin: 0;'>Ze zullen worden toegevoegd aan locatiegegevens die gevonden zijn in de belgegevens die onder andere jouw telefoonnummer, het nummer dat je belde, de tijd en duur van het gesprek en de locatie van de dichtsbijzijnde antennemast tijdens het gesprek.</p><ul><li>Als het verbonden is, zal er een aanvraag verstuurd worden naar Orange IT om de gegevens door te sturen.</li><li>Deze gegevens worden beschikbaar binnen 15 dagen.</li><li>Daarna zullen jouw gegevens elke 2 weken bijgewerkt worden.</li></ul></span>",
+  "notification geopoints": "%{smart_count} niewe geolocatie punt geïmporteerd |||| %{smart_count} nieuwe geolocation punten geïmporteerd",
+  "notification phonecommunicationlogs": "%{smart_count} nieuw gespreks- en sms logbestand geïmporteerd |||| %{smart_count} nieuwe gespreks- en sms logbestand geïmporteerd",
+  "orangeGeolocOptin": "Ja, ik ga ermee akkoord dat Orange regelmatig de geolocatie van mijn telefoon bepaald in het kader van het MesInfos programma",
   "orangeGeolocOptinPreviousState": "orangeGeolocOptinPreviousState",
-  "setting orange optin error": "Technical error, can't set your choice for the geolocation service.",
-  "checking orange optin error": "Technical error, can't check your choice about the geolocation service of Orange",
-  "no orange geoloc optin": "No geopoint data, as you opt-out for Orange geolocation service.",
-  "frequency": "Synchronization frequency"
+  "setting orange optin error": "Technische fout, kan jouw telefoon niet aanmelden voor de geolocatie dienst.",
+  "checking orange optin error": "Technische fout, kan niet controleren wat je gekozen hebt over de geolocatie dienst van Orange",
+  "no orange geoloc optin": "Geen geopunt gegevns als je je niet aangemeld hebt voor de geolocatie dienst.",
+  "frequency": "Synchronisatie frequentie",
+
+  "Loading": {
+    "initial": "Loading connectors accounts..."
+  },
+
+  "tutorial": {
+    "cozy_collect": {
+      "title": "Automate your data gathering",
+      "text": "They will be stored in your Cozy, you won't have to look for them anymore.",
+      "button": "Next"
+    },
+    "menu_apps": {
+      "title": "Your Cozy is so much more than a simple data aggregator",
+      "text": "Open the Applications menu to discover all the features your Cozy has to offer.",
+      "button": "Discover my Apps"
+    }
+  },
+
+  "Error": {
+    "initial": "Something went wrong when fetching your connectors and informations. Please refresh the page.",
+    "button": {
+      "reload": "Refresh now"
+    }
+  }
 
 }

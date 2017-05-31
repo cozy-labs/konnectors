@@ -1,0 +1,288 @@
+{
+  "error.LOGIN_FAILED": "資格情報が間違っています。 Konnector フィールドを確認し、再度接続を実行してください。",
+  "error.UNKNOWN_ERROR": "コネクターの実行中に予期しないことが発生しました",
+  "error.JOB_TIMEOUT": "コネクターの実行時間が長すぎます",
+  "code": "認証コード",
+  "encrypted fields": "パスワードが暗号化されているため、インポートは実行できません。Cozy からログアウトしてから、再度ログインして、Konnectors を再起動してください",
+  "field": {
+    "password": {
+      "visibility": {
+        "hide": "非表示",
+        "show": "表示",
+        "title": {
+          "hide": "パスワードを非表示",
+          "show": "パスワードを表示"
+        }
+      }
+    }
+  },
+  "internal error": "Cozy でエラーが発生しました",
+  "notification homes": "%{smart_count} 件ホームの説明をインポートしました |||| %{smart_count} 件ホームの説明をインポートしました",
+  "notification consumptionstatements": "%{smart_count} 件の新しい利用明細をインポートしました |||| %{smart_count} 件の新しい利用明細をインポートしました",
+  "notification contracts": "%{smart_count} 件の新しい連絡先をインポートしました |||| %{smart_count} 件の新しい連絡先をインポートしました",
+  "notification clients": "%{smart_count} 件の新しいクライアント情報をインポートしました |||| %{smart_count} 件の新しいクライアント情報をインポートしました",
+  "notification paymenttermss": "%{smart_count} 件の新しい支払条件をインポートしました |||| %{smart_count} 件の新しい支払条件をインポートしました",
+  "redirectPath": "リダイレクト URL のパス",
+  "token not found": "トークンを取得できません",
+  "key not found": "キーが見つかりません",
+  "request error": "ウェブサイトへのリクエストが失敗しました。ログを参照してください。",
+  "parsing error": "結果を解析できません。",
+  "file error": "ファイルを作成/更新/削除できません",
+  "no bills retrieved": "取得した請求書はありません",
+  "last import:": "前回のインポート",
+  "save and import": "インポートと保存",
+  "auto import": "自動インポート",
+  "imported data:": "インポートしたデータ:",
+  "importing...": "インポート中...",
+  "no import performed": "インポートを実行していません",
+  "import already running": "インポートはすでに実行中です。",
+  "firstname": "名",
+  "lastname": "姓",
+  "login": "ログイン",
+  "password": "パスワード",
+  "email": "メール",
+  "bank_identifier": "銀行コード (オプション)",
+  "accessToken": "アクセストークン",
+  "accessTokenSecret": "アクセストークン シークレット",
+  "consumerKey": "コンシューマーキー",
+  "consumerSecret": "コンシューマーシークレット",
+  "apikey": "API キー",
+  "phoneNumber": "電話番号",
+  "folderPath": "フォルダーのパス",
+  "select starting date": "開始日を選択",
+  "start import from": "開始",
+  "authCode": "認証コード",
+  "accountName": "アカウント名",
+  "date format": "LL",
+  "add an account": "アカウントを追加",
+  "remove last account": "前回のアカウントを削除",
+  "vendorLink": "データをインポートする元のウェブサイト: ",
+  "loginUrl": "ログイン URL",
+  "token": "トークン",
+  "refreshToken": "トークンを更新",
+  "home headline": "Konnectors を使用すると、多くのデータを取得して Cozy に保存できます。\n電話料金から接続されたスケールに、あるいはツイート。 興味のあるコネクタを設定してください:",
+  "home config step 1": "左のメニューでコネクターを選択してください",
+  "home config step 2": "指示に従って設定してください",
+  "home config step 3": "データが取得されて、Cozy に保存されます",
+  "home more info": "詳細情報:",
+  "home help step 1": "自動インポートを有効にする場合を除き、インポートを手動で開始する必要があります。",
+  "error occurred during import.": "前回のインポート中にエラーが発生しました。",
+  "error occurred during import:": "前回のインポート中にエラーが発生しました:",
+  "import server error": "インポート中にサーバーエラーが発生しました。",
+  "open selected folder": "選択したフォルダーを開く",
+  "konnector default base folder": "/Administrative/%{name}",
+  "konnector customview maif": "これを行うには<ol><li>'接続' ボタンを使用して、Maif アカウントに接続します。</li><li>更新スケジュールとして '毎日' を選択します。</li></li>'インポートと保存' をクリックします。",
+  "konnector customview googlecontacts 4": "このアカウントを初期化またはリセット",
+  "konnector customview googlecontacts 1": "1. \"google アカウントを接続\" ボタンを押して Google アカウントに接続し、Cozy に認証してアクセスします。 Google は複雑な文字列を提供します。 クリップボードにコピーしたら、次のステップで使用します。",
+  "konnector customview googlecontacts 2": "Google アカウントを接続",
+  "konnector customview googlecontacts 3": "2. この文字列を認証コードのフィールドに貼り付けます。 次に 'インポートして保存' ボタンを押して同期を開始します。 アカウント名は自動的に更新されます。",
+  "konnector facebook_events connect": "接続",
+  "konnector installation timeout error": "Konnector のインストールがタイムアウトしました。",
+  "intent.service.initialization.error": "サービスを初期化できませんでした。 ご不便おかけして申し訳ありません。",
+  "intent.service.account.creation.error": "アカウントを作成できません。エラーが発生しました。",
+  "intent.service.error.cause": "原因: %{error}",
+  "intent.service.cancel": "キャンセル",
+  "intent.service.terminate": "終了",
+  "notification import error": "データのインポート中にエラーが発生しました",
+  "notification malakoff_mederic": "%{smart_count} 新しい払い戻しをインポートしました |||| %{smart_count} 新しい払い戻しをインポートしました",
+  "notification prefix": "コネクター %{name}:",
+  "notification commits": "%{smart_count} 件の新しいコミットをインポートしました |||| %{smart_count} 件の新しいコミットをインポートしました",
+  "notification bills": "%{smart_count} 件の新しい請求書をインポートしました |||| %{smart_count} 件の新しい請求書をインポートしました",
+  "notification tweets": "%{smart_count} 件の新しいツイートをインポートしました |||| %{smart_count} 件の新しいツイートをインポートしました",
+  "notification contacts created": "%{smart_count} 件の新しい連絡先を作成しました |||| %{smart_count} 件の新しい連絡先を作成しました",
+  "notification contacts updated": "%{smart_count} 件の連絡先を更新しました |||| %{smart_count} 件の連絡先を更新しました",
+  "notification events created": "%{smart_count} 件の新しいイベントをインポートしました |||| %{smart_count} 件の新しいイベントをインポートしました",
+  "notification events updated": "%{smart_count} 件のイベントを更新しました |||| %{smart_count} 件のイベントを更新しました",
+  "notification measures": "%{smart_count} 件の新しい測定をインポートしました |||| %{smart_count} 件の新しい測定をインポートしました",
+  "notification rescuetime": "%{smart_count} 件の新しいアクティビティをインポートしました |||| %{smart_count} 件の新しいアクティビティをインポートしました",
+  "notification birthdays creation": "%{smart_count} 件の新しい誕生日を作成しました |||| %{smart_count} 件の新しい誕生日を作成しました",
+  "notification ameli": "%{smart_count} 新しい払い戻しをインポートしました |||| %{smart_count} 新しい払い戻しをインポートしました",
+  "notification podcast": "%{smart_count} 件の新しいポッドキャストをインポートしました |||| %{smart_count} 件の新しいポッドキャストをインポートしました",
+  "notification isen": "%{smart_count} 件の新しいコース教材をインポートしました |||| %{smart_count} 件の新しいコース教材をインポートしました",
+  "notification isen event changed": "ご注意ください。仲裁 %{description} は %{oldDate} の代わりに %{newDate} に行われます",
+  "notification isen date format": "MM/DD [-] HH:mm a",
+  "notification isen event deleted": "ご注意ください。 %{date} に行われたはずの仲裁 %{description}がキャンセルされました",
+  "konnector birthdays birthday": "誕生日",
+  "konnector voyages_sncf reference": "参照",
+  "konnector voyages_sncf ticket choice": "チケットの選択",
+  "konnector voyages_sncf outward": "外側",
+  "konnector voyages_sncf inward": "内側",
+  "konnector voyages_sncf class": "クラス",
+  "konnector voyages_sncf car": "車",
+  "konnector voyages_sncf place": "場所",
+  "konnector ovh connect first": "先に OVH アカウントにログインする必要があります。",
+  "konnector danger zone": "危険地帯",
+  "konnector delete credentials": "この設定を削除",
+  "konnector deleted": "konnector 設定を正常に削除しました。",
+  "konnector deletion error": "konnector 設定の削除中にエラーが発生しました。",
+  "oauth connect": "接続",
+  "calendar": "イベントをインポートするカレンダー",
+  "url": "ターゲット URL",
+  "tag": "タグ",
+
+  "title": "Data Connect",
+  "category title": "カテゴリー",
+  "discovery title": "探索",
+  "connected title": "接続しました",
+  "coming_soon": "まもなく登場!",
+
+  "none": "スケジュールが選択されていません",
+  "every hour": "毎時",
+  "every day": "毎日",
+  "every week": "毎週",
+  "each month": "毎月",
+
+  "all category": "すべて",
+  "health category": "健康",
+  "insurance category": "保険",
+  "transport category": "交通",
+  "social category": "ソーシャル",
+  "isp category": "ISP",
+  "telecom category": "電話",
+  "energy category": "エネルギー",
+  "host_provider category": "ホスト",
+  "productivity category": "生産性",
+  "others category": "その他",
+
+  "account config title": "%{name} アカウントに接続:",
+  "account cancel button": "キャンセル",
+  "account save button": "保存",
+  "account config show password": "パスワードを表示",
+  "account config success": "アカウントを正常に追加しました",
+  "account config error": "申し訳ありません。サーバーに問題がありました。もう一度やり直していただけますか?",
+  "account config details": "ファイルアプリで、この場所のデータを検索します: ",
+  "account update success": "アカウントを正常に更新しました",
+  "account index": "アカウント #%{index}",
+  "add_account button": "アカウントを追加",
+  "activity": "アクティビティ",
+  "activity desc": "前回の同期: ",
+  "activity running": "処理中...",
+  "activity button": "今すぐ同期",
+  "config": {
+    "location": {
+      "title": "場所",
+      "desc": "ファイルは、ファイルアプリケーションの次のフォルダにあります",
+      "button": "ファイルで、このフォルダーを開く"
+    },
+    "calendar": {
+      "title": "カレンダー",
+      "desc": "イベントは、カレンダーアプリケーションの次のカレンダーにあります"
+    },
+    "frequency": {
+      "title": "同期の頻度",
+      "desc": "次の頻度で、ファイルが Cozy に追加されます"
+    },
+    "account": {
+      "title": "アカウント"
+    }
+  },
+  "disconnect": "切断",
+  "disconnect desc": "このアカウントから切断されますが、インポートされたデータは保存されます",
+  "disconnect button": "このアカウントを切断",
+  "delete button": "このアカウントを削除",
+  "account delete success": "アカウントを正常に削除しました",
+  "account delete error": "申し訳ありません。サーバーに問題がありました。もう一度やり直していただけますか?",
+  "account": {
+    "connection": {
+      "account": {
+        "title": "アカウント"
+      },
+      "title": "%{name} アカウントを Cozy に接続",
+      "update": {
+        "cancel": "キャンセル",
+        "save": "保存"
+      },
+      "security": "ログインとパスワードは、お使いの Cozy に保存されます。それは誰にもアクセスできません!",
+      "data": {
+        "title": "収集したデータ:",
+        "service": {
+          "description": "サービス説明:"
+        }
+      },
+      "login": {
+        "password": {
+          "placeholder": "サービスに接続するために使用するパスワード"
+        },
+        "submit": "接続",
+        "error": {
+          "bad_credentials": "申し訳ありません。入力されたログインまたはパスワードが間違っています"
+        }
+      }
+    },
+    "connected": {
+      "title": "%{name} アカウントに接続しました!",
+      "description": "おめでとうございます! %{name} アカウントが Cozy にリンクされました。 たくさんの新しい機会があなたに開かれています。",
+      "ongoingSync": "請求書が同期されて、次のフォルダーで利用できます:",
+      "textLinkToBillsFolder": "フォルダーを Cozy ドライブで開く",
+      "buttonAccountConfig": "アカウント設定にアクセス",
+      "buttonBackToServicesList": "サービスのリストに戻る"
+    }
+  },
+  "working": "読み込み中",
+  "voting text": "探しているコネクターが見つかりませんか? 私たちにご連絡ください!",
+
+  "dataType": {
+    "none": "%{name} はお使いの Cozy のデータにアクセスしません",
+    "activity": "アクティビティ",
+    "heartbeat": "心拍数",
+    "calendar": "カレンダー",
+    "commit": "コミット",
+    "consumption": "消費",
+    "contact": "連絡先",
+    "contract": "契約",
+    "travelDate": "旅行日",
+    "event": "イベント",
+    "bill": "請求書",
+    "stepsNumber": "歩数",
+    "podcast": "ポッドキャスト",
+    "weight": "体重",
+    "bloodPressure": "血圧",
+    "appointment": "予定",
+    "refund": "払い戻し",
+    "sleepTime": "睡眠時間",
+    "courseMaterial": "コース教材",
+    "temperature": "気温データ",
+    "tweet": "ツイート",
+    "videostream": "ビデオ",
+    "phonecommunicationlog": "お使いの電話の通信履歴",
+    "geopoint": "ジオロケーション"
+  },
+  "konnector customview orange_vod": "<ul><li>接続されると、Orange の情報システムにデータの抽出要求が送信されます。</li><li>これらのデータは 15 日以内に利用可能となります。</li><li>データは 15 日ごとに自動的に更新されます。</li></ul>",
+  "not fixe token": "これらのデータを取得するには、メールアドレスでサインインする必要があります。",
+  "notification videostreams": "%{smart_count} 新しい映画とビデオの視聴ログをインポートしました |||| %{smart_count} 新しいビデオと映画の視聴ログをインポートしました",
+
+  "konnector customview orange_mobile": "<span style='font-size: 90%;'><p style='margin: 0;'>By clicking on '同意する' をクリックすると、30 分ごとに電話の位置を収集することに同意します。 収集されるデータは</p><ul><li>- この場所の日時、</li><li>- 収集時の最も近い無線アンテナの位置データ。</li></ul><p style='margin-top: 0;'>あなたの同意を得て Orange で収集されたデータは、あなたの Cozy でしかアクセスできません。</p></span><span style='font-size: 80%;'><p style='margin: 0;'>あなたの番号、連絡先番号、通話の開始時間、通話時間、お使いの携帯電話の最も近い無線アンテナの位置を含めて、通話時間中に見つかった位置情報に追加されます。</p><ul><li>接続されると、データ抽出の要求が Orange IT に送信されます。</li><li>これらのデータは 15 日以内に利用可能となります。</li><li>これに続いて、2 週間ごとにあなたのデータが自動的に更新されます。</li></ul></span>",
+  "notification geopoints": "%{smart_count} の新しいジオロケーション地点をインポートしました |||| %{smart_count} の新しいジオロケーション地点をインポートしました",
+  "notification phonecommunicationlogs": "%{smart_count} の新しい通話と sms のログをインポートしました |||| %{smart_count} の新しい通話と sms のログをインポートしました",
+  "orangeGeolocOptin": "はい、私は Orange が MesInfos 規約の範囲で携帯電話を定期的にジオロケーションすることに同意します",
+  "orangeGeolocOptinPreviousState": "orangeGeolocOptinPreviousState",
+  "setting orange optin error": "技術的なエラーが発生しました。 ジオロケーションサービスの選択を設定することはできません。",
+  "checking orange optin error": "技術的なエラーが発生しました。Orange のジオロケーションサービスに関する選択をチェックすることはできません",
+  "no orange geoloc optin": "Orange ジオロケーションサービスを解除したため、ジオポイントデータはありません。",
+  "frequency": "同期頻度",
+
+  "Loading": {
+    "initial": "コネクターアカウントの読み込み中..."
+  },
+
+  "tutorial": {
+    "cozy_collect": {
+      "title": "データの収集を自動化",
+      "text": "それらはお使いの Cozy に保管されます。それ以上気にする必要はありません。",
+      "button": "次へ"
+    },
+    "menu_apps": {
+      "title": "Cozy は単純なデータ収集だけではありません",
+      "text": "アプリケーションメニューを開いて、Cozy が提供しているすべての機能を見つけてください。",
+      "button": "自分のアプリを見つける"
+    }
+  },
+
+  "Error": {
+    "initial": "コネクターと情報を取得する際に何か問題が発生しました。 ページを更新してください。",
+    "button": {
+      "reload": "今すぐ更新"
+    }
+  }
+
+}

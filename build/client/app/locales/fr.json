@@ -1,7 +1,21 @@
 {
-  "bad credentials": "Mauvais identifiants. Vérifiez les champs que vous avez renseignés.",
+  "error.LOGIN_FAILED": "Données de connexion incorrectes. Vérifiez les données de connexion dans le connecteur et relancez la connexion.",
+  "error.UNKNOWN_ERROR": "Quelque-chose d’inattendu s‘est produit pendant l’exécution du connecteur",
+  "error.JOB_TIMEOUT": "L’exécution du connecteur a pris trop de temps",
   "code": "Code d'autorisation",
   "encrypted fields": "Les mots de passe sont toujours chiffrés, aucun import ne peut être réalisé. Veuillez vous déconnecter de votre Cozy, vous reconnecter et redémarrer Konnectors.",
+  "field": {
+    "password": {
+      "visibility": {
+        "hide": "Masquer",
+        "show": "Afficher",
+        "title": {
+          "hide": "Masquer le mot de passe",
+          "show": "Afficher le mot de passe"
+        }
+      }
+    }
+  },
   "internal error": "Une erreur est survenue dans votre Cozy",
   "notification homes": "%{smart_count} description du domicile importée |||| %{smart_count} descriptions du domicile importées",
   "notification consumptionstatements": "%{smart_count} nouveau relevé de consommation d'énergie importé |||| %{smart_count} nouveaux relevés de consommation d'énergie importés",
@@ -56,62 +70,19 @@
   "error occurred during import:": "Une erreur est survenue lors de la dernière importation :",
   "import server error": "L'import a rencontré une erreur serveur.",
   "open selected folder": "Ouvrir le dossier sélectionné",
-  "konnector description darty": "Importez toutes vos factures Darty dans votre Cozy.",
-  "konnector description malakoff_mederic": "Importez vos remboursements Malakoff Mederic dans votre Cozy.",
-  "konnector description meetup": "Synchronise votre calendrier Meetup sur votre Cozy. Ce connecteur requiert l'application Calendrier.",
-  "konnector description trainline": "Téléchargez vos justificatifs d'achat depuis Trainline. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description edf": "EDF vous propose de télécharger automatiquement vos factures, données de consommation, des données à propos de votre relation client, de vos contrats, modalités de paiement ainsi que les données relatives au service e.quilibre dans votre Cozy. Pour cela, indiquez l'e-mail et le mot de passe de votre compte client EDF ci-dessous, sélectionnez 'Tous les jours' comme fréquence de mise à jour, puis cliquez sur 'importer et sauvegarder'. (Notez bien que la copie des données que vous allez récupérer est sous votre responsabilité)",
-  "konnector description free": "Téléchargez toutes vos factures internet de Free. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description free mobile": "Téléchargez toutes vos factures Free Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description maif": "La Maif vous propose de télécharger automatiquement des données vous concernant (sociétaire, foyer, véhicule, sinistre, ...) dans votre Cozy.",
+  "konnector default base folder": "/Administratif/%{name}",
   "konnector customview maif": "Pour cela <ol> <li>connectez-vous à votre compte en ligne Maif via le bouton 'connect',</li><li>sélectionnez 'Tous les jours' comme fréquence de mise à jour,</li><li>cliquez sur 'importer et sauvegarder'.</li></ol>",
-  "konnector description bouygues": "Téléchargez toutes vos factures téléphones de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description bouygues box": "Téléchargez toutes vos factures internet de Bouygues Telecom. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description digiposte": "Download all your bills from the Digiposte service. This konnector requires the Files application to store the bill PDF files.",
-  "konnector description sfr_box": "Téléchargez toutes vos factures internet de SFR. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description sfr_mobile": "Téléchargez toutes vos factures de téléphonie mobile de SFR. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description github": "Téléchargez toutes vos factures Github. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description github commits": "Sauvegardez les informations de tous vos commits Github.",
-  "konnector description jawbone": "Téléchargez les données de déplacement et de sommeil depuis un fichier CSV Jawbone.",
-  "konnector description rescuetime": "Téléchargez toutes vos activités RescueTime.",
-  "konnector description withings": "Téléchargez toutes les mesures de vos appareils Withings.",
-  "konnector description twitter": "Téléchargez tous vos tweets publiés sur Twitter. Ce connecteur requiert deux identifiants et deux clés secrètes. Vous pouvez les générer via le [tableau Twitter de gestion d'applications](https://apps.twitter.com/). Vous pourrez y créer une application. Twitter vous fournira des identifiants pour cette application. Avec ces identifiants ce connecteur pourra récupérer vos données.",
-  "konnector description digital ocean": "Téléchargez toutes vos factures Digital Ocean. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description sosh": "Téléchargez toutes vos factures Sosh. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description electrabel": "Téléchargez toutes vos factures Electrabel. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description orange": "Téléchargez toutes vos factures Orange. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description nest": "Enregistrez la température actuelle mesurée par votre Nest.",
-  "konnector description numericable": "Téléchargez toutes vos factures Numéricable. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description virgin_mobile": "Téléchargez toutes vos factures Virgin Mobile. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description online_net": "Téléchargez toutes vos factures Online.net. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description ovh_eu": "Téléchargez toutes vos factures OVH Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>\nLors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.",
-  "konnector description ovh_ca": "Téléchargez toutes vos factures OVH North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>\nLors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.",
-  "konnector description runabove": "Téléchargez toutes vos factures RunAbove. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>\nLors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.",
-  "konnector description kimsufi_eu": "Téléchargez toutes vos factures Kimsufi Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>\nLors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.",
-  "konnector description kimsufi_ca": "Téléchargez toutes vos factures Kimsufi North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>\nLors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.",
-  "konnector description soyoustart_eu": "Téléchargez toutes vos factures SoYouStart Europe. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>\nLors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.",
-  "konnector description soyoustart_ca": "Téléchargez toutes vos factures SoYouStart North-America. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.<br/>\nLors de votre premier import, nous générerons un lien à partir duquel vous pourrez rentrer vos identifiants OVH Europe.",
-  "konnector description isen": "Les étudiants de l'école d'ingénieur ISEN peuvent importer leurs supports de cours et leur agenda.",
-  "konnector description ical_feed": "Téléchargez et importez un fichier iCal disponible en ligne (.ics).",
-  "konnector description birthdays": "Créez un événement dans votre calendrier pour chaque anniversaire de vos contacts. Si un tag est donné, seuls les contacts taggés avec celui-ci seront pris en compte.",
-  "konnector description googlecontacts": "Importez vos contacts Google dans votre Cozy via l'API de Google.",
-  "konnector description linkedin": "Importez vos contacts LinkedIn dans votre Cozy.",
-  "konnector description ameli": "Importez vos remboursements Ameli dans votre Cozy. L'identifiant doit être constitué des 13 premiers chiffres de votre numéro de sécurité sociale.",
-  "konnector description voyages_sncf": "Importez vos factures et événements Voyages-SNCF dans votre Cozy.",
-  "konnector description doctolib": "Importez vos rendez-vous Doctolib dans votre Cozy.",
   "konnector customview googlecontacts 4": "Initialiser ou réinitialiser ce konnector",
   "konnector customview googlecontacts 1": "1. Cliquez sur le bouton \"Connecter votre compte google\" afin de connecter votre compte google et autoriser Cozy à y accéder. La fenêtre de Google va présenter une chaîne de caractère comlexe pour cela. Copiez la, elle sera utile à l'étape 2.",
   "konnector customview googlecontacts 2": "Connecter votre compte Google",
   "konnector customview googlecontacts 3": "2. Copiez cette chaîne de caractères dans le champs Auth code. Puis cliquez sur le bouton \"Importer et sauvegarder \" pour lancer l'importation.  Le nom du compte sera mis à jour automatiquement.",
-  "konnector description directenergie": "Télécharge toutes vos factures pour votre compte actif depuis le site de Direct Energie.",
-  "konnector description captain_train": "Télécharge toutes les factures du vendeur de billet de train Captain Train. Ce connector ne supporte qu'une authentification normale (email/mot de passe), et ne permet pas la connection avec les comptes Facebook ou Google. Ce connector ne fournit pas non plus d'événements pour votre agenda. Pour ceci, activez l'option sur votre compte capitaine train (<a href=\"https://www.captaintrain.com/preferences/calendars\" target=\"_blank\">ici</a>) et utilisez le lien du flux Ical fourni avec le connector Ical feed (<a href=\"#konnector/ical_feed\">ici</a>).",
-  "konnector description facebook_events": "Importez vos événements Facebook dans votre Cozy. Pour ce faire, cliquez sur le bouton Connect pour vous identifier sur Facebook.",
   "konnector facebook_events connect": "Se connecter",
-  "konnector description aprr": "Télécharge toutes vos factures depuis le site internet de APRR (compte avec badge télépéage). Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description vente_privee": "Télécharge toutes vos factures depuis le site internet vente-privee.com. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description uber": "Télécharge toutes vos factures depuis le site internet d'Uber. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
-  "konnector description podcast": "Téléchargez vos podcasts audios préférés depuis leurs flux RSS. Les importations peuvent prendre du temps.",
-  "konnector description materiel_net": "Télécharge vos factures Materiel.net. Pour pouvoir stocker les factures au format PDF, ce connecteur requiert que l'application Files soit installée sur votre Cozy.",
+  "konnector installation timeout error": "L'installation du connecteur a dépassé le temps imparti.",
+  "intent.service.initialization.error": "L'initialisation du service a échoué.",
+  "intent.service.account.creation.error": "Impossible de créer le compte, il y a eu une erreur.",
+  "intent.service.error.cause": "Raison : %{error}",
+  "intent.service.cancel": "Annuler",
+  "intent.service.terminate": "Terminer",
   "notification import error": "une erreur est survenue pendant l'importation des données",
   "notification malakoff_mederic": "%{smart_count} nouveau remboursement importé |||| %{smart_count} nouveaux remboursements importés",
   "notification prefix": "Konnector %{name} :",
@@ -149,11 +120,11 @@
   "url": "URL cible",
   "tag": "Tag",
 
-  "my_accounts title": "Mes Comptes",
-  "my_accounts category title": "Catégories",
-  "my_accounts discovery title": "Découverte",
-  "my_accounts connected title": "Connectés",
-  "my_accounts coming_soon": "À venir…",
+  "title": "Data Connect",
+  "category title": "Catégories",
+  "discovery title": "Découverte",
+  "connected title": "Connectés",
+  "coming_soon": "À venir…",
 
   "none": "Aucun",
   "every hour": "Toutes les heures",
@@ -163,73 +134,122 @@
 
   "all category": "Tous",
   "health category": "Santé",
+  "insurance category": "\nAssurance",
   "transport category": "Voyage et transport",
   "social category": "Social",
-  "isp category": "FAI",
-  "telecom category": "Télécom",
+  "isp category": "Internet",
+  "telecom category": "Mobile",
   "energy category": "Énergie",
   "host_provider category": "Hébergeur",
   "productivity category": "Productivité",
   "others category": "Autres",
 
-  "my_accounts account config title": "Connectez votre compte %{name} dès maintenant :",
-  "my_accounts account config button": "Se connecter",
-  "my_accounts account cancel button": "Annuler",
-  "my_accounts account save button": "Sauvegarder",
-  "my_accounts account config show password": "Afficher le mot de passe",
-  "my_accounts account config success": "Votre compte a bien été ajouté",
-  "my_accounts account config bad credentials": "Votre identifiant et/ou mot de passe ne sont pas corrects",
-  "my_accounts account config error": "Une erreur est survenue, vos identifiants n'ont pas pu être enregistrés. Pouvez-vous recommencer ?",
-  "my_accounts account config details": "Retrouvez vos données dans l'application Files à l'emplacement :",
-  "my_accounts account index": "Compte ",
-  "my_accounts add_account button": "Ajouter un compte",
-  "my_accounts activity": "Activité",
-  "my_accounts activity desc": "Dernière synchronisation : ",
-  "my_accounts activity running": "en cours...",
-  "my_accounts activity button": "Synchroniser maintenant",
-  "my_accounts location": "Emplacement",
-  "my_accounts location desc": "Vous trouverez vos fichiers à l'emplacement suivant dans l'application Files",
-  "my_accounts location button": "Ouvrir le dossier dans Files",
-  "my_accounts calendar": "Calendrier associé",
-  "my_accounts calendar desc": "Vous trouverez vos évènements dans le calendrier suivant dans l'application Agenda",
-  "my_accounts frequency": "Fréquence de synchronisation",
-  "my_accounts frequency desc": "Vos fichiers seront ajoutés dans votre cozy au rythme suivant",
-  "my_accounts account": "Compte",
-  "my_accounts disconnect": "Déconnexion",
-  "my_accounts disconnect desc": "Vous serez déconnecté de ce compte, mais les données importées seront gardées",
-  "my_accounts disconnect button": "Déconnecter ce compte",
-  "my_accounts delete button": "Supprimer ce compte",
-  "my_accounts account delete success": "Compte supprimé",
-  "my_accounts account delete error": "Une erreur est survenue, vos identifiants n'ont pas pu être enregistrés. Pouvez-vous recommencer ?",
-  "my_accounts title description": "Description du connecteur",
+  "account config title": "Connectez votre compte %{name} dès maintenant :",
+  "account cancel button": "Annuler",
+  "account save button": "Sauvegarder",
+  "account config show password": "Afficher le mot de passe",
+  "account config success": "Votre compte a bien été ajouté",
+  "account config error": "Une erreur est survenue, vos identifiants n'ont pas pu être enregistrés. Pouvez-vous recommencer ?",
+  "account config details": "Retrouvez vos données dans l'application Files à l'emplacement :",
+  "account update success": "Compte mis à jour avec succès",
+  "account index": "Compte n° %{index}",
+  "add_account button": "Ajouter un compte",
+  "activity": "Activité",
+  "activity desc": "Dernière synchronisation : ",
+  "activity running": "en cours...",
+  "activity button": "Synchroniser maintenant",
+  "config": {
+    "location": {
+      "title": "Emplacement",
+      "desc": "Vous trouverez vos fichiers à l'emplacement suivant dans l'application Files",
+      "button": "Ouvrir le dossier dans Files"
+    },
+    "calendar": {
+      "title": "Calendrier associé",
+      "desc": "Vous trouverez vos évènements dans le calendrier suivant dans l'application Agenda"
+    },
+    "frequency": {
+      "title": "Fréquence de synchronisation",
+      "desc": "Vos fichiers seront ajoutés dans votre cozy au rythme suivant"
+    },
+    "account": {
+      "title": "Compte"
+    }
+  },
+  "disconnect": "Déconnexion",
+  "disconnect desc": "Vous serez déconnecté de ce compte, mais les données importées seront gardées",
+  "disconnect button": "Déconnecter ce compte",
+  "delete button": "Supprimer ce compte",
+  "account delete success": "Compte supprimé",
+  "account delete error": "Une erreur est survenue, vos identifiants n'ont pas pu être enregistrés. Pouvez-vous recommencer ?",
+  "account": {
+    "connection": {
+      "account": {
+        "title": "Compte"
+      },
+      "title": "Connectez votre compte %{name} à votre Cozy",
+      "update": {
+        "cancel": "Annuler",
+        "save": "Enregistrer"
+      },
+      "security": "Vos identifiants et mots de passe sont stockés dans votre Cozy. Aucun tiers n'y aura accès !",
+      "data": {
+        "title": "Données collectées :",
+        "service": {
+          "description": "Description du service :"
+        }
+      },
+      "login": {
+        "password": {
+          "placeholder": "Le mot de passe utilisé pour vous connecter au service"
+        },
+        "submit": "\nConnecter",
+        "error": {
+          "bad_credentials": "L'identifiant et le mot de passe sont incorrects."
+        }
+      }
+    },
+    "connected": {
+      "title": "Votre compte %{name} est connecté !",
+      "description": "Bravo ! Votre compte %{name} est désormais lié à votre Cozy. Tellement de nouvelles opportunités s’offrent à vous.",
+      "ongoingSync": "Vos factures sont en cours de synchronisation et seront disponibles au chemin suivant:",
+      "textLinkToBillsFolder": "Ouvrir le dossier dans Cozy Drive",
+      "buttonAccountConfig": "Accéder à la configuration de mon compte",
+      "buttonBackToServicesList": "Revenir à la liste des services"
+    }
+  },
+  "working": "Chargement",
+  "voting text": "Vous ne trouvez pas le connecteur que vous cherchiez ? Dites-le nous !",
 
-  "dataType title": "Votre Cozy récupère les données suivantes :",
-  "dataType disclaimer": "n’accédera à aucune donnée présente sur votre Cozy.",
-  "dataType activity": "Vos activités",
-  "dataType heartbeat": "Vos battements de cœur",
-  "dataType calendar": "Vos calendriers",
-  "dataType commit": "Vos commits",
-  "dataType consumption": "Votre consommation",
-  "dataType contact": "Vos contacts",
-  "dataType contract": "Vos contrats",
-  "dataType travelDate": "Vos dates de voyages",
-  "dataType event": "Vos événements",
-  "dataType bill": "Vos factures",
-  "dataType stepsNumber": "Votre nombre de pas",
-  "dataType podcast": "Vos podcasts",
-  "dataType weight": "Votre poids",
-  "dataType bloodPressure": "Votre pression artérielle",
-  "dataType appointment": "Vos rendez-vous",
-  "dataType refund": "Vos remboursements",
-  "dataType sleepTime": "Votre temps de sommeil",
-  "dataType courseMaterial": "Vos supports de cours",
-  "dataType temperature": "Vos données de température",
-  "dataType tweet": "Vos tweets",
-  "konnector description orange_vod": "Les données mises à disposition par Orange via ce connecteur contiennent la liste des films que vous avez visionnés  à partir du 01/01/2015 en VOD payante ou gratuite (Replay TV) à partir de votre Livebox (à l’exception des contenus « adulte »). Vous pourrez utiliser ces données dans différentes applications de votre Cozy, par exemple « La Musique de mes Films » (disponibilité prochaine sur le Cozy Store)",
+  "dataType": {
+    "none": "%{name} n'accèdera à aucune donnée de votre Cozy",
+    "activity": "\nVos activités",
+    "heartbeat": "Votre rythme cardiaque",
+    "calendar": "Vos calendrier",
+    "commit": "Vos commits",
+    "consumption": "Votre consommation",
+    "contact": "Vos contacts",
+    "contract": "Vos contrats",
+    "travelDate": "Vos séjours et voyages",
+    "event": "Vos évènements",
+    "bill": "Vos factures",
+    "stepsNumber": "Vos nombres de pas",
+    "podcast": "Vos podcasts",
+    "weight": "Votre poids",
+    "bloodPressure": "Votre pression artérielle",
+    "appointment": "Vos rendez-vous",
+    "refund": "Vos remboursements",
+    "sleepTime": "Votre temps de sommeil",
+    "courseMaterial": "Vos supports de cours",
+    "temperature": "Vos données de température",
+    "tweet": "Vos tweets",
+    "videostream": "Vos vidéos",
+    "phonecommunicationlog": "Votre journal d'appels",
+    "geopoint": "Vos géolocalisations"
+  },
   "konnector customview orange_vod": "<ul><li>Dès que vous vous serez connecté, une demande d’extraction de vos données sera émise vers le système d’information d’Orange.</li><li>Ces données seront disponibles sous 15 jours.</li><li>Par la suite, vos données seront mises à jour automatiquement dans votre Cozy, à intervalles de 15 jours.</li></ul>",
   "not fixe token": "Pour récupérer ces données, vous devez vous enregistrer avec votre email.",
   "notification videostreams": "%{smart_count} nouvelle donnée d'historique de vos films et vidéo vu importé |||| %{smart_count} nouvelles données d'historique de vos fims et video and film vu importées",
-  "konnector description orange_mobile": "Les données mises à disposition par Orange via ce connecteur contiennent les comptes rendus des appels émis et reçus depuis votre mobile à partir du 01/07/2016. De plus, dans le cadre du pilote « Mes Infos », Orange vous offre aussi la possibilité de localiser votre téléphone mobile de manière régulière. Le recueil de ces données nécessite votre accord explicite. Cet accord pourra être révoqué à tout moment via ce même connecteur de données. Vous pourrez utiliser ces données dans différentes applications de votre Cozy Cloud, par exemple « Mapping My Life » (disponibilité prochaine sur le Cozy Store).",
 
   "konnector customview orange_mobile": "<span style='font-size: 90%;'><p style='margin: 0;'>En cliquant sur « Accepter », vous donnerez votre accord pour qu’une localisation de votre téléphone mobile soit effectuée à compter de ce jour, deux fois par heure. Les informations recueillies  contiendront uniquement : </p><ul><li>- la date et l’heure de cette localisation ;</li><li>- les coordonnées géographiques de l’antenne radio à laquelle le mobile est rattaché  au moment de la localisation.</li></ul><p style='margin-top: 0;'>Les données récoltées par Orange après votre accord seront accessibles uniquement dans le Cozy Cloud qui vous a été attribué dans le cadre du pilote « Mes Infos ».</p></span><span style='font-size: 80%;'><p style='margin: 0;'>Elles viendront compléter les informations de localisation déjà présentes dans les comptes rendus d’appels, qui incluent votre numéro, celui de votre correspondant, l’heure et la durée de l’appel, ainsi que la localisation géographique de l’antenne radio à laquelle le mobile était rattaché au moment de l’appel.</p><ul><li>Dès que vous vous serez connecté, une demande d’extraction de vos données sera émise vers le système d’information d’Orange.</li><li>Ces données seront disponibles sous 15 jours.</li><li>Par la suite, vos données seront mises à jour automatiquement dans votre Cozy, à intervalles de 15 jours.</li></ul></span>",
   "notification geopoints": "%{smart_count} nouveau point de géolocalisation importé |||| %{smart_count} nouveaux points de géolocalisation importés",
@@ -239,6 +259,30 @@
   "setting orange optin error": "Nous rencontrons une erreur technique, nous ne pouvons enregistrer votre choix à propos du service de géolocalisation.",
   "checking orange optin error": "Nous rencontrons une erreur technique, nous ne pouvons pas récupérer votre choix à propos du service de géolocalisation d'Orange.",
   "no orange geoloc optin": "Nous n'avons pas de données de géolocalisation étant donné que vous n'avez pas activé le service de géolocalisation d'Orange.",
-  "frequency": "Fréquence de synchronisation"
+  "frequency": "Fréquence de synchronisation",
+
+  "Loading": {
+    "initial": "Chargement des comptes des connecteurs…"
+  },
+
+  "tutorial": {
+    "cozy_collect": {
+      "title": "Automatisez la récupération de vos données",
+      "text": "Elles seront conservées dans votre Cozy pour que vous n'ayez plus à les chercher.",
+      "button": "Suivant"
+    },
+    "menu_apps": {
+      "title": "Votre Cozy est bien plus qu’un simple agrégateur de données",
+      "text": "Ouvrez le menu Applications pour découvrir toutes les possibilités offertes par votre Cozy.",
+      "button": "Je découvre mes Applications"
+    }
+  },
+
+  "Error": {
+    "initial": "Quelque chose s’est mal passé pendant la récupération de vos connecteurs et de vos informations. Merci de rafraîchir la page.",
+    "button": {
+      "reload": "Rechargez la page maintenant"
+    }
+  }
 
 }

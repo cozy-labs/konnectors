@@ -77,11 +77,12 @@ logIn = function(requiredFields, billInfos, data, next) {
         }
       };
       return request(loginOptions, function(err, res, body) {
-        var reimbursementOptions;
+        var $, reimbursementOptions;
+        $ = cheerio.load(body);
         if (err) {
           log.error(err);
           return next('bad credentials');
-        } else if (body.indexOf('Connexion à mon compte') > -1) {
+        } else if ($("#id_lien_deco").length !== 1) {
           log.error('Authentication error');
           return next('bad credentials');
         } else {

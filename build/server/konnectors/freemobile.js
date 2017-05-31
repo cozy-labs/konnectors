@@ -93,7 +93,7 @@ module.exports = {
     log.info("Import started");
     return fetcher["new"]().use(prepareLogIn).use(getImageAndIdentifyNumbers).use(logIn).use(getBillPage).use(parseBillPage).use(filterExisting(log, PhoneBill)).use(saveDataAndFile(log, PhoneBill, {
       vendor: 'freemobile',
-      others: ['phonenumber']
+      others: ['titulaire', 'phonenumber']
     }, ['facture'])).use(linkBankOperation({
       log: log,
       model: PhoneBill,
@@ -145,7 +145,7 @@ prepareLogIn = function(requiredFields, billInfos, data, next) {
     var $, loginPageData;
     if (err != null) {
       log.error("Cannot connect to Free Mobile : " + homeUrl);
-      next(err);
+      return next(err);
     }
     loginPageData = body;
     data.imageUrlAndPosition = [];
@@ -179,15 +179,16 @@ getImageAndIdentifyNumbers = function(requiredFields, billInfos, data, next) {
 };
 
 logIn = function(requiredFields, billInfos, data, next) {
-  var baseUrl, homeUrl, transcodedLogin, uniqueLogin;
+  var baseUrl, homeUrl, timerDownload, transcodedLogin, uniqueLogin;
   homeUrl = "https://mobile.free.fr/moncompte/index.php?page=home";
   baseUrl = "https://mobile.free.fr/moncompte/";
   transcodedLogin = transcodeLogin(requiredFields.login, data.conversionTable);
   uniqueLogin = unifyLogin(transcodedLogin);
-  return async.eachSeries(uniqueLogin, getSmallImage, function(err) {
+  timerDownload = Math.round(4 / uniqueLogin.length * 1000);
+  return async.eachSeries(uniqueLogin, getSmallImage(timerDownload), function(err) {
     var form, i, k, len, login, options;
     if (err != null) {
-      next(err);
+      return next(err);
     }
     login = "";
     for (k = 0, len = transcodedLogin.length; k < len; k++) {
@@ -226,7 +227,7 @@ logIn = function(requiredFields, billInfos, data, next) {
         if (requiredFields.login == null) {
           log.error("No login");
         }
-        next('bad credentials');
+        return next('bad credentials');
       }
       options = {
         method: 'GET',
@@ -239,13 +240,13 @@ logIn = function(requiredFields, billInfos, data, next) {
       return request(options, function(err, res, body) {
         var $, connectionForm;
         if (err != null) {
-          next(err);
+          return next(err);
         }
         $ = cheerio.load(body);
         connectionForm = $('#form_connect');
         if (connectionForm.length !== 0) {
           log.error("Authentification error");
-          next('bad credentials');
+          return next('bad credentials');
         }
         return next();
       });
@@ -263,7 +264,7 @@ getBillPage = function(requiredFields, billInfos, data, next) {
   };
   return request(options, function(err, res, body) {
     if (err != null) {
-      next(err);
+      return next(err);
     }
     data.html = body;
     return next();
@@ -279,8 +280,11 @@ parseBillPage = function(requiredFields, bills, data, next) {
   }
   $ = cheerio.load(data.html);
   isMultiline = $('div.infosConso').length > 1;
+  if (isMultiline) {
+    log.info('Multi line detected');
+  }
   $('div.factLigne.is-hidden').each(function() {
-    var amount, bill, data_fact_date, data_fact_id, data_fact_ligne, data_fact_login, data_fact_multi, date, pdfUrl;
+    var amount, bill, data_fact_date, data_fact_id, data_fact_ligne, data_fact_login, data_fact_multi, date, number, pdfUrl, titulaire;
     amount = $($(this).find('.montant')).text();
     amount = amount.replace('€', '');
     amount = parseFloat(amount);
@@ -297,8 +301,13 @@ parseBillPage = function(requiredFields, bills, data, next) {
       vendor: 'Free Mobile',
       type: 'phone'
     };
+    number = $(this).find('div.titulaire > span.numero').text();
+    $(this).find('div.titulaire > span.numero').remove();
+    titulaire = $(this).find('div.titulaire').text().replace(/(\n|\r)/g, '');
+    titulaire = titulaire.trim();
     if (isMultiline && !data_fact_multi) {
-      bill.phonenumber = data_fact_ligne;
+      bill.phonenumber = number;
+      bill.titulaire = titulaire;
     }
     if (date.year() > 2011) {
       bill.pdfurl = pdfUrl;
@@ -314,7 +323,7 @@ getImageAndIdentifyNumber = function(imageInfo, callback) {
   return getSound(imageInfo.position, function(err) {
     var options;
     if (err != null) {
-      callback(err, null);
+      return callback(err, null);
     }
     options = {
       method: 'GET',
@@ -324,7 +333,7 @@ getImageAndIdentifyNumber = function(imageInfo, callback) {
     };
     return request(options, function(err, res, body) {
       if (err != null) {
-        callback(err, null);
+        return callback(err, null);
       }
       return pngjs.loadImage(body, function(err, resultImage) {
         var blue, green, idx, image, k, l, stringcheck, x, y;
@@ -367,7 +376,7 @@ getSound = function(position, callback) {
   };
   return request(options, function(err, res, body) {
     if (err != null) {
-      callback(err);
+      return callback(err);
     }
     return callback(null);
   });
@@ -431,18 +440,20 @@ unifyLogin = function(login) {
   return unique;
 };
 
-getSmallImage = function(digit, callback) {
-  var baseUrl, options;
-  baseUrl = "https://mobile.free.fr/moncompte/";
-  options = {
-    method: 'GET',
-    jar: true,
-    url: baseUrl + "chiffre.php?pos=" + digit + "&small=1"
+getSmallImage = function(timer) {
+  return function(digit, callback) {
+    var baseUrl, options;
+    baseUrl = "https://mobile.free.fr/moncompte/";
+    options = {
+      method: 'GET',
+      jar: true,
+      url: baseUrl + "chiffre.php?pos=" + digit + "&small=1"
+    };
+    return request(options, function(err, res, body) {
+      if (err != null) {
+        return callback(err);
+      }
+      return setTimeout(callback, timer, null);
+    });
   };
-  return request(options, function(err, res, body) {
-    if (err != null) {
-      callback(err);
-    }
-    return setTimeout(callback, 600, null);
-  });
 };
