@@ -5,6 +5,8 @@
 
 [![Build Status](https://api.travis-ci.org/cozy-labs/konnectors.svg?branch=master)](https://travis-ci.org/cozy-labs/konnectors)
 
+This project is deprecated and is replaced by [collect](https://github.com/cozy/cozy-collect) and [connectors](https://github.com/cozy/cozy-konnector-libs/blob/master/konnectors.md) to use with cozy V3
+
 [Cozy][cozy] MyAccounts
 =======================
 
